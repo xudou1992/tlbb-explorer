@@ -1,0 +1,9 @@
+=== groups with >=2 distinct roles AND all texture refs resolved (grade A) ===
+  count: 0
+
+=== texture-ref resolution counts across groups (sanity) ===
+  distinct from_hash with texture refs: 13470
+
+=== for .tga rows: does kind match the name suffix? ===
+  kind=.tga but name not ending .tga: 0
+  name ends .tga but kind<>'.tga': 0

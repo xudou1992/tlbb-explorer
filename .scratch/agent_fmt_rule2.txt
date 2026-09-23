@@ -1,0 +1,83 @@
+corpus: 7996 .mesh
+
+=== outcome ===
+  scan_fail              4449
+  scan_ok                3547
+
+=== per sm: scan_ok / scan_fail / pos_overflow ===
+  sm=1    ok=3547   fail=2672   pos_ovf=0
+  sm=2    ok=0      fail=865    pos_ovf=0
+  sm=3    ok=0      fail=424    pos_ovf=0
+  sm=4    ok=0      fail=170    pos_ovf=0
+  sm=5    ok=0      fail=134    pos_ovf=0
+  sm=6    ok=0      fail=84     pos_ovf=0
+  sm=7    ok=0      fail=50     pos_ovf=0
+  sm=8    ok=0      fail=16     pos_ovf=0
+  sm=9    ok=0      fail=12     pos_ovf=0
+  sm=10   ok=0      fail=8      pos_ovf=0
+  sm=11   ok=0      fail=6      pos_ovf=0
+  sm=12   ok=0      fail=8      pos_ovf=0
+  TOTAL ok=3547 fail=4449
+
+=== index-block-to-EOF distance (bytes, bucketed by 32) ===
+  tail~0      404
+  tail~96     101
+  tail~192    500
+  tail~288    6
+  tail~384    32
+  tail~416    2
+  tail~480    2
+  tail~512    5
+  tail~544    2
+  tail~576    1
+  tail~640    2
+  tail~672    21
+  tail~736    1
+  tail~768    15
+  tail~832    1
+  tail~864    18
+  tail~896    3
+  tail~928    3
+  tail~960    9
+  tail~992    3
+  buckets: [('gt256', 2542), ('le256', 601), ('le8', 404)]
+=== alignment of count array p%4 ===
+  p%4=0: 3346
+  p%4=2: 201
+=== how many validating positions found per file ===
+  1: 3529
+  2: 17
+  3: 1
+=== cross-check vs static layout (u32@pos_end+vc*20 == fc) ===
+  same: 1838
+
+=== files with vc>65535 (u16 index limit): 0 ===
+
+=== examples by sm ===
+
+=== failures ===
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_baihongguanri_h01.mesh', 572, 8, 4, 1, None)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_baota_l001.mesh', 16168, 466, 162, 1, 15192)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_bcdz_z001.mesh', 3236, 72, 108, 1, 2584)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_bd_hzl_c001.mesh', 10076, 234, 384, 1, 7768)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_bd_zhhq_c001.mesh', 20028, 425, 768, 1, None)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_bd_zhhq_c002.mesh', 11964, 275, 480, 1, 9080)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_bd_zhhq_c003.mesh', 11772, 269, 480, 1, 8888)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_bell_h001.mesh', 228156, 5410, 6844, 1, None)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_biaoche_mianpian01.mesh', 1340, 25, 32, 1, None)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_bingkuai_h001.mesh', 828, 12, 20, 1, None)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_bingkuaii_l001.mesh', 788, 12, 20, 1, 664)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_bingkuaii_l002.mesh', 53636, 1404, 1404, 1, 45208)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_bingningshuanghua_h001.mesh', 1812, 38, 52, 1, 1496)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_bloom_v1.mesh', 40828, 955, 1664, 1, 30840)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_boom_v1.mesh', 5896, 148, 146, 1, 5016)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_boom_v2.mesh', 5364, 134, 132, 1, 4568)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_boss_cj_z004.mesh', 23292, 539, 960, 1, 17528)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_boss_fmdf_x01.mesh', 16104, 464, 162, 1, 15128)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_boss_fmdf_x02.mesh', 16008, 461, 162, 1, 15032)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_boss_fyqgz_x02.mesh', 238812, 7013, 2352, 1, 224696)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_boss_fyqgz_x06.mesh', 37644, 854, 1672, 1, 27608)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_boss_gss_cone_c01.mesh', 7484, 171, 288, 1, 5752)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_boss_gss_cone_c02.mesh', 8036, 186, 300, 1, 6232)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_boss_gss_plane_c01.mesh', 2300, 54, 48, 1, 2008)
+  [scan_fail] ('data\\effect\\effectmodel\\w1351_model_boss_guansheng_ztj_x01.mesh', 22648, 652, 250, 1, 21144)

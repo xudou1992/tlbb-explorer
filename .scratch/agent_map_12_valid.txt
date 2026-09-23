@@ -1,0 +1,29 @@
+files grid753: 9288  other: {'rs_596': 1, 'rs_9999': 295, 'rs_592': 66, 'badname': 1559, 'rs_749': 940, 'too_small': 1238, 'rs_957': 21, 'rs_324': 2, 'rs_605': 81, 'rs_601': 1}
+records walked: 260166  clean-name: 252310  empty: 6297
+join hit: 230935 miss: 21375  rate 91.5283%
+ext hist: {'.mesh': 248848, '.pu': 3370, '': 55, '.mdl': 25, '.wav': 12}
+bad-name examples: [('out/tree/mobile_maps\\w1351_cj_002\\1_4_-7.scene', 6, b'\x7f'), ('out/tree/mobile_maps\\w1351_cj_002\\1_4_-7.scene', 7, b')\x1e\xf6\x7f'), ('out/tree/mobile_maps\\w1351_cj_002\\1_4_-8.scene', 15, b'\x7f'), ('out/tree/mobile_maps\\w1351_cj_002\\1_4_-8.scene', 16, b')\x1e\xf6\x7f'), ('out/tree/mobile_maps\\w1351_cj_002\\1_4_-8.scene', 18, b'\x8d\x0e*\x1e\xf6\x7f'), ('out/tree/mobile_maps\\w1351_cj_002\\1_4_-8.scene', 19, b'\x8c\x1e\x01\xf9\x7f')]
+
+coords n=252217
+  x: min -34.06 p1 14.44 p50 122.64 p99 298.07 max 1473.00
+  y: min -105.00 p1 -10.98 p50 9.90 p99 42.00 max 195.76
+  z: min -2423.56 p1 -299.41 p50 -124.60 p99 -10.89 max 38.12
+  scale: min 0.000 p50 1.000 max 3247516746038086981700912642957246464.000  |  distinct top: [(1.0, 127734), (0.65, 43383), (0.647, 4849), (0.645, 3036), (0.85, 2795), (0.652, 2442)]
+
+per-map coordinate bbox (12 maps):
+  w1351_ll_dl_003                    n=6156   x[     1.3,   317.7] y[   -4.8,   24.6] z[  -320.6,     0.1]
+  w1351_ll_dl_002                    n=6112   x[     1.3,   317.7] y[   -4.8,   40.0] z[  -320.6,     0.1]
+  w1351_ll_lyxj_002                  n=5978   x[     0.9,   319.2] y[  -12.5,   30.8] z[  -318.1,    -4.9]
+  w1351_ll_loulan_001                n=5828   x[    -3.4,   319.0] y[    6.0,   44.8] z[  -319.4,    -0.4]
+  w1351_ll_ly_001                    n=5277   x[     0.9,   319.7] y[  -35.7,   30.8] z[  -318.1,    -4.9]
+  w1351_ll_shgz_001                  n=5001   x[     1.4,   316.6] y[   -5.6,   25.0] z[  -317.8,    -0.5]
+  w1351_ll_sz_001                    n=4282   x[    13.7,   316.8] y[   -4.4,   21.8] z[  -309.8,   -10.7]
+  w1351_fb_jiehun_001                n=4059   x[    21.0,   239.7] y[   -2.0,   35.0] z[  -229.7,   -25.3]
+  w1351_fb_jiehun_003                n=3836   x[     6.7,   252.4] y[   -2.0,  195.8] z[  -252.7,    -6.1]
+  w1351_fb_jiehun_002                n=3080   x[     9.5,   248.4] y[   -1.8,   14.2] z[  -227.4,    -2.3]
+  w1351_fb_mtld_001                  n=3072   x[    -1.5,   251.0] y[  -13.7,   27.6] z[  -261.3,    -2.6]
+  w1351_ll_cs_001                    n=3033   x[     7.9,   307.5] y[  -13.3,   35.0] z[  -306.6,    -8.5]
+
+top miss examples (first 30): ['1351_mrsz_tielian_001.mdl', 'guoguo_1.wav', 'gyong_pubu03.pu', 'gyong_pubu09.pu', 'izitutenghong_001.mesh', 'ke_1.wav', 'ququ_1.wav', 'rd_2.wav', 'w1351_bmy_shanshi_004.mesh', 'w1351_bmy_zhuzi_004.mesh', 'w1351_bpzd_lanqigan_001.mesh', 'w1351_bye_caiqifang_001.mesh', 'w1351_bzd_dzqiangshu_001.mesh', 'w1351_bzd_dzqiangshu_002.mesh', 'w1351_bzd_dzqiangshu_003.mesh', 'w1351_bzd_dzqiangshu_004.mesh', 'w1351_bzd_dzqiangzhuan_001.mesh', 'w1351_bzd_dzqiangzhuan_005.mesh', 'w1351_bzd_muzhufowen_001.mesh', 'w1351_bzd_qiganjiantou_002.mesh', 'w1351_bzd_qiganxian_001.mesh', 'w1351_cbt_aishizhu_001.mesh', 'w1351_cbt_baoxiang_001.mesh', 'w1351_cbt_baoxiang_002.mesh', 'w1351_cbt_baoxiang_003.mesh', 'w1351_cbt_baozangtai_001.mesh', 'w1351_cbt_cbglanshanhu_001.mesh', 'w1351_cbt_huopen_001.mesh', 'w1351_cbt_jinbiding_001.mesh', 'w1351_cbt_jinbidui_001.mesh']
+
+records addressable within file bounds: 258607/262651 = 98.46%

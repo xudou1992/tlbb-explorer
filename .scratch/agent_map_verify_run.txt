@@ -1,0 +1,7 @@
+resources.hash rows: 105327
+ResourcePath.cfg resources rows: 1 -> [('4b761249ad5d605c', 'data', 282715384, 10853872)]
+extracted ResourcePath.cfg candidates: ['D:\\TLGL\\.scratch\\out\\tree\\ResourcePath.cfg']
+  D:\TLGL\.scratch\out\tree\ResourcePath.cfg size=10853872 magic=b'JBCF' -> None
+C1: 没能从解包树里读到 JRPC，跳过（不下结论）
+
+C2 .scene rows in db: 11933

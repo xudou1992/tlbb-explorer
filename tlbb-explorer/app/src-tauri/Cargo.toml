@@ -1,0 +1,29 @@
+[workspace]
+# Deliberately detached from D:/TLGL/tlbb-explorer/Cargo.toml: the shell is built
+# standalone so the core workspace keeps compiling on its own.
+resolver = "2"
+
+[package]
+name = "tlbb-shell"
+version = "0.1.0"
+edition = "2021"
+description = "Tauri shell for the TLBB asset understanding workbench"
+
+[lib]
+name = "tlbb_shell_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+base64 = "0.22"
+tlbb-core = { path = "../../crates/core" }
+rusqlite = { version = "0.40.2", features = ["bundled"] }
+
+[profile.release]
+opt-level = 3
+lto = "thin"

@@ -1,0 +1,10 @@
+('resourcepath', 54853)
+('', 48053)
+('self', 2342)
+('manifest', 79)
+('0000d365598844e0', 'mobile_maps_source/w1351_smeh_shandongkou_001.mtl', 'resourcepath', '')
+('000611928485d077', 'data/effect/effectmodel/w1351_model_shubennv_c02.mesh', 'resourcepath', '')
+('00068f5e5b41ec11', 'data/effect/effectmodel/w1351_model_xianglong_b7_lf001_E.mesh', 'resourcepath', '')
+('00069e0d4ace7dc8', 'data/effect/effectmodel/w1351_model_glowline_v6.mesh', 'resourcepath', '')
+distinct src for named .mesh under mobile_maps_source:
+('resourcepath', 7996)

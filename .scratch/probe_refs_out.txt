@@ -1,0 +1,76 @@
+== resources.ext distribution ==
+  ''           48053
+  '.scene'     11933
+  '.ani'       11234
+  '.mtl'       8536
+  '.mesh'      7996
+  '.pu'        7806
+  '.tani'      2560
+  '.tga'       2259
+  '.mdl'       2146
+  '.ske'       1630
+  '.sfl'       297
+  '.map'       274
+  '.wav'       220
+  '.ogg'       166
+  '.pak'       58
+  '.webp'      48
+  '.nav'       25
+  '.anis'      20
+  '.cur'       15
+  '.dll'       14
+
+== refs.kind distribution ==
+  '.mtl'                       total=38694   resolved=37779
+  '.tga'                       total=30585   resolved=25
+  '.ani'                       total=15622   resolved=11294
+  '.mesh'                      total=9316    resolved=8549
+  '.ske'                       total=4210    resolved=3734
+  '.png'                       total=36      resolved=0
+  '.anis'                      total=20      resolved=20
+  '.dds'                       total=14      resolved=0
+  '.pu'                        total=7       resolved=7
+
+== texture refs only (exactly what grade() counts) ==
+  '.dds'                   total=14     resolved=0
+  '.png'                   total=36     resolved=0
+  '.tga'                   total=30585  resolved=25
+  TEXTURE REF ROWS: total=30635 resolved=25
+
+== how many assets have >=1 texture ref / >=1 resolved texture ref ==
+  >=1 texture ref:          13470
+  >=1 RESOLVED texture ref: 25
+
+== all refs regardless of kind ==
+  >=1 ref at all:     21352
+  >=1 RESOLVED ref:   20576
+  total ref rows:     98504
+  resolved ref rows:  61408
+
+== amembers.role distribution ==
+  'scene'        11383
+  'animation'    11193
+  'material'     8519
+  'effect'       7806
+  'mesh'         3941
+  'model'        2061
+  'skeleton'     1630
+  'other'        1311
+  'map'          253
+  'texture'      25
+
+== agroups: role_kinds>=2 count (the `composition` signal) ==
+  groups with role_kinds>=2: 2601
+  total agroups:             13080
+  groups with 0 members:     0
+
+== n_tex / n_mtl columns on agroups (catalog's own counts) ==
+  groups with n_tex>0:  25
+  groups with n_mtl>0:  6541
+  groups with n_mesh>0: 2023
+  groups with n_ani>0:  1511
+  total:                13080
+
+== resources: how many are decodable images (width>0)? ==
+  resources with width>0: 26523
+  resources total:        105327

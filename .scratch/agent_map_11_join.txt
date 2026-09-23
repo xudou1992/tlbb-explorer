@@ -1,0 +1,33 @@
+named resources: 57274 distinct basenames: 45785
+
+#### w1351_ll_dl_002  files=103  instances=6129  named=6112  basename-hit=6111 (100.0% of named)  uniq-hit=213 uniq-miss=1
+   ext kinds: {'.mesh': 6101, '.pu': 10, '': 1}
+   missed uniq (first 25): ['1b4e8ec84230503dbc86bebb844db5bf']
+
+#### w1351_ll_cs_001  files=97  instances=3071  named=3042  basename-hit=3032 (99.7% of named)  uniq-hit=78 uniq-miss=9
+   ext kinds: {'.mesh': 3015, '.pu': 18, '': 9}
+   missed uniq (first 25): ['\x10\x86/nt', '568b3c28463e81ec5e8c5baaa6b09feb', 'aj÷\x7f', 'h\r\x8ck÷\x7f', 'huo02.pu', '\x80?µu\x89\x01', '\x8c-jþ\x7f', '½v6jþ\x7f', 'ð\x9dniþ\x7f']
+
+#### w1351_fb_jiehun_001  files=62  instances=4073  named=4059  basename-hit=4058 (100.0% of named)  uniq-hit=94 uniq-miss=1
+   ext kinds: {'.mesh': 4056, '.pu': 2, '': 1}
+   missed uniq (first 25): ['d0712b584282adddfc66e396744c8caf']
+
+#### w1351_ll_yxh_001  files=100  instances=3010  named=2895  basename-hit=2889 (99.8% of named)  uniq-hit=167 uniq-miss=5
+   ext kinds: {'.mesh': 2852, '.pu': 40, '': 3}
+   missed uniq (first 25): ['uzi_001.mesh', 'w1351_qixi_jinyuhuadeng_001.mesh', 'w1351_s_yxh_queqiao001.mesh', '\x80\x83ös\x1f', '°öâv\x01']
+
+#### w1351_gj_jz_001  files=61  instances=929  named=920  basename-hit=919 (99.9% of named)  uniq-hit=41 uniq-miss=1
+   ext kinds: {'.mesh': 908, '.pu': 11, '': 1}
+   missed uniq (first 25): ['íàô=ïâ']
+
+#### w1351_ll_qingyuan_001  files=97  instances=2361  named=2289  basename-hit=2284 (99.8% of named)  uniq-hit=133 uniq-miss=5
+   ext kinds: {'.mesh': 2245, '.pu': 40, '': 4}
+   missed uniq (first 25): ['89af3b4e4b8c86aec1d6f7a8d095831c', 'uzhuangtu_001.mesh', 'ºä\x13y\x02', '¾\x9a\x99\x99>©øø=q\x90\x10>\xadà@>', 'ð\x05j y\x02']
+
+== TOTAL over 6 maps: {'inst': 19573, 'named': 19317, 'hit': 19293, 'missuniq': 22}
+hit rate 99.88%
+
+== mobile_maps_source inventory
+source mesh count: 3264
+distinct source basenames: 3264
+source basenames absent from resources.path: 0

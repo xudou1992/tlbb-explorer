@@ -1,0 +1,101 @@
+==============================================================================
+名字户口本 v2
+==============================================================================
+
+有实体名字 45785 / 悬空名字 14377
+
+库已写出 D:\TLGL\.scratch\name_registry.db
+  name_card       36482 行
+  name_ref        98504 行
+  name_system      3503 行
+  name_series     25429 行
+
+==============================================================================
+一、贴图系列（series）—— 这是人工判读最有用的粒度
+==============================================================================
+  系列                                            名字数       悬空       引用  示例
+  w1351_mask                                    188      188     3309  w1351_mask_lion01.tga
+  w1351_ribbon                                  173      173      537  w1351_ribbon_h45.tga
+  w1351_texture                                 170      170     2106  w1351_texture_s008.tga
+  w1351_model                                   133      133      173  w1351_model_s033.tga
+  data/effect/textures/mask/w1351_mask          132      132     1369  data/effect/textures/mask/w1351_mask_c043.tga
+  w1351_ring                                    103      103      395  w1351_ring_c016.tga
+  w1351_point                                   102      102     1062  w1351_point_lf004.tga
+  w1351_smoke                                    82       82      907  w1351_smoke_h018.tga
+  data/effect/textures/texture/w1351_texture       77       77      887  data/effect/textures/texture/w1351_texture_h006.tga
+  w1351_text                                     74       74       90  w1351_text_h026.tga
+  w1351_pattern                                  61       61      112  w1351_pattern_c004.tga
+  w1351_plant                                    60       60      126  w1351_plant_c012.tga
+  w1351_textures                                 58       58      228  w1351_textures_h010.tga
+  w1351_fire                                     49       49      111  w1351_fire_c005.tga
+  w1351_water                                    47       47      173  w1351_water_c005.tga
+  data/effect/textures/point_light/w1351_point       42       42      498  data/effect/textures/point_light/w1351_point_lf006.tga
+  w1351_lightning                                39       39       95  w1351_lightning_s002.tga
+  w1351_ice                                      36       36       96  w1351_ice_s001.tga
+  data/effect/textures/ribbon_trail/w1351_ribbon       35       35      152  data/effect/textures/ribbon_trail/w1351_ribbon_c009.tga
+  data/effect/textures/smoke/w1351_smoke         35       35      491  data/effect/textures/smoke/w1351_smoke_h015.tga
+  wyh_mask                                       27       27       76  wyh_mask_lf017.tga
+  data/effect/textures/ring/w1351_ring           25       25      137  data/effect/textures/ring/w1351_ring_c035.tga
+  material #                                     20       20       27  material #194.tga
+  w1351_wuqi_t_shan                              20       20       20  w1351_wuqi_t_shan_0102.tga
+  w1351_wuqi_t_huan                              17       17       17  w1351_wuqi_t_huan_0103.tga
+  w1351_texture_dilie                            16       16       35  w1351_texture_dilie_z015.tga
+  w1351_wuqi_t_daofu                             15       15       15  w1351_wuqi_t_daofu_0205.tga
+  data/effect/textures/water/w1351_water         15       15      116  data/effect/textures/water/w1351_water_z003.tga
+  w1351_wuqi_t_danduan                           14       14       24  w1351_wuqi_t_danduan_0203.tga
+  w1351_wuqi_t_qiangbang                         14       14       14  w1351_wuqi_t_qiangbang_0208.tga
+  data/effect/textures/ring/w1351_textures       14       14       39  data/effect/textures/ring/w1351_textures_h012.tga
+  w1351_ribbon_xx_nan_jt                         13       13       18  w1351_ribbon_xx_nan_jt_x07.tga
+  w1351_npc_attack_sha                           13       13       13  w1351_npc_attack_shanzhu12.tga
+  w1351_wuqi_t_shuangduan                        13       13       13  w1351_wuqi_t_shuangduan_0203.tga
+  w1351_dl_huacu                                 12       12       14  w1351_dl_huacu_012.tga
+  w1351_npc_attack_gaoshanbai                    11       11       11  w1351_npc_attack_gaoshanbaiyuan09.tga
+  data/effect/textures/lightning/w1351_lightning       11       11       38  data/effect/textures/lightning/w1351_lightning_w002.tga
+  w1351_model_huandie03                          10       10       10  w1351_model_huandie03_w003.tga
+  w1351_npc_jiaochang5                           10       10       10  w1351_npc_jiaochang5_007.tga
+  w1351_ui_baoxiang                              10       10       10  w1351_ui_baoxiang_04.tga
+
+==============================================================================
+二、悬空贴图的系统分布（引用者路径语法）
+==============================================================================
+  系统                                       名字数       悬空      引用次数
+  角色/npc/quest                            2738     2738      3034
+  特效/pu_skill                              977      977     13604
+  特效/model                                 401      401       433
+  <未知>                                     327      327      1129
+  特效/ribbon_trail                          227      227       252
+  特效/pu_other                              213      213      1878
+  角色/npc/changjingdaoju                    198      198       217
+  角色/player/w1351_nan                      189      171       204
+  角色/npc/wuqi                              156      156       169
+  角色/player/w1351_nv                       151      144       164
+  特效/ring                                  148      148       174
+  特效/texture                               141      141       170
+  角色/npc/toukui                            121      121       123
+  角色/npc/model                             104      104       235
+  特效/plant                                 100      100       105
+  特效/pattern                                89       89       102
+  特效/point_light                            78       78        96
+  特效/text                                   77       77        79
+  特效/mask                                   67       67        88
+  特效/smoke                                  60       60        67
+  特效/fire                                   54       54        59
+  特效/water                                  48       48        52
+  特效/lightning                              37       37        37
+  特效/ice                                    35       35        39
+  特效/pu_scene                               11       11        57
+  特效/decal                                  11       11        22
+  mobile_maps_source/w1351_mtld_fwyoulang_001.mtl      11       11       111
+  mobile_maps_source/w1351_mrsz_zhujianzhu_004.mtl      11       11       177
+  特效/pbr                                    10       10        27
+  data/sharematerial                        10       10        44
+
+==============================================================================
+三、修正说明：v1 的 n_systems=2734 是口径错误
+==============================================================================
+  template_default.mtl:
+     n_systems = 2734 （出现过多少种'系统'标签）
+     n_dirs    = 2865 （被多少个不同目录引用 —— 这才是事实）
+     引用者目录类别 = ["data", "data/source", "mobile_maps_source"]
+  ⇒ 它是共享模板，被上千个目录引用。'系统数'本身没有意义，改名为 n_systems 并
+     明确标注'只是众数'，同时保留 n_dirs 作为事实。

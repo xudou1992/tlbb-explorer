@@ -1,0 +1,7 @@
+--- node --check ---
+
+check_exit=0
+--- build ---
+web -> D:\TLGL\tlbb-explorer\app\web\dist
+build_exit=0
+copied

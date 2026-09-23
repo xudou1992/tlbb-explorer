@@ -1,0 +1,42 @@
+=== 3D 面板出现/隐藏时界面给了什么话（按 13,080 组） ===
+   11035   84.4%  面板隐藏，且「还能看什么」整块被 hidden：屏幕上没有任何解释
+    1659   12.7%  面板出现，且明说「立体预览（N 个网格）」
+     364    2.8%  面板隐藏，但 canDo 会说「立体预览：这些网格没对上文件」
+      22    0.2%  面板隐藏，无 3D 相关提示（只有贴图预览等）
+
+=== 面板出现的组：画的网格与所选资产是否同一个东西 ===
+    1559  首个网格与本组同名
+     100  首个网格文件名不含本组茎名（画的是别的东西）
+  样本（组名 → 实际渲染的网格）：
+   gid=1 [npc] w1351_model_zq_qszd_h001
+      用的 .mdl = data/source/npc/model/w1351_model_hehua_h001_pbr/w1351_model_hehua_h001_pbr.mdl
+      实际画   = data/source/npc/model/w1351_model_hehua_h001_pbr/w1351_model_hehua_h001_pbr.mesh
+   gid=2 [player] w1351_nan_s_yifu_mjrmdz
+      用的 .mdl = data/source/npc/quest/w1351_cj_diao/w1351_cj_diao.mdl
+      实际画   = data/source/npc/quest/w1351_cj_diao/w1351_cj_diao.mesh
+   gid=3 [npc] w1351_monster_yanshijiangong
+      用的 .mdl = data/source/npc/quest/w1351_monster_shirenyanshi/w1351_monster_meiyingyanshi.mdl
+      实际画   = data/source/npc/quest/w1351_monster_shirenyanshi/w1351_monster_meiyingyanshi_yifu_001.mesh
+   gid=4 [npc] w1351_npc_changbiyuan
+      用的 .mdl = data/source/npc/quest/w1351_monster_eyubanghunhun/w1351_monster_eyubanghunhun.mdl
+      实际画   = data/source/npc/quest/w1351_monster_eyubanghunhun/w1351_monster_eyubanghunhun_yifu_001.mesh
+   gid=5 [npc] w1351_npc_attack_dahuangfeng02
+      用的 .mdl = data/source/npc/quest/w1351_npc_attack_dahuangfeng/w1351_npc_attack_dahuangfeng.mdl
+      实际画   = data/source/npc/quest/w1351_npc_attack_dahuangfeng/w1351_npc_attack_dahuangfeng_a.mesh
+   gid=7 [npc] w1351_zuoqi_yuexiaxun_lan
+      用的 .mdl = data/source/npc/quest/w1351_zuoqi_yuexiaxun/w1351_zuoqi_yuexiaxun.mdl
+      实际画   = data/source/npc/quest/w1351_zuoqi_yuexiaxun/w1351_zuoqi_yuexiaxun.mesh
+   gid=12 [npc] w1351_npc_huayao03
+      用的 .mdl = data/source/npc/quest/w1351_npc_huayao01/w1351_npc_huayao01.mdl
+      实际画   = data/source/npc/quest/w1351_npc_huayao01/w1351_npc_huayao01.mesh
+   gid=13 [npc] w1351_monster_yunmushiren
+      用的 .mdl = data/source/npc/quest/w1351_monster_yeyanshiren/w1351_monster_huagangshiren.mdl
+      实际画   = data/source/npc/quest/w1351_monster_yeyanshiren/w1351_monster_huagangshiren.mesh
+   gid=16 [npc] w1351_pets_longgui_b2
+      用的 .mdl = data/source/npc/quest/w1351_pets_longgui_b0/w1351_pets_longgui_b0.mdl
+      实际画   = data/source/npc/quest/w1351_pets_longgui_b0/w1351_pets_longgui_b0.mesh
+   gid=18 [npc] w1351_zuoqi_hudie_hei
+      用的 .mdl = data/source/npc/quest/w1351_monster_heimoguai01/w1351_monster_heimoguai01.mdl
+      实际画   = data/source/npc/quest/w1351_monster_heimoguai01/w1351_monster_heimoguai01.mesh
+
+面板出现的组里，组内 .mdl 个数分布（>1 时后端只取 path 字典序最小那个）：[(1, 1485), (2, 105), (3, 30), (4, 12), (5, 10), (6, 6), (7, 4), (8, 5), (10, 1), (17, 1)]

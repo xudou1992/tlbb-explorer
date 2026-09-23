@@ -1,0 +1,168 @@
+open: 13080 groups · 6 containers · 116506 index records in 0.1s
+资源组 13080 · 数据容器 6 个 · 索引条目 116506 条
+warm: 13080 组 / 16 路 / 总 1.8s（清单查询 26.4s · 主体回读 15.5s，均为各分片累计）
+  已读取 13080/13080 …      
+全部读取耗时 2.0s
+统计：带贴图线索 25 · 主体可读回 13080 · 名称可定位 25/22630
+  等级 A（完整定位）：20
+  等级 B（主体定位）：2581
+  等级 C（仅有名称）：10479
+  等级 D（只是线索）：0
+
+引用健康度：总引用 98504 · 已解析 61408 (62%) · 悬空名字 14377 · 有引用资产 20576/21352
+         材质 合计  38694 已解析  37779 (98%) 悬空名字 530
+         贴图 合计  30585 已解析     25 (0%) 悬空名字 8672
+         动作 合计  15622 已解析  11294 (72%) 悬空名字 4328
+         网格 合计   9316 已解析   8549 (92%) 悬空名字 587
+         骨骼 合计   4210 已解析   3734 (89%) 悬空名字 244
+         贴图 合计     36 已解析      0 (0%) 悬空名字 4
+         动作 合计     20 已解析     20 (100%) 悬空名字 0
+         贴图 合计     14 已解析      0 (0%) 悬空名字 12
+         特效 合计      7 已解析      7 (100%) 悬空名字 0
+  引用最多（已解析）：
+   template_default.mtl 材质 2933
+   template_default_npc.mtl 材质 2535
+   template_sfx.mtl 材质 2027
+   w1351_point_h021.mtl 材质 1129
+   w1351_point_lf001.mtl 材质 649
+   w1351_point_h009.mtl 材质 571
+   w1351_point_h019.mtl 材质 536
+   w1351_ring_z001.mtl 材质 465
+   w1351_point_s001.mtl 材质 384
+   data/sharematerial/material/skin/template_default_newnpc.mtl 材质 343
+   w1351_point_c001.mtl 材质 337
+   w1351_smoke_h021.mtl 材质 310
+  TOP 悬空：
+   w1351_point_l007.tga 贴图 347
+   w1351_mask_h011.tga 贴图 296
+   w1351_mask_em_jt_x01.tga 贴图 268
+   moon_03.tga 贴图 264
+   w1351_smoke_h021_a.tga 贴图 230
+   w1351_mask_l018.tga 贴图 226
+  反查 template_default.mtl → 6 条 (截断 true)：
+     材质 data/sharematerial/collision.mtl
+     材质 data/sharematerial/texture/ceshiyingzi.mtl
+     材质 data/source/npc/changjingdaoju/w1351_caiji_shuiqiu/w1351_caiji_shuiqiu.mtl
+     材质 data/source/npc/dynamic/w1351_mrsz_tielian_001/w1351_mrsz_tielian_001.mtl
+     材质 data/source/npc/model/w1351_an_model_wave_h001/w1351_an_model_wave_h001.mtl
+     材质 data/source/npc/model/w1351_ani_model_9999_h005/w1351_ani_model_9999_h005.mtl
+查询「曹霜」→ 1 命中（候选拼写 ["曹霜", "caoshuang"]）
+   24 · w1351_boss_caoshuang · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/6
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_boss_caoshuang_lian_001.mtl 已找到
+      引用 材质 w1351_boss_caoshuang_shoutao_001.mtl 已找到
+      引用 材质 w1351_boss_caoshuang_yifu_001.mtl 已找到
+      技术：1cdd37acf5f2c8c8 图：无
+查询「宠物」→ 914 命中（候选拼写 ["宠物", "chongwu"]）
+   6 · w1351_pets_shenqie_b0 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/16
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_pets_shenqie_b0_lian_01.mtl 已找到
+      引用 材质 w1351_pets_shenqie_b0_yifu_01.mtl 已找到
+      引用 网格 w1351_pets_shenqie_b0_lian_01.mesh 已找到
+      技术：0985c4cc2574b05e 图：无
+   16 · w1351_pets_longgui_b2 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/8
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_pets_longgui_b2.mtl 已找到
+      引用 骨骼 w1351_pets_longgui_b0.ske 已找到
+      引用 网格 w1351_pets_longgui_b1.mesh 只有名字
+      技术：169b98eea0cbb843 图：无
+   19 · w1351_pets_qiongqi_b2 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/8
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_pets_qiongqi_b2.mtl 已找到
+      引用 骨骼 w1351_pets_qiongqi_b0.ske 已找到
+      引用 网格 w1351_pets_qiongqi_b1.mesh 只有名字
+      技术：0715115c253a26ea 图：无
+   20 · w1351_pets_yingzhao_b0 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/8
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_pets_yingzhao_b0.mtl 已找到
+      引用 网格 w1351_pets_yingzhao_b0.mesh 已找到
+      引用 骨骼 w1351_pets_yingzhao_b0.ske 已找到
+      技术：0ced4aac7965775d 图：无
+   30 · w1351_pets_bingcan_b2 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/5
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_pets_bingcan_b2.mtl 已找到
+      引用 网格 w1351_pets_bingcan_b2.mesh 已找到
+      引用 骨骼 w1351_pets_bingcan_b0.ske 已找到
+      技术：0056b8cc3fae2472 图：无
+查询「boss」→ 841 命中（候选拼写 ["boss"]）
+   1 · w1351_model_zq_qszd_h001 · 角色 · 等级 B · 标签 ["特效", "技能特效"] · 引用 0/1805
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_model_zq_hd_h001.mtl 已找到
+      引用 网格 w1351_model_zq_hd_h001.mesh 已找到
+      引用 骨骼 w1351_model_zq_hd_h001.ske 已找到
+      技术：092aa2c34e6d742e 图：无
+   10 · w1351_boss_gerong · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/4
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_boss_gerong_lian_001.mtl 已找到
+      引用 材质 w1351_boss_gerong_shoutao_001.mtl 已找到
+      引用 材质 w1351_boss_gerong_toufa_001.mtl 已找到
+      技术：18126906d2332fd7 图：无
+   11 · w1351_boss_yudu · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/5
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_boss_yudu_lian_001.mtl 已找到
+      引用 材质 w1351_boss_yudu_shoutao_001.mtl 已找到
+      引用 材质 w1351_boss_yudu_toufa_001.mtl 已找到
+      技术：c426ffb8dd583491 图：无
+   14 · w1351_boss_hongjiyaowang · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/2
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_boss_hongjiyaowang_toufa_001.mtl 已找到
+      引用 材质 w1351_boss_hongjiyaowang_yifu_001.mtl 已找到
+      引用 网格 w1351_boss_hongjiyaowang_toufa_001.mesh 已找到
+      技术：9abc47acecf44982 图：无
+   15 · w1351_boss_wangyan · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/5
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_boss_wangyan_lian_001.mtl 已找到
+      引用 材质 w1351_boss_wangyan_shoutao_001.mtl 已找到
+      引用 材质 w1351_boss_wangyan_toufa_001.mtl 已找到
+      技术：eeff95acf26fb03d 图：无
+
+模型组成（M1 验收）· w1351_monster_xiyuqiezei
+  模型名   w1351_monster_xiyuqiezei
+  骨架     w1351_monster_xiyuqiezei.ske → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei.ske
+  部件 [MainBodyMesh]
+    网格   w1351_monster_xiyuqiezei_yifu_001.mesh → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_yifu_001.mesh
+    材质   w1351_monster_xiyuqiezei_yifu_001.mtl → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_yifu_001.mtl
+      槽位 贴图 w1351_monster_xiyuqiezei_yifu_001.tga → 缺
+      槽位 材质 template_default_npc.mtl → data/sharematerial/material/template_default_npc.mtl
+      槽位 着色器 DynModelShader → 缺
+  部件 [ArmMesh]
+    网格   w1351_monster_xiyuqiezei_shoutao_001.mesh → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_shoutao_001.mesh
+    材质   w1351_monster_xiyuqiezei_shoutao_001.mtl → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_shoutao_001.mtl
+      槽位 贴图 w1351_monster_xiyuqiezei_shoutao_001.tga → 缺
+      槽位 材质 template_default_npc.mtl → data/sharematerial/material/template_default_npc.mtl
+      槽位 着色器 DynModelShader → 缺
+  动作     15 个：w1351_monster_xiyuqiezei_behit01.ani w1351_monster_xiyuqiezei_dead.ani w1351_monster_xiyuqiezei_deadbegin.ani w1351_monster_xiyuqiezei_fight_idle01.ani w1351_monster_xiyuqiezei_flyingdead.ani w1351_monster_xiyuqiezei_flyingdeadbegin.ani w1351_monster_xiyuqiezei_hit01.ani w1351_monster_xiyuqiezei_hit02.ani w1351_monster_xiyuqiezei_hit03.ani w1351_monster_xiyuqiezei_idle01.ani w1351_monster_xiyuqiezei_idle02.ani w1351_monster_xiyuqiezei_idle03.ani w1351_monster_xiyuqiezei_run.ani w1351_monster_xiyuqiezei_vertigo.ani w1351_monster_xiyuqiezei_walk.ani
+  缺失说明：4 个槽位只有名字、没有 hash 映射——客户端发布时未保存模型贴图的路径，这是客户端的设计，不是解析失败。
+  [首次] 耗时 687ms
+  模型名   w1351_monster_xiyuqiezei
+  骨架     w1351_monster_xiyuqiezei.ske → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei.ske
+  部件 [MainBodyMesh]
+    网格   w1351_monster_xiyuqiezei_yifu_001.mesh → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_yifu_001.mesh
+    材质   w1351_monster_xiyuqiezei_yifu_001.mtl → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_yifu_001.mtl
+      槽位 贴图 w1351_monster_xiyuqiezei_yifu_001.tga → 缺
+      槽位 材质 template_default_npc.mtl → data/sharematerial/material/template_default_npc.mtl
+      槽位 着色器 DynModelShader → 缺
+  部件 [ArmMesh]
+    网格   w1351_monster_xiyuqiezei_shoutao_001.mesh → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_shoutao_001.mesh
+    材质   w1351_monster_xiyuqiezei_shoutao_001.mtl → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_shoutao_001.mtl
+      槽位 贴图 w1351_monster_xiyuqiezei_shoutao_001.tga → 缺
+      槽位 材质 template_default_npc.mtl → data/sharematerial/material/template_default_npc.mtl
+      槽位 着色器 DynModelShader → 缺
+  动作     15 个：w1351_monster_xiyuqiezei_behit01.ani w1351_monster_xiyuqiezei_dead.ani w1351_monster_xiyuqiezei_deadbegin.ani w1351_monster_xiyuqiezei_fight_idle01.ani w1351_monster_xiyuqiezei_flyingdead.ani w1351_monster_xiyuqiezei_flyingdeadbegin.ani w1351_monster_xiyuqiezei_hit01.ani w1351_monster_xiyuqiezei_hit02.ani w1351_monster_xiyuqiezei_hit03.ani w1351_monster_xiyuqiezei_idle01.ani w1351_monster_xiyuqiezei_idle02.ani w1351_monster_xiyuqiezei_idle03.ani w1351_monster_xiyuqiezei_run.ani w1351_monster_xiyuqiezei_vertigo.ani w1351_monster_xiyuqiezei_walk.ani
+  缺失说明：4 个槽位只有名字、没有 hash 映射——客户端发布时未保存模型贴图的路径，这是客户端的设计，不是解析失败。
+  [再次] 耗时 712ms
+
+网格几何（M2-2 验收）
+  w1351_monster_xiyuqiezei_yifu_001.mesh · 顶点 781 · 面 846 · 法线 有 · UV 有 · 负载 39KB · 未解中间 15620B 尾部 22184B
+  w1351_monster_xiyuqiezei_shoutao_001.mesh · 顶点 42 · 面 56 · 法线 有 · UV 有 · 负载 2KB · 未解中间 840B 尾部 12976B
+  w1351_model_plane_c007.mesh · 顶点 378 · 面 540 · 法线 无(前端自算) · UV 无 · 负载 10KB · 未解中间 8640B 尾部 8B
+  test_jianzhen.mesh · 顶点 55864 · 面 65942 · 法线 无(前端自算) · UV 无 · 负载 1388KB · 未解中间 1249164B 尾部 8B
+
+UI 回包体检（落盘给自测台回放）
+  有名字 gid 245 · NPC / 怪物 w1351_monster_xiyuqiezei（npc） · 成员 21 · 网格可预览 2 · 出图 0 · 缺 2 · 还能看 ["组成树", "贴图预览", "动作名单", "立体预览（2 个网格）"]
+  有名字 gid 2299 · 界面资源 w1351_nv_s_yifu_bingcha（ui） · 成员 2 · 网格可预览 0 · 出图 1 · 缺 0 · 还能看 ["贴图预览"]
+  有名字 gid 30 · NPC / 怪物 w1351_pets_bingcan_b2（npc） · 成员 29 · 网格可预览 1 · 出图 0 · 缺 5 · 还能看 ["组成树", "贴图预览", "动作名单", "立体预览（1 个网格）"]
+  未命名 gid 2410 · 其他资源 （other） · 成员 1 · 网格可预览 0 · 出图 0 · 缺 4 · 还能看 []
+  真实网格 → D:/TLGL\.scratch/ui_check\mesh_real.json · 顶点 781 · 面 846 · 法线 true · base64 39KB
+  有名字的默认列表 12159 条 · 无名 0 条 · 前 4 条 ["w1351_nan_s_yifu_xianfeng_001", "w1351_nan_s_yifu_ysym_moren", "w1351_nan_s_yifu_zhongshilifu", "w1351_nan_s_duanyuyuyan_001"]
+  未命名默认列表 921 条 · 无名 80 条 · 前 4 条 ["00a9fbe2315293e7", "00ad6e9dfea790dc", "00b9ffd2315291fb", "01a0916c4123ae46"]

@@ -1,0 +1,59 @@
+== refs from map material files (mobile_maps_source/*.mtl) by kind, resolved vs dangling
+  .tga   total=6379   resolved=0      dangling=6379    rate 0.00%
+  .mtl   total=3288   resolved=3288   dangling=0       rate 100.00%
+
+== refs from .scene files
+   ('.tga', 2064, 0)
+   ('.pu', 5, 5)
+
+== GLOBAL .tga resolution: all refs kind=.tga
+  resolved 25 / 30585 = 0.08%
+
+== named .tga resources by top dir
+   ('ui/login/texture', 266)
+   ('ui/icon/skill', 266)
+   ('ui/icon/item', 211)
+   ('ui/texture/font/worldmap', 133)
+   ('ui/texture/base', 102)
+   ('ui/icon/wardrobe', 95)
+   ('ui/texture/monsterhead', 74)
+   ('ui/texture/font/welfarehall', 70)
+   ('ui/icon/buff', 65)
+   ('ui/texture/font/dynamic', 59)
+
+== texture resources: named vs unnamed
+   (0, 24261)
+   (1, 2259)
+
+== any resource path mentioning lightmap/lm/_lm/.lmt ?
+   lightmap in path: (0,)
+   lm-ish names: (194,)
+== refs names that look like lightmaps
+   ('data/effect/textures/point_light/w1351_point_lf001.mtl', 452)
+   ('data/effect/textures/point_light/w1351_point_h021.mtl', 213)
+   ('data/effect/textures/point_light/w1351_point_h021.tga', 205)
+   ('data/effect/textures/point_light/w1351_point_h009.mtl', 186)
+   ('data/effect/textures/point_light/w1351_point_c001.mtl', 129)
+   ('data/effect/textures/point_light/w1351_point_h019.mtl', 99)
+   ('data/effect/textures/point_light/w1351_point_c007.mtl', 76)
+   ('data/effect/textures/point_light/w1351_point_lf001.tga', 68)
+   ('data/effect/textures/point_light/w1351_point_tl_nan_x02.mtl', 59)
+   ('data/effect/textures/point_light/w1351_point_c005.mtl', 59)
+
+== sfl files (JBCF) in mobile_maps: refs out of them
+   ('mobile_maps/w1351_fb_tianjielou_007/w1351_fb_tianjielou_007.sfl', 'moon_03.tga', '.tga', None)
+   ('mobile_maps/w1351_fb_tianjielou_007/w1351_fb_tianjielou_007.sfl', 'sunset.tga', '.tga', None)
+   ('mobile_maps/w1351_fb_tianjielou_007/w1351_fb_tianjielou_007.sfl', 'bs_donghu.tga', '.tga', None)
+   ('mobile_maps/w1351_fb_cangmangshan50_001/w1351_fb_cangmangshan50_001.sfl', 'moon_03.tga', '.tga', None)
+   ('mobile_maps/w1351_fb_cangmangshan50_001/w1351_fb_cangmangshan50_001.sfl', 'sundie.tga', '.tga', None)
+   ('mobile_maps/w1351_fb_cangmangshan50_001/w1351_fb_cangmangshan50_001.sfl', 'dl_qbt_bj.tga', '.tga', None)
+   ('mobile_maps/w1351_fb_cangmangshan50_001/w1351_fb_cangmangshan50_001.sfl', 'dl_qbt_yuanyun.tga', '.tga', None)
+   ('mobile_maps/w1351_fb_cangmangshan50_001/w1351_fb_cangmangshan50_001.sfl', 'dl_qbt_jinyun.tga', '.tga', None)
+   ('mobile_maps/w1351_ll_qingyuan_001/w1351_ll_qingyuan_001.sfl', 'moon_03.tga', '.tga', None)
+   ('mobile_maps/w1351_ll_qingyuan_001/w1351_ll_qingyuan_001.sfl', 'sunset.tga', '.tga', None)
+   ('mobile_maps/w1351_ll_qingyuan_001/w1351_ll_qingyuan_001.sfl', 'dl_qyw_bj_xingkong.tga', '.tga', None)
+   ('mobile_maps/w1351_ll_qingyuan_001/w1351_ll_qingyuan_001.sfl', 'dl_qyw_yuanyun.tga', '.tga', None)
+   ('mobile_maps/w1351_ll_qingyuan_001/w1351_ll_qingyuan_001.sfl', 'dl_qyw_jinyun.tga', '.tga', None)
+   ('mobile_maps/w1351_ll_qingyuan_001/w1351_ll_qingyuan_001.sfl', 'dl_qxy_bj.tga', '.tga', None)
+   ('mobile_maps/w1351_ll_qingyuan_001/w1351_ll_qingyuan_001.sfl', 'dl_qxy_yuanyun.tga', '.tga', None)
+  sfl refs total/paths: (2069, 270)

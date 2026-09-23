@@ -1,0 +1,72 @@
+--- leaf dirs (top 25) ---
+  ani                           11254
+  mobile_maps_source             6465
+  pu_other                       3326
+  tani                           2560
+  effectmodel                    1700
+  boss                           1139
+  zhenshou                       1025
+  texture                         548
+  model                           439
+  pu_scene                        295
+  npc                             281
+  ribbon_trail                    278
+  skill                           266
+  toukui                          246
+  item                            211
+  ring                            180
+  wuqi                            170
+  anqi                            166
+  mask                            161
+  w1351_nan_yifu                  153
+  w1351_fb_sxzc_001               135
+  ymg01                           135
+  worldmap                        133
+  w1351_ll_dl_003                 120
+  w1351_ll_loulan_001             118
+--- extensions (top 25) ---
+  .scene        11933
+  .ani          11234
+  .mtl           8536
+  .mesh          7996
+  .pu            7806
+  .tani          2560
+  .tga           2259
+  .mdl           2146
+  .ske           1630
+  .sfl            297
+  .map            274
+  .wav            220
+  .ogg            166
+  .pak             58
+  .webp            48
+  .nav             25
+  .anis            20
+  .cur             15
+  .dll             14
+  .jpg             10
+  .txt              4
+  .xml              4
+  .ttf              3
+  .exe              3
+  .tab              2
+--- sample model paths ---
+   mobile_maps_source/w1351_smeh_shandongkou_001.mtl
+   data/effect/effectmodel/w1351_model_shubennv_c02.mesh
+   data/effect/effectmodel/w1351_model_xianglong_b7_lf001_E.mesh
+   data/effect/effectmodel/w1351_model_glowline_v6.mesh
+   data/source/npc/quest/w1351_wuhun_t_yuyaopan_0102/w1351_wuhun_t_yuyaopan_0102.mesh
+   data/source/npc/quest/w1351_npc_xinmurongfu/w1351_npc_xinmurongfu.mesh
+   data/source/npc/quest/w1351_pets_lianyishou_b5/w1351_pets_lianyishou_b5.ske
+   data/source/npc/toukui/w1351_nv_t_toukui_cubumao_0101.mesh
+   mobile_maps_source/w1351_chz_aiqiang_004.mesh
+   mobile_maps_source/w1351_bmy_yabianshu_004.mtl
+   data/source/npc/quest/w1351_monster_huojingling/w1351_monster_huojingling.ske
+   data/source/npc/quest/w1351_boss_sunmeimei/w1351_boss_sunmeimei_lian_001.mtl
+   mobile_maps_source/w1351_ly__fwshuangcenglou_001.mtl
+   mobile_maps_source/w1351_tls_huatan_002.mesh
+   data/effect/textures/ribbon_trail/w1351_ribbon_xx_nan_jt_x13.mtl
+   mobile_maps_source/w1351_ll_dizhuanxinhuawen_007.mesh
+   data/effect/textures/ring/w1351_ring_c022.mtl
+   data/source/npc/quest/w1351_npc_biaoche3/w1351_npc_biaoche3.mtl
+   data/source/player/w1351_nv/w1351_nv_toufa/w1351_nv_s_toufa_slrmdz.mtl

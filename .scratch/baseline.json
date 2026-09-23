@@ -1,0 +1,192 @@
+{
+  "catalog": "D:\\TLGL\\.scratch\\resources.db",
+  "catalog_bytes": 148811776,
+  "tables": [
+    {
+      "key": "agroup_names",
+      "label": "agroup_names",
+      "n": 28733
+    },
+    {
+      "key": "agroups",
+      "label": "agroups",
+      "n": 13080
+    },
+    {
+      "key": "amembers",
+      "label": "amembers",
+      "n": 48122
+    },
+    {
+      "key": "asset_fingerprint",
+      "label": "asset_fingerprint",
+      "n": 13080
+    },
+    {
+      "key": "asset_identity",
+      "label": "asset_identity",
+      "n": 13080
+    },
+    {
+      "key": "asset_tags",
+      "label": "asset_tags",
+      "n": 18520
+    },
+    {
+      "key": "assets",
+      "label": "assets",
+      "n": 46155
+    },
+    {
+      "key": "blobs",
+      "label": "blobs",
+      "n": 105222
+    },
+    {
+      "key": "dangling",
+      "label": "dangling",
+      "n": 14377
+    },
+    {
+      "key": "meta",
+      "label": "meta",
+      "n": 61
+    },
+    {
+      "key": "records",
+      "label": "records",
+      "n": 114975
+    },
+    {
+      "key": "refs",
+      "label": "refs",
+      "n": 98504
+    },
+    {
+      "key": "relations",
+      "label": "relations",
+      "n": 100303
+    },
+    {
+      "key": "resources",
+      "label": "resources",
+      "n": 105327
+    }
+  ],
+  "totals": {
+    "groups": 13080,
+    "members": 48122,
+    "resources": 105327,
+    "names": 28733,
+    "dangling": 14377,
+    "refs": 98504,
+    "relations": 100303
+  },
+  "kinds": [
+    {
+      "key": "effect",
+      "label": "特效",
+      "n": 6473
+    },
+    {
+      "key": "map-prop",
+      "label": "场景物件",
+      "n": 3463
+    },
+    {
+      "key": "npc",
+      "label": "NPC / 怪物",
+      "n": 1961
+    },
+    {
+      "key": "other",
+      "label": "其他资源",
+      "n": 921
+    },
+    {
+      "key": "player",
+      "label": "玩家角色",
+      "n": 204
+    },
+    {
+      "key": "shared-material",
+      "label": "共享材质",
+      "n": 36
+    },
+    {
+      "key": "ui",
+      "label": "界面资源",
+      "n": 22
+    }
+  ],
+  "scenarios": [
+    {
+      "key": "特效",
+      "label": "特效",
+      "n": 6473
+    },
+    {
+      "key": "其他",
+      "label": "其他",
+      "n": 4624
+    },
+    {
+      "key": "角色",
+      "label": "角色",
+      "n": 1961
+    },
+    {
+      "key": "界面",
+      "label": "界面",
+      "n": 22
+    }
+  ],
+  "grades": [
+    {
+      "key": "D 推测",
+      "label": "D 推测",
+      "n": 12134
+    },
+    {
+      "key": "C 名称证据",
+      "label": "C 名称证据",
+      "n": 921
+    },
+    {
+      "key": "B 主体定位",
+      "label": "B 主体定位",
+      "n": 23
+    },
+    {
+      "key": "A 完整定位",
+      "label": "A 完整定位",
+      "n": 2
+    }
+  ],
+  "image_sources": [
+    {
+      "key": "同目录兜底",
+      "label": "同目录兜底",
+      "n": 921
+    },
+    {
+      "key": "引用定位",
+      "label": "引用定位",
+      "n": 25
+    }
+  ],
+  "relations": {
+    "raw_refs": 98504,
+    "self_refs": 1595,
+    "internal_group_edges": 26328,
+    "located": 61408,
+    "inferred": 40652,
+    "forensic": 59651,
+    "all_relations": 100303
+  },
+  "named": {
+    "with_stem": 12159,
+    "nameless": 921,
+    "nameless_without_image": 0
+  }
+}

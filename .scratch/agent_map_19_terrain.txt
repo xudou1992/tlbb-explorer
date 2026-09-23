@@ -1,0 +1,40 @@
+== 1713 distinct referenced mesh/effect names from 700 scene files
+   unresolved (not a named resource): 256 (14.94% of distinct names)
+   top name tokens: ['w1351', '001', 'dl', 'ly', '002', 'sz', 'bpzd', 'xh', 'zhalan', 'huacu', '003', 'yn', 'cbs', 'caoye', 'lyxj', 'jiehun', 'll', 'dh', 'qiangmian', 'muzhalanwangge', 'luwei', 'bajiao', 'mj', 'cj', 'dzlongwen78', 'wls', 'weilan', '004', 'bzd', '001a', 'qhdg', 'zhuzi', 'em', 'muzhalan', 'ss', 'youcaihua', 'yezishu', 'fh', 'nh', 'tls', 'caodui', 'qhl', 'miaoj', 'huatan', 'muzhalanjian']
+   names that look like GROUND/TERRAIN tiles: 5 -> ['w1351_lyxj_xuedidibiaowzg_031.mesh', 'w1351_bpzd_tudi_001.mesh', 'w1351_ly_dibiao_001.mesh', 'w1351_lyxj_xuedidibiaowzg_001.mesh', 'w1351_lyxj_xuedidibiaowzg_014.mesh']
+   instance y: n=13418 min -100.3 p50 9.9 max 1143257588063182160626273969242112.0  distinct(0.5u bins)=162
+
+== mobile_maps_source meshes: 3264 ; tokens: ['ly', 'dl', 'll', 'sz', 'jiehun', 'st', 'qhl', 'xiyu', 'cbs', 'bzd', 'shgz', 'qz', 'miaoj', 'qhdg', 'dh']
+   source names matching terrain tokens: 8
+   examples: ['w1351_st_fwzhongxing_001.mesh', 'w1351_xlfl_zhudian_001.mesh', 'w1351_st_fwyunwei_001.mesh', 'w1351_chz_shuyuan_001.mesh', 'w1351_cj_xuanrentaixin_001.mesh', 'w1351_chz_zhujianzhu_001.mesh', 'w1351_cj_xuanrentaixin_002.mesh', 'w1351_st_liushudawai_001.mesh', 'w1351_chz_damen_001.mesh', 'w1351_jiehun_jiehuntai_001.mesh']
+
+== .map pointer census (4-byte aligned u64 with high dword in 0x7f00..0x7fff)
+  w1351_fb_sxzc_001.map          size=2301456  AxB=23x24 ptr4=4      density 0.00/KB  header-region ptrs=0
+  w1351_fb_songliao_001.map      size=1837400  AxB=21x21 ptr4=4      density 0.00/KB  header-region ptrs=0
+  w1351_ll_dl_002.map            size=1765304  AxB=20x21 ptr4=3      density 0.00/KB  header-region ptrs=0
+  w1351_ll_ml_001.map            size=1763096  AxB=20x21 ptr4=4      density 0.00/KB  header-region ptrs=0
+  w1351_ll_qingyuan_001.map      size=1762520  AxB=21x20 ptr4=4      density 0.00/KB  header-region ptrs=0
+  w1351_ll_cy_001.map            size=1762040  AxB=21x20 ptr4=4      density 0.00/KB  header-region ptrs=0
+  w1351_ll_loulan_001.map        size=1755896  AxB=21x20 ptr4=3      density 0.00/KB  header-region ptrs=0
+  w1351_hd_lyfhc_002.map         size=1748888  AxB=20x21 ptr4=4      density 0.00/KB  header-region ptrs=0
+  w1351_ll_wls_001.map           size=1697656  AxB=20x20 ptr4=2      density 0.00/KB  header-region ptrs=0
+  w1351_ll_dh_001.map            size=1692664  AxB=20x20 ptr4=4      density 0.00/KB  header-region ptrs=0
+  w1351_ll_xwd_001.map           size=1689016  AxB=20x20 ptr4=4      density 0.00/KB  header-region ptrs=0
+  w1351_ll_ly_001.map            size=1686136  AxB=20x20 ptr4=2      density 0.00/KB  header-region ptrs=0
+  TOTAL: 42 ptrs in 21.5 MB = 0.00 per KB
+  ... and all of them sit in the 152-byte header + tail: chunk table bytes are (0,b1,b2,0) with b1,b2 < 200
+
+== .tga/.pu strings inside .scene files
+   1_2_-5.scene @100900  Zwaves8.tga
+   1_2_-5.scene @101160  Zwaves2.tga
+   1_6_-5.scene @26162  waves8.tga
+   1_6_-5.scene @26422  waves2.tga
+   1_0_-6.scene @6976  waves8.tga
+   1_0_-6.scene @7236  waves2.tga
+   1_8_-10.scene @4091  <dwaves8.tga
+   1_8_-10.scene @4351  <dwaves2.tga
+   1_6_-8.scene @32850  waves8.tga
+   1_6_-8.scene @33110  waves2.tga
+   1_6_-7.scene @119165  waves8.tga
+   1_6_-7.scene @119425  waves2.tga
+   total .tga strings in 250 sampled files: 30

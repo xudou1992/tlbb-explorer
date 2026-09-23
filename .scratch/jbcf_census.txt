@@ -1,0 +1,7 @@
+JBCF rows=13403 parsed=13402 (round8 formula hit 13402)  errors={'not jbcf': 1}
+flag!=0 files: 0
+strings per file: [(1, 11), (2, 5), (3, 6461), (4, 1050), (5, 622), (6, 842), (7, 260), (8, 162), (9, 524), (10, 160), (11, 59), (12, 380), (13, 92), (14, 72), (15, 128), (16, 65), (17, 43), (18, 57), (19, 43), (20, 28)]
+distinct texture names: 7870   distinct parent mtl: 3090
+shaders: [('DynModelShader', 6837), ('NewSfxShader', 2028)]
+top strings: [('DynModelShader', 6837), ('template_default.mtl', 2929), ('template_default_npc.mtl', 2533), ('MainBodyMesh', 2192), ('NewSfxShader', 2028), ('template_sfx.mtl', 2027), ('ani', 1993), ('0', 1784), ('000', 1774), ('', 1494), ('idle01', 1459), ('idle02', 1314), ('idle03', 1232), ('run', 965), ('walk', 955)]
+by ext: [('.mtl', 8536), ('.mdl', 2146), ('.ske', 1630), ('', 793), ('.sfl', 297), ('.cfg', 1)]

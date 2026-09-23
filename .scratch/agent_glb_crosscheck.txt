@@ -1,0 +1,9 @@
+tsv rows            : 7996
+both parsed         : 7996
+either side refused : 0
+normals verified    : 7891
+uv set 0 verified   : 7169
+face table (2*fc)   : 1651
+unexplained middle  : 3582
+indices in range    : 7996
+field disagreements : 0

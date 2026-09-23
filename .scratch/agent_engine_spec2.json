@@ -1,0 +1,10 @@
+[
+ ["decompile",{"addr":"0x140642030"}],
+ ["decompile",{"addr":"0x140642110"}],
+ ["decompile",{"addr":"0x140642230"}],
+ ["xrefs_to",{"addr":"0x140642110","count":40}],
+ ["xrefs_to",{"addr":"0x140642030","count":40}],
+ ["xrefs_to",{"addr":"0x140642230","count":40}],
+ ["xrefs_to",{"addr":"0x140645780","count":40}],
+ ["decompile",{"addr":"0x140645780"}]
+]

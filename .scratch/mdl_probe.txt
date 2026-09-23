@@ -1,0 +1,8 @@
+mdl 总数=2147 有名=2146
+
+=== --type=mdl --limit=40 (rc=0) ===
+列出 type = mdl（前 40 条）：
+
+stderr:
+
+picked names: []

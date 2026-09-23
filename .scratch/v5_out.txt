@@ -1,0 +1,120 @@
+=== entry chain ===
+  0000000140AC2A38 in start
+  0000000141250594 in 
+  00000001412506CC in 
+    sub     rsp, 28h
+    call    __security_init_cookie
+    add     rsp, 28h
+    jmp     ?__scrt_common_main_seh@@YAHXZ
+
+=== .202 00000001411E2000-000000014126A000 ===
+functions: 0
+
+=== Lua C API symbols ===
+  luaL_newstate          -
+  lua_pcallk             -
+  lua_setfield           -
+  lua_getfield           -
+  lua_pushlstring        -
+  luaopen_base           -
+  lua_createtable        -
+  luaL_checkinteger      -
+  lua_tolength           -
+  lua_rawgetp            -
+  luaB_pcall             -
+  luaD_precall           -
+  luaV_execute           -
+  luaS_new               -
+  f_parser               -
+  lua-prefixed function name roots: {}
+
+=== thread / loop / fps strings ===
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\ThreadPool.cpp
+  tlsext_tick_lifetime_hint
+  tlsext_tick
+  tlsext_tick_age_add
+  ticket_appdata
+  construct_stateful_ticket
+  construct_stateless_ticket
+  create_ticket_prequel
+  SSL_set_session_ticket_ext
+  tls_construct_ctos_session_ticket
+  tls_construct_new_session_ticket
+  tls_construct_stoc_session_ticket
+  tls_parse_ctos_session_ticket
+  tls_parse_stoc_session_ticket
+  tls_process_new_session_ticket
+  invalid ticket keys length
+  peer does not accept heartbeats
+  heartbeat request already pending
+  SessionTicket
+  no_ticket
+  NumTickets
+  num_tickets
+  ZwQueryInformationThread
+  Client_GetTickCount
+  GetFrameTick
+  SetMergeThreadCount
+  GetMergeThreadCount
+  SetMaxFPS
+  uCurrentTime <= m_uTimeOutTickCount
+  GetServerTickCount
+  GAME_FPS
+  ON_FPS_CHANGED
+  GetFPS
+  GetTickCount
+  SetCacheFrameRate
+  GetCacheFrameRate
+  Newsession Ticket
+  FileSystem::UpdateManager::CreateRecompressThreads
+  FileSystem::AsynchronismReadUnPackagedFile::ThreadActivate
+  FileSystem::AsynchronismReadPackagedFile::ThreadActivate
+  GetGameFPS
+  m_pOutDoor->m_bPauseMultiThreadLoad
+  GfxThread
+  RenderThread
+  GameThread waiting for RenderThread timed out after %.02f secs
+  agsDriverExtensionsDX11_SetMaxAsyncCompileThreadCount
+  GetCurrentThreadId
+  GetCurrentThread
+  ExitThread
+  CreateThread
+  GetTickCount
+  GetTickCount64
+  GetExitCodeThread
+  SetThreadAffinityMask
+  ResumeThread
+  Thread32Next
+  Thread32First
+  SuspendThread
+  GetThreadContext
+  SetThreadContext
+  OpenThread
+  SwitchToThread
+  SetThreadPriority
+  FreeLibraryAndExitThread
+  ConvertFiberToThread
+  ConvertThreadToFiber
+  .?AUFrameOffsetThread@Gfx@@
+  .?AUCmdGfxThreadFence@Gfx@@
+  .?AU?$Cmd@UCmdGfxThreadFence@Gfx@@@Gfx@@
+  ConvertFiberToThread
+  ConvertThreadToFiber
+  FreeLibraryAndExitThread
+  SetThreadPriority
+  GetCurrentThreadId
+  GetCurrentThread
+  ExitThread
+  CreateThread
+  GetTickCount
+  GetTickCount64
+  GetExitCodeThread
+  SetThreadAffinityMask
+  ResumeThread
+  Thread32Next
+  Thread32First
+  SuspendThread
+  GetThreadContext
+  SetThreadContext
+  OpenThread
+  SwitchToThread

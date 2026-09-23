@@ -1,0 +1,41 @@
+
+#### 1_0_-6.scene size=9736 N=13 RS=753 zero=0 stride=761
+  parsed 13 records; last ends at 9905 (file 9736) leftover=-169
+  rec00 @12     m=[-0.3751, 0.0, 0.5308, 0.0, 0.0, 0.65, 0.0, 0.0, -0.5308, 0.0, -0.3751, 0.0, 30.2748, 6.0, -177.554, 1.0] scale=0.0000  name=1_dl_bajiaoshu_001.mesh
+  rec01 @773    m=[0.0001, 0.0, -0.65, 0.0, 0.0, 0.65, 0.0, 0.0, 0.65, 0.0, 0.0001, 0.0, 27.2061, 6.0, -168.435, 1.0] scale=0.0000  name=1_dl_chenglou_002.mesh
+  rec02 @1534   m=[-0.0002, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, -0.0002, 0.0, 26.3281, 6.0, -190.543, 1.0] scale=0.0000  name=1_dl_chengqiang_001.mesh
+  rec03 @2295   m=[-0.0002, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, -0.0002, 0.0, 26.3281, 6.0, -180.682, 1.0] scale=0.0000  name=1_dl_chengqiang_001.mesh
+  records with |matrix|<2000: 13/13
+  names unique=8 ; ext: ['.mesh', '.pu']
+  name sample: ['1_dl_bajiaoshu_001.mesh', '1_dl_chenglou_002.mesh', '1_dl_chengqiang_001.mesh', '1_dl_huacu_007a.mesh', '1_dl_putaojia_002.mesh', '1_dl_yezishu_001.mesh']
+
+#### 1_0_-10.scene size=24356 N=32 RS=753 zero=0 stride=761
+  parsed 32 records; last ends at 24364 (file 24356) leftover=-8
+  rec00 @12     m=[0.65, 0.0, 0.0, 0.0, 0.0, 0.65, 0.0, 0.0, 0.0, 0.0, 0.65, 0.0, 26.2658, 6.0, -293.372, 1.0] scale=0.0000  name=1_dl_bajiao_001.mesh
+  rec01 @773    m=[0.65, 0.0, 0.0, 0.0, 0.0, 0.65, 0.0, 0.0, 0.0, 0.0, 0.65, 0.0, 2.9855, 6.0, -317.104, 1.0] scale=0.0000  name=1_dl_chenglou_005a.mesh
+  rec02 @1534   m=[0.65, 0.0, 0.0, 0.0, 0.0, 0.65, 0.0, 0.0, 0.0, 0.0, 0.65, 0.0, 16.4939, 16.0, -318.72, 1.0] scale=0.0000  name=1_dl_chenglou_005a.mesh
+  rec03 @2295   m=[-0.0002, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, -0.0002, 0.0, 2.2703, 6.0, -289.962, 1.0] scale=0.0000  name=1_dl_chengqiang_001.mesh
+  records with |matrix|<2000: 32/32
+  names unique=15 ; ext: ['.mesh']
+  name sample: ['1_dl_bajiao_001.mesh', '1_dl_chenglou_005a.mesh', '1_dl_chengqiang_001.mesh', '1_dl_darongshu_002.mesh', '1_dl_fangwu_001.mesh', '1_dl_huacu_001a.mesh']
+
+#### 1_2_-1.scene size=27400 N=36 RS=753 zero=0 stride=761
+  parsed 36 records; last ends at 27408 (file 27400) leftover=-8
+  rec00 @12     m=[0.0001, 0.0, -0.65, 0.0, 0.0, 0.65, 0.0, 0.0, 0.65, 0.0, 0.0001, 0.0, 76.4192, 0.0, -30.8785, 1.0] scale=0.0000  name=1_dl_fangwuxiaoyuan_002.mesh
+  rec01 @773    m=[0.65, 0.0, 0.0, 0.0, 0.0, 0.65, 0.0, 0.0, 0.0, 0.0, 0.65, 0.0, 85.4393, -3.9123, -8.7718, 1.0] scale=0.0000  name=1_dl_nongjiaxiaoyuan_002.mesh
+  rec02 @1534   m=[-0.6, 0.0, -0.0, 0.0, 0.0, 0.6, 0.0, 0.0, 0.0, 0.0, -0.6, 0.0, 68.351, -4.0, -8.3402, 1.0] scale=0.0000  name=1_dl_nongjiaxiaoyuan_003m.mesh
+  rec03 @2295   m=[-0.6, 0.0, -0.0, 0.0, 0.0, 0.6, 0.0, 0.0, 0.0, 0.0, -0.6, 0.0, 79.3808, -4.0, -8.3402, 1.0] scale=0.0000  name=1_dl_nongjiaxiaoyuan_003m.mesh
+  records with |matrix|<2000: 36/36
+  names unique=13 ; ext: ['.mesh']
+  name sample: ['1_dl_fangwuxiaoyuan_002.mesh', '1_dl_nongjiaxiaoyuan_002.mesh', '1_dl_nongjiaxiaoyuan_003m.mesh', '1_dl_qiangmian_001.mesh', '1_dl_qiangmian_002.mesh', '1_dl_rongshu_001.mesh']
+
+#### 1_3_-5.scene size=242326 N=321 RS=753 zero=0 stride=761
+  rec319 beyond
+  parsed 319 records; last ends at 242771 (file 242326) leftover=-445
+  rec00 @12     m=[0.9025, 0.0, 0.0, 0.0, 0.0, 0.9025, 0.0, 0.0, 0.0, 0.0, 0.9025, 0.0, 118.014, 2.6613, -148.809, 1.0] scale=0.0000  name=1_dh_hongdenglongchuan_001.mesh
+  rec01 @773    m=[0.9025, 0.0, 0.0, 0.0, 0.0, 0.9025, 0.0, 0.0, 0.0, 0.0, 0.9025, 0.0, 118.007, 2.6613, -141.099, 1.0] scale=0.0000  name=1_dh_hongdenglongchuan_001.mesh
+  rec02 @1534   m=[0.9025, 0.0, 0.0, 0.0, 0.0, 0.9025, 0.0, 0.0, 0.0, 0.0, 0.9025, 0.0, 98.9345, 2.6704, -152.589, 1.0] scale=0.0000  name=1_dh_hongdenglongchuan_001.mesh
+  rec03 @2295   m=[0.9025, 0.0, 0.0, 0.0, 0.0, 0.9025, 0.0, 0.0, 0.0, 0.0, 0.9025, 0.0, 108.977, 2.6704, -152.589, 1.0] scale=0.0000  name=1_dh_hongdenglongchuan_001.mesh
+  records with |matrix|<2000: 319/319
+  names unique=45 ; ext: ['', '.mesh']
+  name sample: ['', '1_dh_hongdenglongchuan_001.mesh', '1_dl_tanzi_001.mesh', '1_jh_huachuanqigan_001.mesh', '1_jiehun_chujihongditan_003.mesh', '1_jiehun_chujihonghua_002.mesh']

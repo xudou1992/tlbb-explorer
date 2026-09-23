@@ -1,0 +1,28 @@
+=== 争议实体 00a9fbe2315293e7 ===
+  resources: ('00a9fbe2315293e7', '', '', None, '', 'JBCF', 'JBCF', 'data3', 537014824, 2576, 1422, 0, None)
+  records  : ('data3', 20, '00a9fbe2315293e7', 537014824, 1422, 2576, 51, 2)
+  blobs    : ('8562aca555dc7784f5341d1b6b7a9130ad48b2b3d722239664558cf21ae60a70', 2576)
+  它自己发出的引用：
+    ('w1351_pets_jiuxiaozhanlong_b8.mesh', '.mesh', None)
+    ('w1351_pets_jiuxiaozhanlong_b8.mtl', '.mtl', None)
+    ('w1351_pets_jiuxiaozhanlong_b8.ske', '.ske', None)
+  它属于哪些组 / 角色：
+    (2410, 'other')
+  同目录同族 b0 主体的资源行（对照）：
+    ('1572c0acddd75570', 'w1351_pets_jiuxiaozhanlong_b0_deadbegin.ani', 'data/source/npc/quest/w1351_pets_jiuxiaozhanlong_b0/ani/w1351_pets_jiuxiaozhanlong_b0_deadbegin.ani', 'ani', 157120)
+    ('169f9cca7b7834c7', 'w1351_pets_jiuxiaozhanlong_b0_idle01.ani', 'data/source/npc/quest/w1351_pets_jiuxiaozhanlong_b0/ani/w1351_pets_jiuxiaozhanlong_b0_idle01.ani', 'ani', 100320)
+    ('330acfb2bdbf947f', 'w1351_pets_jiuxiaozhanlong_b0_run.ani', 'data/source/npc/quest/w1351_pets_jiuxiaozhanlong_b0/ani/w1351_pets_jiuxiaozhanlong_b0_run.ani', 'ani', 54880)
+    ('4eca3e508873324b', 'w1351_pets_jiuxiaozhanlong_b0.mesh', 'data/source/npc/quest/w1351_pets_jiuxiaozhanlong_b0/w1351_pets_jiuxiaozhanlong_b0.mesh', 'mesh', 139796)
+    ('5a8bfbcb7b08ad9d', 'w1351_pets_jiuxiaozhanlong_b0_idle02.ani', 'data/source/npc/quest/w1351_pets_jiuxiaozhanlong_b0/ani/w1351_pets_jiuxiaozhanlong_b0_idle02.ani', 'ani', 248000)
+    ('80364ebbbce0bda4', 'w1351_pets_jiuxiaozhanlong_b0_hit01.ani', 'data/source/npc/quest/w1351_pets_jiuxiaozhanlong_b0/ani/w1351_pets_jiuxiaozhanlong_b0_hit01.ani', 'ani', 84416)
+  有没有任何 resources.name 含 jiuxiaozhanlong_b8 且 ext in (.mesh,.ske,.mtl,.mdl)：
+    4 条
+  tree 侧（实体文件目录）是否存在 *jiuxiaozhanlong_b8*.mesh/.ske/.mtl/.mdl：见 find 结果（外部核对，0 条）
+
+=== 「附属文件 N 个：客户端未含这些文件」这句话的影响面 ===
+  至少含一个「有 hash 无 path」成员的组数：974 / 13080
+    type='JBPU' 223
+    type='JBCF' 792
+  其中在 records 里有容器/偏移/大小（=字节确实在客户端里）：1029 条成员
+  其中 records 里也没有的：0 条成员
+  成员里有 hash 无 path 但有 name 的：0 条

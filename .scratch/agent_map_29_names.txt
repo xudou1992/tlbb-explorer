@@ -1,0 +1,17 @@
+distinct names referenced by scene instance tables: 4730 ; instances 281840
+
+.mesh  cfg-distinct=22172  db-named=7996  referenced-by-scenes=4456 (instances 277767)
+   referenced & in cfg: 4414 ; referenced & in db: 3251 ; referenced & cfg-but-NOT-db: 1163 ; referenced & not-in-cfg: 42
+   INSTANCE-weighted: recoverable-via-cfg-only=22700 (8.05%) ; absent-even-from-cfg=52 (0.02%)
+
+.tga  cfg-distinct=20315  db-named=2191  referenced-by-scenes=3 (instances 12)
+   referenced & in cfg: 1 ; referenced & in db: 1 ; referenced & cfg-but-NOT-db: 0 ; referenced & not-in-cfg: 2
+   INSTANCE-weighted: recoverable-via-cfg-only=0 (0.00%) ; absent-even-from-cfg=4 (0.00%)
+
+.pu  cfg-distinct=7815  db-named=7806  referenced-by-scenes=190 (instances 3962)
+   referenced & in cfg: 150 ; referenced & in db: 148 ; referenced & cfg-but-NOT-db: 2 ; referenced & not-in-cfg: 40
+   INSTANCE-weighted: recoverable-via-cfg-only=25 (0.01%) ; absent-even-from-cfg=126 (0.04%)
+
+.mdl  cfg-distinct=5005  db-named=2146  referenced-by-scenes=20 (instances 30)
+   referenced & in cfg: 6 ; referenced & in db: 6 ; referenced & cfg-but-NOT-db: 0 ; referenced & not-in-cfg: 14
+   INSTANCE-weighted: recoverable-via-cfg-only=0 (0.00%) ; absent-even-from-cfg=17 (0.01%)

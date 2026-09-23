@@ -1,0 +1,19 @@
+MAP                        files     inst     uniq    reslv   trisUni   trisInst      bbox  mapfile
+w1351_ll_dl_002              103     6129      209      209     88442    1468225 x1..318 z-321..0 y-2..23  w1351_ll_dl_002.map (1.8MB)
+     uniq-mesh resolve 100.0%  missing uniq 0  unparseable rec 17  instance-tri/uniq-tri=16.6  mesh files on disk in source dir: 209/209
+w1351_ll_loulan_001          115     5951      292      292     96607    1454209 x-3..319 z-319..-0 y8..38  w1351_jq_xixiahuanggong_001.map (1.3MB)
+     uniq-mesh resolve 100.0%  missing uniq 0  unparseable rec 123  instance-tri/uniq-tri=15.1  mesh files on disk in source dir: 292/292
+w1351_fb_jiehun_001           62     4073       93       93     23779     706121 x21..240 z-230..-25 y-2..17  w1351_fb_jiehun_001.map (0.8MB)
+     uniq-mesh resolve 100.0%  missing uniq 0  unparseable rec 14  instance-tri/uniq-tri=29.7  mesh files on disk in source dir: 93/93
+w1351_ll_qingyuan_001         97     2361      128      127     27075     282168 x-1638..312 z-310..0 y-13..14  w1351_ll_qingyuan_001.map (1.8MB)
+     uniq-mesh resolve 99.2%  missing uniq 1  unparseable rec 75  instance-tri/uniq-tri=10.4  mesh files on disk in source dir: 127/128
+w1351_gj_jz_001               61      929       38       38      8605     153440 x10..239 z-245..-12 y-29..0  w1351_gj_jz_001.map (1.2MB)
+     uniq-mesh resolve 100.0%  missing uniq 0  unparseable rec 10  instance-tri/uniq-tri=17.8  mesh files on disk in source dir: 38/38
+w1351_ll_cs_001               97     3071       70       70     17013     203022 x0..308 z-307..70362092361014373777408 y1..26  w1351_ll_cs_001.map (1.7MB)
+     uniq-mesh resolve 100.0%  missing uniq 0  unparseable rec 37  instance-tri/uniq-tri=11.9  mesh files on disk in source dir: 70/70
+w1351_fb_sxzc_001            133     1296       99       13     15021      96553 x12..379 z-366..1 y-25..14  w1351_fb_sxzc_001.map (2.3MB)
+     uniq-mesh resolve 13.1%  missing uniq 86  unparseable rec 20  instance-tri/uniq-tri=6.4  mesh files on disk in source dir: 13/99
+
+== how many named .mesh live under mobile_maps_source and are present in tree?
+  named .mesh total: 7996  in mobile_maps_source: 3264
+  tree files present: 7996

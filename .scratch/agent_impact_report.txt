@@ -1,0 +1,120 @@
+agent_impact_census —— 3D 预览可画率实测报告
+生成脚本: D:\TLGL\.scratch\agent_impact_census.py   数据源: D:\TLGL\.scratch\out\tree (只读)
+判定函数 parse()/locate() 与 crates/core/src/preview/geometry.rs::parse_geometry 对齐；
+bodies 顺序与 crates/core/src/preview/summary.rs::mdl_summary 对齐；解析 .mdl 用 .scratch/jbcf.py::parse。
+
+====================================================================================================
+【1】.mesh 文件级：能不能解出顶点+索引
+====================================================================================================
+目录桶                                        文件数      可画      失败     失败率    可画sm=1   失败sm>=2    失败sm<2
+地图场景块(mobile_maps_source)                 3264    1864    1400   42.9%      1864      1400         0
+特效模型(data/effect)                         1700    1679      21    1.2%      1679        21         0
+NPC(npc/quest:npc)                         932     816     116   12.4%       816       116         0
+怪物(npc/quest:monster)                      460     452       8    1.7%       451         8         0
+NPC/怪物模型库(npc/model)                       334     321      13    3.9%       321        13         0
+宠物/坐骑(npc/quest:pets)                      319     248      71   22.3%       248        71         0
+BOSS(npc/quest:boss)                       264     249      15    5.7%       249        15         0
+玩家角色(data/source/player)                   217     139      78   35.9%       139        78         0
+场景采集道具(npc/changjingdaoju)                 163     137      26   16.0%       137        26         0
+武器(npc/wuqi)                               142     139       3    2.1%       139         3         0
+头盔外观(npc/toukui)                           123     112      11    8.9%       112        11         0
+任务杂项(npc/quest:other)                       38      30       8   21.1%        29         8         0
+生活材料(npc/quest:shenghuo)                    17      17       0    0.0%        17         0         0
+武器(npc/quest:wuqi)                          17      17       0    0.0%        17         0         0
+动态场景物件(npc/dynamic)                          5       1       4   80.0%         1         4         0
+挂件(npc/guajian)                              1       0       1  100.0%         0         1         0
+合计                                        7996    6221    1775   22.2%      6219      1775         0
+
+失败原因分布（全量 .mesh）：
+  ok_no_normals                        3618  45.2%
+  ok                                   2603  32.6%
+  no_self_consistent_index_block       1775  22.2%
+
+====================================================================================================
+【2】.mdl 级（立体预览的唯一数据来源：insp.mdl.bodies，见 mesh.js::listOf）
+====================================================================================================
+2.1 面板会不会出现
+  .mdl 总数                       : 2146
+  JBCF 解不出（面板必不出）       : 0
+  字符串表里 0 个 .mesh 部件      : 1
+  能定位到 >=1 个 .mesh 实体      : 1961  91.4%
+  定位不到 .mesh 实体（无面板）   : 185   8.6%
+  部件槽位合计 / 其中定位到实体   : 3028 / 2787
+  定位方式分布: {'same_dir': 2745, 'missing': 241, 'unique_stem': 3, 'base_dir': 39}
+  引用来料 .mesh 槽位里可画       : 2477  88.9%
+
+2.2 第一眼能不能画（只看面板会出的那批 .mdl）
+分类                       .mdl    出面板      面板率     第一个可画    换部件才可画      全画不出     第一眼可画率       有筹码    第一眼占全类    无面板占全类     全败占全类
+怪物/NPC                   1269   1268    99.9%      1129         8       131      89.0%       409      89.0%       0.1%     10.3%
+宠物/坐骑                     444    279    62.8%       206         1        72      73.8%        40      46.4%      37.2%     16.2%
+场景道具                      195    195   100.0%       160         0        35      82.1%         2      82.1%       0.0%     17.9%
+怪物/NPC(BOSS)              136    135    99.3%       124         2         9      91.9%        77      91.2%       0.7%      6.6%
+武器/挂件                      61     46    75.4%        43         0         3      93.5%         0      70.5%      24.6%      4.9%
+玩家角色                       41     38    92.7%         3         0        35       7.9%         0       7.3%       7.3%     85.4%
+合计                       2146   1961    91.4%      1665        11       285      84.9%       528      77.6%       8.6%     13.3%
+
+  占全部 .mdl 的比例：第一眼就能画  77.6% / 点一下筹码才能画   0.5% / 换哪个部件都画不出  13.3% / 连面板都没有   8.6%
+
+2.3 失败的成因
+  玩家角色 里第一眼可画的 3 个 .mdl: w1351_nan.mdl(vc=8,sm=1), w1351_nan_s_yifu_tsrmdz.mdl(vc=3876,sm=1), w1351_nv.mdl(vc=8,sm=1)
+  出面板但第一个 .mesh 就画不出的 .mdl   : 296
+    其中「第一个失败部件 sm>=2」        : 296 100.0%
+  可画部件存在但排在第一位之后（被埋）  : 11
+  画不出的 .mesh 槽位 / 其中 sm>=2      : 310 / 310 100.0%
+  被 .mdl 引用且画不出的原因分布: {'no_self_consistent_index_block': 310}
+
+  「第一眼看不到立体」的 .mdl 归因（共 481 个，占全部 .mdl  22.4%）：
+     e. 所有部件索引块都定位失败(sm>=2)                                 285  占失败  59.3% / 占全部 .mdl  13.3%
+     c. 引用的 .mesh 实体全都不在库里(悬空引用)                            184  占失败  38.3% / 占全部 .mdl   8.6%
+     d. 第一个部件索引块定位失败(sm>=2)，换部件可救                            11  占失败   2.3% / 占全部 .mdl   0.5%
+     b. .mdl 字符串表里没有 .mesh 部件                                 1  占失败   0.2% / 占全部 .mdl   0.0%
+
+  被任何 .mdl 引用的 .mesh 个数: 2589 / 7996（其余是没有 .mdl 顶着的独立网格，面板永不出）
+    没 .mdl 顶着的 .mesh 桶分布: {'地图场景块(mobile_maps_source)': 3264, '特效模型(data/effect)': 1699, '玩家角色(data/source/player)': 180, '头盔外观(npc/toukui)': 123, '武器(npc/wuqi)': 114, 'NPC(npc/quest:npc)': 9, 'NPC/怪物模型库(npc/model)': 7, '场景采集道具(npc/changjingdaoju)': 4, '宠物/坐骑(npc/quest:pets)': 3, '任务杂项(npc/quest:other)': 2, '怪物(npc/quest:monster)': 2}
+    其中「其实可画、只是没有 .mdl 引用」: 3927
+
+====================================================================================================
+【3】已知反例核对：w1351_monster_xiyuqiezei
+====================================================================================================
+  .mdl            : data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei.mdl  (jbcf=ok, bodies=2, resolved=2, drawable=2)
+  模型名 / 基目录 : 'w1351_monster_xiyuqiezei' / 'data/source/npc/quest/w1351_monster_xiyuqiezei/'
+  第一个网格      : data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_yifu_001.mesh  ok=True sm=1 vc=781 fc=846 reason=ok
+  结论            : outcome=first_ok
+     - w1351_monster_xiyuqiezei_yifu_001.mesh -> data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_yifu_001.mesh  sm=1 vc=781 ok=True (resolve=same_dir)
+     - w1351_monster_xiyuqiezei_shoutao_001.mesh -> data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_shoutao_001.mesh  sm=1 vc=42 ok=True (resolve=same_dir)
+
+====================================================================================================
+【4】资源组级（工作台列表的真实单位：agroups 一行 = 用户点开的一个资产）
+====================================================================================================
+  组总数                       : 13080
+  含 >=1 个 .mesh 的组         : 2023  15.5%
+  其中组内有 .mdl（会去解它）  : 1665
+  组内有 .mdl 却一个网格没解出 : 6
+  有 .mesh 但没有 .mdl（必无面板）: 358  17.7%
+  第一眼就能画的组             : 1397  占全库  10.7% / 占有网格的组  69.1%
+  换个筹码才能画的组           : 9
+  部件全画不出的组             : 253
+  面板出现率（占有网格的组）   :  82.0%
+  按 kind 细分: {"npc": {"g_panel_yes": 1622, "g_first_ok": 1394, "g_all_fail": 219, "g_panel_no": 6, "g_no_mesh_resolved": 6, "g_switch": 9, "g_no_mdl": 35}, "player": {"g_panel_yes": 37, "g_all_fail": 34, "g_first_ok": 3}, "effect": {"g_no_mdl": 323}}
+  对不上 tree 的 .mdl 路径数   : 0 
+
+====================================================================================================
+【5】口径核对：tree 茎名索引 vs 工作台用的 resources.name 索引
+====================================================================================================
+  {"db_mesh_rows": 7996, "db_distinct_names": 7996, "names_with_multiple_rows": 0, "tree_only": 0, "db_only": 0}
+  -> name 在 .mesh 上全局唯一，所以「basename + LIMIT 1」等价于本脚本的唯一茎名定位。
+
+  再拿项目自己算好的 refs(.mdl→.mesh) 对一遍（另一条独立实现）：
+     槽位数 我方 3028 / refs 3028 ；引用落空 我方 241 / refs 240 ；带网格引用的 .mdl 我方 2145 / refs 2145
+     逐文件计数不一致：1 个 / 2145
+     data/source/npc/quest/w1351_zuoqi_baishi/w1351_zuoqi_shizi.mdl  refs=[('w1351_zuoqi_baishi.mesh', True)]  我方={'bodies': 1, 'resolved': 0}
+     该例 .mdl 字符串表原文引用 w1351_zuoqi_shizi.mesh（tree 与 resources.name 里都没有此文件），
+     refs 却记成了兄弟名 w1351_zuoqi_baishi.mesh —— 工作台走的是 name 精确匹配，所以按我方口径它仍然落空。
+
+====================================================================================================
+【6】口径说明
+====================================================================================================
+  实测 = 直接对 tree 里 7,996 个 .mesh / 2,146 个 .mdl 逐字节跑解析得到的计数。
+  推断 = 把「parse() 定位不到索引块」等同于「工作台画不出来」。依据是 mesh.js 的
+         listOf/pick(0) 只看第一个 resolved 部件 + geometry.rs 同一套布局；
+         未覆盖 WebGL/TAURI 侧的运行时故障（本机开不了 3D、贴图缺失等）。

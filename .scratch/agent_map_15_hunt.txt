@@ -1,0 +1,91 @@
+
+#### w1351_fh_qiangzhi_001.mesh
+  resources.path LIKE %%name%%: []
+  refs.name =: []
+  refs.name stem: []
+  agroup_names: []
+  dangling: []
+
+#### w1351_lyxj_dengta_001.mesh
+  resources.path LIKE %%name%%: []
+  refs.name =: []
+  refs.name stem: []
+  agroup_names: []
+  dangling: []
+
+#### w1351_bzd_hongshizhuqi_001.mesh
+  resources.path LIKE %%name%%: []
+  refs.name =: []
+  refs.name stem: []
+  agroup_names: []
+  dangling: []
+
+#### w1351_fh_shitiao_001.mesh
+  resources.path LIKE %%name%%: []
+  refs.name =: []
+  refs.name stem: []
+  agroup_names: []
+  dangling: []
+
+== unnamed resources by type/subtype
+  ('texture', 'JMT1', 24261)
+  ('geom', 'raw', 12676)
+  ('ani', 'copy', 2999)
+  ('binary', 'bin', 2179)
+  ('scene', 'grid753', 1126)
+  ('mapref', 'tab280', 887)
+  ('JBCF', 'JBCF', 793)
+  ('tiny', 'bin', 653)
+  ('text', 'text', 589)
+  ('xml', 'xml', 546)
+  ('mesh', 'copy', 471)
+  ('NAVF', 'NAVF', 430)
+  ('JBPU', 'JBPU', 223)
+  ('table', 'u32head', 152)
+  ('mp3', 'mp3', 38)
+  ('missing', None, 27)
+  ('JMDL', 'JMDL', 1)
+  ('png', 'png', 1)
+  ('set', 'copy', 1)
+
+== how do we know an unnamed blob is a mesh?  count named=0 with type in mesh-ish
+  ('texture', 'JMT1', 24261, 3914224470)
+  ('geom', 'raw', 12676, 1390557406)
+  ('ani', 'copy', 2999, 211318814)
+  ('binary', 'bin', 2179, 622453101)
+  ('scene', 'grid753', 1126, 17464695)
+  ('mapref', 'tab280', 887, 255456)
+  ('JBCF', 'JBCF', 793, 2006384)
+  ('tiny', 'bin', 653, 2612)
+  ('text', 'text', 589, 445056)
+  ('xml', 'xml', 546, 119038)
+  ('mesh', 'copy', 471, 45526449)
+  ('NAVF', 'NAVF', 430, 9619920)
+  ('JBPU', 'JBPU', 223, 315112)
+  ('table', 'u32head', 152, 18410110)
+  ('mp3', 'mp3', 38, 71353751)
+
+== refs kind census
+  ('.mtl', 38694)
+  ('.tga', 30585)
+  ('.ani', 15622)
+  ('.mesh', 9316)
+  ('.ske', 4210)
+  ('.png', 36)
+  ('.anis', 20)
+  ('.dds', 14)
+  ('.pu', 7)
+
+== sample refs rows from an mtl in mobile_maps_source
+  ('mobile_maps_source/w1351_smeh_shandongkou_001.mtl', 'w1351_smeh_shandong1_001.tga', '.tga', None)
+  ('mobile_maps_source/w1351_smeh_shandongkou_001.mtl', 'template_default.mtl', '.mtl', 'f487698d200a12cf')
+  ('mobile_maps_source/w1351_smeh_shandongkou_001.mtl', 'w1351_smeh_jitanqiang_001.tga', '.tga', None)
+  ('mobile_maps_source/w1351_smeh_shandongkou_001.mtl', 'w1351_smeh_jitandizuan_001.tga', '.tga', None)
+  ('mobile_maps_source/w1351_smeh_shandongkou_001.mtl', 'w1351_smeh_jianzhu_001.tga', '.tga', None)
+  ('mobile_maps_source/w1351_smeh_shandongkou_001.mtl', 'w1351_smeh_jianzhu2_001.tga', '.tga', None)
+  ('mobile_maps_source/w1351_smeh_shandongkou_001.mtl', 'w1351_smeh_zuanqiang_001.tga', '.tga', None)
+  ('mobile_maps_source/w1351_smeh_shandongkou_001.mtl', 'w1351_smeh_shandong_001.tga', '.tga', None)
+  ('mobile_maps_source/w1351_bmy_yabianshu_004.mtl', 'w1351_bmy_yabianshi_001.tga', '.tga', None)
+  ('mobile_maps_source/w1351_bmy_yabianshu_004.mtl', 'template_default.mtl', '.mtl', 'f487698d200a12cf')
+  ('mobile_maps_source/w1351_bmy_yabianshu_004.mtl', 'w1351_bmy_yabianshugen_001.tga', '.tga', None)
+  ('mobile_maps_source/w1351_bmy_yabianshu_004.mtl', 'template_derfault_vegetation.mtl', '.mtl', '2e3a3055e4ba2c09')

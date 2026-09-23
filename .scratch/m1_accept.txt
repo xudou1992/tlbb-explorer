@@ -1,0 +1,42 @@
+exit=0 wall=4.94s
+
+模型组成（M1 验收）· w1351_monster_xiyuqiezei
+  模型名   w1351_monster_xiyuqiezei
+  骨架     w1351_monster_xiyuqiezei.ske → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei.ske
+  部件 [MainBodyMesh]
+    网格   w1351_monster_xiyuqiezei_yifu_001.mesh → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_yifu_001.mesh
+    材质   w1351_monster_xiyuqiezei_yifu_001.mtl → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_yifu_001.mtl
+      槽位 贴图 w1351_monster_xiyuqiezei_yifu_001.tga → 缺
+      槽位 材质 template_default_npc.mtl → data/sharematerial/material/template_default_npc.mtl
+      槽位 着色器 DynModelShader → 缺
+  部件 [ArmMesh]
+    网格   w1351_monster_xiyuqiezei_shoutao_001.mesh → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_shoutao_001.mesh
+    材质   w1351_monster_xiyuqiezei_shoutao_001.mtl → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_shoutao_001.mtl
+      槽位 贴图 w1351_monster_xiyuqiezei_shoutao_001.tga → 缺
+      槽位 材质 template_default_npc.mtl → data/sharematerial/material/template_default_npc.mtl
+      槽位 着色器 DynModelShader → 缺
+  动作     15 个：w1351_monster_xiyuqiezei_behit01.ani w1351_monster_xiyuqiezei_dead.ani w1351_monster_xiyuqiezei_deadbegin.ani w1351_monster_xiyuqiezei_fight_idle01.ani w1351_monster_xiyuqiezei_flyingdead.ani w1351_monster_xiyuqiezei_flyingdeadbegin.ani w1351_monster_xiyuqiezei_hit01.ani w1351_monster_xiyuqiezei_hit02.ani w1351_monster_xiyuqiezei_hit03.ani w1351_monster_xiyuqiezei_idle01.ani w1351_monster_xiyuqiezei_idle02.ani w1351_monster_xiyuqiezei_idle03.ani w1351_monster_xiyuqiezei_run.ani w1351_monster_xiyuqiezei_vertigo.ani w1351_monster_xiyuqiezei_walk.ani
+  缺失说明：4 个槽位只有名字、没有 hash 映射——客户端发布时未保存模型贴图的路径，这是客户端的设计，不是解析失败。
+  [首次] 耗时 541ms
+  模型名   w1351_monster_xiyuqiezei
+  骨架     w1351_monster_xiyuqiezei.ske → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei.ske
+  部件 [MainBodyMesh]
+    网格   w1351_monster_xiyuqiezei_yifu_001.mesh → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_yifu_001.mesh
+    材质   w1351_monster_xiyuqiezei_yifu_001.mtl → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_yifu_001.mtl
+      槽位 贴图 w1351_monster_xiyuqiezei_yifu_001.tga → 缺
+      槽位 材质 template_default_npc.mtl → data/sharematerial/material/template_default_npc.mtl
+      槽位 着色器 DynModelShader → 缺
+  部件 [ArmMesh]
+    网格   w1351_monster_xiyuqiezei_shoutao_001.mesh → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_shoutao_001.mesh
+    材质   w1351_monster_xiyuqiezei_shoutao_001.mtl → data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_shoutao_001.mtl
+      槽位 贴图 w1351_monster_xiyuqiezei_shoutao_001.tga → 缺
+      槽位 材质 template_default_npc.mtl → data/sharematerial/material/template_default_npc.mtl
+      槽位 着色器 DynModelShader → 缺
+  动作     15 个：w1351_monster_xiyuqiezei_behit01.ani w1351_monster_xiyuqiezei_dead.ani w1351_monster_xiyuqiezei_deadbegin.ani w1351_monster_xiyuqiezei_fight_idle01.ani w1351_monster_xiyuqiezei_flyingdead.ani w1351_monster_xiyuqiezei_flyingdeadbegin.ani w1351_monster_xiyuqiezei_hit01.ani w1351_monster_xiyuqiezei_hit02.ani w1351_monster_xiyuqiezei_hit03.ani w1351_monster_xiyuqiezei_idle01.ani w1351_monster_xiyuqiezei_idle02.ani w1351_monster_xiyuqiezei_idle03.ani w1351_monster_xiyuqiezei_run.ani w1351_monster_xiyuqiezei_vertigo.ani w1351_monster_xiyuqiezei_walk.ani
+  缺失说明：4 个槽位只有名字、没有 hash 映射——客户端发布时未保存模型贴图的路径，这是客户端的设计，不是解析失败。
+  [再次] 耗时 477ms
+
+
+--- stderr ---
+open: 13080 groups · 6 containers · 116506 index records in 0.1s
+warm: 13080 组 / 16 路 / 总 1.9s（清单查询 28.0s · 主体回读 12.6s，均为各分片累计）

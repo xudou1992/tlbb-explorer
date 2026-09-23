@@ -1,0 +1,377 @@
+==== stats.json ====
+{
+ "totalGroups": 13080,
+ "scanned": 13080,
+ "ready": true,
+ "scenarios": [
+  {
+   "value": "角色",
+   "label": "角色",
+   "count": 2165
+  },
+  {
+   "value": "场景",
+   "label": "场景",
+   "count": 3463
+  },
+  {
+   "value": "特效",
+   "label": "特效",
+   "count": 6473
+  },
+  {
+   "value": "界面",
+   "label": "界面",
+   "count": 22
+  },
+  {
+   "value": "物品",
+   "label": "物品",
+   "count": 36
+  },
+  {
+   "value": "其他",
+   "label": "其他",
+   "count": 921
+  }
+ ],
+ "kinds": [
+  {
+   "value": "特效",
+   "label": "特效",
+   "count": 6473
+  },
+  {
+   "value": "场景物件",
+   "label": "场景物件",
+   "count": 3463
+  },
+  {
+   "value": "NPC / 怪物",
+   "label": "NPC / 怪物",
+   "count": 1961
+  },
+  {
+   "value": "其他资源",
+   "label": "其他资源",
+   "count": 921
+  },
+  {
+   "value": "玩家角色",
+   "label": "玩家角色",
+   "count": 204
+  },
+  {
+   "value": "共享材质",
+   "label": "共享材质",
+   "count": 36
+  },
+  {
+   "value": "界面资源",
+   "label": "界面资源",
+   "count": 22
+  }
+ ],
+ "grades": [
+  {
+   "value": "A",
+   "label": "完整定位",
+   "count": 20
+  },
+  {
+   "value": "B",
+   "label": "主体定位",
+   "count": 2581
+  },
+  {
+   "value": "C",
+   "label": "仅有名称",
+   "count": 10479
+  },
+  {
+   "value": "D",
+   "label": "只是线索",
+   "count": 0
+  }
+ ],
+ "imageCandidates": 25,
+ "decoded": 13080,
+ "locatedRefs": 25,
+ "totalRefs": 22630,
+ "unnamed": 921,
+ "containers": 6,
+ "catalogFile": "D:/TLGL\\.scratch/resources.db",
+ "root": "D:/TLGL"
+}
+==== replay.json ====
+[
+ {
+  "gid": 245,
+  "grade": "B",
+  "gradeNote": "主体能打开，部分零件只有名字",
+  "gradeWord": "主体定位",
+  "kind": "NPC / 怪物",
+  "locatedTotal": 0,
+  "memberTotal": 21,
+  "name": "w1351_monster_xiyuqiezei",
+  "named": true,
+  "parts": [
+   {
+    "count": 1,
+    "label": "模型"
+   },
+   {
+    "count": 2,
+    "label": "网格"
+   },
+   {
+    "count": 2,
+    "label": "材质"
+   },
+   {
+    "count": 1,
+    "label": "骨骼"
+   },
+   {
+    "count": 15,
+    "label": "动作"
+   }
+  ],
+  "placeholder": "character",
+  "previewHash": null,
+  "refTotal": 2,
+  "scenario": "角色",
+  "subtitle": "角色 · xiyuqiezei",
+  "tags": [
+   "动作集",
+   "怪物",
+   "NPC"
+  ]
+ },
+ {
+  "gid": 2299,
+  "grade": "A",
+  "gradeNote": "主体和它用到的零件都找到了",
+  "gradeWord": "完整定位",
+  "kind": "界面资源",
+  "locatedTotal": 1,
+  "memberTotal": 2,
+  "name": "w1351_nv_s_yifu_bingcha",
+  "named": true,
+  "parts": [
+   {
+    "count": 1,
+    "label": "材质"
+   },
+   {
+    "count": 1,
+    "label": "贴图"
+   }
+  ],
+  "placeholder": "item",
+  "previewHash": "1908483d67257a08",
+  "refTotal": 1,
+  "scenario": "界面",
+  "subtitle": "界面 · bingcha",
+  "tags": [
+   "物品图标",
+   "角色部件",
+   "界面",
+   "女性角色"
+  ]
+ },
+ {
+  "gid": 30,
+  "grade": "B",
+  "gradeNote": "主体能打开，部分零件只有名字",
+  "gradeWord": "主体定位",
+  "kind": "NPC / 怪物",
+  "locatedTotal": 0,
+  "memberTotal": 29,
+  "name": "w1351_pets_bingcan_b2",
+  "named": true,
+  "parts": [
+   {
+    "count": 5,
+    "label": "模型"
+   },
+   {
+    "count": 5,
+    "label": "网格"
+   },
+   {
+    "count": 5,
+    "label": "材质"
+   },
+   {
+    "count": 1,
+    "label": "骨骼"
+   },
+   {
+    "count": 13,
+    "label": "动作"
+   }
+  ],
+  "placeholder": "beast",
+  "previewHash": null,
+  "refTotal": 5,
+  "scenario": "角色",
+  "subtitle": "角色 · b2",
+  "tags": [
+   "动作集",
+   "NPC",
+   "宠物"
+  ]
+ },
+ {
+  "gid": 2410,
+  "grade": "C",
+  "gradeNote": "只拿到主体，零件关系来自名字推断",
+  "gradeWord": "仅有名称",
+  "kind": "其他资源",
+  "locatedTotal": 0,
+  "memberTotal": 1,
+  "name": "00a9fbe2315293e7",
+  "named": false,
+  "parts": [
+   {
+    "count": 1,
+    "label": "附属文件"
+   }
+  ],
+  "placeholder": "beast",
+  "previewHash": null,
+  "refTotal": 0,
+  "scenario": "其他",
+  "subtitle": "其他 · 00a9fbe2315293e7",
+  "tags": [
+   "NPC",
+   "宠物"
+  ]
+ }
+]
+==== inspect_2410.json ====
+{
+ "found": true,
+ "what": "其他资源（other）",
+ "names": [
+  {
+   "name": "w1351_pets_jiuxiaozhanlong_b8.mesh",
+   "cls": "unique"
+  },
+  {
+   "name": "w1351_pets_jiuxiaozhanlong_b8.mtl",
+   "cls": "unique"
+  },
+  {
+   "name": "w1351_pets_jiuxiaozhanlong_b8.ske",
+   "cls": "shared"
+  }
+ ],
+ "dir": "",
+ "parts": 1,
+ "counts": {
+  "mesh": 0,
+  "mtl": 0,
+  "ani": 0,
+  "ske": 0,
+  "tex": 0
+ },
+ "members": [
+  {
+   "role": "other",
+   "roleZh": "附属文件",
+   "name": "00a9fbe2315293e7",
+   "path": null,
+   "resolved": false
+  }
+ ],
+ "mdl": null,
+ "missing": [
+  "网格 w1351_pets_jiuxiaozhanlong_b8.mesh：客户端未含此文件",
+  "材质 w1351_pets_jiuxiaozhanlong_b8.mtl：客户端未含此文件",
+  "骨骼 w1351_pets_jiuxiaozhanlong_b8.ske：客户端未含此文件",
+  "附属文件（编号 00a9fbe2315293e7）：客户端未含此文件，清单里只记了编号"
+ ],
+ "canDo": [],
+ "anims": [],
+ "elapsedMs": 1,
+ "note": ""
+}
+==== detail_2410.json ====
+{
+ "card": {
+  "gid": 2410,
+  "name": "00a9fbe2315293e7",
+  "subtitle": "其他 · 00a9fbe2315293e7",
+  "kind": "其他资源",
+  "scenario": "其他",
+  "grade": "C",
+  "gradeWord": "仅有名称",
+  "gradeNote": "只拿到主体，零件关系来自名字推断",
+  "tags": [
+   "NPC",
+   "宠物"
+  ],
+  "parts": [
+   {
+    "label": "附属文件",
+    "count": 1
+   }
+  ],
+  "placeholder": "beast",
+  "memberTotal": 1,
+  "refTotal": 0,
+  "locatedTotal": 0,
+  "named": false,
+  "previewHash": null
+ },
+ "refs": [
+  {
+   "name": "w1351_pets_jiuxiaozhanlong_b8.mtl",
+   "kind": "材质",
+   "status": "只有名字",
+   "located": false
+  },
+  {
+   "name": "w1351_pets_jiuxiaozhanlong_b8.mesh",
+   "kind": "网格",
+   "status": "只有名字",
+   "located": false
+  },
+  {
+   "name": "w1351_pets_jiuxiaozhanlong_b8.ske",
+   "kind": "骨骼",
+   "status": "只有名字",
+   "located": false
+  }
+ ],
+ "gaps": [
+  "组成单一，未见模型/材质/动作的完整搭配"
+ ],
+ "nameSource": "没有记录到它所在的路径，只能以编号区分",
+ "hubDecoded": true,
+ "members": [
+  {
+   "roleWord": "附属文件",
+   "name": "00a9fbe2315293e7",
+   "hasImage": false,
+   "hash": "00a9fbe2315293e7"
+  }
+ ],
+ "tech": {
+  "id": "00a9fbe2315293e7",
+  "container": "data3",
+  "offset": 537014824,
+  "bytes": 2576,
+  "codec": "",
+  "fingerprint": "b8d507794735b854",
+  "rules": [
+   "npc (medium)",
+   "pet (medium)"
+  ],
+  "names": 3,
+  "folder": "",
+  "path": ""
+ }
+}

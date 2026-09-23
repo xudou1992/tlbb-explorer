@@ -1,0 +1,39 @@
+=== mtl 贴图槽 ===
+════════════════════════════════════════════════════════════════
+资源：w1351_monster_xiyuqiezei_yifu_001.mtl
+  hash       bd1e39c275b16280
+  类型       JBCF .mtl
+  路径       data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_yifu_001.mtl
+  存储       data @ 0x3cc40a80, 1016 字节
+  定位       名字 w1351_monster_xiyuqiezei_yifu_001.mtl
+════════════════════════════════════════════════════════════════
+
+已取出 1016 字节（加密）
+识别为：材质
+
+材质槽（3 个）
+  [  贴图] w1351_monster_xiyuqiezei_yifu_001.tga          → 缺
+  [  材质] template_default_npc.mtl                       → JBCF data/sharematerial/material/template_default_npc.mtl
+  [ 着色器] DynModelShader                                 → 缺
+
+  2 个槽位在资源库里对不上实体（显示为「缺」）。
+  这是客户端的设计：这些名字存在于材质文件里，但没有对应的路径记录。
+
+=== 组归属 ===
+mdl hash=007cb62c6345c819 -> gids=[245]
+gid=245 ani refs (15):
+   w1351_monster_xiyuqiezei_behit01.ani .ani 已定位 x1
+   w1351_monster_xiyuqiezei_dead.ani .ani 已定位 x1
+   w1351_monster_xiyuqiezei_deadbegin.ani .ani 已定位 x1
+   w1351_monster_xiyuqiezei_fight_idle01.ani .ani 已定位 x1
+   w1351_monster_xiyuqiezei_flyingdead.ani .ani 已定位 x1
+   w1351_monster_xiyuqiezei_flyingdeadbegin.ani .ani 已定位 x1
+   w1351_monster_xiyuqiezei_hit01.ani .ani 已定位 x1
+   w1351_monster_xiyuqiezei_hit02.ani .ani 已定位 x1
+   w1351_monster_xiyuqiezei_hit03.ani .ani 已定位 x1
+   w1351_monster_xiyuqiezei_idle01.ani .ani 已定位 x1
+   w1351_monster_xiyuqiezei_idle02.ani .ani 已定位 x1
+   w1351_monster_xiyuqiezei_idle03.ani .ani 已定位 x1
+   w1351_monster_xiyuqiezei_run.ani .ani 已定位 x1
+   w1351_monster_xiyuqiezei_vertigo.ani .ani 已定位 x1
+   w1351_monster_xiyuqiezei_walk.ani .ani 已定位 x1

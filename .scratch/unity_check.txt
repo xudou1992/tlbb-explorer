@@ -1,0 +1,32 @@
+exe size 18932792
+Unity                    count=     0  first@-
+unity                    count=    22  first@0xea4aaa
+UnityEngine              count=     0  first@-
+UnityPlayer              count=     0  first@-
+CAB-                     count=     0  first@-
+SerializedFile           count=     0  first@-
+Typetree                 count=     0  first@-
+typeTree                 count=     0  first@-
+mono                     count=     0  first@-
+Mono                     count=     1  first@0xec68cc
+il2cpp                   count=     0  first@-
+IL2CPP                   count=     0  first@-
+monobehaviour            count=     0  first@-
+MonoBehaviour            count=     0  first@-
+.bundle                  count=     0  first@-
+GfxModule                count=     4  first@0x1075224
+DX11Gfx                  count=   104  first@0xf0d600
+SkinModel                count=     3  first@0xef2e50
+MeshModel                count=     2  first@0x1083aac
+REMesh                   count=     6  first@0x10838d3
+EsMaterial               count=     1  first@0x1082994
+Fantasy                  count=     1  first@0xf676c4
+julegame                 count=     2  first@0xeeff9f
+W1351                    count=    55  first@0xcad553
+d3d11                    count=     5  first@0xd51e50
+D3D11CreateDevice        count=     7  first@0xd51e60
+opengl32                 count=     0  first@-
+vulkan-1                 count=     0  first@-
+dxgi                     count=     2  first@0x102fd76
+
+graphics/runtime-ish DLL names referenced: ['d3d11.dll', 'd3dcompiler_47.dll', 'dxgi.dll']

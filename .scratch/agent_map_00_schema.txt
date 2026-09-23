@@ -1,0 +1,144 @@
+index ix_am_g
+CREATE INDEX ix_am_g ON amembers(gid)
+
+index ix_am_h
+CREATE INDEX ix_am_h ON amembers(hash)
+
+index ix_an_g
+CREATE INDEX ix_an_g ON agroup_names(gid)
+
+index ix_fingerprint_g
+CREATE INDEX ix_fingerprint_g ON asset_fingerprint(gid)
+
+index ix_ia_asset
+CREATE INDEX ix_ia_asset ON asset_identity(id_asset)
+
+index ix_refs_kind
+CREATE INDEX ix_refs_kind ON refs(kind)
+
+index ix_refs_to
+CREATE INDEX ix_refs_to ON refs(to_hash)
+
+index ix_rel_from
+CREATE INDEX ix_rel_from ON relations(from_hash)
+
+index ix_rel_to
+CREATE INDEX ix_rel_to   ON relations(to_hash)
+
+index ix_res_dir
+CREATE INDEX ix_res_dir  ON resources(dir)
+
+index ix_res_dir_type_original
+CREATE INDEX ix_res_dir_type_original ON resources(dir, type, original DESC)
+
+index ix_res_ext
+CREATE INDEX ix_res_ext  ON resources(ext)
+
+index ix_res_path
+CREATE INDEX ix_res_path ON resources(path)
+
+index ix_res_type
+CREATE INDEX ix_res_type ON resources(type)
+
+index ix_tags_g
+CREATE INDEX ix_tags_g ON asset_tags(gid)
+
+index sqlite_autoindex_agroup_names_1
+None
+
+index sqlite_autoindex_amembers_1
+None
+
+index sqlite_autoindex_asset_tags_1
+None
+
+index sqlite_autoindex_blobs_1
+None
+
+index sqlite_autoindex_dangling_1
+None
+
+index sqlite_autoindex_meta_1
+None
+
+index sqlite_autoindex_records_1
+None
+
+index sqlite_autoindex_refs_1
+None
+
+index sqlite_autoindex_relations_1
+None
+
+index sqlite_autoindex_resources_1
+None
+
+table agroup_names
+CREATE TABLE agroup_names(gid INT, name TEXT, cls TEXT, UNIQUE(gid, name))
+
+table agroups
+CREATE TABLE agroups(id INTEGER PRIMARY KEY, hub TEXT, hub_path TEXT, dir TEXT,
+        stem TEXT, kind TEXT, n INT, n_mesh INT, n_mtl INT, n_ani INT, n_ske INT,
+        n_tex INT, n_other INT, names INT)
+
+table amembers
+CREATE TABLE amembers(gid INT, hash TEXT, role TEXT, UNIQUE(gid, hash))
+
+table asset_fingerprint
+CREATE TABLE asset_fingerprint(gid INTEGER PRIMARY KEY, fp_asset TEXT, fp_model TEXT, fp_skeleton TEXT, fp_mesh TEXT, fp_material TEXT, fp_animation TEXT, fp_texture TEXT, fp_names TEXT, n_members INT, n_names INT)
+
+table asset_identity
+CREATE TABLE asset_identity(gid INTEGER PRIMARY KEY, id_asset TEXT, id_content TEXT,
+        id_pack TEXT, id_struct TEXT, id_names TEXT, n_members INT, n_names INT,
+        hub_path TEXT, dir TEXT, stem TEXT, kind TEXT)
+
+table asset_tags
+CREATE TABLE asset_tags(gid INT, tag TEXT, rule TEXT, confidence TEXT, PRIMARY KEY(gid, tag))
+
+table assets
+CREATE TABLE assets(grp TEXT, primary_hash TEXT, kind TEXT)
+
+table blobs
+CREATE TABLE blobs(hash TEXT PRIMARY KEY, sha TEXT, size INT)
+
+table dangling
+CREATE TABLE dangling(name TEXT PRIMARY KEY, ext TEXT, n_refs INT, n_src INT, cls TEXT)
+
+table meta
+CREATE TABLE meta(key TEXT PRIMARY KEY, value TEXT)
+
+table records
+CREATE TABLE records(
+        pak TEXT, gen INT, hash TEXT, offset INT, stored INT, occupied INT,
+        original INT, ver INT, flags INT, method INT, filecrc INT,
+        PRIMARY KEY(pak, hash))
+
+table refs
+CREATE TABLE refs(from_hash TEXT, from_path TEXT, name TEXT, kind TEXT,
+                        to_hash TEXT, ambig INT DEFAULT 0, PRIMARY KEY(from_hash, name))
+
+table relations
+CREATE TABLE relations(
+        from_hash TEXT, from_path TEXT, to_hash TEXT, to_path TEXT, rel TEXT,
+        PRIMARY KEY(from_hash, to_hash, rel))
+
+table resources
+CREATE TABLE resources(
+        hash TEXT PRIMARY KEY, path TEXT, dir TEXT, name TEXT, ext TEXT,
+        type TEXT, subtype TEXT, codec TEXT, width INT, height INT, mips INT,
+        ver INT, flags INT, method INT, stored INT, occupied INT, original INT,
+        filecrc INT, pak TEXT, gen INT, offset INT, named INT, props TEXT,
+        src TEXT, self_path TEXT)
+
+table sqlite_stat1
+CREATE TABLE sqlite_stat1(tbl,idx,stat)
+
+counts:
+resources 105327
+records 114975
+refs 98504
+relations 100303
+agroups 13080
+amembers 48122
+asset_tags 18520
+blobs 105222

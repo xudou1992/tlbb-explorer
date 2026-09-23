@@ -1,0 +1,22 @@
+{
+  "nameless_textures": 24261,
+  "pool": 1800,
+  "decoded_fail": 1,
+  "alpha_zero_dropped": 173,
+  "near_flat": 15,
+  "dim_shapes": 102,
+  "square": 23211,
+  "all_pairs": {"n":1619100,"p10":25,"p50":32,"p90":38,"mean":31.597},
+  "same_cluster": {"n":60383,"p10":24,"p50":31,"p90":38,"mean":31.095},
+  "cross_cluster": {"n":1558717,"p10":25,"p50":32,"p90":38,"mean":31.616},
+  "nearest": {"n":1800,"p10":0,"p50":14,"p90":19,"mean":11.605},
+  "nearest_le8": 548,
+  "nearest_le16": 1256,
+  "nearest_same_cluster": 557,
+  "nearest_cross_cluster": 1243,
+  "same_avail_pairs": 60383,
+  "all_avail_pairs": 1619100,
+  "all_pairs_le8": 1579,
+  "all_pairs_le16": 9928,
+  "verdict": "半自动：近半图能找到同族，可做「按族归类 + 人工命名」，全自动恢复不成立。"
+}

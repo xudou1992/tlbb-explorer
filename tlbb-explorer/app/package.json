@@ -1,0 +1,14 @@
+{
+  "name": "tlbb-explorer-shell",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "天龙八部·归来 资产理解工作台 — Tauri 2 shell",
+  "scripts": {
+    "icons": "node scripts/make-icons.mjs",
+    "build": "node web/build.mjs",
+    "test": "node --test tests/*.test.js",
+    "dev": "npm run build && tauri dev",
+    "tauri": "tauri"
+  }
+}

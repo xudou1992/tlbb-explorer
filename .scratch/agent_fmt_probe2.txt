@@ -1,0 +1,539 @@
+
+### w1351_model_emiter_lf002.mesh size=18408 vc=434 fc=528 sm=2 ver=1 tag=b'mesh' banner=False pos_end=0x1570
+    last16: ae 01 ae 01 b1 01 77 01 ff ff ff ff 00 00 00 00
+    count-array @0x3B78 (15224)  p%4=0 middle=9736 middle/vc=22.433 tail=8
+    counts=[264, 264] sum=528
+    block0: off=0x3B80 faces=264 min=0 max=211 first8=[0, 1, 2, 0, 3, 4, 3, 5] distinct_verts=212
+    block1: off=0x41B0 faces=264 min=212 max=433 first8=[212, 213, 214, 212, 215, 216, 216, 215] distinct_verts=222
+    index data ends at 0x47E0 (18400) ; file end 0x47E8; tail bytes=ff ff ff ff 00 00 00 00
+--- 48B before count array @0x3B48 ---
+  0x003b48 4d 8d b3 3e 06 eb 67 3f c3 33 d1 3e 2c 71 6a 3f  |M..>..g?.3.>,qj?|
+  0x003b58 18 ca df 3e 82 db 4e 3f ae 21 c0 3e 25 c5 54 3f  |...>..N?.!.>%.T?|
+  0x003b68 76 cc c3 3e d2 8c 4b 3f 28 5b e1 3e 3d 9d 45 3f  |v..>..K?([.>=.E?|
+--- first 64B of middle @0x1570 ---
+  0x001570 ec f6 af 3e b1 30 04 bd 9f 43 70 3f ae 94 17 35  |...>.0...Cp?...5|
+  0x001580 48 3c 65 bc 96 f9 7f 3f e3 22 ab 3e a9 94 09 bd  |H<e....?.".>....|
+  0x001590 69 1f 71 3f f4 94 bf 3e b1 70 f6 3c 23 47 6d 3f  |i.q?...>.p.<#Gm?|
+  0x0015a0 aa af 45 34 79 36 20 3c de fc 7f 3f 92 12 a3 b3  |..E4y6 <...?....|
+--- last 64B of middle @0x3B38 ---
+  0x003b38 0b 1e cd 3e 54 59 70 3f d4 37 c9 3e 7d 78 73 3f  |...>TYp?.7.>}xs?|
+  0x003b48 4d 8d b3 3e 06 eb 67 3f c3 33 d1 3e 2c 71 6a 3f  |M..>..g?.3.>,qj?|
+  0x003b58 18 ca df 3e 82 db 4e 3f ae 21 c0 3e 25 c5 54 3f  |...>..N?.!.>%.T?|
+  0x003b68 76 cc c3 3e d2 8c 4b 3f 28 5b e1 3e 3d 9d 45 3f  |v..>..K?([.>=.E?|
+    middle as f32[0:24]: 0.3437, -0.03227, 0.9385, 5.647e-07, -0.01399, 0.9999, 0.3343, -0.03359, 0.9419, 0.3742, 0.03008, 0.9269, 1.841e-07, 0.009779, 1, -7.594e-08, 0.2046, 0.9788, 1.46e-06, -0.06592, 0.9978, 0.3249, 0.1541, 0.9331
+    middle tail as f32: 0.3039, 0.8695, 0.3349, 0.8198, 0.353, 0.8749, 0.3397, 0.9155, 0.4006, 0.9389, 0.393, 0.9511, 0.3507, 0.9059, 0.4086, 0.9158, 0.4371, 0.808, 0.3753, 0.8311, 0.3824, 0.7951, 0.4401, 0.7719
+
+### w1351_st_fwzhongxing_001.mesh size=2206108 vc=47775 fc=36850 sm=7 ver=1 tag=b'mesh' banner=False pos_end=0x8c08c
+    last16: 9c ba 90 ba 90 ba 9a ba 99 ba 90 ba 9c ba 91 ba
+    count-array @0x1E49D4 (1984980)  p%4=0 middle=1411400 middle/vc=29.543 tail=0
+    counts=[26461, 1531, 12, 1752, 6772, 240, 82] sum=36850
+    block0: off=0x1E49F0 faces=26461 min=0 max=34914 first8=[0, 1, 2, 2, 3, 0, 4, 5] distinct_verts=34915
+    block1: off=0x20B61E faces=1531 min=34915 max=36743 first8=[34915, 34916, 34917, 34917, 34918, 34915, 34918, 34917] distinct_verts=1829
+    block2: off=0x20DA00 faces=12 min=36744 max=36766 first8=[36744, 36745, 36746, 36746, 36747, 36744, 36744, 36748] distinct_verts=23
+    block3: off=0x20DA48 faces=1752 min=36767 max=39704 first8=[36767, 36768, 36769, 36769, 36770, 36767, 36771, 36772] distinct_verts=2938
+    block4: off=0x210358 faces=6772 min=39705 max=47200 first8=[39705, 39706, 39707, 39706, 39705, 39708, 39705, 39707] distinct_verts=7496
+    block5: off=0x21A210 faces=240 min=47201 max=47680 first8=[47201, 47202, 47203, 47203, 47204, 47201, 47205, 47206] distinct_verts=480
+    block6: off=0x21A7B0 faces=82 min=47681 max=47774 first8=[47681, 47682, 47683, 47683, 47684, 47681, 47682, 47685] distinct_verts=94
+    index data ends at 0x21A99C (2206108) ; file end 0x21A99C; tail bytes=
+--- 48B before count array @0x1E49A4 ---
+  0x1e49a4 6e 24 e9 3b a0 a7 a2 3e 51 28 1a 3d 73 64 9f 3e  |n$.;...>Q(.=sd.>|
+  0x1e49b4 25 3a 1a 3d a4 a5 a2 3e a8 47 e5 3b 3f 1c 8e 3e  |%:.=...>.G.;?..>|
+  0x1e49c4 34 6f e1 3b fe 85 73 3e 33 48 19 3d 89 82 73 3e  |4o.;..s>3H.=..s>|
+--- first 64B of middle @0x8C08C ---
+  0x08c08c 23 aa f3 3b 10 97 0c 3f 89 ee 55 bf 1d 56 ab 3c  |#..;...?..U..V.<|
+  0x08c09c 7a f1 7f 3f 05 e6 1c bb ad 39 ba bc db ee 7f 3f  |z..?.....9.....?|
+  0x08c0ac 44 af 25 bb 50 35 87 bc 6a 8f 0c 3f 0c eb 55 bf  |D.%.P5..j..?..U.|
+  0x08c0bc fb 8d 92 3c 25 fa 13 3f 47 d9 50 3f 1c 3d 25 3c  |...<%..?G.P?.=%<|
+--- last 64B of middle @0x1E4994 ---
+  0x1e4994 78 d2 e9 3d 0d 60 9f 3e 0e cb 90 3d 8a 62 9f 3e  |x..=.`.>...=.b.>|
+  0x1e49a4 6e 24 e9 3b a0 a7 a2 3e 51 28 1a 3d 73 64 9f 3e  |n$.;...>Q(.=sd.>|
+  0x1e49b4 25 3a 1a 3d a4 a5 a2 3e a8 47 e5 3b 3f 1c 8e 3e  |%:.=...>.G.;?..>|
+  0x1e49c4 34 6f e1 3b fe 85 73 3e 33 48 19 3d 89 82 73 3e  |4o.;..s>3H.=..s>|
+    middle as f32[0:24]: 0.007436, 0.5492, -0.8357, 0.02092, 0.9998, -0.002394, -0.02273, 0.9997, -0.002528, -0.0165, 0.5491, -0.8356, 0.01789, 0.578, 0.8158, 0.01009, 0.6289, 0.7774, -0.0174, 0.6287, 0.7774, -0.00738, 0.5782, 0.8159
+    middle tail as f32: 0.07065, 0.2984, 0.07055, 0.2641, 0.1142, 0.2641, 0.1142, 0.2775, 0.1142, 0.3113, 0.0707, 0.3113, 0.007115, 0.3177, 0.03764, 0.3113, 0.03765, 0.3177, 0.006997, 0.2776, 0.00688, 0.2378, 0.03742, 0.2378
+
+### test_jianzhen.mesh size=2315476 vc=55864 fc=65942 sm=1 ver=1 tag=b'mesh' banner=False pos_end=0xa3bb8
+    last16: 35 da 35 da 34 da 36 da ff ff ff ff 00 00 00 00
+    count-array @0x1D4B44 (1919812)  p%4=0 middle=1249164 middle/vc=22.361 tail=8
+    counts=[65942] sum=65942
+    block0: off=0x1D4B48 faces=65942 min=0 max=55863 first8=[0, 1, 2, 2, 3, 0, 4, 5] distinct_verts=55864
+    index data ends at 0x2354CC (2315468) ; file end 0x2354D4; tail bytes=ff ff ff ff 00 00 00 00
+--- 48B before count array @0x1D4B14 ---
+  0x1d4b14 ba a0 3b 3f 17 6c e6 3e d1 09 3d 3f 14 94 3e 3f  |..;?.l.>..=?..>?|
+  0x1d4b24 ad 24 3e 3f fa fc d7 3e 0a 43 3a 3f b2 45 d8 3e  |.$>?...>.C:?.E.>|
+  0x1d4b34 49 d7 3c 3f 4f 5b c7 3e 49 89 39 3f 02 1e c8 3e  |I.<?O[.>I.9?...>|
+--- first 64B of middle @0xA3BB8 ---
+  0x0a3bb8 72 e5 5a bf 4e 50 d9 be 29 80 98 3e 70 97 25 bf  |r.Z.NP..)..>p.%.|
+  0x0a3bc8 4c c8 0e bf 1b 26 05 3f b4 08 4e bf 6e 11 87 bc  |L....&.?..N.n...|
+  0x0a3bd8 d2 e1 17 3f a5 37 63 bf 9d 73 c6 3c 54 8a eb 3e  |...?.7c..s.<T..>|
+  0x0a3be8 ff f5 b0 3d 0f 02 7c bf 0d e7 1c 3e 3a 83 10 bf  |...=..|....>:...|
+--- last 64B of middle @0x1D4B04 ---
+  0x1d4b04 e1 28 3e 3f b0 a0 f8 3e 7e e2 3f 3f 4d 66 e5 3e  |.(>?...>~.??Mf.>|
+  0x1d4b14 ba a0 3b 3f 17 6c e6 3e d1 09 3d 3f 14 94 3e 3f  |..;?.l.>..=?..>?|
+  0x1d4b24 ad 24 3e 3f fa fc d7 3e 0a 43 3a 3f b2 45 d8 3e  |.$>?...>.C:?.E.>|
+  0x1d4b34 49 d7 3c 3f 4f 5b c7 3e 49 89 39 3f 02 1e c8 3e  |I.<?O[.>I.9?...>|
+    middle as f32[0:24]: -0.8551, -0.4244, 0.2979, -0.6468, -0.5577, 0.5201, -0.8048, -0.01649, 0.5933, -0.8876, 0.02423, 0.46, 0.08641, -0.9844, 0.1532, -0.5645, -0.6832, 0.4632, -0.001148, -0.9999, 0.009945, -0.8733, 0.01634, 0.487
+    middle tail as f32: 0.7482, 0.5344, 0.7732, 0.5093, 0.7485, 0.5115, 0.7606, 0.4798, 0.7428, 0.4856, 0.7495, 0.448, 0.7329, 0.45, 0.7384, 0.7444, 0.7427, 0.4219, 0.7276, 0.4224, 0.7377, 0.3894, 0.7248, 0.3909
+
+### w1351_bmy_shanshi_009.mesh size=53336 vc=1064 fc=1311 sm=2 ver=1 tag=b'mesh' banner=False pos_end=0x32f8
+    last16: 25 04 23 04 25 04 24 04 26 04 26 04 27 04 25 04
+    count-array @0xB196 (45462)  p%4=2 middle=32414 middle/vc=30.464 tail=0
+    counts=[1262, 49] sum=1311
+    block0: off=0xB19E faces=1262 min=0 max=1004 first8=[0, 1, 2, 1, 3, 2, 4, 5] distinct_verts=1005
+    block1: off=0xCF32 faces=49 min=1005 max=1063 first8=[1005, 1006, 1007, 1007, 1008, 1005, 1006, 1009] distinct_verts=59
+    index data ends at 0xD058 (53336) ; file end 0xD058; tail bytes=
+--- 48B before count array @0xB166 ---
+  0x00b166 41 be 1b 3f 65 96 38 3f e2 32 1c 3f f2 41 52 3f  |A..?e.8?.2.?.AR?|
+  0x00b176 6b 13 24 3f 23 17 39 3f 9d 95 24 3f 1a c2 52 3f  |k.$?#.9?..$?..R?|
+  0x00b186 32 a5 29 3f 22 22 3c 3f 53 2b 2a 3f f0 cc 55 3f  |2.)?""<?S+*?..U?|
+--- first 64B of middle @0x32F8 ---
+  0x0032f8 71 96 e0 3e 7b 98 48 3f 0a 47 e1 3e c4 a4 3d 3f  |q..>{.H?.G.>..=?|
+  0x003308 d5 a3 2a 3f ae 53 aa bd ed 51 4d be f4 aa 7a 3f  |..*?.S...QM...z?|
+  0x003318 dc dc 02 bd 46 41 84 3e 40 77 75 3f a4 49 f1 bd  |....FA.>@wu?.I..|
+  0x003328 f0 b2 f6 be a8 ad 49 3f 8c 6f c4 be ef 2f 26 bf  |......I?.o.../&.|
+--- last 64B of middle @0xB156 ---
+  0x00b156 1c 9b 17 3f ec de 54 3f 64 2c 17 3f 07 33 3b 3f  |...?..T?d,.?.3;?|
+  0x00b166 41 be 1b 3f 65 96 38 3f e2 32 1c 3f f2 41 52 3f  |A..?e.8?.2.?.AR?|
+  0x00b176 6b 13 24 3f 23 17 39 3f 9d 95 24 3f 1a c2 52 3f  |k.$?#.9?..$?..R?|
+  0x00b186 32 a5 29 3f 22 22 3c 3f 53 2b 2a 3f f0 cc 55 3f  |2.)?""<?S+*?..U?|
+    middle as f32[0:24]: 0.4386, 0.7836, 0.44, 0.7408, 0.6666, -0.08317, -0.2005, 0.9792, -0.03195, 0.2583, 0.9589, -0.1178, -0.4818, 0.7878, -0.3837, -0.6492, 0.7605, 0.01537, -0.4568, 0.547, 0.7015, 0.672, -0.09466, 0.7345
+    middle tail as f32: 0.8748, 0.3342, 0.919, 0.418, 0.8968, 0.4117, 0.8774, 0.4176, 0.5922, 0.8315, 0.5905, 0.7312, 0.6084, 0.721, 0.6102, 0.8213, 0.6409, 0.723, 0.6429, 0.8233, 0.6627, 0.7349, 0.6647, 0.8352
+
+### w1351_bpzd_dashubaoshi_001.mesh size=33128 vc=739 fc=409 sm=4 ver=1 tag=b'mesh' banner=False pos_end=0x23bc
+    last16: df 02 e0 02 de 02 e1 02 df 02 de 02 e2 02 e1 02
+    count-array @0x77C2 (30658)  p%4=2 middle=21510 middle/vc=29.107 tail=0
+    counts=[138, 110, 108, 53] sum=409
+    block0: off=0x77D2 faces=138 min=0 max=235 first8=[0, 1, 2, 3, 4, 5, 2, 1] distinct_verts=236
+    block1: off=0x7B0E faces=110 min=236 max=452 first8=[236, 237, 238, 238, 239, 236, 240, 241] distinct_verts=217
+    block2: off=0x7DA2 faces=108 min=453 max=646 first8=[453, 454, 455, 455, 456, 453, 457, 458] distinct_verts=194
+    block3: off=0x802A faces=53 min=647 max=738 first8=[647, 648, 649, 650, 651, 652, 651, 650] distinct_verts=92
+    index data ends at 0x8168 (33128) ; file end 0x8168; tail bytes=
+--- 48B before count array @0x7792 ---
+  0x007792 07 28 57 3f d0 6c 10 3d 50 60 72 3f 8f 8d a4 3d  |.(W?.l.=P`r?...=|
+  0x0077a2 7e e2 79 3f 95 a3 6c 3d a0 c1 77 3f da 47 b6 3d  |~.y?..l=..w?.G.=|
+  0x0077b2 f0 65 73 3f f6 e1 2e 3d 44 5d 72 3f 0b 92 73 3d  |.es?...=D]r?..s=|
+--- first 64B of middle @0x23BC ---
+  0x0023bc f2 fa 84 be 2e a2 64 3f bf 0f bc 3e 53 88 ad bb  |......d?...>S...|
+  0x0023cc 94 e9 7f 3f 10 d7 d1 3c ba 28 9d 3d e7 53 75 3f  |...?...<.(.=.Su?|
+  0x0023dc aa ea 8c 3e 53 88 ad 3b 94 e9 7f bf 13 d7 d1 bc  |...>S..;........|
+  0x0023ec f3 fa 84 3e 2d a2 64 bf bf 0f bc be ba 28 9d bd  |...>-.d......(..|
+--- last 64B of middle @0x7782 ---
+  0x007782 d6 d5 53 3f d8 4c 5e 3b 8d 12 5e 3f 6f 12 03 3b  |..S?.L^;..^?o..;|
+  0x007792 07 28 57 3f d0 6c 10 3d 50 60 72 3f 8f 8d a4 3d  |.(W?.l.=P`r?...=|
+  0x0077a2 7e e2 79 3f 95 a3 6c 3d a0 c1 77 3f da 47 b6 3d  |~.y?..l=..w?.G.=|
+  0x0077b2 f0 65 73 3f f6 e1 2e 3d 44 5d 72 3f 0b 92 73 3d  |.es?...=D]r?..s=|
+    middle as f32[0:24]: -0.2597, 0.8931, 0.3673, -0.005296, 0.9997, 0.02562, 0.07674, 0.9583, 0.2752, 0.005296, -0.9997, -0.02562, 0.2597, -0.8931, -0.3673, -0.07674, -0.9583, -0.2752, 0.4032, 0.903, 0.1487, -0.4032, -0.903, -0.1487
+    middle tail as f32: 0.8995, 0.03823, 0.8995, 0.03823, 0.9065, 0.0538, 0.8918, 0.01559, 0.8275, 0.003392, 0.8675, 0.002, 0.8405, 0.03526, 0.9468, 0.08035, 0.9761, 0.05777, 0.9678, 0.089, 0.9508, 0.0427, 0.9467, 0.05947
+
+### w1351_bpzd_dasongshuduan_001.mesh size=12096 vc=259 fc=180 sm=4 ver=1 tag=b'mesh' banner=False pos_end=0xd3c
+    last16: 01 01 00 01 01 01 02 01 00 01 00 01 02 01 fe 00
+    count-array @0x2AF8 (11000)  p%4=0 middle=7612 middle/vc=29.390 tail=0
+    counts=[97, 60, 19, 4] sum=180
+    block0: off=0x2B08 faces=97 min=0 max=143 first8=[0, 1, 2, 2, 3, 0, 4, 5] distinct_verts=144
+    block1: off=0x2D4E faces=60 min=144 max=218 first8=[144, 145, 146, 145, 147, 146, 147, 148] distinct_verts=75
+    block2: off=0x2EB6 faces=19 min=219 max=253 first8=[219, 220, 221, 221, 222, 219, 223, 224] distinct_verts=35
+    block3: off=0x2F28 faces=4 min=254 max=258 first8=[254, 255, 256, 255, 257, 256, 257, 258] distinct_verts=5
+    index data ends at 0x2F40 (12096) ; file end 0x2F40; tail bytes=
+--- 48B before count array @0x2AC8 ---
+  0x002ac8 b0 17 95 3e 9b 65 27 3e 28 bf 37 3f 6f 12 03 3b  |...>.e'>(.7?o..;|
+  0x002ad8 73 65 55 3f 82 2d 9a 3d 41 e7 39 3f 74 cf d0 3d  |seU?.-.=A.9?t..=|
+  0x002ae8 98 31 3f 3f ad 05 4c 3e 91 88 22 3f ac da c9 3d  |.1??..L>.."?...=|
+--- first 64B of middle @0xD3C ---
+  0x000d3c 59 65 71 3f 8c a6 d8 3d e7 9f a1 be 38 5b a5 3e  |Yeq?...=....8[.>|
+  0x000d4c 3b a1 4c 3e aa d1 6c bf 25 89 02 3f 9a 0e c7 3d  |;.L>..l.%..?...=|
+  0x000d5c 0f cf 5a bf c4 fe 57 3f ee ff c7 3e 6b 7d bc be  |..Z...W?...>k}..|
+  0x000d6c 38 5b a5 3e 3b a1 4c 3e aa d1 6c bf f0 60 0a bf  |8[.>;.L>..l..`..|
+--- last 64B of middle @0x2AB8 ---
+  0x002ab8 9e 45 8d 3e 68 7d ee 3c 54 8e 7d 3e f9 08 10 3e  |.E.>h}.<T.}>...>|
+  0x002ac8 b0 17 95 3e 9b 65 27 3e 28 bf 37 3f 6f 12 03 3b  |...>.e'>(.7?o..;|
+  0x002ad8 73 65 55 3f 82 2d 9a 3d 41 e7 39 3f 74 cf d0 3d  |seU?.-.=A.9?t..=|
+  0x002ae8 98 31 3f 3f ad 05 4c 3e 91 88 22 3f ac da c9 3d  |.1??..L>.."?...=|
+    middle as f32[0:24]: 0.943, 0.1058, -0.3157, 0.323, 0.1998, -0.9251, 0.5099, 0.0972, -0.8547, 0.8437, 0.3906, -0.3681, 0.323, 0.1998, -0.9251, -0.5405, 0.2272, -0.81, -0.4085, 0.2176, -0.8864, -0.9498, 0.255, 0.1811
+    middle tail as f32: 0.3303, 0.1626, 0.3898, 0.1146, 0.4029, 0.1392, 0.3192, 0.1872, 0.2759, 0.02911, 0.2476, 0.1407, 0.2912, 0.1635, 0.7178, 0.002, 0.8336, 0.07528, 0.7262, 0.102, 0.7469, 0.1992, 0.6349, 0.09856
+
+### w1351_bpzd_gouhuoyuanguo_001.mesh size=26500 vc=578 fc=386 sm=3 ver=1 tag=b'mesh' banner=False pos_end=0x1c30
+    last16: 37 02 36 02 3a 02 40 02 41 02 41 02 3b 02 3a 02
+    count-array @0x5E6C (24172)  p%4=0 middle=16956 middle/vc=29.336 tail=0
+    counts=[66, 194, 126] sum=386
+    block0: off=0x5E78 faces=66 min=0 max=86 first8=[0, 1, 2, 3, 4, 5, 3, 5] distinct_verts=87
+    block1: off=0x6004 faces=194 min=87 max=371 first8=[87, 88, 89, 89, 90, 87, 91, 92] distinct_verts=285
+    block2: off=0x6490 faces=126 min=372 max=577 first8=[372, 373, 374, 374, 375, 372, 376, 377] distinct_verts=206
+    index data ends at 0x6784 (26500) ; file end 0x6784; tail bytes=
+--- 48B before count array @0x5E3C ---
+  0x005e3c bb ec e3 3e 55 a7 3d 3f ff 71 f0 3e a0 ac 3a 3f  |...>U.=?.q.>..:?|
+  0x005e4c 16 77 d4 3e b7 f0 3d 3f bb ec e3 3e 55 a7 3d 3f  |.w.>..=?...>U.=?|
+  0x005e5c ff 71 f0 3e a0 ac 3a 3f df 35 00 3f e8 f8 37 3f  |.q.>..:?.5.?..7?|
+--- first 64B of middle @0x1C30 ---
+  0x001c30 b9 07 1f 3f 09 51 44 3f 6f 2d 25 3e ff 27 29 3f  |...?.QD?o-%>.')?|
+  0x001c40 b3 c4 e6 3e af a6 19 3f 2c ab 7e 3f be 8c 21 3c  |...>...?,.~?..!<|
+  0x001c50 08 9e cf 3d 8f 72 6b 3e 83 2b 23 3c c7 20 79 bf  |...=.rk>.+#<. y.|
+  0x001c60 d9 0c 94 3c fb 1b c3 3e 68 a3 6c bf 17 bb 90 3e  |...<...>h.l....>|
+--- last 64B of middle @0x5E2C ---
+  0x005e2c a1 79 01 3f 28 7a 5a 3f c9 f7 07 3f 10 15 58 3f  |.y.?(zZ?...?..X?|
+  0x005e3c bb ec e3 3e 55 a7 3d 3f ff 71 f0 3e a0 ac 3a 3f  |...>U.=?.q.>..:?|
+  0x005e4c 16 77 d4 3e b7 f0 3d 3f bb ec e3 3e 55 a7 3d 3f  |.w.>..=?...>U.=?|
+  0x005e5c ff 71 f0 3e a0 ac 3a 3f df 35 00 3f e8 f8 37 3f  |.q.>..:?.5.?..7?|
+    middle as f32[0:24]: 0.6212, 0.7669, 0.1613, 0.6608, 0.4507, 0.6002, 0.9948, 0.00986, 0.1014, 0.2299, 0.009959, -0.9732, 0.01807, 0.3811, -0.9244, 0.2827, 0.2299, -0.9313, 0.3467, -0.009657, -0.9379, 0.4471, -0.1407, -0.8833
+    middle tail as f32: 0.4552, 0.8649, 0.4791, 0.8656, 0.5534, 0.9407, 0.5345, 0.9515, 0.5058, 0.8534, 0.5311, 0.8441, 0.4452, 0.7408, 0.4696, 0.7292, 0.415, 0.742, 0.4452, 0.7408, 0.4696, 0.7292, 0.5008, 0.7186
+
+### w1351_model_mianpian_l001.mesh size=424 vc=4 fc=2 sm=1 ver=0 tag=b'mesh' banner=False pos_end=0x148
+    last16: 02 00 00 00 00 00 01 00 02 00 02 00 03 00 00 00
+    count-array @0x198 (408)  p%4=0 middle=80 middle/vc=20.000 tail=0
+    counts=[2] sum=2
+    block0: off=0x19C faces=2 min=0 max=3 first8=[0, 1, 2, 2, 3, 0] distinct_verts=4
+    index data ends at 0x1A8 (424) ; file end 0x1A8; tail bytes=
+--- 48B before count array @0x168 ---
+  0x000168 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00  |...........?....|
+  0x000178 30 30 85 3a 00 00 00 00 1f eb 02 3f 00 00 00 00  |00.:.......?....|
+  0x000188 1f eb 02 3f 00 00 80 3f 30 30 85 3a 00 00 80 3f  |...?...?00.:...?|
+--- first 64B of middle @0x148 ---
+  0x000148 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00  |.......?........|
+  0x000158 00 00 80 3f 00 00 00 00 00 00 00 00 00 00 80 3f  |...?...........?|
+  0x000168 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00  |...........?....|
+  0x000178 30 30 85 3a 00 00 00 00 1f eb 02 3f 00 00 00 00  |00.:.......?....|
+--- last 64B of middle @0x158 ---
+  0x000158 00 00 80 3f 00 00 00 00 00 00 00 00 00 00 80 3f  |...?...........?|
+  0x000168 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00  |...........?....|
+  0x000178 30 30 85 3a 00 00 00 00 1f eb 02 3f 00 00 00 00  |00.:.......?....|
+  0x000188 1f eb 02 3f 00 00 80 3f 30 30 85 3a 00 00 80 3f  |...?...?00.:...?|
+    middle as f32[0:24]: 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0.001016, 0, 0.5114, 0, 0.5114, 1, 0.001016, 1, 2.803e-45, 9.184e-41, 1.837e-40, 4.204e-45
+    middle tail as f32: -15, -15, 0, -15, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0.001016, 0, 0.5114, 0, 0.5114, 1, 0.001016, 1
+
+### w1351_bmy_shanshi_008.mesh size=176352 vc=3366 fc=5178 sm=2 ver=1 tag=b'mesh' banner=False pos_end=0x9ee0
+    last16: 14 0d 22 0d e4 0c 22 0d 14 0d e2 0c 17 0d 22 0d
+    count-array @0x2377C (145276)  p%4=0 middle=104604 middle/vc=31.077 tail=0
+    counts=[4222, 956] sum=5178
+    block0: off=0x23784 faces=4222 min=0 max=2717 first8=[0, 1, 2, 3, 4, 5, 6, 5] distinct_verts=2718
+    block1: off=0x29A78 faces=956 min=2718 max=3365 first8=[2718, 2719, 2720, 2721, 2720, 2719, 2722, 2723] distinct_verts=648
+    index data ends at 0x2B0E0 (176352) ; file end 0x2B0E0; tail bytes=
+--- 48B before count array @0x2374C ---
+  0x02374c fb c9 12 3f 5e c3 58 3f dc e6 12 3f ac db 55 3f  |...?^.X?...?..U?|
+  0x02375c 09 af 22 3f 86 fb 58 3f 09 cb 23 3f 60 c5 53 3f  |.."?..X?..#?`.S?|
+  0x02376c f5 3c 24 3f 60 c5 53 3f 7e f0 12 3f fa e2 54 3f  |.<$?`.S?~..?..T?|
+--- first 64B of middle @0x9EE0 ---
+  0x009ee0 ba 68 7c 3f d3 b5 0a bd 03 5b 27 3e 57 df 4c 3f  |.h|?.....['>W.L?|
+  0x009ef0 78 ac 2b 3e a8 61 13 3f bf 02 7d 3f ba 28 ce bd  |x.+>.a.?..}?.(..|
+  0x009f00 53 43 ea 3d 12 f9 33 3f 38 db 57 be d0 e0 2d bf  |SC.=..3?8.W...-.|
+  0x009f10 7f 3d 5f 3f 98 36 40 be ae 6f e7 be 9d 8d 6f 3f  |.=_?.6@..o....o?|
+--- last 64B of middle @0x2373C ---
+  0x02373c cd 4f 15 3f aa 1e 5b 3f c6 9d 13 3f c4 7c 58 3f  |.O.?..[?...?.|X?|
+  0x02374c fb c9 12 3f 5e c3 58 3f dc e6 12 3f ac db 55 3f  |...?^.X?...?..U?|
+  0x02375c 09 af 22 3f 86 fb 58 3f 09 cb 23 3f 60 c5 53 3f  |.."?..X?..#?`.S?|
+  0x02376c f5 3c 24 3f 60 c5 53 3f 7e f0 12 3f fa e2 54 3f  |.<$?`.S?~..?..T?|
+    middle as f32[0:24]: 0.986, -0.03386, 0.1634, 0.8003, 0.1677, 0.5757, 0.9883, -0.1007, 0.1144, 0.703, -0.2108, -0.6792, 0.872, -0.1877, -0.452, 0.9358, -0.1487, -0.3197, 0.9342, -0.2263, -0.2759, 0.6812, -0.3992, 0.6136
+    middle tail as f32: 0.584, 0.8534, 0.5768, 0.8245, 0.5741, 0.8286, 0.5771, 0.8279, 0.5832, 0.8559, 0.5766, 0.8457, 0.5734, 0.8467, 0.5738, 0.8354, 0.6355, 0.8476, 0.6398, 0.8272, 0.6416, 0.8272, 0.574, 0.8316
+
+### w1351_bmy_shanshi_009.mesh size=53336 vc=1064 fc=1311 sm=2 ver=1 tag=b'mesh' banner=False pos_end=0x32f8
+    last16: 25 04 23 04 25 04 24 04 26 04 26 04 27 04 25 04
+    count-array @0xB196 (45462)  p%4=2 middle=32414 middle/vc=30.464 tail=0
+    counts=[1262, 49] sum=1311
+    block0: off=0xB19E faces=1262 min=0 max=1004 first8=[0, 1, 2, 1, 3, 2, 4, 5] distinct_verts=1005
+    block1: off=0xCF32 faces=49 min=1005 max=1063 first8=[1005, 1006, 1007, 1007, 1008, 1005, 1006, 1009] distinct_verts=59
+    index data ends at 0xD058 (53336) ; file end 0xD058; tail bytes=
+--- 48B before count array @0xB166 ---
+  0x00b166 41 be 1b 3f 65 96 38 3f e2 32 1c 3f f2 41 52 3f  |A..?e.8?.2.?.AR?|
+  0x00b176 6b 13 24 3f 23 17 39 3f 9d 95 24 3f 1a c2 52 3f  |k.$?#.9?..$?..R?|
+  0x00b186 32 a5 29 3f 22 22 3c 3f 53 2b 2a 3f f0 cc 55 3f  |2.)?""<?S+*?..U?|
+--- first 64B of middle @0x32F8 ---
+  0x0032f8 71 96 e0 3e 7b 98 48 3f 0a 47 e1 3e c4 a4 3d 3f  |q..>{.H?.G.>..=?|
+  0x003308 d5 a3 2a 3f ae 53 aa bd ed 51 4d be f4 aa 7a 3f  |..*?.S...QM...z?|
+  0x003318 dc dc 02 bd 46 41 84 3e 40 77 75 3f a4 49 f1 bd  |....FA.>@wu?.I..|
+  0x003328 f0 b2 f6 be a8 ad 49 3f 8c 6f c4 be ef 2f 26 bf  |......I?.o.../&.|
+--- last 64B of middle @0xB156 ---
+  0x00b156 1c 9b 17 3f ec de 54 3f 64 2c 17 3f 07 33 3b 3f  |...?..T?d,.?.3;?|
+  0x00b166 41 be 1b 3f 65 96 38 3f e2 32 1c 3f f2 41 52 3f  |A..?e.8?.2.?.AR?|
+  0x00b176 6b 13 24 3f 23 17 39 3f 9d 95 24 3f 1a c2 52 3f  |k.$?#.9?..$?..R?|
+  0x00b186 32 a5 29 3f 22 22 3c 3f 53 2b 2a 3f f0 cc 55 3f  |2.)?""<?S+*?..U?|
+    middle as f32[0:24]: 0.4386, 0.7836, 0.44, 0.7408, 0.6666, -0.08317, -0.2005, 0.9792, -0.03195, 0.2583, 0.9589, -0.1178, -0.4818, 0.7878, -0.3837, -0.6492, 0.7605, 0.01537, -0.4568, 0.547, 0.7015, 0.672, -0.09466, 0.7345
+    middle tail as f32: 0.8748, 0.3342, 0.919, 0.418, 0.8968, 0.4117, 0.8774, 0.4176, 0.5922, 0.8315, 0.5905, 0.7312, 0.6084, 0.721, 0.6102, 0.8213, 0.6409, 0.723, 0.6429, 0.8233, 0.6627, 0.7349, 0.6647, 0.8352
+
+### w1351_bmy_yabianshu_004.mesh size=172153 vc=2892 fc=1214 sm=3 ver=1 tag=b'mesh' banner=False pos_end=0x88a8
+    last16: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80 3f
+    NO FIT for tail in 0..64
+
+### w1351_bpzd_dasongshujiao_001.mesh size=14108 vc=301 fc=222 sm=3 ver=1 tag=b'mesh' banner=False pos_end=0xf34
+    last16: 29 01 2b 01 2b 01 29 01 2c 01 29 01 28 01 2c 01
+    count-array @0x31DC (12764)  p%4=0 middle=8872 middle/vc=29.475 tail=0
+    counts=[134, 8, 80] sum=222
+    block0: off=0x31E8 faces=134 min=0 max=190 first8=[0, 1, 2, 2, 3, 0, 4, 5] distinct_verts=191
+    block1: off=0x350C faces=8 min=191 max=200 first8=[191, 192, 193, 192, 194, 193, 194, 195] distinct_verts=10
+    block2: off=0x353C faces=80 min=201 max=300 first8=[201, 202, 203, 202, 204, 203, 204, 205] distinct_verts=100
+    index data ends at 0x371C (14108) ; file end 0x371C; tail bytes=
+--- 48B before count array @0x31AC ---
+  0x0031ac 6a c4 d3 3e c3 bf 88 3e 67 69 f3 3e ef f4 5e 3f  |j..>...>gi.>..^?|
+  0x0031bc 07 8e e2 3e 78 66 4a 3f a5 38 fc 3e 71 87 42 3f  |...>xfJ?.8.>q.B?|
+  0x0031cc 4b b0 cb 3e ed ac 34 3f fc 3a b8 3e 33 89 50 3f  |K..>..4?.:.>3.P?|
+--- first 64B of middle @0xF34 ---
+  0x000f34 5f 63 73 3f 10 46 3d 3e aa d8 7e be 59 af 76 3f  |_cs?.F=>..~.Y.v?|
+  0x000f44 12 69 55 3e 5e 65 2b 3e af a6 28 3f 3c 10 6b 3e  |.iU>^e+>..(?<.k>|
+  0x000f54 11 69 37 bf 41 78 9c 3e eb 69 63 3e 8e 07 6d bf  |.i7.Ax.>.ic>..m.|
+  0x000f64 41 78 9c 3e eb 69 63 3e 8e 07 6d bf af a6 28 3f  |Ax.>.ic>..m...(?|
+--- last 64B of middle @0x319C ---
+  0x00319c bf b7 ff 3e c9 f0 88 3e ba 1a 05 3f e3 c0 b3 3e  |...>...>...?...>|
+  0x0031ac 6a c4 d3 3e c3 bf 88 3e 67 69 f3 3e ef f4 5e 3f  |j..>...>gi.>..^?|
+  0x0031bc 07 8e e2 3e 78 66 4a 3f a5 38 fc 3e 71 87 42 3f  |...>xfJ?.8.>q.B?|
+  0x0031cc 4b b0 cb 3e ed ac 34 3f fc 3a b8 3e 33 89 50 3f  |K..>..4?.:.>3.P?|
+    middle as f32[0:24]: 0.9507, 0.1848, -0.2489, 0.9636, 0.2084, 0.1674, 0.6588, 0.2296, -0.7164, 0.3056, 0.2221, -0.9259, 0.3056, 0.2221, -0.9259, 0.6588, 0.2296, -0.7164, -0.1383, 0.2528, -0.9576, -0.5553, 0.2519, -0.7926
+    middle tail as f32: 0.3433, 0.5619, 0.2965, 0.6825, 0.4959, 0.1841, 0.5813, 0.2454, 0.4994, 0.2675, 0.5199, 0.3511, 0.4136, 0.2671, 0.4754, 0.8709, 0.4425, 0.7906, 0.4926, 0.7599, 0.3978, 0.7058, 0.3598, 0.8146
+
+### w1351_bpzd_dashubaoshi_001.mesh size=33128 vc=739 fc=409 sm=4 ver=1 tag=b'mesh' banner=False pos_end=0x23bc
+    last16: df 02 e0 02 de 02 e1 02 df 02 de 02 e2 02 e1 02
+    count-array @0x77C2 (30658)  p%4=2 middle=21510 middle/vc=29.107 tail=0
+    counts=[138, 110, 108, 53] sum=409
+    block0: off=0x77D2 faces=138 min=0 max=235 first8=[0, 1, 2, 3, 4, 5, 2, 1] distinct_verts=236
+    block1: off=0x7B0E faces=110 min=236 max=452 first8=[236, 237, 238, 238, 239, 236, 240, 241] distinct_verts=217
+    block2: off=0x7DA2 faces=108 min=453 max=646 first8=[453, 454, 455, 455, 456, 453, 457, 458] distinct_verts=194
+    block3: off=0x802A faces=53 min=647 max=738 first8=[647, 648, 649, 650, 651, 652, 651, 650] distinct_verts=92
+    index data ends at 0x8168 (33128) ; file end 0x8168; tail bytes=
+--- 48B before count array @0x7792 ---
+  0x007792 07 28 57 3f d0 6c 10 3d 50 60 72 3f 8f 8d a4 3d  |.(W?.l.=P`r?...=|
+  0x0077a2 7e e2 79 3f 95 a3 6c 3d a0 c1 77 3f da 47 b6 3d  |~.y?..l=..w?.G.=|
+  0x0077b2 f0 65 73 3f f6 e1 2e 3d 44 5d 72 3f 0b 92 73 3d  |.es?...=D]r?..s=|
+--- first 64B of middle @0x23BC ---
+  0x0023bc f2 fa 84 be 2e a2 64 3f bf 0f bc 3e 53 88 ad bb  |......d?...>S...|
+  0x0023cc 94 e9 7f 3f 10 d7 d1 3c ba 28 9d 3d e7 53 75 3f  |...?...<.(.=.Su?|
+  0x0023dc aa ea 8c 3e 53 88 ad 3b 94 e9 7f bf 13 d7 d1 bc  |...>S..;........|
+  0x0023ec f3 fa 84 3e 2d a2 64 bf bf 0f bc be ba 28 9d bd  |...>-.d......(..|
+--- last 64B of middle @0x7782 ---
+  0x007782 d6 d5 53 3f d8 4c 5e 3b 8d 12 5e 3f 6f 12 03 3b  |..S?.L^;..^?o..;|
+  0x007792 07 28 57 3f d0 6c 10 3d 50 60 72 3f 8f 8d a4 3d  |.(W?.l.=P`r?...=|
+  0x0077a2 7e e2 79 3f 95 a3 6c 3d a0 c1 77 3f da 47 b6 3d  |~.y?..l=..w?.G.=|
+  0x0077b2 f0 65 73 3f f6 e1 2e 3d 44 5d 72 3f 0b 92 73 3d  |.es?...=D]r?..s=|
+    middle as f32[0:24]: -0.2597, 0.8931, 0.3673, -0.005296, 0.9997, 0.02562, 0.07674, 0.9583, 0.2752, 0.005296, -0.9997, -0.02562, 0.2597, -0.8931, -0.3673, -0.07674, -0.9583, -0.2752, 0.4032, 0.903, 0.1487, -0.4032, -0.903, -0.1487
+    middle tail as f32: 0.8995, 0.03823, 0.8995, 0.03823, 0.9065, 0.0538, 0.8918, 0.01559, 0.8275, 0.003392, 0.8675, 0.002, 0.8405, 0.03526, 0.9468, 0.08035, 0.9761, 0.05777, 0.9678, 0.089, 0.9508, 0.0427, 0.9467, 0.05947
+
+### w1351_bpzd_dasongshuduan_001.mesh size=12096 vc=259 fc=180 sm=4 ver=1 tag=b'mesh' banner=False pos_end=0xd3c
+    last16: 01 01 00 01 01 01 02 01 00 01 00 01 02 01 fe 00
+    count-array @0x2AF8 (11000)  p%4=0 middle=7612 middle/vc=29.390 tail=0
+    counts=[97, 60, 19, 4] sum=180
+    block0: off=0x2B08 faces=97 min=0 max=143 first8=[0, 1, 2, 2, 3, 0, 4, 5] distinct_verts=144
+    block1: off=0x2D4E faces=60 min=144 max=218 first8=[144, 145, 146, 145, 147, 146, 147, 148] distinct_verts=75
+    block2: off=0x2EB6 faces=19 min=219 max=253 first8=[219, 220, 221, 221, 222, 219, 223, 224] distinct_verts=35
+    block3: off=0x2F28 faces=4 min=254 max=258 first8=[254, 255, 256, 255, 257, 256, 257, 258] distinct_verts=5
+    index data ends at 0x2F40 (12096) ; file end 0x2F40; tail bytes=
+--- 48B before count array @0x2AC8 ---
+  0x002ac8 b0 17 95 3e 9b 65 27 3e 28 bf 37 3f 6f 12 03 3b  |...>.e'>(.7?o..;|
+  0x002ad8 73 65 55 3f 82 2d 9a 3d 41 e7 39 3f 74 cf d0 3d  |seU?.-.=A.9?t..=|
+  0x002ae8 98 31 3f 3f ad 05 4c 3e 91 88 22 3f ac da c9 3d  |.1??..L>.."?...=|
+--- first 64B of middle @0xD3C ---
+  0x000d3c 59 65 71 3f 8c a6 d8 3d e7 9f a1 be 38 5b a5 3e  |Yeq?...=....8[.>|
+  0x000d4c 3b a1 4c 3e aa d1 6c bf 25 89 02 3f 9a 0e c7 3d  |;.L>..l.%..?...=|
+  0x000d5c 0f cf 5a bf c4 fe 57 3f ee ff c7 3e 6b 7d bc be  |..Z...W?...>k}..|
+  0x000d6c 38 5b a5 3e 3b a1 4c 3e aa d1 6c bf f0 60 0a bf  |8[.>;.L>..l..`..|
+--- last 64B of middle @0x2AB8 ---
+  0x002ab8 9e 45 8d 3e 68 7d ee 3c 54 8e 7d 3e f9 08 10 3e  |.E.>h}.<T.}>...>|
+  0x002ac8 b0 17 95 3e 9b 65 27 3e 28 bf 37 3f 6f 12 03 3b  |...>.e'>(.7?o..;|
+  0x002ad8 73 65 55 3f 82 2d 9a 3d 41 e7 39 3f 74 cf d0 3d  |seU?.-.=A.9?t..=|
+  0x002ae8 98 31 3f 3f ad 05 4c 3e 91 88 22 3f ac da c9 3d  |.1??..L>.."?...=|
+    middle as f32[0:24]: 0.943, 0.1058, -0.3157, 0.323, 0.1998, -0.9251, 0.5099, 0.0972, -0.8547, 0.8437, 0.3906, -0.3681, 0.323, 0.1998, -0.9251, -0.5405, 0.2272, -0.81, -0.4085, 0.2176, -0.8864, -0.9498, 0.255, 0.1811
+    middle tail as f32: 0.3303, 0.1626, 0.3898, 0.1146, 0.4029, 0.1392, 0.3192, 0.1872, 0.2759, 0.02911, 0.2476, 0.1407, 0.2912, 0.1635, 0.7178, 0.002, 0.8336, 0.07528, 0.7262, 0.102, 0.7469, 0.1992, 0.6349, 0.09856
+
+### w1351_bpzd_yijijiaochang_001.mesh size=187484 vc=4168 fc=2558 sm=5 ver=1 tag=b'mesh' banner=False pos_end=0xc478
+    last16: 43 10 40 10 44 10 45 10 46 10 46 10 47 10 44 10
+    count-array @0x2A054 (172116)  p%4=0 middle=121820 middle/vc=29.227 tail=0
+    counts=[62, 376, 558, 602, 960] sum=2558
+    block0: off=0x2A068 faces=62 min=0 max=125 first8=[0, 1, 2, 2, 3, 0, 4, 5] distinct_verts=126
+    block1: off=0x2A1DC faces=376 min=126 max=589 first8=[126, 127, 128, 129, 130, 131, 131, 132] distinct_verts=464
+    block2: off=0x2AAAC faces=558 min=590 max=1323 first8=[590, 591, 592, 592, 593, 590, 594, 595] distinct_verts=734
+    block3: off=0x2B7C0 faces=602 min=1324 max=2501 first8=[1324, 1325, 1326, 1324, 1327, 1328, 1324, 1329] distinct_verts=1178
+    block4: off=0x2C5DC faces=960 min=2502 max=4167 first8=[2502, 2503, 2504, 2504, 2505, 2502, 2506, 2507] distinct_verts=1666
+    index data ends at 0x2DC5C (187484) ; file end 0x2DC5C; tail bytes=
+--- 48B before count array @0x2A024 ---
+  0x02a024 ff 1c 2c 3f c4 a4 d2 3e 10 8d 00 3f 20 89 d4 3e  |..,?...>...? ..>|
+  0x02a034 96 c7 40 3f 05 36 eb 3e 6b c7 6a 3f c7 6e ec 3e  |..@?.6.>k.j?.n.>|
+  0x02a044 1e be 6a 3f 56 72 ee 3e 98 c3 40 3f e3 4d ed 3e  |..j?Vr.>..@?.M.>|
+--- first 64B of middle @0xC478 ---
+  0x00c478 00 00 80 bf 00 00 00 00 75 dc 00 b5 00 00 80 bf  |........u.......|
+  0x00c488 00 00 00 00 75 dc 00 b5 00 00 80 bf 00 00 00 00  |....u...........|
+  0x00c498 75 dc 00 b5 00 00 80 bf 00 00 00 00 75 dc 00 b5  |u...........u...|
+  0x00c4a8 63 8c 22 3f df d5 23 3f d1 8e dd 3e df 8c 22 3f  |c."?..#?...>.."?|
+--- last 64B of middle @0x2A014 ---
+  0x02a014 98 a4 00 3f 0c e7 d1 3e 35 38 2c 3f dc 1b d0 3e  |...?...>58,?...>|
+  0x02a024 ff 1c 2c 3f c4 a4 d2 3e 10 8d 00 3f 20 89 d4 3e  |..,?...>...? ..>|
+  0x02a034 96 c7 40 3f 05 36 eb 3e 6b c7 6a 3f c7 6e ec 3e  |..@?.6.>k.j?.n.>|
+  0x02a044 1e be 6a 3f 56 72 ee 3e 98 c3 40 3f e3 4d ed 3e  |..j?Vr.>..@?.M.>|
+    middle as f32[0:24]: -1, 0, -4.8e-07, -1, 0, -4.8e-07, -1, 0, -4.8e-07, -1, 0, -4.8e-07, 0.635, 0.64, 0.4327, 0.635, 0.64, 0.4327, 0.635, 0.64, 0.4327, 0.6349, 0.64, 0.4327
+    middle tail as f32: 0.456, 0.5796, 0.583, 0.5847, 0.5822, 0.5891, 0.4552, 0.5842, 0.5025, 0.41, 0.6727, 0.4065, 0.6723, 0.4114, 0.5022, 0.4151, 0.753, 0.4594, 0.9171, 0.4618, 0.917, 0.4657, 0.753, 0.4635
+
+### w1351_bpzd_yijixiangfang_001.mesh size=56012 vc=1230 fc=814 sm=5 ver=1 tag=b'mesh' banner=False pos_end=0x3ac0
+    last16: cc 04 c7 04 cc 04 cd 04 c7 04 cd 04 c5 04 c7 04
+    count-array @0xC7A4 (51108)  p%4=0 middle=36068 middle/vc=29.324 tail=0
+    counts=[188, 158, 220, 4, 244] sum=814
+    block0: off=0xC7B8 faces=188 min=0 max=319 first8=[0, 1, 2, 3, 4, 5, 6, 7] distinct_verts=320
+    block1: off=0xCC20 faces=158 min=320 max=510 first8=[320, 321, 322, 322, 323, 320, 324, 325] distinct_verts=191
+    block2: off=0xCFD4 faces=220 min=511 max=858 first8=[511, 512, 513, 513, 514, 511, 512, 515] distinct_verts=348
+    block3: off=0xD4FC faces=4 min=859 max=864 first8=[859, 860, 861, 861, 862, 859, 863, 864] distinct_verts=6
+    block4: off=0xD514 faces=244 min=865 max=1229 first8=[865, 866, 867, 867, 868, 865, 869, 870] distinct_verts=365
+    index data ends at 0xDACC (56012) ; file end 0xDACC; tail bytes=
+--- 48B before count array @0xC774 ---
+  0x00c774 bc 19 08 3f 00 8f 60 3f 69 e3 07 3f 51 22 5a 3f  |...?..`?i..?Q"Z?|
+  0x00c784 3d ea 0b 3f 8e 6d 55 3f 6d d2 11 3f 58 32 55 3f  |=..?.mU?m..?X2U?|
+  0x00c794 31 26 16 3f 87 93 59 3f 90 5c 16 3f 5d 00 60 3f  |1&.?..Y?.\.?].`?|
+--- first 64B of middle @0x3AC0 ---
+  0x003ac0 0e d1 7a bf 92 31 4a be 59 a7 07 bd 0e d1 7a bf  |..z..1J.Y.....z.|
+  0x003ad0 92 31 4a be 59 a7 07 bd 0e d1 7a bf 92 31 4a be  |.1J.Y.....z..1J.|
+  0x003ae0 59 a7 07 bd 65 3b 9d bd 3d 96 7e 3f 5f 7a 92 bd  |Y...e;..=.~?_z..|
+  0x003af0 65 3b 9d bd 3d 96 7e 3f 5f 7a 92 bd 65 3b 9d bd  |e;..=.~?_z..e;..|
+--- last 64B of middle @0xC764 ---
+  0x00c764 6c 6d 0c 3f 42 f0 64 3f 00 20 0f 3f 5f 11 5d 3f  |lm.?B.d?. .?_.]?|
+  0x00c774 bc 19 08 3f 00 8f 60 3f 69 e3 07 3f 51 22 5a 3f  |...?..`?i..?Q"Z?|
+  0x00c784 3d ea 0b 3f 8e 6d 55 3f 6d d2 11 3f 58 32 55 3f  |=..?.mU?m..?X2U?|
+  0x00c794 31 26 16 3f 87 93 59 3f 90 5c 16 3f 5d 00 60 3f  |1&.?..Y?.\.?].`?|
+    middle as f32[0:24]: -0.9798, -0.1975, -0.03312, -0.9798, -0.1975, -0.03312, -0.9798, -0.1975, -0.03312, -0.07677, 0.9945, -0.07152, -0.07677, 0.9945, -0.07152, -0.07677, 0.9945, -0.07152, 0.9929, -0.05356, -0.1059, 0.9929, -0.05356, -0.1059
+    middle tail as f32: 0.6786, 0.587, 0.6787, 0.5955, 0.6786, 0.587, 0.5716, 0.8934, 0.5485, 0.8943, 0.5591, 0.8635, 0.5316, 0.8772, 0.5308, 0.8521, 0.5465, 0.8337, 0.5696, 0.8328, 0.5865, 0.8499, 0.5873, 0.875
+
+### w1351_bpzd_wujichenglou_001.mesh size=81552 vc=1818 fc=1066 sm=6 ver=1 tag=b'mesh' banner=False pos_end=0x5650
+    last16: 15 07 12 07 16 07 17 07 18 07 18 07 19 07 16 07
+    count-array @0x1257C (75132)  p%4=0 middle=53036 middle/vc=29.173 tail=0
+    counts=[68, 10, 108, 586, 270, 24] sum=1066
+    block0: off=0x12594 faces=68 min=0 max=135 first8=[0, 1, 2, 2, 3, 0, 4, 5] distinct_verts=136
+    block1: off=0x1272C faces=10 min=136 max=151 first8=[136, 137, 138, 138, 139, 140, 136, 138] distinct_verts=16
+    block2: off=0x12768 faces=108 min=152 max=335 first8=[152, 153, 154, 154, 155, 152, 156, 157] distinct_verts=184
+    block3: off=0x129F0 faces=586 min=336 max=1384 first8=[336, 337, 338, 338, 339, 336, 340, 341] distinct_verts=1049
+    block4: off=0x137AC faces=270 min=1385 max=1761 first8=[1385, 1386, 1387, 1387, 1388, 1385, 1389, 1385] distinct_verts=377
+    block5: off=0x13E00 faces=24 min=1762 max=1817 first8=[1762, 1763, 1764, 1765, 1766, 1767, 1768, 1769] distinct_verts=56
+    index data ends at 0x13E90 (81552) ; file end 0x13E90; tail bytes=
+--- 48B before count array @0x1254C ---
+  0x01254c 19 59 d0 c4 e5 46 22 c4 19 59 d0 c4 ac 43 22 c4  |.Y...F"..Y...C".|
+  0x01255c 19 59 d0 c4 ac 43 22 c4 19 59 d0 c4 e5 46 22 c4  |.Y...C"..Y...F".|
+  0x01256c 19 59 d0 c4 b5 77 1d c4 19 59 d0 c4 05 6f 1d c4  |.Y...w...Y...o..|
+--- first 64B of middle @0x5650 ---
+  0x005650 73 05 4e 3f fd e1 1f bb ea f4 17 3f 22 e4 48 3f  |s.N?.......?".H?|
+  0x005660 00 00 00 00 99 ad 1e 3f 73 05 4e 3f fd e1 1f bb  |.......?s.N?....|
+  0x005670 ea f4 17 3f ea ec 52 3f 89 cb 9f bb 8f 11 11 3f  |...?..R?.......?|
+  0x005680 12 5f 31 3f b2 ea 4e 34 60 98 38 bf 33 5f 31 3f  |._1?..N4`.8.3_1?|
+--- last 64B of middle @0x1253C ---
+  0x01253c b7 89 c9 c4 ac 43 22 c4 b7 89 c9 c4 e5 46 22 c4  |.....C"......F".|
+  0x01254c 19 59 d0 c4 e5 46 22 c4 19 59 d0 c4 ac 43 22 c4  |.Y...F"..Y...C".|
+  0x01255c 19 59 d0 c4 ac 43 22 c4 19 59 d0 c4 e5 46 22 c4  |.Y...C"..Y...F".|
+  0x01256c 19 59 d0 c4 b5 77 1d c4 19 59 d0 c4 05 6f 1d c4  |.Y...w...Y...o..|
+    middle as f32[0:24]: 0.8048, -0.00244, 0.5936, 0.7847, 0, 0.6198, 0.8048, -0.00244, 0.5936, 0.8239, -0.004877, 0.5667, 0.6929, 1.927e-07, -0.7211, 0.6929, 3.854e-07, -0.7211, 0.6929, 1.927e-07, -0.7211, 0.6929, 0, -0.7211
+    middle tail as f32: -1954, -649.1, -1954, -629.7, -1954, -629.9, -1954, -649.1, -1612, -649.1, -1612, -649.1, -1667, -649.1, -1667, -649.1, -1667, -649.1, -1667, -649.1, -1667, -629.9, -1667, -629.7
+
+### w1351_cbs_fwtiequanlian_001.mesh size=81792 vc=1766 fc=1356 sm=6 ver=1 tag=b'mesh' banner=False pos_end=0x53e0
+    last16: e3 06 db 06 dd 06 dc 06 e4 06 e4 06 e5 06 dd 06
+    count-array @0x11FA0 (73632)  p%4=0 middle=52160 middle/vc=29.536 tail=0
+    counts=[80, 52, 164, 376, 140, 544] sum=1356
+    block0: off=0x11FB8 faces=80 min=0 max=115 first8=[0, 1, 2, 2, 3, 0, 4, 5] distinct_verts=116
+    block1: off=0x12198 faces=52 min=116 max=157 first8=[116, 117, 118, 118, 119, 116, 117, 120] distinct_verts=42
+    block2: off=0x122D0 faces=164 min=158 max=415 first8=[158, 159, 160, 160, 161, 158, 162, 163] distinct_verts=258
+    block3: off=0x126A8 faces=376 min=416 max=911 first8=[416, 417, 418, 418, 419, 416, 420, 421] distinct_verts=496
+    block4: off=0x12F78 faces=140 min=912 max=1149 first8=[912, 913, 914, 914, 915, 912, 916, 917] distinct_verts=238
+    block5: off=0x132C0 faces=544 min=1150 max=1765 first8=[1150, 1151, 1152, 1152, 1153, 1150, 1154, 1155] distinct_verts=616
+    index data ends at 0x13F80 (81792) ; file end 0x13F80; tail bytes=
+--- 48B before count array @0x11F70 ---
+  0x011f70 e4 98 5b 3f 89 b4 62 3f b9 86 5b 3f 60 ee 61 3f  |..[?..b?..[?`.a?|
+  0x011f80 cf c7 77 3f a1 17 38 3f 96 d4 77 3f 2f de 38 3f  |..w?..8?..w?/.8?|
+  0x011f90 37 b7 77 3f 57 3d 37 3f cf c7 77 3f a1 17 38 3f  |7.w?W=7?..w?..8?|
+--- first 64B of middle @0x53E0 ---
+  0x0053e0 af 3c 6c bb fd 2e ad 3e a2 e8 70 3f e2 74 fc 3a  |.<l....>..p?.t.:|
+  0x0053f0 64 84 f4 3e 49 eb 60 3f f2 6b a5 bb 57 6c 46 3e  |d..>I.`?.k..WlF>|
+  0x005400 02 25 7b 3f f9 23 0e bc 06 ee 46 3e ef 1c 7b 3f  |.%{?.#....F>..{?|
+  0x005410 53 7e c2 39 55 ae 7c 3f 31 5b 24 be 79 aa 0b bb  |S~.9U.|?1[$.y...|
+--- last 64B of middle @0x11F60 ---
+  0x011f60 b9 86 5b 3f 60 ee 61 3f 8a 74 5b 3f 31 14 61 3f  |..[?`.a?.t[?1.a?|
+  0x011f70 e4 98 5b 3f 89 b4 62 3f b9 86 5b 3f 60 ee 61 3f  |..[?..b?..[?`.a?|
+  0x011f80 cf c7 77 3f a1 17 38 3f 96 d4 77 3f 2f de 38 3f  |..w?..8?..w?/.8?|
+  0x011f90 37 b7 77 3f 57 3d 37 3f cf c7 77 3f a1 17 38 3f  |7.w?W=7?..w?..8?|
+    middle as f32[0:24]: -0.003605, 0.3382, 0.941, 0.001926, 0.4776, 0.8786, -0.005048, 0.1938, 0.981, -0.008676, 0.1943, 0.9809, 0.000371, 0.987, -0.1605, -0.002131, 0.8016, -0.5979, -0.001409, 0.9234, -0.3838, -0.0008999, 0.9871, -0.1602
+    middle tail as f32: 0.9597, 0.7236, 0.962, 0.7255, 0.9572, 0.7215, 0.9597, 0.7236, 0.8575, 0.8825, 0.8572, 0.8792, 0.8578, 0.8856, 0.8575, 0.8825, 0.9679, 0.7191, 0.9681, 0.7221, 0.9676, 0.7158, 0.9679, 0.7191
+
+### w1351_bpzd_wujichenglouqiao_001.mesh size=216500 vc=4786 fc=3094 sm=7 ver=1 tag=b'mesh' banner=False pos_end=0xe170
+    last16: ad 12 aa 12 ae 12 af 12 b0 12 b0 12 b1 12 ae 12
+    count-array @0x30514 (197908)  p%4=0 middle=140196 middle/vc=29.293 tail=0
+    counts=[1540, 24, 280, 110, 24, 620, 496] sum=3094
+    block0: off=0x30530 faces=1540 min=0 max=2126 first8=[0, 1, 2, 2, 3, 0, 4, 5] distinct_verts=2127
+    block1: off=0x32948 faces=24 min=2127 max=2174 first8=[2127, 2128, 2129, 2129, 2130, 2127, 2131, 2132] distinct_verts=48
+    block2: off=0x329D8 faces=280 min=2175 max=2670 first8=[2175, 2176, 2177, 2177, 2178, 2175, 2179, 2180] distinct_verts=496
+    block3: off=0x33068 faces=110 min=2671 max=2830 first8=[2671, 2672, 2673, 2673, 2674, 2671, 2675, 2671] distinct_verts=160
+    block4: off=0x332FC faces=24 min=2831 max=2862 first8=[2831, 2832, 2833, 2831, 2833, 2834, 2835, 2831] distinct_verts=32
+    block5: off=0x3338C faces=620 min=2863 max=3930 first8=[2863, 2864, 2865, 2865, 2866, 2863, 2867, 2868] distinct_verts=1068
+    block6: off=0x34214 faces=496 min=3931 max=4785 first8=[3931, 3932, 3933, 3933, 3934, 3931, 3935, 3936] distinct_verts=855
+    index data ends at 0x34DB4 (216500) ; file end 0x34DB4; tail bytes=
+--- 48B before count array @0x304E4 ---
+  0x0304e4 73 07 11 3f 06 0d 1a 3f 3e d1 15 3f 98 0b 1a 3f  |s..?...?>..?...?|
+  0x0304f4 86 7e 0d 3f ee 5e 1b 3f bc 6c 03 3f 0b 5f 1b 3f  |.~.?.^.?.l.?._.?|
+  0x030504 1b 6d 03 3f 8d 1f 1a 3f b4 79 0d 3f 9b 02 1a 3f  |.m.?...?.y.?...?|
+--- first 64B of middle @0xE170 ---
+  0x00e170 48 07 50 b9 47 c1 3e 3d e4 b8 7f bf 0b 2a d0 b9  |H.P.G.>=.....*..|
+  0x00e180 26 cf 37 3d f9 bd 7f bf 48 07 50 b9 47 c1 3e 3d  |&.7=....H.P.G.>=|
+  0x00e190 e4 b8 7f bf 07 5b 8b 34 44 b3 45 3d 9e b3 7f bf  |.....[.4D.E=....|
+  0x00e1a0 aa a3 67 b9 c6 fe 7f 3f 29 74 c8 3b 08 60 b1 b9  |..g....?)t.;.`..|
+--- last 64B of middle @0x304D4 ---
+  0x0304d4 08 d6 15 3f e6 58 1b 3f 45 0c 11 3f f1 5e 1b 3f  |...?.X.?E..?.^.?|
+  0x0304e4 73 07 11 3f 06 0d 1a 3f 3e d1 15 3f 98 0b 1a 3f  |s..?...?>..?...?|
+  0x0304f4 86 7e 0d 3f ee 5e 1b 3f bc 6c 03 3f 0b 5f 1b 3f  |.~.?.^.?.l.?._.?|
+  0x030504 1b 6d 03 3f 8d 1f 1a 3f b4 79 0d 3f 9b 02 1a 3f  |.m.?...?.y.?...?|
+    middle as f32[0:24]: -0.0001984, 0.04657, -0.9989, -0.000397, 0.04488, -0.999, -0.0001984, 0.04657, -0.9989, 2.596e-07, 0.04827, -0.9988, -0.0002209, 1, 0.006117, -0.0003383, 1, 0.004876, -0.0002209, 1, 0.006117, -0.0001035, 1, 0.007358
+    middle tail as f32: 0.9861, 0.2622, 0.9859, 0.2804, 0.9791, 0.2776, 0.979, 0.2648, 0.5853, 0.6068, 0.5666, 0.6069, 0.5665, 0.6018, 0.5852, 0.6017, 0.5527, 0.6069, 0.5134, 0.6069, 0.5134, 0.602, 0.5526, 0.6016
+
+### w1351_eh_wenquandong_001.mesh size=20868 vc=453 fc=305 sm=7 ver=1 tag=b'mesh' banner=False pos_end=0x1654
+    last16: 9d 01 c4 01 9f 01 a2 01 9d 01 c3 01 9d 01 a2 01
+    count-array @0x4A42 (19010)  p%4=2 middle=13294 middle/vc=29.347 tail=0
+    counts=[58, 170, 4, 4, 8, 8, 53] sum=305
+    block0: off=0x4A5E faces=58 min=0 max=102 first8=[0, 1, 2, 2, 3, 0, 4, 5] distinct_verts=103
+    block1: off=0x4BBA faces=170 min=103 max=343 first8=[103, 104, 105, 105, 106, 103, 104, 107] distinct_verts=241
+    block2: off=0x4FB6 faces=4 min=344 max=351 first8=[344, 345, 346, 347, 346, 345, 348, 349] distinct_verts=8
+    block3: off=0x4FCE faces=4 min=352 max=357 first8=[352, 353, 354, 354, 355, 352, 356, 352] distinct_verts=6
+    block4: off=0x4FE6 faces=8 min=358 max=369 first8=[358, 359, 360, 360, 361, 358, 362, 359] distinct_verts=12
+    block5: off=0x5016 faces=8 min=370 max=378 first8=[370, 371, 372, 372, 373, 370, 372, 374] distinct_verts=9
+    block6: off=0x5046 faces=53 min=379 max=452 first8=[379, 380, 381, 382, 381, 380, 383, 384] distinct_verts=74
+    index data ends at 0x5184 (20868) ; file end 0x5184; tail bytes=
+--- 48B before count array @0x4A12 ---
+  0x004a12 84 66 91 3e e6 d7 3b 3f d8 9b 8c 3e 4e 81 3a 3f  |.f.>..;?...>N.:?|
+  0x004a22 8c e4 94 3e 1e b1 3b 3f b8 20 a1 3e a8 cc 38 3f  |...>..;?. .>..8?|
+  0x004a32 c8 84 8c 3e 64 ee 46 3f 44 a1 82 3e 98 07 44 3f  |...>d.F?D..>..D?|
+--- first 64B of middle @0x1654 ---
+  0x001654 68 68 72 ba 31 98 38 3f 3a 5f 31 3f ea 80 72 ba  |hhr.1.8?:_1?..r.|
+  0x001664 0a 98 38 3f 61 5f 31 3f c8 a5 61 3a 37 5f 31 3f  |..8?a_1?..a:7_1?|
+  0x001674 35 98 38 bf ed a5 61 3a 37 5f 31 3f 34 98 38 bf  |5.8...a:7_1?4.8.|
+  0x001684 0c 8f 9a ba c1 f1 1e 3d 98 ce 7f 3f ea 80 72 ba  |.......=...?..r.|
+--- last 64B of middle @0x4A02 ---
+  0x004a02 40 0c 92 3e 8a 04 3d 3f 7c d3 94 3e c0 3c 3d 3f  |@..>..=?|..>.<=?|
+  0x004a12 84 66 91 3e e6 d7 3b 3f d8 9b 8c 3e 4e 81 3a 3f  |.f.>..;?...>N.:?|
+  0x004a22 8c e4 94 3e 1e b1 3b 3f b8 20 a1 3e a8 cc 38 3f  |...>..;?. .>..8?|
+  0x004a32 c8 84 8c 3e 64 ee 46 3f 44 a1 82 3e 98 07 44 3f  |...>d.F?D..>..D?|
+    middle as f32[0:24]: -0.0009247, 0.7211, 0.6929, -0.0009251, 0.7211, 0.6929, 0.0008608, 0.6929, -0.7211, 0.0008608, 0.6929, -0.7211, -0.001179, 0.0388, 0.9992, -0.0009251, 0.7211, 0.6929, -0.0009247, 0.7211, 0.6929, -0.001179, 0.03881, 0.9992
+    middle tail as f32: 0.284, 0.7338, 0.2852, 0.7384, 0.2746, 0.7285, 0.2767, 0.7429, 0.2852, 0.7384, 0.2907, 0.7392, 0.284, 0.7338, 0.2746, 0.7285, 0.2908, 0.7332, 0.3147, 0.7219, 0.2745, 0.7771, 0.2551, 0.7657
+
+### w1351_jiehun_beijingdaqiang_001.mesh size=314021 vc=6589 fc=6244 sm=8 ver=1 tag=b'mesh' banner=False pos_end=0x135f4
+    last16: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80 3f
+    NO FIT for tail in 0..64
+
+### w1351_ll_chengmen_001.mesh size=65248 vc=1425 fc=992 sm=8 ver=1 tag=b'mesh' banner=False pos_end=0x43e4
+    last16: 80 05 8d 05 83 05 8f 05 90 05 90 05 84 05 83 05
+    count-array @0xE780 (59264)  p%4=0 middle=41884 middle/vc=29.392 tail=0
+    counts=[136, 32, 96, 36, 100, 412, 116, 64] sum=992
+    block0: off=0xE7A0 faces=136 min=0 max=199 first8=[0, 1, 2, 2, 3, 0, 4, 5] distinct_verts=200
+    block1: off=0xEAD0 faces=32 min=200 max=255 first8=[200, 201, 202, 202, 203, 200, 204, 205] distinct_verts=56
+    block2: off=0xEB90 faces=96 min=256 max=409 first8=[256, 257, 258, 258, 259, 256, 256, 260] distinct_verts=154
+    block3: off=0xEDD0 faces=36 min=410 max=481 first8=[410, 411, 412, 412, 413, 410, 414, 415] distinct_verts=72
+    block4: off=0xEEA8 faces=100 min=482 max=605 first8=[482, 483, 484, 484, 485, 482, 482, 485] distinct_verts=124
+    block5: off=0xF100 faces=412 min=606 max=1138 first8=[606, 607, 608, 609, 610, 611, 611, 612] distinct_verts=533
+    block6: off=0xFAA8 faces=116 min=1139 max=1320 first8=[1139, 1140, 1141, 1142, 1139, 1141, 1143, 1141] distinct_verts=182
+    block7: off=0xFD60 faces=64 min=1321 max=1424 first8=[1321, 1322, 1323, 1323, 1324, 1321, 1325, 1326] distinct_verts=104
+    index data ends at 0xFEE0 (65248) ; file end 0xFEE0; tail bytes=
+--- 48B before count array @0xE750 ---
+  0x00e750 c8 f2 db 3e ed 18 6a 3e c8 f2 db 3e 8a b1 61 3e  |...>..j>...>..a>|
+  0x00e760 bb 8d 86 3e 8a b1 61 3e 4d 58 8a 3e ed 18 6a 3e  |...>..a>MX.>..j>|
+  0x00e770 a0 c6 16 3f ed 18 6a 3e e8 ab 18 3f 8a b1 61 3e  |...?..j>...?..a>|
+--- first 64B of middle @0x43E4 ---
+  0x0043e4 33 94 7d bf 96 1f 0c be 09 24 24 bc f7 d5 75 bf  |3.}......$$...u.|
+  0x0043f4 93 cd 8e be 48 d4 cd bb 88 fd 7f bf ec 25 f2 3a  |....H........%.:|
+  0x004404 4d f0 0a bc 36 f9 7f bf ea d5 53 3b 48 cf 65 bc  |M...6.....S;H.e.|
+  0x004414 99 79 17 3f 91 5f 4e 3f cd ba 96 bb f5 19 0d 3f  |.y.?._N?.......?|
+--- last 64B of middle @0xE740 ---
+  0x00e740 e8 ab 18 3f 8a b1 61 3e a0 c6 16 3f ed 18 6a 3e  |...?..a>...?..j>|
+  0x00e750 c8 f2 db 3e ed 18 6a 3e c8 f2 db 3e 8a b1 61 3e  |...>..j>...>..a>|
+  0x00e760 bb 8d 86 3e 8a b1 61 3e 4d 58 8a 3e ed 18 6a 3e  |...>..a>MX.>..j>|
+  0x00e770 a0 c6 16 3f ed 18 6a 3e e8 ab 18 3f 8a b1 61 3e  |...?..j>...?..a>|
+    middle as f32[0:24]: -0.9905, -0.1368, -0.01002, -0.9603, -0.2789, -0.006281, -1, 0.001847, -0.00848, -0.9999, 0.003232, -0.01403, 0.5917, 0.8061, -0.0046, 0.5512, 0.8344, 0.005227, 0.5473, 0.837, -0.002463, 0.6348, 0.7726, -0.007107
+    middle tail as f32: 0.4296, 0.2204, 0.4296, 0.2286, 0.2702, 0.2286, 0.2628, 0.2204, 0.5964, 0.2204, 0.589, 0.2286, 0.4296, 0.2286, 0.4296, 0.2204, 0.2628, 0.2204, 0.2702, 0.2286, 0.589, 0.2286, 0.5964, 0.2204
+
+### w1351_jiehun_fwyoulangjiao_001.mesh size=318737 vc=6901 fc=5273 sm=9 ver=1 tag=b'mesh' banner=False pos_end=0x14494
+    last16: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80 3f
+    NO FIT for tail in 0..64
+
+### w1351_jiehun_fwyoulang_002.mesh size=104097 vc=2220 fc=1848 sm=9 ver=1 tag=b'mesh' banner=False pos_end=0x6928
+    last16: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80 3f
+    NO FIT for tail in 0..64

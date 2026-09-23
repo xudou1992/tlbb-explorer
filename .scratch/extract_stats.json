@@ -1,0 +1,36 @@
+{
+ "gens": 117,
+ "records": 117000,
+ "unique": 114975,
+ "dup": 0,
+ "locked": 0,
+ "manifest": 154,
+ "encrypted": 114900,
+ "snappy": 107702,
+ "stored": 7238,
+ "other_meth": {},
+ "empty": 35,
+ "written": 114940,
+ "bytes_out": 10410905493,
+ "stored_crc_ok": 114940,
+ "rec_crc_ok": 114975,
+ "man_crc_ok": 0,
+ "man_crc_bad": 154,
+ "size_mismatch": 0,
+ "fails": 2025
+}
+  fail: ('data', 15, 651, 'record crc')
+  fail: ('data', 15, 652, 'record crc')
+  fail: ('data', 15, 653, 'record crc')
+  fail: ('data', 15, 654, 'record crc')
+  fail: ('data', 15, 655, 'record crc')
+  fail: ('data', 15, 656, 'record crc')
+  fail: ('data', 15, 657, 'record crc')
+  fail: ('data', 15, 658, 'record crc')
+  fail: ('data', 15, 659, 'record crc')
+  fail: ('data', 15, 660, 'record crc')
+  fail: ('data', 15, 661, 'record crc')
+  fail: ('data', 15, 662, 'record crc')
+  fail: ('data', 15, 663, 'record crc')
+  fail: ('data', 15, 664, 'record crc')
+  fail: ('data', 15, 665, 'record crc')

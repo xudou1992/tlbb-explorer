@@ -1,0 +1,512 @@
+=== module prefixes inferred from "Class::Function" log strings ===
+distinct classes with ::style strings: 75
+   120  LuaScriptFunc
+    87  Character
+    63  NetPlayerClient
+    50  Player
+    47  BinaryTableFile
+    37  LuaScriptEx
+    27  Skill
+    23  LogicScene
+    18  GatewayClient
+    16  GameWorldClient
+    16  KResAttrDefine
+    14  UpdateStatMgr
+    14  BinaryTableIndexTable
+    14  KAttrUtils
+    12  LuaSerializer
+    10  KCharacterAttr
+    10  BinaryTableLineSubValueTemplate
+     9  LuaScriptData
+     8  Region
+     7  SkillManager
+     7  GameClient
+     7  EmbellishList
+     7  Doodad
+     7  EffectManager
+     6  CharacterMoveState
+     6  ScriptManager
+     6  NpcTemplateList
+     6  BulletManager
+     5  Npc
+     5  YiDunSystem
+     5  BuffManager
+     5  AsyncSocketStream
+     5  MapNetWork
+     5  Target
+     5  SocketConnector
+     4  SocketStream
+     4  SoundEngine
+     4  KASkillAttr
+     4  KABuffAttr
+     3  SkillList
+     3  CTMGSDKWrapper
+     3  CenterInfo
+     3  TextFilter
+     3  MoveStateSetting
+     3  KThreatList
+     2  RepresentTemplateList
+     2  BufferedSocketStream
+     2  GWConstList
+     2  AStarPath
+     2  AutoJumpSetting
+     1  Mp3Decoder
+     1  CMemoryStream
+     1  RelationForceMgr
+     1  BinaryTableSetValue
+     1  NavGrid
+     1  GameWorldSettings
+     1  MapListFile
+     1  KAttrBuffList
+     1  KSkillRecipePointer
+     1  EmbellishMgr
+
+=== lua / script asset references ===
+  .mesh
+  scripts/client/ExtendProtocol.lua
+  scripts/client/Main.lua
+  scripts/client/OnNormalAttact.lua
+  scripts/client/Represent.lua
+  scripts/client/buff_represent.lua
+  scripts/client/doodad/DoodadDropSound.lua
+  scripts/common/battlepower/battlepower.lua
+
+=== resource container / format strings ===
+  %016llx_%u_%u.pak
+  .?AVCompresser@FileSystem@@
+  .?AVEmptyFileMappingBuffer@FileSystem@@
+  .?AVFileMapping@FileSystem@@
+  .?AVFileMappingBuffer@FileSystem@@
+  .?AVFileMappingSystem@FileSystem@@
+  .?AVIFileMapping@FileSystem@@
+  .?AVIFileMappingBuffer@FileSystem@@
+  .?AVIFileMappingSystem@FileSystem@@
+  .?AVLzmaAllocator@FileSystem@@
+  .?AVPackageFile@FileSystem@@
+  .?AVPackageManager@FileSystem@@
+  CMS_CompressedData
+  CMS_EncryptedData_encrypt
+  CMS_RecipientInfo_encrypt
+  CMS_encrypt
+  Compress file failed with unknown compress type %u. "%s".
+  Compression
+  CreateFileMappingA
+  Decompress file by lzma failed.
+  EVP_PKEY_encrypt
+  EVP_PKEY_encrypt_init
+  EVP_PKEY_encrypt_old
+  FileSystem::Compresser::Compress
+  FileSystem::Compresser::Uncompress
+  FileSystem::FileMapping::MapView
+  FileSystem::FileMappingSystem::CreateFileMappingW
+  FileSystem::LzmaAllocator::LzmaAllocatorAllocate
+  FileSystem::PackageManager::CheckOutPackagedFile
+  FileSystem::PackageManager::ConvertFileContent
+  FileSystem::PackageManager::CreateUpdatePackage
+  FileSystem::PackageManager::GetPackagedFileAttributeAndTime
+  FileSystem::PackageManager::LoadPackage
+  FileSystem::PackageManager::LoadUpdatePackages
+  FileSystem::PackageManager::OpenReadFile
+  FileSystem::PackageManager::ReCompressConvertFileContentAndHaveDecodeKey
+  FileSystem::PackageManager::ReCompressHaveDecodeKey
+  GetCompressSendBufferInformation
+  Load idle update task config file %016llx.pak success.
+  OpenFileMappingW
+  PKCS12_SAFEBAG_create_pkcs8_encrypt
+  PKCS12_item_i2d_encrypt
+  PKCS7_encrypt
+  PKCS8_encrypt
+  S/MIME encryption
+  Update file %016llx.pak failed.
+  add packaged file %016llx.pak failed.
+  bad rsa encrypt
+  bad zlib header
+  bio_zlib_flush
+  bio_zlib_new
+  bio_zlib_read
+  bio_zlib_write
+  cms_CompressedData_create
+  cms_CompressedData_init_bio
+  cms_RecipientInfo_kari_encrypt
+  cms_RecipientInfo_kekri_encrypt
+  cms_RecipientInfo_ktri_encrypt
+  crc64ecma
+  d.encrypted
+  d.encryptedData
+  data.pak
+  encrypt error
+  encrypted
+  encrypted length too long
+  encrypted track 2
+  encryptedContent
+  encryptedContentInfo
+  encryptedKey
+  encryption
+  encryption ctrl failure
+  encryption not supported for this key type
+  error setting encrypted data type
+  id-cmc-encryptedPOP
+  invalid encrypted key length
+  invalid key encryption parameter
+  missing rsa encrypting cert
+  not encrypted
+  not encrypted data
+  pkcs7-encryptedData
+  rsa_ossl_private_encrypt
+  rsa_ossl_public_encrypt
+  smimeencrypt
+  the content of file %016llx.pak is not correct.
+  tls_construct_encrypted_extensions
+  tls_process_encrypted_extensions
+  type not encrypted data
+  unsupported encryption
+  unsupported encryption type
+  unsupported key encryption algorithm
+  update_%u_%u.pak
+  updater.pak
+  x-cos-hash-crc64ecma
+  zlib compression
+  zlib corrupt
+  zlib deflate error
+  zlib inflate error
+  zlib not supported
+
+=== protocol / session / server strings ===
+  (int)uDataLen >= nProtocolSize
+  ..\ssl\packet.c
+  .?AUISocketStream@@
+  .?AVAsyncSocketStream@@
+  .?AVBufferedSocketStream@@
+  .?AVHTTPClientSession@Net@Poco@@
+  .?AVHTTPSClientSession@Net@Poco@@
+  .?AVHTTPSession@Net@Poco@@
+  .?AVIPv4SocketAddressImpl@Impl@Net@Poco@@
+  .?AVIPv6SocketAddressImpl@Impl@Net@Poco@@
+  .?AVInvalidSocketException@Net@Poco@@
+  .?AVMultiSocketConnector@@
+  .?AVRenderingThreadTickHeartbeat@@
+  .?AVSecureSocketImpl@Net@Poco@@
+  .?AVSecureStreamSocket@Net@Poco@@
+  .?AVSecureStreamSocketImpl@Net@Poco@@
+  .?AVSecuritySocketStream@@
+  .?AVSession@Net@Poco@@
+  .?AVSocket@Net@Poco@@
+  .?AVSocketAddressImpl@Impl@Net@Poco@@
+  .?AVSocketConnector@@
+  .?AVSocketImpl@Net@Poco@@
+  .?AVSocketStream@@
+  .?AVStreamSocket@Net@Poco@@
+  .?AVStreamSocketImpl@Net@Poco@@
+  <no protocol>
+  A requested feature, protocol or option was not found built-in in this libcurl due to a build-time decision.
+  ALPN, server did not agree to a protocol
+
+  AsyncSocketStream::Recv
+  AsyncSocketStream::Send
+  AsyncSocketStream::_WebSocketDecode
+  AsyncSocketStream::_WebSocketEncode
+  AsyncSocketStream::_WebSocketSendPong
+  BIO_socket
+  BIO_socket_nbio
+  Bad protocol
+  BufferedSocketStream::Recv
+  BufferedSocketStream::RecvReservedBuffer
+  Cannot acceptConnection() on a SecureStreamSocketImpl
+  Cannot assign incompatible socket
+  Cannot bind() a SecureStreamSocketImpl
+  Cannot listen() on a SecureStreamSocketImpl
+  Cannot receiveFrom() on a SecureStreamSocketImpl
+  Cannot send after socket shutdown
+  Cannot sendTo() on a SecureStreamSocketImpl
+  Cannot sendUrgent() on a SecureStreamSocketImpl
+  Cannot set the host for an already connected session
+  Cannot set the port number for an already connected session
+  Cannot set the proxy host and port for an already connected session
+  Connect time out, try relogin to server......
+  Connect to GameServer %s:%d ... ...
+  Connect to GameServer failed, no more retry.
+  Connect to GameServer failed.
+  Connect to GameServer success.
+  DecodeProtocol
+  Descriptor is not a socket
+  Do Login...
+  DoReloginAccountVerify
+  Doing the SSL/TLS handshake on the data stream
+
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\NetSSL_OpenSSL\src\SecureSocketImpl.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\NetSSL_OpenSSL\src\SecureStreamSocketImpl.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Net\src\HTTPClientSession.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Net\src\HTTPSession.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Net\src\Socket.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Net\src\SocketImpl.cpp
+  Exit m_bReloginToServer:%d
+  Failed to encode DOH packet [%d]
+
+  ForceReloginToServer
+  ForceReloginToServer......
+  GatewayClient::DoReloginAccountVerify
+  GatewayClient::Login
+  GatewayClient::LoginActiveCode
+  GatewayClient::LoginGame
+  GatewayClient::LoginPlayerProtocalVerify
+  GatewayClient::LoginRealName
+  GatewayClient::LoginTwoVerifyCode
+  GatewayClient::ReLogin
+  GetLoginInfo
+  GetPostProcessProtocolFunction
+  GetProcessProtocolFunction
+  GetSocketPosition
+  Got RTSP Session ID Line [%s], but wanted ID [%s]
+  Got a blank Session ID
+  Got an error writing an RTP packet
+  Immediate connect fail for %s: %s
+
+  Internal error: Unexpected packet
+  Invalid address length or family passed to SocketAddress()
+  Invalid gateway protocol (%u)
+  Invalid handshake respond code(%u).
+  Invalid input packet
+  Invalid login game respond code(%u).
+  Invalid socket
+  IsReLogin
+  IsReloginToServerWhenRealInit
+  Login
+  Login denied
+  Login szFData=%s
+  Login=success
+  LoginActiveAccount
+  LoginGame
+  LoginGateway
+  LoginRealName
+  LoginTwoVerify
+  LuaScriptFunc::LuaDoReloginAccountVerify
+  LuaScriptFunc::LuaGetPostProcessProtocolFunction
+  LuaScriptFunc::LuaGetProcessProtocolFunction
+  LuaScriptFunc::LuaLoginActiveAccount
+  LuaScriptFunc::LuaLoginGame
+  LuaScriptFunc::LuaLoginGateway
+  LuaScriptFunc::LuaLoginRealName
+  LuaScriptFunc::LuaLoginTwoVerify
+  LuaScriptFunc::LuaRemovePostProcessProtocolFunction
+  LuaScriptFunc::LuaRemoveProcessProtocolFunction
+  LuaScriptFunc::LuaSetPostProcessProtocolFunction
+  LuaScriptFunc::LuaSetProcessProtocolFunction
+  Malformed ACK packet, rejecting
+  MaxProtocol
+  Microsoft Smartcardlogin
+  MinProtocol
+  MultiSocketConnector::CheckConnectResult
+  NTLM handshake failure (bad type-2 message)
+
+  NTLM handshake failure (bad type-2 message). Target Info Offset Len is set incorrect by the peer
+
+  NTLM handshake failure (empty type-2 message)
+
+  NTLM handshake failure (internal error)
+
+  NTLM handshake rejected
+
+  NetPlayerClient::DoScriptExtendProtocol
+  NetPlayerClient::DoScriptExtendProtocolToCenter
+  NetPlayerClient::ForceReloginToServer
+  NetPlayerClient::Login
+  NetPlayerClient::OnScriptExtendProtocol
+  NetPlayerClient::SetLuaPostProcessProtocolFunction
+  NetPlayerClient::SetLuaProcessProtocolFunction
+  Newsession Ticket
+  Next protocol
+  NotifyUI2:%s m_bRelogin=%d
+
+  NotifyUI:%s m_bRelogin=%d
+
+  OnClientModuleProtocol
+  OnSyncRoleList m_bReloginToServer:%d
+  Pointer to SocketAddress implementation is NULL.
+  ProcessProtocol
+  Protocol
+  Protocol "%s" not supported or disabled in libcurl
+  Protocol family not supported
+  Protocol is unsupported
+  Protocol not available
+  Protocol not supported
+  Protocol option is unsupported
+  ProtocolID
+  RTSP session error
+  ReLogin
+  ReLogin m_bReloginToServer:%d
+  Received last DATA packet block %d again.
+
+  Received too short packet
+  Received unexpected DATA packet block %d, expecting block %d
+
+  Recv socket error %u.
+  Refusing to issue an RTSP request [%s] without a session ID.
+  ReloginToServer
+  ReloginToServer Failed!
+  ReloginToServer m_bReloginToServer:%d
+  RemovePostProcessProtocolFunction
+  RemoveProcessProtocolFunction
+  Reset m_bReloginToServer:%d
+  SSL re-using session ID
+
+  SSL: SSL_set_session failed: %s
+  SSL_CTX_set_session_id_context
+  SSL_do_handshake
+  SSL_set_session
+  SSL_set_session_id_context
+  SSL_set_session_ticket_ext
+  SSL_verify_client_post_handshake
+  Session
+  Session ID cannot be set as a custom header.
+  Session:
+  Session: %s
+
+  SessionTicket
+  SetPostProcessProtocolFunction
+  SetProcessProtocolFunction
+  Socket has been shut down
+  Socket is already connected
+  Socket is not connected
+  Socket is unsupported
+  Socket not ready for send/recv
+  Socket operation attempted on non-socket
+  Socket type not supported
+  SocketAddress must be an IPv6 address
+  SocketConnector::CheckConnectResult
+  SocketConnector::Connect
+  SocketConnector::ConnectSecurity
+  SocketConnector::OnConnected
+  SocketConnector::OnRecvSecurityKey
+  SocketStream::Recv
+  SocketStream::RecvReservedBuffer
+  SocketStream::Send
+  SocketStream::SendReservedBuffer
+  TLS handshake
+  Try relogin to server......
+  USClient Recv Socket Error %u.
+  USClient Send Socket Error %d
+  Unexpected: select marked ready but FD_ISSET failed, socket = %d.
+  Unsupported protocol
+  WPACKET_start_sub_packet_len__
+  WaitForLoginLoading
+  Wrong protocol type
+  [NetPlayerClient] Account Kickout, try relogin to server......
+  _pSocket
+  _pSocket->initialized()
+  app data in handshake
+  attempt to reuse session in different context
+  bad handshake length
+  bad handshake state
+  bad packet
+  bad packet length
+  bad protocol version number
+  call LuaPostProcessProtocol %d failed, error = %s.
+  call LuaProcessProtocol %d failed, error = %s.
+  cannot set session ID context
+  check can recv socket error %d.
+  closing session
+  d:\proj_test\openssl-1.1.1c\ssl\packet_locl.h
+  eProtocol > gs_client_connection_begin && eProtocol < gs_client_connection_end
+  failed to store ssl session
+  handshake failure
+  heartbeat request already pending
+  id-mod-timestamp-protocol
+  id-regCtrl-protocolEncrKey
+  invalid blocksize value in OACK packet
+  invalid session id
+  invalid socket
+  invalid tsize -:%s:- value in OACK packet
+  ioctlsocket
+  login
+  m_bRelogin
+  m_bReloginToServer:%d
+  m_bReloginToServer:false
+  m_nSocket != -1
+  m_pSocket
+  m_piSocket == NULL
+  m_piSocketStream
+  max_protocol
+  min_protocol
+  mixed handshake and non handshake data
+  msSmartcardLogin
+  nFirstLoginTime
+  nProtocol < gs_client_connection_end
+  nProtocol < s2c_us_protocol_end
+  nProtocol > gs_client_connection_begin
+  nProtocol > s2c_us_protocol_begin
+  net player client protocol function %d is not registered.
+  no application protocol
+  no protocol option
+  no protocols available
+  not a socket
+  old SSL session ID is stale, removing
+
+  old session cipher not returned
+  old session compression algorithm not returned
+  opening session
+  pBufferPacket
+  pHeader->byProtocolID > gs_client_connection_begin && pHeader->byProtocolID < gs_client_connection_end
+  packet length too long
+  packet_size_multiplier
+  pcszLoginType
+  peer does not accept heartbeats
+  piBufferPacket
+  piPacket
+  post handshake auth encoding err
+  ppSocketStream
+  protocol error
+  protocol is shutdown
+  protocol not supported
+  protocol version
+  protocolInformation
+  protocol_id
+  recv socket error %d.
+  scripts/client/ExtendProtocol.lua
+  select/poll on SSL socket, errno: %d
+  send socket err %d
+  session id context uninitialized
+  session_id
+  session_id_context
+  socket
+  socket connect
+  socket failure: %s
+  ssl handshake failure
+  ssl session id callback failed
+  ssl session id conflict
+  ssl session id context too long
+  ssl session id has bad length
+  ssl session id too long
+  ssl session version mismatch
+  ssl3 session id too long
+  ssl_add_cert_to_wpacket
+  ssl_generate_session_id
+  ssl_get_new_session
+  ssl_get_prev_session
+  ssl_handshake_hash
+  ssl_session_dup
+  sslv3 alert handshake failure
+  tls13_restore_handshake_digest_for_pha
+  tls13_save_handshake_digest_for_pha
+  tls_construct_ctos_post_handshake_auth
+  tls_construct_ctos_session_ticket
+  tls_construct_new_session_ticket
+  tls_construct_stoc_session_ticket
+  tls_finish_handshake
+  tls_parse_ctos_post_handshake_auth
+  tls_parse_ctos_session_ticket
+  tls_parse_stoc_session_ticket
+  tls_process_new_session_ticket
+  tls_setup_handshake
+  tlsv1 alert protocol version
+  uBufferSize <= GetMaxProtocolSize()
+  uPackSize <= GetMaxProtocolSize()
+  uPackageLength <= (uint64_t)GetMaxProtocolSize()
+  uSize >= m_uProtocolSize[nProtocol]
+  unable to bind socket
+  unable to create socket
+  unable to listen socket
+  unknown protocol
+  unsupported protocol
+  unsupported protocol family
+  wpacket_intern_init_len
+  wrong protocol type

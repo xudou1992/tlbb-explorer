@@ -1,0 +1,87 @@
+=== dynamically-referenced DLL strings + their xrefs ===
+  %s.dll                                     xrefs=1   0000000140BD9096:sub_140BD8FC0
+  atidxx32.dll                               xrefs=1   0000000140C17DDC:agsDriverExtensionsDX11_CreateDevice
+  atidxx64.dll                               xrefs=1   0000000140C17E01:agsDriverExtensionsDX11_CreateDevice
+  d3d11.dll                                  xrefs=1   0000000140C17E19:agsDriverExtensionsDX11_CreateDevice
+  aticfx32.dll                               xrefs=1   0000000140C198E0:sub_140C198B0
+  aticfx64.dll                               xrefs=1   0000000140C198E7:sub_140C198B0
+  atiadlxy.dll                               xrefs=1   0000000140C19AB5:agsInit
+  atiadlxx.dll                               xrefs=1   0000000140C19ABC:agsInit
+  mshtml.dll                                 xrefs=1   00000001400EA04D:TopLevelExceptionFilter
+  DirectX\x64\d3dcompiler_47.dll             xrefs=1   00000001400F9A5C:sub_1400F95C0
+  TMGLibrary.dll                             xrefs=1   000000014012A5B5:sub_14012A420
+  webview.dll                                xrefs=1   000000014012D370:sub_14012D1C0
+  iphlpapi.dll                               xrefs=1   0000000140152BF0:sub_140152BC0
+  !\?.dll;!\..\lib\lua\5.3\?.dll;!\loadall.dll;.\?.dll xrefs=1   00000001402F6C50:sub_1402F6B40
+  WS2_32.dll                                 xrefs=0   
+  IMM32.dll                                  xrefs=0   
+  WLDAP32.dll                                xrefs=0   
+  dbghelp.dll                                xrefs=0   
+  DSOUND.dll                                 xrefs=0   
+  GDI32.dll                                  xrefs=0   
+  ole32.dll                                  xrefs=0   
+  SHELL32.dll                                xrefs=0   
+  ADVAPI32.dll                               xrefs=0   
+  USER32.dll                                 xrefs=0   
+  MSIMG32.dll                                xrefs=0   
+  KERNEL32.dll                               xrefs=0   
+  dxgi.dll                                   xrefs=0   
+  d3d11.dll                                  xrefs=0   
+  dwmapi.dll                                 xrefs=0   
+  bcrypt.dll                                 xrefs=0   
+  NEP2_64.dll                                xrefs=1   00000001411E1784:
+  WS2_32.dll                                 xrefs=1   00000001411E1798:
+  IMM32.dll                                  xrefs=1   00000001411E17AC:
+  WLDAP32.dll                                xrefs=1   00000001411E17C0:
+  dbghelp.dll                                xrefs=1   00000001411E17D4:
+  DSOUND.dll                                 xrefs=1   00000001411E17E8:
+  GDI32.dll                                  xrefs=1   00000001411E17FC:
+  ole32.dll                                  xrefs=1   00000001411E1810:
+  SHELL32.dll                                xrefs=1   00000001411E1824:
+  ADVAPI32.dll                               xrefs=1   00000001411E1838:
+  USER32.dll                                 xrefs=1   00000001411E184C:
+  MSIMG32.dll                                xrefs=1   00000001411E1860:
+  KERNEL32.dll                               xrefs=1   00000001411E1874:
+  dxgi.dll                                   xrefs=1   00000001411E1888:
+  d3d11.dll                                  xrefs=1   00000001411E189C:
+  dwmapi.dll                                 xrefs=1   00000001411E18B0:
+  bcrypt.dll                                 xrefs=1   00000001411E18C4:
+
+=== NEP2 import slot & its callers ===
+  slot 00000001411DEF28 qword=0xFFFFFFFFFFFFFFFF
+    call from 00000001411E1788  in 
+  NEP2 name-string xref check:
+    NEP2_64.dll                        xrefs=1 00000001411E1784
+
+=== appended sections content probe ===
+  .200     00000001411C0000-00000001411DE000 printable=0.37 zero=0.00
+        %?`\>F
+        8@b90H
+        [}%4iO
+        J"+RNrkG
+        JY3A41,
+        nNte[Jy
+        \,el3{;
+        [9bMF]
+        4=x3qX
+        f8BUy&E&
+        4}H$Eu
+        Q3VDeo{
+  .201     00000001411AC000-00000001411C0000 printable=0.37 zero=0.00
+        O BKWp^
+        Lv.R-5
+        !<tcE@W)
+        QDB4N!wv'
+        V)/MPaQ
+        SU?^_prw;
+        $^=l$"
+        SR-Gfs
+        PE'2)i
+        k+ VfL
+        U$'=K%
+        9dab%{
+  .202     00000001411E2000-000000014126A000 printable=0.19 zero=0.20
+        vH5$w?
+        C%-"7~
+        (Y|^]vD
+  .rotext  0000000140C8E000-0000000140CAB000 printable=0.28 zero=0.02

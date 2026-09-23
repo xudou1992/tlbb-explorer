@@ -1,0 +1,2 @@
+small: [('w1351_model_t_canying_h004.mesh', 388), ('w1351_model_mianpian_l001.mesh', 424), ('w1351_model_fuwenzi_l001.mesh', 424), ('w1351_model_plane_c01.mesh', 424)]
+big: [('test_jianzhen.mesh', 2315476), ('w1351_st_fwzhongxing_001.mesh', 2206108)]

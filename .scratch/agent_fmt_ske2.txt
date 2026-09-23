@@ -1,0 +1,83 @@
+.ske files: 1630
+analysed 1630
+=== aggregate ===
+  body>=64*bones: 1565/1630
+  eof_slack==0: 816/1630
+  body<=40*bones: 11/1630
+  quat_hits>0: 1/1630
+  max_run>=16: 0/1630
+  max_run>=48: 0/1630
+  quat_hits>=8: 0/1630
+  float_frac>0.5: 0/1630
+  max float-like run per file: p50=1 p90=2 max=2
+  float-like word fraction: p50=0.0248 p90=0.0420 max=0.1094
+  quaternion-like windows per file: p50=0 max=4
+  body/bone_like_strings: p10=67.5 p50=76.4 p90=180.0 (a 4x4 f32 matrix = 64B)
+  body/string: p50=45.9 (node-tree records are ~8-24B)
+
+  top files by float fraction:
+    w1351_npc_shufang02.ske size=256 body=108 str=4 bones=0 float_frac=0.109 max_run=2@0xB4 quat=0
+    w1351_wuqi_t_huan_0201.ske size=264 body=108 str=4 bones=0 float_frac=0.106 max_run=2@0xB4 quat=0
+    w1351_wuqi_t_shan_0201.ske size=264 body=108 str=4 bones=0 float_frac=0.106 max_run=2@0xB4 quat=0
+    w1351_wuqi_t_shan_0202.ske size=264 body=108 str=4 bones=0 float_frac=0.106 max_run=2@0xB4 quat=0
+    w1351_npc_jiusi05.ske size=248 body=108 str=4 bones=0 float_frac=0.097 max_run=2@0xB4 quat=0
+    w1351_npc_duantai02.ske size=256 body=108 str=4 bones=0 float_frac=0.094 max_run=2@0xB4 quat=0
+    w1351_npc_duantai04.ske size=256 body=108 str=4 bones=0 float_frac=0.094 max_run=2@0xB4 quat=0
+    w1351_npc_xianya03.ske size=256 body=108 str=4 bones=0 float_frac=0.094 max_run=2@0xB4 quat=0
+    w1351_npc_qianzhuang01.ske size=264 body=108 str=4 bones=0 float_frac=0.091 max_run=2@0xB4 quat=0
+    w1351_wuqi_t_daofu_0202.ske size=264 body=108 str=4 bones=0 float_frac=0.091 max_run=2@0xB4 quat=0
+
+  biggest bodies:
+    w1351_nan.ske size=275800 body=112168 str=4743 bones=233 max_run=2 quat=4 eof_slack=4
+    w1351_nv.ske size=271536 body=111616 str=4701 bones=234 max_run=2 quat=0 eof_slack=4
+    w1351_zuoqi_wanlishanhehong.ske size=20632 body=16340 str=270 bones=247 max_run=2 quat=0 eof_slack=0
+    w1351_pets_xiaohualing_b5.ske size=21080 body=15944 str=272 bones=239 max_run=2 quat=0 eof_slack=4
+    w1351_pets_xianglong_b7.ske size=20336 body=15688 str=268 bones=235 max_run=2 quat=0 eof_slack=0
+    w1351_model_ymg02_jn_long_h002.ske size=17016 body=13620 str=217 bones=210 max_run=2 quat=0 eof_slack=4
+    w1351_model_ymg02_jn_long_lg_h002.ske size=17024 body=13620 str=217 bones=210 max_run=2 quat=0 eof_slack=4
+    w1351_npc_xinmurongfu.ske size=18152 body=13004 str=239 bones=187 max_run=2 quat=0 eof_slack=4
+    w1351_pets_jinyubaobao_b7.ske size=16384 body=12680 str=221 bones=188 max_run=2 quat=0 eof_slack=0
+    w1351_pets_xuanhaima_b7.ske size=16368 body=12552 str=219 bones=186 max_run=2 quat=0 eof_slack=4
+
+=== longest float-like run, byte context ===
+  w1351_caiji_bosijihao_01.ske run=2 at 0x228 (body=0x18..0x158)
+    hex: 6c 65 30 32 77 31 33 35 31 5f 63 61 69 6a 69 5f 62 6f 73 69 6a 69 68 61 6f 5f 30 31 5f 69 64 6c 65 30 32 2e 61 6e 69 69 64 6c 65 30 33 77 31 33 35 31 5f 63 61 69 6a 69 5f 62 6f 73 69 6a 69 68 61 6f 5f 30 31 5f 69 64 6c 65 30 33 2e 61 6e 69 30 30 30 30 62 6f 6e 65 30 30 31 00 00 00 00 00
+    f32: 1.0268e-08, 6.6755e-07, 2.6214e+20, 1.6819e+19, 1.8393e+25, 2.6795e+20, 2.5666e-09, 1.1045e+27, 4.0515e-11, 1.7638e+25, 8.3464e-10, 4.1319e-08, 4.1172e+21, 1.7712e+25, 1.8966e+31, 4.4091e+24, 8.1285e-10, 1.722e+22, 4.107e-08, 1.8011e+25, 6.4097e-10, 7.0374e+22, 4.5172e-39, 0
+  w1351_caiji_duchanchu_01.ske run=2 at 0x884 (body=0x18..0x758)
+    hex: 95 91 77 46 77 31 33 35 31 5f 63 61 69 6a 69 5f 64 75 63 68 61 6e 63 68 75 5f 30 31 2f 77 31 33 35 31 5f 63 61 69 6a 69 5f 64 75 63 68 61 6e 63 68 75 5f 30 31 2f 61 6e 69 69 64 6c 65 30 31 77 31 33 35 31 5f 63 61 69 6a 69 5f 64 75 63 68 61 6e 63 68 75 5f 30 31 5f 69 64 6c 65 30 31 2e 61 6e 69 69 64 6c 65 30 32 77 31 33 35 31 5f 63 61 69 6a 69 5f 64 75 63 68 61 6e 63 68 75 5f 30 31
+    f32: 15844, 6.6755e-07, 2.6214e+20, 1.6819e+19, 4.2966e+24, 4.2961e+24, 2.5666e-09, 4.1319e-08, 4.1172e+21, 1.7712e+25, 4.5267e+21, 4.3973e+21, 8.1294e-10, 1.7423e+28, 1.1045e+27, 3.5938e+33, 2.6368e-09, 1.703e+25, 1.6485e+22, 2.6793e+20, 2.9459e+32, 1.2768e+19, 6.9771e+22, 2.0083e+20, 1.7223e+22, 1.0268e-08, 6.6755e-07, 2.6214e+20, 1.6819e+19, 4.2966e+24, 4.2961e+24, 2.5666e-09
+  w1351_caiji_duzhizhu_01.ske run=2 at 0xE24 (body=0x18..0xC58)
+    hex: e7 6d 20 38 77 31 33 35 31 5f 63 61 69 6a 69 5f 64 75 7a 68 69 7a 68 75 5f 30 31 2f 77 31 33 35 31 5f 63 61 69 6a 69 5f 64 75 7a 68 69 7a 68 75 5f 30 31 2f 61 6e 69 69 64 6c 65 30 31 77 31 33 35 31 5f 63 61 69 6a 69 5f 64 75 7a 68 69 7a 68 75 5f 30 31 5f 69 64 6c 65 30 31 2e 61 6e 69 69 64 6c 65 30 32 77 31 33 35 31 5f 63 61 69 6a 69 5f 64 75 7a 68 69 7a 68 75 5f 30 31 5f 69 64 6c
+    f32: 3.8249e-05, 6.6755e-07, 2.6214e+20, 1.6819e+19, 4.731e+24, 2.947e+32, 1.6115e-10, 6.6755e-07, 2.6214e+20, 1.6819e+19, 4.731e+24, 2.947e+32, 1.6115e-10, 1.7638e+25, 8.3464e-10, 4.1319e-08, 4.1172e+21, 1.7712e+25, 3.1854e+35, 4.7301e+24, 2.5666e-09, 1.1045e+27, 4.0288e-11, 1.7638e+25, 8.3464e-10, 4.1319e-08, 4.1172e+21, 1.7712e+25, 3.1854e+35, 4.7301e+24, 2.5666e-09, 1.1045e+27
+
+=== extension census under tree (top 25) ===
+  .scene     11933
+  .ani       11234
+  .mtl       8536
+  .mesh      7996
+  .pu        7806
+  .tani      2560
+  .tga       2259
+  .mdl       2146
+  .ske       1630
+  .sfl       297
+  .map       274
+  .wav       220
+  .ogg       166
+  .webp      48
+  .nav       25
+  .anis      20
+  .cur       15
+  .jpg       10
+  .xml       4
+  .txt       4
+  .ttf       3
+  .tab       2
+  .png       2
+  .jstr      1
+  .cfg       1
+  distinct extensions: 28
+
+=== sibling files of a skinned mesh ===
+  data\source\player\w1351_nan: 33 entries: ['ani', 'w1351_nan.mdl', 'w1351_nan.ske', 'w1351_nan_lian', 'w1351_nan_s_qiaofeng.mdl', 'w1351_nan_s_yifu_duanyu.mdl', 'w1351_nan_s_yifu_emrmdz.mdl', 'w1351_nan_s_yifu_gbrmdz.mdl', 'w1351_nan_s_yifu_hhxk_jichu.mdl', 'w1351_nan_s_yifu_mjrmdz.mdl', 'w1351_nan_s_yifu_murongfu.mdl', 'w1351_nan_s_yifu_new_dingchunqiu.mdl', 'w1351_nan_s_yifu_new_duanyanqing.mdl', 'w1351_nan_s_yifu_qingzhuliuyun.mdl', 'w1351_nan_s_yifu_shengdanpaidui.mdl', 'w1351_nan_s_yifu_slrmdz.mdl', 'w1351_nan_s_yifu_tlrmdz.mdl', 'w1351_nan_s_yifu_tsrmdz.mdl', 'w1351_nan_s_yifu_txfh_moreng.mdl', 'w1351_nan_s_yifu_txfh_yanzhilei.mdl', 'w1351_nan_s_yifu_wdrmdz.mdl', 'w1351_nan_s_yifu_wulinzhizun.mdl', 'w1351_nan_s_yifu_xianfeng_001.mdl', 'w1351_nan_s_yifu_xxrmdz.mdl', 'w1351_nan_s_yifu_xyrmdz.mdl', 'w1351_nan_s_yifu_ysym_moren.mdl', 'w1351_nan_s_yifu_yszm_moreng.mdl', 'w1351_nan_s_yifu_zhongshilifu.mdl', 'w1351_nan_s_yuyuqinchou_001.mdl', 'w1351_nan_shoutao', 'w1351_nan_toufa', 'w1351_nan_xiezi', 'w1351_nan_yifu']
+  data\source\npc\model\w1351_model_kongmo_001: 14 entries: ['ani', 'w1351_model_kongmo_001.mdl', 'w1351_model_kongmo_001.mesh', 'w1351_model_kongmo_001.mtl', 'w1351_model_kongmo_001.ske', 'w1351_model_kongmo_002.mdl', 'w1351_model_kongmo_002.mesh', 'w1351_model_kongmo_002.mtl', 'w1351_model_kongmo_003.mdl', 'w1351_model_kongmo_003.mesh', 'w1351_model_kongmo_003.mtl', 'w1351_model_kongmo_rlsz.mdl', 'w1351_model_kongmo_rlsz.mesh', 'w1351_model_kongmo_rlsz.mtl']

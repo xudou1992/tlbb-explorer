@@ -1,0 +1,14 @@
+agroup_names distinct: 14377  amembers rows: 20689
+dangling rows: 14377
+refs distinct names: 36480
+
+== sample of 1200 scene files: 26183 records, direct join 23807 (90.93%), missing 471 distinct
+  via agroup_names(mesh stem) resolved instance-count: 0 / 2376 missing
+  still unresolved distinct: 471  (instances 2376, 9.07% of records)
+  examples: ['z_buliandongtai_002.mdl', 'w1351_bzd_hongshizhuqi_001.mesh', 'w1351_sjh_shuijingzhumuer_001.mesh', 'w1351_songliao_dzqiang4s_001.mesh', 'w1351_songliao_dzqiang4s_002.mesh', 'w1351_songliao_dzqiang4s_003.mesh', 'w1351_bzd_muzhufowen_001.mesh', 'w1351_fh_fwpomian_001.mesh', 'w1351_fh_fwxieding_001.mesh', 'w1351_fh_fwxiedingpo_001.mesh', 'w1351_fh_mujiaer_001.mesh', 'w1351_fh_mujiaxiao_001.mesh', 'w1351_fh_qianggaopo_001.mesh', 'w1351_fh_qianghuacan_001.mesh', 'w1351_fh_qianghuajiao_001.mesh', 'w1351_fh_qiangpomian_001.mesh', 'w1351_fh_qiangpomianxie_001.mesh', 'w1351_fh_qiangwajiao_001.mesh', 'w1351_fh_qiangzhi_001.mesh', 'w1351_fh_shitiao_001.mesh', 'w1351_fh_shitiaoduan_001.mesh', 'w1351_fh_zhuansan_001.mesh', 'w1351_lyxj_dengta_001.mesh', 'w1351_lyxj_huacu_011.mesh', 'w1351_lyxj_taohuashuxicha_001.mesh']
+
+== do those unresolved appear in refs.name / dangling?
+  unresolved in refs: 0/471 ; in dangling: 0/471
+  dangling examples: []
+
+== extension split of unresolved: Counter({'.mesh': 460, '': 5, '.pu': 3, '.mdl': 2, '.wav': 1})

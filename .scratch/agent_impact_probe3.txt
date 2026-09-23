@@ -1,0 +1,15 @@
+['ani', 'w1351_monster_xiyuqiezei.mdl', 'w1351_monster_xiyuqiezei.ske', 'w1351_monster_xiyuqiezei_shoutao_001.mesh', 'w1351_monster_xiyuqiezei_shoutao_001.mtl', 'w1351_monster_xiyuqiezei_yifu_001.mesh', 'w1351_monster_xiyuqiezei_yifu_001.mtl']
+
+strings(9):
+   w1351_monster_xiyuqiezei                                   eb436191
+   data/source/npc/quest/w1351_monster_xiyuqiezei/            fe204af0
+   MainBodyMesh                                               465ff08a
+   w1351_monster_xiyuqiezei_yifu_001.mesh                     180c9300
+   w1351_monster_xiyuqiezei_yifu_001.mtl                      88e358b9
+   ArmMesh                                                    61139c73
+   w1351_monster_xiyuqiezei_shoutao_001.mesh                  cc8fd86d
+   w1351_monster_xiyuqiezei_shoutao_001.mtl                   e96d88d4
+   w1351_monster_xiyuqiezei.ske                               27534847
+name='w1351_monster_xiyuqiezei' base='data/source/npc/quest/w1351_monster_xiyuqiezei/' bodies=[{'label': 'MainBodyMesh', 'mesh': 'w1351_monster_xiyuqiezei_yifu_001.mesh', 'material': 'w1351_monster_xiyuqiezei_yifu_001.mtl'}, {'label': 'ArmMesh', 'mesh': 'w1351_monster_xiyuqiezei_shoutao_001.mesh', 'material': 'w1351_monster_xiyuqiezei_shoutao_001.mtl'}]
+   parse w1351_monster_xiyuqiezei_yifu_001.mesh -> (True, 'ok', {'size': 52536, 'vc': 781, 'fc': 846, 'sm': 1, 'middle': 15620, 'stride': 20.0, 'static': True, 'trailing': 22184})
+   parse w1351_monster_xiyuqiezei_shoutao_001.mesh -> (True, 'ok', {'size': 14940, 'vc': 42, 'fc': 56, 'sm': 1, 'middle': 840, 'stride': 20.0, 'static': True, 'trailing': 12976})

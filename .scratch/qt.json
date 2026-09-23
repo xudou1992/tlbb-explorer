@@ -1,0 +1,1 @@
+[["find",{"type":"string","targets":[".tga","%s.tga","texture/%s","%s%s.tga","data/texture/"],"limit":12}],["search_text",{"pattern":".tga","limit":40}]]

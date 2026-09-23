@@ -1,0 +1,2 @@
+   Compiling tlbb-core v0.1.0 (D:\TLGL\tlbb-explorer\crates\core)
+    Finished `release` profile [optimized] target(s) in 3.74s

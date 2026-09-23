@@ -1,0 +1,141 @@
+corpus: 7996 .mesh files
+
+=== outcome (files considered: 7996) ===
+  rule_fit                     4672
+  both_fit                     3510
+  rule_no_fit                  3324
+  no_fit_but_legacy_ok         2711
+  rule_rescues_legacy_fail     1162
+
+=== per sm: fit / no_fit / rescue(legacy failed) / pos_overflow ===
+  sm=1   fit=3510   no_fit=2709  rescue=0     pos_ovf=0
+  sm=2   fit=548    no_fit=317   rescue=548   pos_ovf=0
+  sm=3   fit=279    no_fit=145   rescue=279   pos_ovf=0
+  sm=4   fit=108    no_fit=62    rescue=108   pos_ovf=0
+  sm=5   fit=94     no_fit=40    rescue=94    pos_ovf=0
+  sm=6   fit=58     no_fit=26    rescue=58    pos_ovf=0
+  sm=7   fit=35     no_fit=15    rescue=35    pos_ovf=0
+  sm=8   fit=14     no_fit=2     rescue=14    pos_ovf=0
+  sm=9   fit=7      no_fit=5     rescue=7     pos_ovf=0
+  sm=10  fit=7      no_fit=1     rescue=7     pos_ovf=0
+  sm=11  fit=4      no_fit=2     rescue=4     pos_ovf=0
+  sm=12  fit=8      no_fit=0     rescue=8     pos_ovf=0
+  TOTAL fit=4672 unexplained=3324
+
+=== tail after index data ===
+  tail=0      3721
+  tail=8      442
+  tail=96     109
+  tail=192    77
+  tail=394    24
+  tail=384    23
+  tail=100    18
+  tail=1736   15
+  tail=688    15
+  tail=768    14
+  tail=868    12
+  tail=1728   8
+  tail=864    8
+  tail=672    7
+=== count-array alignment p%4 ===
+  p%4=0 : 4189
+  p%4=2 : 483
+=== middle vs vc*20 ===
+  gt_vc20: 3574
+  eq_vc20: 1098
+=== legacy vs rule agreement on legacy hits ===
+  same: 3497
+  diff: 13
+=== header 0x98..0x117 all-zero? ===
+  hdr_extra_nonzero=True: 7995
+  hdr_extra_nonzero=False: 1
+
+=== examples: rule fit, by sm ===
+  sm=1 data\effect\effectmodel\test_jianzhen.mesh
+      size=2315476 vc=55864 fc=65942 sm=1 p=0x1D4B44 tail=8 counts=[65942] middle=1249164 middle/vc=22.361
+  sm=1 data\effect\effectmodel\test_jianzhen2.mesh
+      size=413092 vc=10056 fc=11376 sm=1 p=0x542F8 tail=8 counts=[11376] middle=223872 middle/vc=22.263
+  sm=2 data\effect\effectmodel\w1351_model_emiter_lf002.mesh
+      size=18408 vc=434 fc=528 sm=2 p=0x3B78 tail=8 counts=[264, 264] middle=9736 middle/vc=22.433
+  sm=2 data\effect\effectmodel\w1351_model_fengsha_h001.mesh
+      size=53304 vc=1332 fc=1732 sm=2 p=0xA798 tail=0 counts=[1600, 132] middle=26640 middle/vc=20.000
+  sm=3 data\effect\effectmodel\w1351_model_emiter_lf004.mesh
+      size=17788 vc=436 fc=442 sm=3 p=0x3B0C tail=8 counts=[402, 8, 32] middle=9604 middle/vc=22.028
+  sm=3 data\effect\effectmodel\w1351_model_sl_nan_jt_x26.mesh
+      size=156244 vc=3789 fc=5784 sm=3 p=0x1DAB8 tail=0 counts=[1344, 1900, 2540] middle=75780 middle/vc=20.000
+  sm=4 data\effect\effectmodel\w1351_model_lantern_lf001.mesh
+      size=10856 vc=253 fc=308 sm=4 p=0x2320 tail=0 counts=[144, 32, 80, 52] middle=5676 middle/vc=22.435
+  sm=4 data\effect\effectmodel\w1351_model_qb_hhlw_emitter_c001.mesh
+      size=5064 vc=128 fc=112 sm=4 p=0x1118 tail=0 counts=[28, 28, 28, 28] middle=2560 middle/vc=20.000
+  sm=5 data\source\npc\quest\w1351_npc_fangjufang05\w1351_npc_fangjufang05.mesh
+      size=35880 vc=981 fc=698 sm=5 p=0x7BB8 tail=0 counts=[38, 286, 286, 4, 84] middle=19620 middle/vc=20.000
+  sm=5 data\source\npc\quest\w1351_npc_jiaochang01\w1351_npc_jiaochang01.mesh
+      size=147232 vc=4112 fc=2558 sm=5 p=0x20318 tail=0 counts=[960, 602, 558, 376, 62] middle=82240 middle/vc=20.000
+  sm=6 data\source\npc\model\w1351_model_kongmo_001\w1351_model_kongmo_001.mesh
+      size=2480 vc=24 fc=12 sm=6 p=0x418 tail=1336 counts=[2, 2, 2, 2, 2, 2] middle=480 middle/vc=20.000
+  sm=6 data\source\npc\model\w1351_model_kongmo_001\w1351_model_kongmo_002.mesh
+      size=2480 vc=24 fc=12 sm=6 p=0x418 tail=1336 counts=[2, 2, 2, 2, 2, 2] middle=480 middle/vc=20.000
+  sm=7 data\source\npc\quest\w1351_npc_duantai01\w1351_npc_duantai01.mesh
+      size=159376 vc=4435 fc=2858 sm=7 p=0x22B78 tail=0 counts=[254, 34, 270, 766, 1090, 190, 254] middle=88700 middle/vc=20.000
+  sm=7 data\source\npc\quest\w1351_npc_duantai05\w1351_npc_duantai05.mesh
+      size=186576 vc=5201 fc=3306 sm=7 p=0x28B38 tail=0 counts=[802, 258, 26, 176, 16, 8, 2020] middle=104020 middle/vc=20.000
+  sm=8 data\source\npc\quest\w1351_npc_fangjufang02\w1351_npc_fangjufang02.mesh
+      size=64588 vc=1790 fc=1150 sm=8 p=0xE0D8 tail=96 counts=[214, 42, 428, 10, 292, 126, 2, 36] middle=35800 middle/vc=20.000
+  sm=8 data\source\npc\quest\w1351_npc_micang04\w1351_npc_micang04.mesh
+      size=62796 vc=1713 fc=1278 sm=8 p=0xD738 tail=0 counts=[32, 268, 704, 12, 128, 4, 98, 32] middle=34260 middle/vc=20.000
+  sm=9 data\source\npc\quest\w1351_npc_micang02\w1351_npc_micang02.mesh
+      size=124448 vc=3428 fc=2406 sm=9 p=0x1AD98 tail=0 counts=[522, 280, 312, 180, 777, 48, 54, 84, 149] middle=68560 middle/vc=20.000
+  sm=9 data\source\npc\quest\w1351_npc_xianya04\w1351_npc_xianya04.mesh
+      size=162544 vc=4518 fc=2942 sm=9 p=0x235D8 tail=0 counts=[4, 430, 74, 762, 808, 28, 32, 580, 224] middle=90360 middle/vc=20.000
+  sm=10 data\source\npc\quest\w1351_npc_jiaochang05\w1351_npc_jiaochang05.mesh
+      size=129866 vc=3609 fc=2343 sm=10 p=0x1C438 tail=0 counts=[192, 36, 594, 88, 940, 200, 6, 16, 10, 261] middle=72180 middle/vc=20.000
+  sm=10 mobile_maps_source\w1351_mrsz_xiaotingzi_001.mesh
+      size=62368 vc=1369 fc=910 sm=10 p=0xDE1C tail=8 counts=[152, 40, 176, 32, 24, 40, 48, 48, 104, 246] middle=40152 middle/vc=29.329
+  sm=11 mobile_maps_source\w1351_ll_qingzhensimen_001.mesh
+      size=49220 vc=1064 fc=792 sm=11 p=0xAD88 tail=0 counts=[72, 24, 16, 148, 16, 20, 16, 36, 172, 160, 112] middle=31376 middle/vc=29.489
+  sm=11 mobile_maps_source\w1351_mrsz_tingxiangshuixie_001.mesh
+      size=151100 vc=3320 fc=2246 sm=11 p=0x21964 tail=8 counts=[140, 146, 43, 134, 116, 822, 489, 222, 100, 32, 2] middle=97452 middle/vc=29.353
+  sm=12 mobile_maps_source\w1351_mrsz_canhezhuangjianzhu_001.mesh
+      size=226368 vc=5028 fc=3114 sm=12 p=0x32B0C tail=8 counts=[112, 815, 128, 108, 252, 760, 506, 88, 128, 9, 88, 120] middle=147012 middle/vc=29.239
+  sm=12 mobile_maps_source\w1351_mrsz_changhuilangting_001.mesh
+      size=171424 vc=3802 fc=2376 sm=12 p=0x265B8 tail=8 counts=[276, 96, 568, 92, 88, 56, 48, 324, 48, 256, 272, 252] middle=111208 middle/vc=29.250
+
+=== failures ===
+  [no_fit] ('data\\effect\\effectmodel\\w1351_jianmo_v1.mesh', 4529, 80, 120, 1, True, 2840)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_jianmo_v2.mesh', 7809, 160, 240, 1, True, 5400)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_jianmo_v3.mesh', 4529, 80, 120, 1, True, 2840)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_jianmo_v4.mesh', 7809, 160, 240, 1, True, 5400)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_jianmo_v5.mesh', 3233, 50, 64, 1, True, 1880)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_jianmo_v6.mesh', 25889, 578, 1024, 1, True, 18776)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_jianmo_v7.mesh', 4225, 75, 96, 1, True, 2680)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_jianmo_v8.mesh', 4225, 75, 96, 1, True, 2680)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_model_cj_h001.mesh', 8129, 185, 288, 1, True, 6200)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_model_cj_h002.mesh', 8857, 198, 340, 1, True, 6616)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_model_cj_h003.mesh', 4177, 90, 136, 1, True, 3160)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_model_cj_h004.mesh', 18293, 416, 750, 1, True, 13592)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_model_ice_q_v1.mesh', 23253, 661, 270, 1, True, 21432)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_model_ice_q_v2.mesh', 202965, 5947, 2030, 1, True, 190584)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_model_ice_v2.mesh', 21543, 568, 481, 1, True, 18456)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_model_jianding_h001.mesh', 4681, 120, 60, 1, True, 4120)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_model_jianding_h002.mesh', 3841, 96, 48, 1, True, 3352)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_model_mountain_h002.mesh', 353793, 8126, 11660, 1, True, 283632)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_model_pl_h006.mesh', 41980, 155, 240, 1, True, 5720)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_model_qz_v1.mesh', 15829, 360, 638, 1, True, 11800)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_model_shengji_h001.mesh', 4681, 120, 60, 1, True, 4120)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_model_smo_t1.mesh', 3369, 79, 60, 1, True, 2808)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_model_smo_t2.mesh', 3889, 84, 120, 1, True, 2968)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_model_smo_t3.mesh', 34789, 855, 1158, 1, True, 27640)
+  [no_fit] ('data\\effect\\effectmodel\\w1351_model_sms_v1.mesh', 266249, 6119, 11660, 1, True, 196088)
+  [legacy_diff] ('data\\source\\npc\\changjingdaoju\\w1351_caiji_shuiqiu\\w1351_caiji_shuiqiu.mesh', 1428, 3, 1, 1, 'legacy=0x17A rule=0x43C')
+  [legacy_diff] ('data\\source\\npc\\model\\w1351_model_hongbaoshi_s001\\w1351_model_hongbaoshi_s001.mesh', 12576, 287, 96, 1, 'legacy=0x24F8 rule=0x2948')
+  [legacy_diff] ('data\\source\\npc\\model\\w1351_model_jianyinghu_idle03_guiji_c001\\w1351_model_jianyinghu_idle03_guiji_c001.mesh', 956, 4, 2, 1, 'legacy=0x19C rule=0x33C')
+  [legacy_diff] ('data\\source\\npc\\model\\w1351_model_jinyubaobao_gj_c001\\w1351_model_jinyubaobao_gj_c001.mesh', 1216, 4, 2, 1, 'legacy=0x19C rule=0x35C')
+  [legacy_diff] ('data\\source\\npc\\model\\w1351_model_mr_cj_nan_path_lf002\\w1351_model_mr_cj_nan_path_lf002.mesh', 956, 4, 2, 1, 'legacy=0x19C rule=0x33C')
+  [legacy_diff] ('data\\source\\npc\\model\\w1351_model_mr_nv_cj_trail_ani_lf001\\w1351_model_mr_nv_cj_trail_ani_lf001.mesh', 956, 4, 2, 1, 'legacy=0x19C rule=0x33C')
+  [legacy_diff] ('data\\source\\npc\\model\\w1351_model_pets_xhl_b7_c01\\w1351_model_pets_xhl_b7_c01.mesh', 33440, 594, 198, 1, 'legacy=0x4B58 rule=0x7344')
+  [legacy_diff] ('data\\source\\npc\\model\\w1351_model_xx_nan_jt_x02\\w1351_model_xx_nan_jt_x02.mesh', 11140, 219, 76, 1, 'legacy=0x1D10 rule=0x24C8')
+  [legacy_diff] ('data\\source\\npc\\model\\w1351_model_zq_hd_h001\\w1351_model_zq_hd_h001.mesh', 1576, 24, 12, 1, 'legacy=0x430 rule=0x51C')
+  [legacy_diff] ('data\\source\\npc\\model\\w1351_modle_yxh_queqiao_line02\\w1351_modle_yxh_queqiao_line02.mesh', 956, 4, 2, 1, 'legacy=0x19C rule=0x33C')
+  [legacy_diff] ('data\\source\\npc\\quest\\chuansong001\\chuansong001.mesh', 1132, 6, 2, 1, 'legacy=0x1DC rule=0x300')
+  [legacy_diff] ('data\\source\\npc\\quest\\chuansong001\\chuansong002.mesh', 1132, 6, 2, 1, 'legacy=0x1DC rule=0x300')
+  [legacy_diff] ('data\\source\\npc\\wuqi\\w1351_wuqi_t_shan_0209\\w1351_wuqi_t_shan_0209.mesh', 22172, 405, 304, 1, 'legacy=0x33B8 rule=0x4DD4')

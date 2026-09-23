@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tlbb.local/contracts/AssetReport.schema.json",
+  "title": "单资产报告（Python report.py / identity.py 快照产出）",
+  "description": "一个资产项的报告数据模型 = 版本快照 assets[] 的元素 = report.py asset_report() 背后消费的对象。键名沿用 identity.py snap() 的英文键（这是它与 Rust 卡片的第一个冲突：Rust 用中文键、Python 用英文键，见 README）。此契约容纳 Python 现状：身份证=五层 id_*、出站 names、入站 谁在使用它(可选)、缩略图=内联 base64(可选)。",
+  "$ref": "#/$defs/报告项",
+  "$defs": {
+    "十六位": { "type": "string", "pattern": "^[0-9a-f]{16}$" },
+    "报告项": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gid", "stem", "kind", "dir", "hub_path",
+        "id_content", "id_pack", "id_struct", "id_names", "id_asset",
+        "rels", "members", "names"
+      ],
+      "properties": {
+        "gid": { "type": "integer", "minimum": 1, "description": "agroups.id，本机内唯一，但不能作为跨版本匹配键（新版本 gid 会变）。" },
+        "stem": { "type": "string", "description": "茎名原文（允许 ''：8533 项中 790 项无茎名）。展示层再按 nice() 去掉 w1351_ 前缀，属显示而非数据。" },
+        "kind": {
+          "description": "英文原始 kind（与 Rust 卡片中文『类型』冲突，UI 需再经 kind_zh 映射）。封闭枚举。",
+          "type": "string",
+          "enum": ["npc", "player", "map-prop", "effect", "ui", "shared-material", "other"]
+        },
+        "dir": { "type": "string", "description": "安装内相对目录，可为空串。" },
+        "hub_path": { "type": "string", "description": "枢纽文件完整相对路径；无路径时为 ''（makedemo 注入行即为空），故 minLength 不收紧。" },
+        "id_content": { "$ref": "#/$defs/十六位", "description": "内容层：按角色分组、对『解压后』字节取的多重集摘要。免打包/免排序/免偏移，只有真实内容或成员增减才变。" },
+        "id_pack":    { "$ref": "#/$defs/十六位", "description": "打包层：filecrc(存储字节 CRC) 多重集摘要。与 id_content 不同 ⇒ 仅重打包，非重做。" },
+        "id_struct":  { "$ref": "#/$defs/十六位", "description": "结构层：角色计数 + 内部关系类型多重集。组成变化才变。" },
+        "id_names":   { "$ref": "#/$defs/十六位", "description": "引用名层：被引用但本机无对应实体的名字（小写基名）多重集摘要。仅此层变 = 仅名称变化。" },
+        "id_asset":   { "$ref": "#/$defs/十六位", "description": "身份总摘要 = digest(id_content||id_struct)，版本比对据此匹配（对应 asset_fingerprint.fp_asset）。" },
+        "rels": {
+          "type": "object",
+          "description": "该资产内部关系按类型计数（键随分析演进而增，非封闭）。",
+          "additionalProperties": { "type": "integer", "minimum": 0 },
+          "patternProperties": { "^[a-z][a-z0-9-]*$": { "type": "integer", "minimum": 0 } }
+        },
+        "members": { "type": "array", "items": { "$ref": "#/$defs/成员" }, "description": "成员清单；id_content/id_pack/id_struct 均由此计算。" },
+        "names": {
+          "type": "array", "items": { "type": "string" },
+          "description": "出站：引用了但没找到对应文件的原始名字（report.py 归一为小写基名）。对应 Rust『引用名称』里的 仅有名称 子集。"
+        },
+
+        "谁在使用它": {
+          "type": "array",
+          "description": "入站（可选）：report.py 的『谁在使用它』。方向与 名称/Rust 引用名称 相反，是两套实现的核心冲突之一，故显式独立成字段而非混入 names。",
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["名称", "关系"],
+            "properties": {
+              "名称": { "type": "string" },
+              "关系": {
+                "type": "string",
+                "enum": ["用到它的材质", "用到它的骨骼", "用到它的模型", "用到它的动作", "用到它的贴图", "用到它的特效", "用到它的场景", "与它同属一个模型", "同名配套文件", "文件里写着它的名字"]
+              }
+            }
+          }
+        },
+        "预览图": {
+          "type": ["string", "null"],
+          "description": "Python 缩略图=内联 data URI（thumb_b64：'data:image/png;base64,' + b64，缺图时原实现返回 ''）。报告是单文件交付物故图内嵌。与 Rust 的相对路径形态冲突（见 README，统一建议：以本 base64 为交付形态、路径为缓存形态）。MIME 限 png/jpeg/webp；单图字符上限约 2,000,000（≈1.5MB 原图），超限须降采样或改外链。",
+          "pattern": "^data:image/(png|jpeg|webp);base64,[A-Za-z0-9+/]*={0,2}$|^$",
+          "maxLength": 2000000
+        },
+        "身份证": { "$ref": "#/$defs/身份" }
+      }
+    },
+    "成员": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "name", "sha", "crc", "type", "w", "h"],
+      "properties": {
+        "role": {
+          "description": "英文原始角色（注意：数据里出现 scene/map/effect 三值不在 identity.py 的 ROLES 七元组内，故 id_content 不纳入它们的角色分桶——一处真实坑，见 README）。封闭枚举取 role_zh 的英文域。",
+          "type": "string",
+          "enum": ["model", "mesh", "material", "skeleton", "animation", "texture", "scene", "config", "audio", "map", "effect", "other"]
+        },
+        "name": { "type": "string", "description": "成员基名或（无路径时）其哈希。" },
+        "sha": { "type": "string", "pattern": "^([0-9a-f]{16})?$", "description": "解压后 SHA-256 前 16 位；blobs 未命中时为空串。" },
+        "crc": { "type": "string", "pattern": "^([0-9a-f]{8})?$", "description": "存储字节 filecrc（8 位十六进制）；缺失为空串。" },
+        "type": { "type": "string", "description": "嗅探出的格式标签（JBCF/mesh/ani/JBPU/texture/…，20+ 值，开放）。刻意不封闭。" },
+        "w": { "type": ["integer", "null"], "minimum": 0, "description": "贴图宽；非贴图为 null。" },
+        "h": { "type": ["integer", "null"], "minimum": 0, "description": "贴图高；非贴图为 null。" }
+      }
+    },
+    "身份": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["身份证", "内容层", "结构层", "打包层", "引用名层", "重复情况"],
+      "description": "report.py『资源身份证』小节的 JSON 化（可选，供 UI 直接渲染）。与顶层 id_* 是同数据的中文别名视图。",
+      "properties": {
+        "身份证":   { "$ref": "#/$defs/十六位", "description": "= id_asset" },
+        "内容层":   { "$ref": "#/$defs/十六位", "description": "= id_content" },
+        "结构层":   { "$ref": "#/$defs/十六位", "description": "= id_struct" },
+        "打包层":   { "$ref": "#/$defs/十六位", "description": "= id_pack" },
+        "引用名层": { "$ref": "#/$defs/十六位", "description": "= id_names" },
+        "重复情况": { "type": "integer", "minimum": 0, "description": "另有几项内容完全相同（dup 计数）。" }
+      }
+    },
+    "版本快照文档": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "built_from", "assets"],
+      "description": "versions/示例_下一版.json 与 out/versionA.json 的顶层信封。",
+      "properties": {
+        "version": { "type": "integer", "description": "快照格式版本，当前为 2（identity.py 注入）。" },
+        "built_from": { "type": "string" },
+        "assets": { "type": "array", "items": { "$ref": "#/$defs/报告项" } }
+      }
+    }
+  }
+}

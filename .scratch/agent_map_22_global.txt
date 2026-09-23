@@ -1,0 +1,31 @@
+map-adjacent named .mesh with fc read: 3264/7996
+
+== per-map aggregate over 270 maps
+  instances: 281840  with resolvable named mesh: 255013 = 90.48%
+  maps by instance-resolve bucket: {'>=95%': 103, '>=80%': 58, '>=50%': 33, '>0%': 21, '>=99%': 54, '0%': 1}
+  maps with 0 resolvable instances: 1
+  median per-map instance resolve rate: 0.965
+  median per-map UNIQUE-mesh resolve rate: 0.989
+  per-map unique-mesh triangles: p50=96542 p90=372969 max=1585405 (w1351_ll_dl_003)
+  total unique map meshes referenced: 3250 ; total triangles (dedup) 49767384
+
+  top-10 maps by resolvable instances:
+    w1351_ll_dl_003                  inst=6156   res=6145   (99.8%) uniqMesh=218 tri=1585405
+    w1351_ll_dl_002                  inst=6112   res=6101   (99.8%) uniqMesh=209 tri=1468225
+    w1351_ll_loulan_001              inst=5828   res=5778   (99.1%) uniqMesh=292 tri=1454209
+    w1351_ll_ly_001                  inst=5279   res=5238   (99.2%) uniqMesh=274 tri=688689
+    w1351_ll_shgz_001                inst=5002   res=4971   (99.4%) uniqMesh=232 tri=827279
+    w1351_ll_sz_001                  inst=4282   res=4275   (99.8%) uniqMesh=254 tri=527158
+    w1351_fb_jiehun_001              inst=4059   res=4056   (99.9%) uniqMesh=93 tri=706121
+    w1351_fb_jiehun_003              inst=3837   res=3823   (99.6%) uniqMesh=140 tri=1392029
+    w1351_fb_jiehun_002              inst=3080   res=3061   (99.4%) uniqMesh=127 tri=1223013
+    w1351_fb_mtld_001                inst=3075   res=3042   (98.9%) uniqMesh=142 tri=1561992
+  worst >500-inst maps:
+    w1351_fb_songliao_001            inst=1134   res=0      (0.0%)
+    w1351_ll_lyxj_002                inst=5978   res=116    (1.9%)
+    w1351_fb_qingqiu_001             inst=707    res=29     (4.1%)
+    w1351_fb_sxzc_001                inst=1276   res=66     (5.2%)
+    w1351_fb_fenghuanglingmu_001     inst=663    res=86     (13.0%)
+    w1351_fb_chiji_001               inst=2342   res=537    (22.9%)
+    w1351_hd_lyfhc_001               inst=1518   res=508    (33.5%)
+    w1351_fb_fhgucheng_001           inst=2036   res=964    (47.3%)

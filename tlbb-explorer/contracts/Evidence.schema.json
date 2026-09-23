@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tlbb.local/contracts/Evidence.schema.json",
+  "title": "证据 / 身份证（两套实现的身份信息统一契约）",
+  "description": "统一『这条信息有多可信』的契约。两套实现在此分裂：Rust 卡片的『证据』=定位置信轴（A/B/C/D 等级），Python 报告的『资源身份证』=内容身份轴（五层 id_*/fp_* 指纹）。本契约把定位置信轴设为必填核心、内容身份轴设为可选内嵌块，使 Rust 现状可直接校验，并为合并后的实现预留同一落点。",
+  "$ref": "#/$defs/证据",
+  "$defs": {
+    "十六位": { "type": "string", "pattern": "^[0-9a-f]{16}$" },
+    "证据": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["定位等级", "等级说明", "缺口", "名称来源"],
+      "properties": {
+        "定位等级": {
+          "description": "evidence::grade() 的 label()。等级由四个信号唯一决定（见 判定输入），是封闭枚举、可稳定排序与配 CSS（首字母 A/B/C/D 供卡片着色）。",
+          "type": "string",
+          "enum": ["A 完整定位", "B 主体定位", "C 名称证据", "D 推测"]
+        },
+        "等级说明": {
+          "description": "grade().note()，与 定位等级 严格一一对应，禁止自由文本，防止实现各写各的话术。封闭枚举。",
+          "type": "string",
+          "enum": [
+            "主体与全部依赖均已定位",
+            "主体可解码，部分依赖只有名称",
+            "仅持有主体，依赖关系来自名称",
+            "未能解码任何内容，条目仅为线索"
+          ]
+        },
+        "缺口": {
+          "type": "array", "uniqueItems": true,
+          "description": "evidence::gaps() 以事实口吻列出欠缺项（不写成报错）。封闭枚举集合。",
+          "items": {
+            "type": "string",
+            "enum": [
+              "贴图引用只有名称，未指向具体资源",
+              "部分贴图引用未定位",
+              "组成单一，未见模型/材质/动作的完整搭配",
+              "主体文件未能解码"
+            ]
+          }
+        },
+        "名称来源": {
+          "description": "名称是茎名原文还是仅凭标识区分（named 判定）。封闭枚举。",
+          "type": "string",
+          "enum": ["客户端茎名（原文展示，未翻译）", "无路径记录，仅以标识区分"]
+        },
+        "内容身份": { "$ref": "#/$defs/内容身份", "description": "可选内嵌：把 Python 五层身份证折进同一证据对象，供合并实现使用；Rust 现状缺省。" }
+      },
+      "allOf": [
+        {
+          "comment": "等级↔说明↔缺口 的一致性硬约束：D 级必含『主体文件未能解码』，A 级 缺口必为空。",
+          "if": { "properties": { "定位等级": { "const": "D 推测" } }, "required": ["定位等级"] },
+          "then": { "properties": { "缺口": { "contains": { "const": "主体文件未能解码" } } } }
+        },
+        {
+          "if": { "properties": { "定位等级": { "const": "A 完整定位" } }, "required": ["定位等级"] },
+          "then": { "properties": { "缺口": { "maxItems": 0 } } }
+        }
+      ]
+    },
+    "内容身份": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["身份证", "内容层", "打包层", "结构层", "引用名层"],
+      "description": "Python identity.py 五层身份的规范落点。键名用中文以贴合 UI，值即 id_* 十六位摘要；映射到 DB：身份证→asset_fingerprint.fp_asset。",
+      "properties": {
+        "身份证":   { "$ref": "#/$defs/十六位", "description": "id_asset = digest(id_content||id_struct) = fp_asset。版本匹配主键。" },
+        "内容层":   { "$ref": "#/$defs/十六位", "description": "id_content：解压字节按角色多重集摘要，免疫重打包与排序。" },
+        "打包层":   { "$ref": "#/$defs/十六位", "description": "id_pack：filecrc 存储字节摘要。仅它变=重打包，非内容变。" },
+        "结构层":   { "$ref": "#/$defs/十六位", "description": "id_struct：角色计数+关系多重集。" },
+        "引用名层": { "$ref": "#/$defs/十六位", "description": "id_names：缺失引用名小写基名摘要。仅它变=仅名称变化。" }
+      }
+    },
+    "判定输入": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hub_decoded", "role_kinds", "members", "refs_total", "refs_located"],
+      "description": "证据等级的判定输入（evidence::Signals）。仅作规范说明，不出现在产物里。规则：!hub_decoded||members==0→D；(role_kinds>=2 && refs_total>0 && refs_located==refs_total)→A；role_kinds>=2→B；否则 C。",
+      "properties": {
+        "hub_decoded": { "type": "boolean" },
+        "role_kinds": { "type": "integer", "minimum": 0 },
+        "members": { "type": "integer", "minimum": 0 },
+        "refs_total": { "type": "integer", "minimum": 0 },
+        "refs_located": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

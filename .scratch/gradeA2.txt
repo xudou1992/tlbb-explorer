@@ -1,0 +1,5 @@
+total groups: 13080
+
+groups with dr>=2 and loc_refs>0: 0
+
+=== checking name-based totals for those candidates ===

@@ -1,0 +1,559 @@
+########## group static_ctrl
+
+### w1351_model_mianpian_l001.mesh size=424 vc=4 fc=2 sm=1 pos_end=0x148
+    p=0x198 tail_after_idx=0 middle=80 mid/vc=20.0000 counts=[2]
+    models: vc*20=80 (mid-vc*20)=0 fc*2=4 residual_after_20vc_2fc=-4 12vc=48 24vc=96 28vc=112 32vc=128
+    mid[0:64]   00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 30 30 85 3a 00 00 00 00 1f eb 02 3f 00 00 00 00
+    mid[-64:]   00 00 80 3f 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 30 30 85 3a 00 00 00 00 1f eb 02 3f 00 00 00 00 1f eb 02 3f 00 00 80 3f 30 30 85 3a 00 00 80 3f
+    mid head f32: n=12 min=0.0 max=1.0 mean=0.3333333432674408 finite=100.0% in[0,1]=100.0%
+    mid tail f32: n=12 min=0.0 max=1.0 mean=0.3354027271270752 finite=100.0% in[0,1]=100.0%
+    unit-normal runs (>= 64 verts): 
+    slice profile (off, %finite_f32, %|f|<=1.1, %in[0,1]):
+
+### w1351_model_plane_c01.mesh size=424 vc=4 fc=2 sm=1 pos_end=0x148
+    p=0x198 tail_after_idx=0 middle=80 mid/vc=20.0000 counts=[2]
+    models: vc*20=80 (mid-vc*20)=0 fc*2=4 residual_after_20vc_2fc=-4 12vc=48 24vc=96 28vc=112 32vc=128
+    mid[0:64]   00 00 00 00 00 00 80 3f 01 00 00 b4 00 00 00 00 00 00 80 3f 01 00 00 b4 00 00 00 00 00 00 80 3f 01 00 00 b4 00 00 00 00 00 00 80 3f 01 00 00 b4 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00
+    mid[-64:]   00 00 80 3f 01 00 00 b4 00 00 00 00 00 00 80 3f 01 00 00 b4 00 00 00 00 00 00 80 3f 01 00 00 b4 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 80 3f 00 00 80 3f 00 00 00 00 00 00 80 3f
+    mid head f32: n=12 min=-1.1920930376163597e-07 max=1.0 mean=0.333333283662796 finite=100.0% in[0,1]=66.7%
+    mid tail f32: n=12 min=-1.1920930376163597e-07 max=1.0 mean=0.4166666567325592 finite=100.0% in[0,1]=83.3%
+    unit-normal runs (>= 64 verts): 
+    slice profile (off, %finite_f32, %|f|<=1.1, %in[0,1]):
+
+### w1351_npc_duantai01.mesh size=159376 vc=4435 fc=2858 sm=7 pos_end=0xD0FC
+    p=0x22B78 tail_after_idx=0 middle=88700 mid/vc=20.0000 counts=[254, 34, 270, 766, 1090, 190, 254]
+    models: vc*20=88700 (mid-vc*20)=0 fc*2=5716 residual_after_20vc_2fc=-5716 12vc=53220 24vc=106440 28vc=124180 32vc=141920
+    mid[0:64]   aa 80 e0 3d f3 ca 68 3f 1f 7c cd 3e 63 4a 83 3d c2 e3 65 3f e7 dd de 3e aa 80 e0 3d f3 ca 68 3f 1f 7c cd 3e 21 7b 1e 3e 57 ea 6a 3f f9 69 bb 3e 26 ea 54 3e 6a 9a 2f 3f db 82 32 3f 72 9f 1a 3e
+    mid[-64:]   b1 21 7e 3b 18 f1 00 3f b6 1c f6 3e f8 f8 00 3f b8 34 f6 3e e5 bc 7f 3f d6 e6 8f 3b 3c 97 7f 3f e1 5b 7a 3f f7 d8 80 3f bf 7a 7a 3f 85 33 01 3f bb 3b fe 3e 2e 44 01 3f d8 ec fd 3e 00 b8 80 3f
+    mid head f32: n=12 min=0.06410672515630722 max=0.9176382422447205 mean=0.47303810715675354 finite=100.0% in[0,1]=100.0%
+    mid tail f32: n=12 min=0.0043915314599871635 max=1.006621241569519 mean=0.7044510841369629 finite=100.0% in[0,1]=83.3%
+    unit-normal runs (>= 3548 verts): mid+0x0(abs 0xD0FC) len=4435
+    None
+    before-normal f32 (uv?): n=0 min=nan max=nan mean=nan finite=nan% in[0,1]=nan%
+    slice profile (off, %finite_f32, %|f|<=1.1, %in[0,1]):
+      0x00D0FC  fin=100%  le1.1=100%  in01=75%  u16max=61089
+      0x00D9A4  fin=100%  le1.1=100%  in01=62%  u16max=64652
+      0x00E24C  fin=100%  le1.1=100%  in01=38%  u16max=64647
+      0x00EAF4  fin=100%  le1.1=100%  in01=59%  u16max=64333
+      0x00F39C  fin=100%  le1.1=100%  in01=58%  u16max=65524
+      0x00FC44  fin=100%  le1.1=100%  in01=47%  u16max=65170
+      0x0104EC  fin=100%  le1.1=100%  in01=59%  u16max=63874
+      0x010D94  fin=100%  le1.1=100%  in01=67%  u16max=61385
+      0x01163C  fin=100%  le1.1=100%  in01=61%  u16max=60313
+      0x011EE4  fin=100%  le1.1=100%  in01=75%  u16max=64628
+      0x01278C  fin=100%  le1.1=100%  in01=47%  u16max=65295
+      0x013034  fin=100%  le1.1=100%  in01=45%  u16max=65085
+      0x0138DC  fin=100%  le1.1=100%  in01=61%  u16max=65367
+      0x014184  fin=100%  le1.1=100%  in01=45%  u16max=62642
+      0x014A2C  fin=100%  le1.1=100%  in01=56%  u16max=65444
+      0x0152D4  fin=100%  le1.1=100%  in01=45%  u16max=65313
+      0x015B7C  fin=100%  le1.1=100%  in01=67%  u16max=61131
+      0x016424  fin=100%  le1.1=100%  in01=56%  u16max=65218
+      0x016CCC  fin=100%  le1.1=100%  in01=50%  u16max=64839
+      0x017574  fin=100%  le1.1=100%  in01=50%  u16max=63000
+      0x017E1C  fin=100%  le1.1=100%  in01=53%  u16max=64949
+      0x0186C4  fin=100%  le1.1=100%  in01=56%  u16max=65445
+      0x018F6C  fin=100%  le1.1=100%  in01=77%  u16max=65444
+      0x019814  fin=100%  le1.1=100%  in01=94%  u16max=65024
+      0x01A0BC  fin=100%  le1.1=100%  in01=92%  u16max=60767
+      0x01A964  fin=100%  le1.1=100%  in01=50%  u16max=54180
+      0x01B20C  fin=100%  le1.1=91%  in01=91%  u16max=32768
+      0x01BAB4  fin=100%  le1.1=53%  in01=5%  u16max=48878
+      0x01C35C  fin=100%  le1.1=100%  in01=100%  u16max=44871
+      0x01CC04  fin=100%  le1.1=100%  in01=100%  u16max=59915
+      0x01D4AC  fin=100%  le1.1=100%  in01=100%  u16max=65534
+      0x01DD54  fin=100%  le1.1=100%  in01=100%  u16max=61851
+      0x01E5FC  fin=100%  le1.1=100%  in01=100%  u16max=64473
+      0x01EEA4  fin=100%  le1.1=100%  in01=97%  u16max=64068
+      0x01F74C  fin=100%  le1.1=100%  in01=100%  u16max=61621
+      0x01FFF4  fin=100%  le1.1=100%  in01=100%  u16max=63208
+      0x02089C  fin=100%  le1.1=100%  in01=100%  u16max=64398
+      0x021144  fin=100%  le1.1=100%  in01=100%  u16max=60469
+      0x0219EC  fin=100%  le1.1=100%  in01=100%  u16max=64563
+      0x022294  fin=100%  le1.1=100%  in01=100%  u16max=62349
+
+### w1351_model_fengsha_h001.mesh size=53304 vc=1332 fc=1732 sm=2 pos_end=0x3F88
+    p=0xA798 tail_after_idx=0 middle=26640 mid/vc=20.0000 counts=[1600, 132]
+    models: vc*20=26640 (mid-vc*20)=0 fc*2=3464 residual_after_20vc_2fc=-3464 12vc=15984 24vc=31968 28vc=37296 32vc=42624
+    mid[0:64]   0a 5b d7 bd d5 20 2a 3e b2 00 7b 3f 34 5d a4 bd b7 a7 3a 3e 09 df 7a 3f a4 b6 b2 bd 45 be f5 3d ac 2a 7d 3f d0 8d d6 bd f1 c5 b6 3d 6a 90 7d 3f ca df 4d bd 13 03 3b 3e 8f 5d 7b 3f 21 4f 6f bd
+    mid[-64:]   b2 bd 8a 3d 96 09 88 3b 44 75 67 3f 18 6c 05 3c 44 75 67 3f 18 6c 05 3c b2 bd 8a 3d 96 09 88 3b 40 fe db 3b 40 0a dc 3b 44 75 67 3f 18 6c 05 3c 40 fe db 3b 40 0a dc 3b 04 48 7e 3f 40 0a dc 3b
+    mid head f32: n=12 min=-0.1051541119813919 max=0.9904848337173462 mean=0.3433403968811035 finite=100.0% in[0,1]=66.7%
+    mid tail f32: n=12 min=0.004151533357799053 max=0.9932863712310791 mean=0.2436090111732483 finite=100.0% in[0,1]=100.0%
+    unit-normal runs (>= 1065 verts): mid+0x0(abs 0x3F88) len=1332, mid+0x4(abs 0x3F8C) len=1085
+    None
+    before-normal f32 (uv?): n=0 min=nan max=nan mean=nan finite=nan% in[0,1]=nan%
+    slice profile (off, %finite_f32, %|f|<=1.1, %in[0,1]):
+      0x003F88  fin=100%  le1.1=100%  in01=80%  u16max=65363
+      0x004220  fin=100%  le1.1=100%  in01=45%  u16max=62675
+      0x0044B8  fin=100%  le1.1=100%  in01=48%  u16max=65033
+      0x004750  fin=100%  le1.1=100%  in01=78%  u16max=61875
+      0x0049E8  fin=100%  le1.1=100%  in01=50%  u16max=65534
+      0x004C80  fin=100%  le1.1=100%  in01=16%  u16max=61960
+      0x004F18  fin=100%  le1.1=100%  in01=17%  u16max=61168
+      0x0051B0  fin=100%  le1.1=100%  in01=17%  u16max=65261
+      0x005448  fin=100%  le1.1=100%  in01=22%  u16max=63439
+      0x0056E0  fin=100%  le1.1=100%  in01=81%  u16max=63629
+      0x005978  fin=100%  le1.1=100%  in01=80%  u16max=65160
+      0x005C10  fin=100%  le1.1=100%  in01=53%  u16max=65534
+      0x005EA8  fin=100%  le1.1=100%  in01=52%  u16max=65444
+      0x006140  fin=100%  le1.1=100%  in01=45%  u16max=64542
+      0x0063D8  fin=100%  le1.1=100%  in01=50%  u16max=64812
+      0x006670  fin=100%  le1.1=100%  in01=48%  u16max=65333
+      0x006908  fin=100%  le1.1=100%  in01=47%  u16max=65012
+      0x006BA0  fin=100%  le1.1=100%  in01=77%  u16max=63562
+      0x006E38  fin=100%  le1.1=100%  in01=84%  u16max=65341
+      0x0070D0  fin=100%  le1.1=100%  in01=50%  u16max=57746
+      0x007368  fin=100%  le1.1=100%  in01=72%  u16max=64108
+      0x007600  fin=100%  le1.1=100%  in01=47%  u16max=61626
+      0x007898  fin=100%  le1.1=100%  in01=77%  u16max=63227
+      0x007B30  fin=100%  le1.1=100%  in01=52%  u16max=63605
+      0x007DC8  fin=100%  le1.1=100%  in01=95%  u16max=65088
+      0x008060  fin=100%  le1.1=100%  in01=100%  u16max=62238
+      0x0082F8  fin=100%  le1.1=100%  in01=100%  u16max=65088
+      0x008590  fin=100%  le1.1=100%  in01=100%  u16max=65088
+      0x008828  fin=100%  le1.1=100%  in01=100%  u16max=65452
+      0x008AC0  fin=100%  le1.1=100%  in01=100%  u16max=65088
+      0x008D58  fin=100%  le1.1=100%  in01=100%  u16max=65088
+      0x008FF0  fin=100%  le1.1=100%  in01=100%  u16max=63454
+      0x009288  fin=100%  le1.1=100%  in01=100%  u16max=65088
+      0x009520  fin=100%  le1.1=100%  in01=100%  u16max=65088
+      0x0097B8  fin=100%  le1.1=100%  in01=100%  u16max=65442
+      0x009A50  fin=100%  le1.1=100%  in01=100%  u16max=65088
+      0x009CE8  fin=100%  le1.1=100%  in01=100%  u16max=64660
+      0x009F80  fin=100%  le1.1=100%  in01=100%  u16max=62882
+      0x00A218  fin=100%  le1.1=100%  in01=100%  u16max=65088
+      0x00A4B0  fin=100%  le1.1=100%  in01=100%  u16max=65088
+########## group skinned_effect
+
+### test_jianzhen.mesh size=2315476 vc=55864 fc=65942 sm=1 pos_end=0xA3BB8
+    p=0x1D4B44 tail_after_idx=8 middle=1249164 mid/vc=22.3608 counts=[65942]
+    models: vc*20=1117280 (mid-vc*20)=131884 fc*2=131884 residual_after_20vc_2fc=0 12vc=670368 24vc=1340736 28vc=1564192 32vc=1787648
+    mid[0:64]   72 e5 5a bf 4e 50 d9 be 29 80 98 3e 70 97 25 bf 4c c8 0e bf 1b 26 05 3f b4 08 4e bf 6e 11 87 bc d2 e1 17 3f a5 37 63 bf 9d 73 c6 3c 54 8a eb 3e ff f5 b0 3d 0f 02 7c bf 0d e7 1c 3e 3a 83 10 bf
+    mid[-64:]   e1 28 3e 3f b0 a0 f8 3e 7e e2 3f 3f 4d 66 e5 3e ba a0 3b 3f 17 6c e6 3e d1 09 3d 3f 14 94 3e 3f ad 24 3e 3f fa fc d7 3e 0a 43 3a 3f b2 45 d8 3e 49 d7 3c 3f 4f 5b c7 3e 49 89 39 3f 02 1e c8 3e
+    mid head f32: n=12 min=-0.8875678181648254 max=0.5932894945144653 mean=-0.19145385921001434 finite=100.0% in[0,1]=41.7%
+    mid tail f32: n=12 min=0.3893685042858124 max=0.7444469928741455 mean=0.6019222736358643 finite=100.0% in[0,1]=100.0%
+    unit-normal runs (>= 44691 verts): mid+0x0(abs 0xA3BB8) len=55864
+    None
+    before-normal f32 (uv?): n=0 min=nan max=nan mean=nan finite=nan% in[0,1]=nan%
+    slice profile (off, %finite_f32, %|f|<=1.1, %in[0,1]):
+      0x0A3BB8  fin=100%  le1.1=100%  in01=38%  u16max=64695
+      0x0AB5B4  fin=100%  le1.1=100%  in01=55%  u16max=64698
+      0x0B2FB0  fin=100%  le1.1=100%  in01=45%  u16max=64750
+      0x0BA9AC  fin=100%  le1.1=100%  in01=53%  u16max=64920
+      0x0C23A8  fin=100%  le1.1=100%  in01=62%  u16max=65177
+      0x0C9DA4  fin=100%  le1.1=100%  in01=66%  u16max=64420
+      0x0D17A0  fin=100%  le1.1=100%  in01=9%  u16max=63681
+      0x0D919C  fin=100%  le1.1=100%  in01=72%  u16max=64429
+      ... (capped)
+
+### test_jianzhen2.mesh size=413092 vc=10056 fc=11376 sm=1 pos_end=0x1D878
+    p=0x542F8 tail_after_idx=8 middle=223872 mid/vc=22.2625 counts=[11376]
+    models: vc*20=201120 (mid-vc*20)=22752 fc*2=22752 residual_after_20vc_2fc=0 12vc=120672 24vc=241344 28vc=281568 32vc=321792
+    mid[0:64]   46 06 3a 3d ef 62 9c bd d5 fc 7e bf ab b7 00 bd 6d d6 7b 3e c1 01 78 bf 8a ff 00 3f 36 ee b5 3d 5f f3 5b bf ff 05 01 3f fb f5 95 bd fd 4f 5c bf cf 45 48 bf 94 8b d7 3e 56 0c eb be 03 3c 40 be
+    mid[-64:]   ef 7b 50 3f 40 c7 60 3e 5b 54 58 3f aa 02 2e 3e 9d 28 50 3f fc 29 3b 3e 2f 30 53 3f 86 03 04 3e ea 33 4c 3f 64 8d 19 3e 5f e4 53 3f d8 29 c2 3e 49 d4 53 3f 52 96 d3 3e fe 68 48 3f 35 5b aa 3d
+    mid head f32: n=12 min=-0.9960454106330872 max=0.5039977431297302 mean=-0.2064606100320816 finite=100.0% in[0,1]=41.7%
+    mid tail f32: n=12 min=0.08318177610635757 max=0.8277034163475037 mean=0.5175890326499939 finite=100.0% in[0,1]=100.0%
+    unit-normal runs (>= 8044 verts): mid+0x0(abs 0x1D878) len=10056
+    None
+    before-normal f32 (uv?): n=0 min=nan max=nan mean=nan finite=nan% in[0,1]=nan%
+    slice profile (off, %finite_f32, %|f|<=1.1, %in[0,1]):
+      0x01D878  fin=100%  le1.1=100%  in01=28%  u16max=65418
+      0x01EE54  fin=100%  le1.1=100%  in01=45%  u16max=65325
+      0x020430  fin=100%  le1.1=100%  in01=47%  u16max=64793
+      0x021A0C  fin=100%  le1.1=100%  in01=41%  u16max=64918
+      0x022FE8  fin=100%  le1.1=100%  in01=70%  u16max=65499
+      0x0245C4  fin=100%  le1.1=100%  in01=28%  u16max=64305
+      0x025BA0  fin=100%  le1.1=100%  in01=80%  u16max=65473
+      0x02717C  fin=100%  le1.1=100%  in01=22%  u16max=64406
+      0x028758  fin=100%  le1.1=100%  in01=14%  u16max=64648
+      0x029D34  fin=100%  le1.1=100%  in01=5%  u16max=65524
+      0x02B310  fin=100%  le1.1=100%  in01=55%  u16max=62631
+      0x02C8EC  fin=100%  le1.1=100%  in01=81%  u16max=65187
+      0x02DEC8  fin=100%  le1.1=100%  in01=39%  u16max=65060
+      0x02F4A4  fin=100%  le1.1=100%  in01=36%  u16max=65257
+      0x030A80  fin=100%  le1.1=100%  in01=58%  u16max=65142
+      0x03205C  fin=100%  le1.1=100%  in01=27%  u16max=64456
+      0x033638  fin=100%  le1.1=100%  in01=31%  u16max=65360
+      0x034C14  fin=100%  le1.1=100%  in01=36%  u16max=64900
+      0x0361F0  fin=100%  le1.1=100%  in01=73%  u16max=61203
+      0x0377CC  fin=100%  le1.1=100%  in01=62%  u16max=64970
+      0x038DA8  fin=100%  le1.1=100%  in01=38%  u16max=65127
+      0x03A384  fin=100%  le1.1=100%  in01=45%  u16max=61307
+      0x03B960  fin=100%  le1.1=100%  in01=100%  u16max=8
+      0x03CF3C  fin=100%  le1.1=100%  in01=100%  u16max=8
+      0x03E518  fin=100%  le1.1=100%  in01=100%  u16max=8
+      0x03FAF4  fin=100%  le1.1=100%  in01=100%  u16max=4
+      0x0410D0  fin=100%  le1.1=100%  in01=100%  u16max=65236
+      0x0426AC  fin=100%  le1.1=100%  in01=100%  u16max=63918
+      0x043C88  fin=100%  le1.1=100%  in01=100%  u16max=62403
+      0x045264  fin=100%  le1.1=100%  in01=100%  u16max=63411
+      0x046840  fin=100%  le1.1=100%  in01=100%  u16max=64189
+      0x047E1C  fin=100%  le1.1=100%  in01=100%  u16max=63411
+      0x0493F8  fin=100%  le1.1=100%  in01=100%  u16max=65236
+      0x04A9D4  fin=100%  le1.1=100%  in01=100%  u16max=63918
+      0x04BFB0  fin=100%  le1.1=100%  in01=100%  u16max=65236
+      0x04D58C  fin=100%  le1.1=100%  in01=100%  u16max=60171
+      0x04EB68  fin=100%  le1.1=100%  in01=100%  u16max=65236
+      ... (capped)
+
+### w1351_model_emiter_lf002.mesh size=18408 vc=434 fc=528 sm=2 pos_end=0x1570
+    p=0x3B78 tail_after_idx=8 middle=9736 mid/vc=22.4332 counts=[264, 264]
+    models: vc*20=8680 (mid-vc*20)=1056 fc*2=1056 residual_after_20vc_2fc=0 12vc=5208 24vc=10416 28vc=12152 32vc=13888
+    mid[0:64]   ec f6 af 3e b1 30 04 bd 9f 43 70 3f ae 94 17 35 48 3c 65 bc 96 f9 7f 3f e3 22 ab 3e a9 94 09 bd 69 1f 71 3f f4 94 bf 3e b1 70 f6 3c 23 47 6d 3f aa af 45 34 79 36 20 3c de fc 7f 3f 92 12 a3 b3
+    mid[-64:]   0b 1e cd 3e 54 59 70 3f d4 37 c9 3e 7d 78 73 3f 4d 8d b3 3e 06 eb 67 3f c3 33 d1 3e 2c 71 6a 3f 18 ca df 3e 82 db 4e 3f ae 21 c0 3e 25 c5 54 3f 76 cc c3 3e d2 8c 4b 3f 28 5b e1 3e 3d 9d 45 3f
+    mid head f32: n=12 min=-0.033589038997888565 max=0.9999021291732788 mean=0.40079423785209656 finite=100.0% in[0,1]=75.0%
+    mid tail f32: n=12 min=0.3506874144077301 max=0.9157893657684326 mean=0.6185113787651062 finite=100.0% in[0,1]=100.0%
+    unit-normal runs (>= 347 verts): mid+0x0(abs 0x1570) len=434
+    None
+    before-normal f32 (uv?): n=0 min=nan max=nan mean=nan finite=nan% in[0,1]=nan%
+    slice profile (off, %finite_f32, %|f|<=1.1, %in[0,1]):
+      0x001570  fin=100%  le1.1=100%  in01=88%  u16max=65398
+      0x001660  fin=100%  le1.1=100%  in01=80%  u16max=65424
+      0x001750  fin=100%  le1.1=100%  in01=64%  u16max=65424
+      0x001840  fin=100%  le1.1=100%  in01=55%  u16max=64245
+      0x001930  fin=100%  le1.1=100%  in01=69%  u16max=65191
+      0x001A20  fin=100%  le1.1=100%  in01=84%  u16max=65470
+      0x001B10  fin=100%  le1.1=100%  in01=59%  u16max=62199
+      0x001C00  fin=100%  le1.1=100%  in01=53%  u16max=65319
+      0x001CF0  fin=100%  le1.1=100%  in01=33%  u16max=65326
+      0x001DE0  fin=100%  le1.1=100%  in01=56%  u16max=65326
+      0x001ED0  fin=100%  le1.1=100%  in01=41%  u16max=64206
+      0x001FC0  fin=100%  le1.1=100%  in01=62%  u16max=65424
+      0x0020B0  fin=100%  le1.1=100%  in01=42%  u16max=65236
+      0x0021A0  fin=100%  le1.1=100%  in01=36%  u16max=65326
+      0x002290  fin=100%  le1.1=100%  in01=91%  u16max=65398
+      0x002380  fin=100%  le1.1=100%  in01=86%  u16max=65246
+      0x002470  fin=100%  le1.1=100%  in01=67%  u16max=65246
+      0x002560  fin=100%  le1.1=100%  in01=56%  u16max=65319
+      0x002650  fin=100%  le1.1=100%  in01=58%  u16max=65191
+      0x002740  fin=100%  le1.1=100%  in01=89%  u16max=65470
+      0x002830  fin=100%  le1.1=100%  in01=69%  u16max=64209
+      0x002920  fin=100%  le1.1=100%  in01=56%  u16max=64206
+      0x002A10  fin=100%  le1.1=100%  in01=100%  u16max=1
+      0x002B00  fin=100%  le1.1=100%  in01=100%  u16max=1
+      0x002BF0  fin=100%  le1.1=100%  in01=100%  u16max=1
+      0x002CE0  fin=100%  le1.1=100%  in01=100%  u16max=1
+      0x002DD0  fin=100%  le1.1=100%  in01=100%  u16max=63774
+      0x002EC0  fin=100%  le1.1=100%  in01=100%  u16max=63774
+      0x002FB0  fin=100%  le1.1=100%  in01=100%  u16max=63586
+      0x0030A0  fin=100%  le1.1=100%  in01=100%  u16max=63586
+      0x003190  fin=100%  le1.1=100%  in01=100%  u16max=63774
+      0x003280  fin=100%  le1.1=100%  in01=100%  u16max=63774
+      0x003370  fin=100%  le1.1=100%  in01=100%  u16max=63586
+      0x003460  fin=100%  le1.1=100%  in01=100%  u16max=64054
+      0x003550  fin=100%  le1.1=100%  in01=100%  u16max=64054
+      0x003640  fin=100%  le1.1=100%  in01=100%  u16max=64186
+      0x003730  fin=100%  le1.1=100%  in01=100%  u16max=64274
+      0x003820  fin=100%  le1.1=100%  in01=100%  u16max=64274
+      0x003910  fin=100%  le1.1=100%  in01=100%  u16max=64248
+      0x003A00  fin=100%  le1.1=100%  in01=100%  u16max=64248
+
+### w1351_model_emiter_lf004.mesh size=17788 vc=436 fc=442 sm=3 pos_end=0x1588
+    p=0x3B0C tail_after_idx=8 middle=9604 mid/vc=22.0275 counts=[402, 8, 32]
+    models: vc*20=8720 (mid-vc*20)=884 fc*2=884 residual_after_20vc_2fc=0 12vc=5232 24vc=10464 28vc=12208 32vc=13952
+    mid[0:64]   74 e4 9e 3e 41 f3 67 3e d4 59 6c 3f be 10 2f 3e 1a f1 60 3f a9 39 e4 3e 8e af a5 be 57 6c 2d 3f 99 1b 29 3f 82 34 01 bf 52 c6 2f 3e e7 96 58 3f 8e cf 8b be b8 f9 b0 be fe d2 65 3f 45 bc 76 3e
+    mid[-64:]   e7 98 62 3f 95 ca 45 3e 27 a4 5a 3f 81 89 77 3e 49 43 5a 3f ad db 3f 3e b9 ea 62 3f 5d 6d 78 3e 27 a4 5a 3f 81 89 77 3e e7 98 62 3f 95 ca 45 3e b9 ea 62 3f 5d 6d 78 3e 49 43 5a 3f ad db 3f 3e
+    mid head f32: n=12 min=-0.5047074556350708 max=0.9232456684112549 mean=0.37357470393180847 finite=100.0% in[0,1]=83.3%
+    mid tail f32: n=12 min=0.1873614341020584 max=0.8863940834999084 mean=0.5426668524742126 finite=100.0% in[0,1]=100.0%
+    unit-normal runs (>= 348 verts): mid+0x0(abs 0x1588) len=436
+    None
+    before-normal f32 (uv?): n=0 min=nan max=nan mean=nan finite=nan% in[0,1]=nan%
+    slice profile (off, %finite_f32, %|f|<=1.1, %in[0,1]):
+      0x001588  fin=100%  le1.1=100%  in01=77%  u16max=63928
+      0x001678  fin=100%  le1.1=100%  in01=67%  u16max=65320
+      0x001768  fin=100%  le1.1=100%  in01=67%  u16max=65302
+      0x001858  fin=100%  le1.1=100%  in01=67%  u16max=64957
+      0x001948  fin=100%  le1.1=100%  in01=56%  u16max=65389
+      0x001A38  fin=100%  le1.1=100%  in01=89%  u16max=63324
+      0x001B28  fin=100%  le1.1=100%  in01=72%  u16max=63968
+      0x001C18  fin=100%  le1.1=100%  in01=69%  u16max=65465
+      0x001D08  fin=100%  le1.1=100%  in01=61%  u16max=65268
+      0x001DF8  fin=100%  le1.1=100%  in01=47%  u16max=65026
+      0x001EE8  fin=100%  le1.1=100%  in01=53%  u16max=65381
+      0x001FD8  fin=100%  le1.1=100%  in01=48%  u16max=64438
+      0x0020C8  fin=100%  le1.1=100%  in01=58%  u16max=63351
+      0x0021B8  fin=100%  le1.1=100%  in01=56%  u16max=64232
+      0x0022A8  fin=100%  le1.1=100%  in01=47%  u16max=61725
+      0x002398  fin=100%  le1.1=100%  in01=3%  u16max=63193
+      0x002488  fin=100%  le1.1=100%  in01=34%  u16max=63190
+      0x002578  fin=100%  le1.1=100%  in01=48%  u16max=63190
+      0x002668  fin=100%  le1.1=100%  in01=61%  u16max=61139
+      0x002758  fin=100%  le1.1=100%  in01=92%  u16max=63324
+      0x002848  fin=100%  le1.1=100%  in01=62%  u16max=63351
+      0x002938  fin=100%  le1.1=100%  in01=62%  u16max=61445
+      0x002A28  fin=100%  le1.1=100%  in01=100%  u16max=1
+      0x002B18  fin=100%  le1.1=100%  in01=100%  u16max=1
+      0x002C08  fin=100%  le1.1=100%  in01=100%  u16max=1
+      0x002CF8  fin=100%  le1.1=100%  in01=100%  u16max=60693
+      0x002DE8  fin=100%  le1.1=100%  in01=100%  u16max=60693
+      0x002ED8  fin=100%  le1.1=100%  in01=100%  u16max=60693
+      0x002FC8  fin=100%  le1.1=100%  in01=100%  u16max=65131
+      0x0030B8  fin=100%  le1.1=100%  in01=100%  u16max=65131
+      0x0031A8  fin=100%  le1.1=100%  in01=100%  u16max=60693
+      0x003298  fin=100%  le1.1=100%  in01=100%  u16max=60693
+      0x003388  fin=100%  le1.1=100%  in01=100%  u16max=60693
+      0x003478  fin=100%  le1.1=100%  in01=100%  u16max=65131
+      0x003568  fin=100%  le1.1=100%  in01=100%  u16max=65131
+      0x003658  fin=100%  le1.1=100%  in01=100%  u16max=65131
+      0x003748  fin=100%  le1.1=100%  in01=100%  u16max=65131
+      0x003838  fin=100%  le1.1=100%  in01=100%  u16max=65131
+      0x003928  fin=100%  le1.1=100%  in01=100%  u16max=62122
+
+### w1351_model_pl_h006.mesh size=41980 vc=155 fc=240 sm=1 pos_end=0x85C
+    p=0x1658 tail_after_idx=34816 middle=3580 mid/vc=23.0968 counts=[240]
+    models: vc*20=3100 (mid-vc*20)=480 fc*2=480 residual_after_20vc_2fc=0 12vc=1860 24vc=3720 28vc=4340 32vc=4960
+    mid[0:64]   ab d0 6c bf 95 5d 92 3e 8d 0b 80 3e 81 a3 6b bf 5a 0d 96 3e c3 62 84 3e 2f 78 65 bf 7c 32 a7 3e 96 81 99 3e 05 81 64 bf 83 bb aa 3e 55 5d 9b 3e df ab 57 bf 6d 90 ec 3e ae dc 8d 3e d1 96 56 bf
+    mid[-64:]   d2 92 62 3f 14 bf 72 3e d2 92 62 3f f4 16 51 3e d2 92 62 3f d8 6e 2f 3e d2 92 62 3f b8 c6 0d 3e d2 92 62 3f 38 3d d8 3d d2 92 62 3f f8 ec 94 3d d2 92 62 3f 80 39 23 3d d2 92 62 3f 80 c8 e4 3b
+    mid head f32: n=12 min=-0.9250590205192566 max=0.33346185088157654 mean=-0.1069670096039772 finite=100.0% in[0,1]=66.7%
+    mid tail f32: n=12 min=0.006981909275054932 max=0.8850528001785278 mean=0.4871021509170532 finite=100.0% in[0,1]=100.0%
+    unit-normal runs (>= 124 verts): mid+0x0(abs 0x85C) len=155
+    None
+    before-normal f32 (uv?): n=0 min=nan max=nan mean=nan finite=nan% in[0,1]=nan%
+    slice profile (off, %finite_f32, %|f|<=1.1, %in[0,1]):
+      0x00085C  fin=100%  le1.1=100%  in01=48%  u16max=65089
+      0x0008B4  fin=100%  le1.1=100%  in01=50%  u16max=65415
+      0x00090C  fin=100%  le1.1=100%  in01=64%  u16max=65415
+      0x000964  fin=100%  le1.1=100%  in01=53%  u16max=65387
+      0x0009BC  fin=100%  le1.1=100%  in01=42%  u16max=65427
+      0x000A14  fin=100%  le1.1=100%  in01=39%  u16max=65427
+      0x000A6C  fin=100%  le1.1=100%  in01=53%  u16max=65427
+      0x000AC4  fin=100%  le1.1=100%  in01=52%  u16max=65237
+      0x000B1C  fin=100%  le1.1=100%  in01=56%  u16max=60746
+      0x000B74  fin=100%  le1.1=100%  in01=45%  u16max=62790
+      0x000BCC  fin=100%  le1.1=100%  in01=53%  u16max=64764
+      0x000C24  fin=100%  le1.1=100%  in01=44%  u16max=64764
+      0x000C7C  fin=100%  le1.1=100%  in01=53%  u16max=63701
+      0x000CD4  fin=100%  le1.1=100%  in01=45%  u16max=65238
+      0x000D2C  fin=100%  le1.1=100%  in01=52%  u16max=65238
+      0x000D84  fin=100%  le1.1=100%  in01=45%  u16max=65238
+      0x000DDC  fin=100%  le1.1=100%  in01=53%  u16max=63609
+      0x000E34  fin=100%  le1.1=100%  in01=48%  u16max=64405
+      0x000E8C  fin=100%  le1.1=100%  in01=50%  u16max=64405
+      0x000EE4  fin=100%  le1.1=100%  in01=62%  u16max=64405
+      0x000F3C  fin=100%  le1.1=100%  in01=83%  u16max=62333
+      0x000F94  fin=100%  le1.1=100%  in01=98%  u16max=49180
+      0x000FEC  fin=100%  le1.1=100%  in01=100%  u16max=1
+      0x001044  fin=100%  le1.1=100%  in01=100%  u16max=1
+      0x00109C  fin=100%  le1.1=100%  in01=100%  u16max=52325
+      0x0010F4  fin=100%  le1.1=100%  in01=100%  u16max=63575
+      0x00114C  fin=100%  le1.1=100%  in01=100%  u16max=63575
+      0x0011A4  fin=100%  le1.1=100%  in01=100%  u16max=63575
+      0x0011FC  fin=100%  le1.1=100%  in01=100%  u16max=58931
+      0x001254  fin=100%  le1.1=100%  in01=100%  u16max=60672
+      0x0012AC  fin=100%  le1.1=100%  in01=100%  u16max=65535
+      0x001304  fin=100%  le1.1=100%  in01=100%  u16max=65535
+      0x00135C  fin=100%  le1.1=100%  in01=100%  u16max=65535
+      0x0013B4  fin=100%  le1.1=100%  in01=100%  u16max=65535
+      0x00140C  fin=100%  le1.1=100%  in01=100%  u16max=65534
+      0x001464  fin=100%  le1.1=100%  in01=100%  u16max=63574
+      0x0014BC  fin=100%  le1.1=100%  in01=100%  u16max=63574
+      0x001514  fin=100%  le1.1=100%  in01=100%  u16max=63574
+########## group map_props
+
+### w1351_st_fwzhongxing_001.mesh size=2206108 vc=47775 fc=36850 sm=7 pos_end=0x8C08C
+    p=0x1E49D4 tail_after_idx=0 middle=1411400 mid/vc=29.5426 counts=[26461, 1531, 12, 1752, 6772, 240, 82]
+    models: vc*20=955500 (mid-vc*20)=455900 fc*2=73700 residual_after_20vc_2fc=382200 12vc=573300 24vc=1146600 28vc=1337700 32vc=1528800
+    mid[0:64]   23 aa f3 3b 10 97 0c 3f 89 ee 55 bf 1d 56 ab 3c 7a f1 7f 3f 05 e6 1c bb ad 39 ba bc db ee 7f 3f 44 af 25 bb 50 35 87 bc 6a 8f 0c 3f 0c eb 55 bf fb 8d 92 3c 25 fa 13 3f 47 d9 50 3f 1c 3d 25 3c
+    mid[-64:]   78 d2 e9 3d 0d 60 9f 3e 0e cb 90 3d 8a 62 9f 3e 6e 24 e9 3b a0 a7 a2 3e 51 28 1a 3d 73 64 9f 3e 25 3a 1a 3d a4 a5 a2 3e a8 47 e5 3b 3f 1c 8e 3e 34 6f e1 3b fe 85 73 3e 33 48 19 3d 89 82 73 3e
+    mid head f32: n=12 min=-0.8356710076332092 max=0.9997783899307251 mean=0.11755523830652237 finite=100.0% in[0,1]=50.0%
+    mid tail f32: n=12 min=0.006879711523652077 max=0.3176851272583008 mean=0.15279579162597656 finite=100.0% in[0,1]=100.0%
+    unit-normal runs (>= 38220 verts): mid+0x0(abs 0x8C08C) len=47775
+    None
+    before-normal f32 (uv?): n=0 min=nan max=nan mean=nan finite=nan% in[0,1]=nan%
+    slice profile (off, %finite_f32, %|f|<=1.1, %in[0,1]):
+      0x08C08C  fin=100%  le1.1=100%  in01=67%  u16max=65498
+      0x094A60  fin=100%  le1.1=100%  in01=45%  u16max=65056
+      0x09D434  fin=100%  le1.1=100%  in01=42%  u16max=65367
+      0x0A5E08  fin=100%  le1.1=100%  in01=62%  u16max=64340
+      0x0AE7DC  fin=100%  le1.1=100%  in01=31%  u16max=65530
+      0x0B71B0  fin=100%  le1.1=100%  in01=66%  u16max=65526
+      0x0BFB84  fin=100%  le1.1=100%  in01=56%  u16max=65215
+      ... (capped)
+
+### w1351_bmy_shanshi_009.mesh size=53336 vc=1064 fc=1311 sm=2 pos_end=0x32F8
+    p=0xB196 tail_after_idx=0 middle=32414 mid/vc=30.4643 counts=[1262, 49]
+    models: vc*20=21280 (mid-vc*20)=11134 fc*2=2622 residual_after_20vc_2fc=8512 12vc=12768 24vc=25536 28vc=29792 32vc=34048
+    mid[0:64]   71 96 e0 3e 7b 98 48 3f 0a 47 e1 3e c4 a4 3d 3f d5 a3 2a 3f ae 53 aa bd ed 51 4d be f4 aa 7a 3f dc dc 02 bd 46 41 84 3e 40 77 75 3f a4 49 f1 bd f0 b2 f6 be a8 ad 49 3f 8c 6f c4 be ef 2f 26 bf
+    mid[-64:]   1c 9b 17 3f ec de 54 3f 64 2c 17 3f 07 33 3b 3f 41 be 1b 3f 65 96 38 3f e2 32 1c 3f f2 41 52 3f 6b 13 24 3f 23 17 39 3f 9d 95 24 3f 1a c2 52 3f 32 a5 29 3f 22 22 3c 3f 53 2b 2a 3f f0 cc 55 3f
+    mid head f32: n=12 min=-0.20050783455371857 max=0.9791710376739502 mean=0.4027057886123657 finite=100.0% in[0,1]=66.7%
+    mid tail f32: n=12 min=0.6083717942237854 max=0.8351583480834961 mean=0.707371175289154 finite=100.0% in[0,1]=100.0%
+    unit-normal runs (>= 851 verts): mid+0x0(abs 0x32F8) len=1064
+    None
+    before-normal f32 (uv?): n=0 min=nan max=nan mean=nan finite=nan% in[0,1]=nan%
+    slice profile (off, %finite_f32, %|f|<=1.1, %in[0,1]):
+      0x0032F8  fin=100%  le1.1=100%  in01=56%  u16max=64287
+      0x003620  fin=100%  le1.1=100%  in01=31%  u16max=64981
+      0x003948  fin=100%  le1.1=100%  in01=50%  u16max=65117
+      0x003C70  fin=100%  le1.1=100%  in01=70%  u16max=64841
+      0x003F98  fin=100%  le1.1=100%  in01=62%  u16max=64340
+      0x0042C0  fin=100%  le1.1=100%  in01=80%  u16max=65087
+      0x0045E8  fin=100%  le1.1=100%  in01=69%  u16max=64587
+      0x004910  fin=100%  le1.1=100%  in01=44%  u16max=63347
+      0x004C38  fin=100%  le1.1=100%  in01=55%  u16max=64587
+      0x004F60  fin=100%  le1.1=100%  in01=56%  u16max=64995
+      0x005288  fin=100%  le1.1=100%  in01=48%  u16max=61877
+      0x0055B0  fin=100%  le1.1=100%  in01=50%  u16max=64148
+      0x0058D8  fin=100%  le1.1=100%  in01=69%  u16max=64979
+      0x005C00  fin=100%  le1.1=100%  in01=75%  u16max=63191
+      0x005F28  fin=100%  le1.1=100%  in01=64%  u16max=65172
+      0x006250  fin=100%  le1.1=100%  in01=72%  u16max=65202
+      0x006578  fin=100%  le1.1=100%  in01=100%  u16max=2
+      0x0068A0  fin=100%  le1.1=100%  in01=100%  u16max=1
+      0x006BC8  fin=100%  le1.1=100%  in01=100%  u16max=2
+      0x006EF0  fin=100%  le1.1=55%  in01=31%  u16max=63439
+      0x007218  fin=100%  le1.1=52%  in01=27%  u16max=65221
+      0x007540  fin=100%  le1.1=45%  in01=16%  u16max=64802
+      0x007868  fin=100%  le1.1=44%  in01=17%  u16max=64802
+      0x007B90  fin=100%  le1.1=52%  in01=25%  u16max=64383
+      0x007EB8  fin=100%  le1.1=55%  in01=25%  u16max=65221
+      0x0081E0  fin=100%  le1.1=36%  in01=14%  u16max=65326
+      0x008508  fin=100%  le1.1=48%  in01=25%  u16max=63124
+      0x008830  fin=100%  le1.1=48%  in01=27%  u16max=63753
+      0x008B58  fin=100%  le1.1=50%  in01=22%  u16max=65221
+      0x008E80  fin=100%  le1.1=67%  in01=44%  u16max=65326
+      0x0091A8  fin=100%  le1.1=58%  in01=28%  u16max=64549
+      0x0094D0  fin=100%  le1.1=44%  in01=23%  u16max=63729
+      0x0097F8  fin=100%  le1.1=45%  in01=28%  u16max=65174
+      0x009B20  fin=97%  le1.1=47%  in01=20%  u16max=65294
+      0x009E48  fin=98%  le1.1=52%  in01=23%  u16max=65343
+      0x00A170  fin=98%  le1.1=44%  in01=23%  u16max=65153
+      0x00A498  fin=98%  le1.1=44%  in01=22%  u16max=65424
+      0x00A7C0  fin=100%  le1.1=56%  in01=20%  u16max=64861
+      0x00AAE8  fin=100%  le1.1=42%  in01=22%  u16max=64893
+      0x00AE10  fin=100%  le1.1=52%  in01=19%  u16max=65346
+
+### w1351_bpzd_dashubaoshi_001.mesh size=33128 vc=739 fc=409 sm=4 pos_end=0x23BC
+    p=0x77C2 tail_after_idx=0 middle=21510 mid/vc=29.1069 counts=[138, 110, 108, 53]
+    models: vc*20=14780 (mid-vc*20)=6730 fc*2=818 residual_after_20vc_2fc=5912 12vc=8868 24vc=17736 28vc=20692 32vc=23648
+    mid[0:64]   f2 fa 84 be 2e a2 64 3f bf 0f bc 3e 53 88 ad bb 94 e9 7f 3f 10 d7 d1 3c ba 28 9d 3d e7 53 75 3f aa ea 8c 3e 53 88 ad 3b 94 e9 7f bf 13 d7 d1 bc f3 fa 84 3e 2d a2 64 bf bf 0f bc be ba 28 9d bd
+    mid[-64:]   d6 d5 53 3f d8 4c 5e 3b 8d 12 5e 3f 6f 12 03 3b 07 28 57 3f d0 6c 10 3d 50 60 72 3f 8f 8d a4 3d 7e e2 79 3f 95 a3 6c 3d a0 c1 77 3f da 47 b6 3d f0 65 73 3f f6 e1 2e 3d 44 5d 72 3f 0b 92 73 3d
+    mid head f32: n=12 min=-0.9996578693389893 max=0.9996578693389893 mean=0.19257976114749908 finite=100.0% in[0,1]=66.7%
+    mid tail f32: n=12 min=0.035260021686553955 max=0.9761122465133667 mean=0.4994336664676666 finite=100.0% in[0,1]=100.0%
+    unit-normal runs (>= 591 verts): mid+0x0(abs 0x23BC) len=739
+    None
+    before-normal f32 (uv?): n=0 min=nan max=nan mean=nan finite=nan% in[0,1]=nan%
+    slice profile (off, %finite_f32, %|f|<=1.1, %in[0,1]):
+      0x0023BC  fin=100%  le1.1=100%  in01=50%  u16max=64243
+      0x0025D4  fin=100%  le1.1=100%  in01=47%  u16max=65236
+      0x0027EC  fin=100%  le1.1=100%  in01=50%  u16max=64400
+      0x002A04  fin=100%  le1.1=100%  in01=50%  u16max=62887
+      0x002C1C  fin=100%  le1.1=100%  in01=48%  u16max=60896
+      0x002E34  fin=100%  le1.1=100%  in01=67%  u16max=61338
+      0x00304C  fin=100%  le1.1=100%  in01=55%  u16max=65428
+      0x003264  fin=100%  le1.1=100%  in01=48%  u16max=65389
+      0x00347C  fin=100%  le1.1=100%  in01=53%  u16max=63576
+      0x003694  fin=100%  le1.1=100%  in01=52%  u16max=65188
+      0x0038AC  fin=100%  le1.1=100%  in01=67%  u16max=63921
+      0x003AC4  fin=100%  le1.1=100%  in01=53%  u16max=64440
+      0x003CDC  fin=100%  le1.1=100%  in01=64%  u16max=64832
+      0x003EF4  fin=100%  le1.1=100%  in01=59%  u16max=65411
+      0x00410C  fin=100%  le1.1=100%  in01=53%  u16max=64490
+      0x004324  fin=100%  le1.1=100%  in01=66%  u16max=63771
+      0x00453C  fin=100%  le1.1=100%  in01=73%  u16max=65183
+      0x004754  fin=100%  le1.1=100%  in01=100%  u16max=2
+      0x00496C  fin=100%  le1.1=56%  in01=22%  u16max=55470
+      0x004B84  fin=100%  le1.1=77%  in01=28%  u16max=55470
+      0x004D9C  fin=100%  le1.1=83%  in01=36%  u16max=55470
+      0x004FB4  fin=100%  le1.1=62%  in01=19%  u16max=55470
+      0x0051CC  fin=100%  le1.1=59%  in01=22%  u16max=43830
+      0x0053E4  fin=100%  le1.1=73%  in01=23%  u16max=43830
+      0x0055FC  fin=100%  le1.1=77%  in01=25%  u16max=43830
+      0x005814  fin=100%  le1.1=48%  in01=22%  u16max=62810
+      0x005A2C  fin=100%  le1.1=59%  in01=30%  u16max=65221
+      0x005C44  fin=100%  le1.1=59%  in01=27%  u16max=63858
+      0x005E5C  fin=100%  le1.1=48%  in01=27%  u16max=65012
+      0x006074  fin=100%  le1.1=58%  in01=30%  u16max=64068
+      0x00628C  fin=97%  le1.1=48%  in01=25%  u16max=63542
+      0x0064A4  fin=100%  le1.1=50%  in01=20%  u16max=64847
+      0x0066BC  fin=100%  le1.1=53%  in01=31%  u16max=63840
+      0x0068D4  fin=100%  le1.1=56%  in01=30%  u16max=65306
+      0x006AEC  fin=100%  le1.1=59%  in01=22%  u16max=62561
+      0x006D04  fin=100%  le1.1=34%  in01=19%  u16max=63916
+      0x006F1C  fin=98%  le1.1=50%  in01=30%  u16max=65450
+      0x007134  fin=100%  le1.1=55%  in01=22%  u16max=65017
+      0x00734C  fin=100%  le1.1=47%  in01=31%  u16max=65325
+      0x007564  fin=100%  le1.1=52%  in01=39%  u16max=64370
+
+### w1351_bpzd_dasongshuduan_001.mesh size=12096 vc=259 fc=180 sm=4 pos_end=0xD3C
+    p=0x2AF8 tail_after_idx=0 middle=7612 mid/vc=29.3900 counts=[97, 60, 19, 4]
+    models: vc*20=5180 (mid-vc*20)=2432 fc*2=360 residual_after_20vc_2fc=2072 12vc=3108 24vc=6216 28vc=7252 32vc=8288
+    mid[0:64]   59 65 71 3f 8c a6 d8 3d e7 9f a1 be 38 5b a5 3e 3b a1 4c 3e aa d1 6c bf 25 89 02 3f 9a 0e c7 3d 0f cf 5a bf c4 fe 57 3f ee ff c7 3e 6b 7d bc be 38 5b a5 3e 3b a1 4c 3e aa d1 6c bf f0 60 0a bf
+    mid[-64:]   9e 45 8d 3e 68 7d ee 3c 54 8e 7d 3e f9 08 10 3e b0 17 95 3e 9b 65 27 3e 28 bf 37 3f 6f 12 03 3b 73 65 55 3f 82 2d 9a 3d 41 e7 39 3f 74 cf d0 3d 98 31 3f 3f ad 05 4c 3e 91 88 22 3f ac da c9 3d
+    mid head f32: n=12 min=-0.9250742197036743 max=0.9429526925086975 mean=0.07911478728055954 finite=100.0% in[0,1]=66.7%
+    mid tail f32: n=12 min=0.0020000000949949026 max=0.8335792422294617 mean=0.3825819790363312 finite=100.0% in[0,1]=100.0%
+    unit-normal runs (>= 207 verts): mid+0x0(abs 0xD3C) len=259
+    None
+    before-normal f32 (uv?): n=0 min=nan max=nan mean=nan finite=nan% in[0,1]=nan%
+    slice profile (off, %finite_f32, %|f|<=1.1, %in[0,1]):
+      0x000D3C  fin=100%  le1.1=100%  in01=55%  u16max=65518
+      0x000DF8  fin=100%  le1.1=100%  in01=48%  u16max=65070
+      0x000EB4  fin=100%  le1.1=100%  in01=62%  u16max=63340
+      0x000F70  fin=100%  le1.1=100%  in01=58%  u16max=62688
+      0x00102C  fin=100%  le1.1=100%  in01=53%  u16max=62688
+      0x0010E8  fin=100%  le1.1=100%  in01=70%  u16max=63340
+      0x0011A4  fin=100%  le1.1=100%  in01=66%  u16max=62688
+      0x001260  fin=100%  le1.1=100%  in01=78%  u16max=65070
+      0x00131C  fin=100%  le1.1=100%  in01=83%  u16max=65518
+      0x0013D8  fin=100%  le1.1=100%  in01=89%  u16max=64867
+      0x001494  fin=100%  le1.1=100%  in01=75%  u16max=65471
+      0x001550  fin=100%  le1.1=100%  in01=50%  u16max=63563
+      0x00160C  fin=100%  le1.1=100%  in01=62%  u16max=63306
+      0x0016C8  fin=100%  le1.1=100%  in01=81%  u16max=64087
+      0x001784  fin=100%  le1.1=100%  in01=69%  u16max=64986
+      0x001840  fin=100%  le1.1=100%  in01=81%  u16max=64768
+      0x0018FC  fin=100%  le1.1=100%  in01=84%  u16max=65320
+      0x0019B8  fin=100%  le1.1=100%  in01=100%  u16max=2
+      0x001A74  fin=100%  le1.1=100%  in01=98%  u16max=62969
+      0x001B30  fin=100%  le1.1=100%  in01=100%  u16max=62969
+      0x001BEC  fin=100%  le1.1=100%  in01=100%  u16max=62969
+      0x001CA8  fin=100%  le1.1=100%  in01=98%  u16max=62969
+      0x001D64  fin=100%  le1.1=100%  in01=100%  u16max=62969
+      0x001E20  fin=100%  le1.1=100%  in01=97%  u16max=65055
+      0x001EDC  fin=100%  le1.1=100%  in01=97%  u16max=65024
+      0x001F98  fin=100%  le1.1=100%  in01=100%  u16max=65024
+      0x002054  fin=100%  le1.1=100%  in01=100%  u16max=65024
+      0x002110  fin=100%  le1.1=100%  in01=97%  u16max=65024
+      0x0021CC  fin=100%  le1.1=100%  in01=97%  u16max=64148
+      0x002288  fin=100%  le1.1=100%  in01=100%  u16max=65024
+      0x002344  fin=100%  le1.1=100%  in01=100%  u16max=63764
+      0x002400  fin=100%  le1.1=100%  in01=100%  u16max=63764
+      0x0024BC  fin=100%  le1.1=100%  in01=100%  u16max=60604
+      0x002578  fin=100%  le1.1=100%  in01=100%  u16max=60604
+      0x002634  fin=100%  le1.1=100%  in01=100%  u16max=58541
+      0x0026F0  fin=100%  le1.1=100%  in01=100%  u16max=65365
+      0x0027AC  fin=100%  le1.1=100%  in01=100%  u16max=65365
+      0x002868  fin=100%  le1.1=100%  in01=100%  u16max=65493
+      0x002924  fin=100%  le1.1=100%  in01=100%  u16max=65493
+      0x0029E0  fin=100%  le1.1=100%  in01=100%  u16max=64204
+
+=== collecting middle sizes over corpus ===
+located 600 files (of 601 read)
+=== size-model fit over located corpus samples (top 12) ===
+  middle = 20*vc + 2*fc + 0   exact hits 328/600
+  middle = 20*vc + 0*fc + 0   exact hits 272/600
+  middle = 12*vc + 8*fc + 16   exact hits 21/600
+  middle = 16*vc + 4*fc + 8   exact hits 19/600
+  middle = 16*vc + 6*fc + 16   exact hits 15/600
+  middle = 16*vc + 8*fc + 0   exact hits 14/600
+  middle = 16*vc + 6*fc + 8   exact hits 14/600
+  middle = 8*vc + 24*fc + 0   exact hits 12/600
+  middle = 16*vc + 12*fc + 0   exact hits 11/600
+  middle = 12*vc + 24*fc + 0   exact hits 11/600
+  middle = 12*vc + 8*fc + 0   exact hits 10/600
+  middle = 8*vc + 8*fc + 0   exact hits 9/600
+=== per-file small residual forms (top 20) ===
+  exact:20*vc+2*fc: 328
+  gt20vc: 328
+  exact:20*vc+0*fc: 272
+  eq20vc: 272
+  exact:16*vc+8*fc: 14
+  exact:8*vc+24*fc: 12
+  exact:12*vc+24*fc: 11
+  exact:16*vc+12*fc: 11
+  exact:12*vc+8*fc: 10
+  exact:8*vc+8*fc: 9
+  exact:8*vc+12*fc: 8
+  exact:16*vc+4*fc: 7
+  exact:8*vc+20*fc: 2
+  exact:12*vc+12*fc: 2
+  exact:16*vc+6*fc: 2

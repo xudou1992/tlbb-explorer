@@ -1,0 +1,4 @@
+%terraininfo% -> (0,)
+%terrain% -> (0,)
+%.terrain% -> (0,)
+exts for terrain paths:

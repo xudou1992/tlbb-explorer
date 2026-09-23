@@ -1,0 +1,164 @@
+====================================================================================================
+data\source\npc\quest\w1351_new_npc_muwanqing\w1351_new_npc_muwanqing.mesh size 400520 vc 6433 fc 7876 sm 5 p 0x362c0 counts (5285, 1332, 598, 417, 244) middle 144412 mid-20vc 15752 mid-28vc-2fc -51464
+  [middle] off=0x12EA4 len=144412 len/vc=22.449 f32-like=0.884
+    head64 : bf 7d 29 bd 43 c7 7f 3f 5e e7 8c 3b 7a ef 14 3f 36 d7 4e 3f 8c 31 bf 3d 65 89 0b 3f 0f 6a 39 3f 9e 36 d8 be b2 53 89 bd 84 c0 79 3f d5 1c 56 3e 17 4b 8d 3b de 50 a0 3e da 1f 73 bf c8 e5 97 3d
+    tail64 : 3c 53 e4 3d 11 df 75 3f 49 c9 9c 3d cd e6 6d 3f 07 be 2c 3d 44 8a 76 3f 28 8e 30 3c 07 83 6b 3f 27 ca 37 3d 80 84 63 3f 48 ab 6a 3b 90 50 5f 3f 7f 89 94 3c 5a 7b 50 3f f8 d5 35 3e e4 86 7c 3f
+    f32[0:16]: -0.0413797, 0.999134, 0.00430004, 0.581779, 0.807971, 0.0933562, 0.545065, 0.724275, -0.422292, -0.0670542, 0.975594, 0.209094, 0.00431193, 0.313117, -0.949705, 0.0741687
+    ascii runs>=4: 3300 -> [(86, 'm>9:'), (117, '+M?o'), (196, '`B ? '), (207, '>w(#?'), (281, '~(? '), (329, 'M`?D'), (352, 'OI8?'), (369, '|F=#'), (378, 't?2y<'), (415, "?z'X")]
+    stride20: best 4xf32 sum1 frac=0.001 at field 1  u16 max=65518 u16 mean=30892.7
+    stride24: best 4xf32 sum1 frac=0.003 at field 1  u16 max=65518 u16 mean=26501.1
+    stride28: best 4xf32 sum1 frac=0.002 at field 0  u16 max=65518 u16 mean=26260.7
+    stride32: best 4xf32 sum1 frac=0.003 at field 1  u16 max=65518 u16 mean=26019.5
+    f32x3@+0x0: unit_frac=1.000 |v|p50=1 max=1
+    f32x3@+0x12D8C: unit_frac=0.011 |v|p50=0 max=0.99544
+    f32x3@+0xC908: unit_frac=0.373 |v|p50=1 max=1
+  [tail] off=0x41B6C len=131356 len/vc=20.419 f32-like=0.442
+    head64 : ff ff ff ff 30 30 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 30 30 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+    tail64 : 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 c8 42 00 00 c8 42 00 00 c8 42 01 00 00 00 00 00 00 00
+    f32[0:16]: nan, 4.42539e-39, 0, 0, 0, 0, 0, 0, 0, 4.42539e-39, 0, 0, 0, 0, 0, 0
+    ascii runs>=4: 1127 -> [(72, 'bip001'), (104, 'bone090'), (136, 'bone091'), (168, 'bone092'), (200, 'bone089'), (392, 'bip001'), (424, 'bip001'), (460, 'bip001_prop1'), (492, 'bip001_footsteps'), (524, 'bip001_pelvis')]
+    stride20: best 4xf32 sum1 frac=0.075 at field 0  u16 max=65535 u16 mean=8510.5
+    stride24: best 4xf32 sum1 frac=0.078 at field 1  u16 max=65535 u16 mean=8620.6
+    stride28: best 4xf32 sum1 frac=0.082 at field 1  u16 max=65535 u16 mean=8633.5
+    stride32: best 4xf32 sum1 frac=0.080 at field 2  u16 max=65535 u16 mean=8720.6
+    f32x3@+0x0: unit_frac=0.070 |v|p50=nan max=nan
+    f32x3@+0x12D8C: unit_frac=0.111 |v|p50=0.2872 max=1.8497e+31
+    f32x3@+0xC908: unit_frac=0.111 |v|p50=0.5386 max=7.0374e+22
+====================================================================================================
+data\source\npc\quest\w1351_pets_xianglong_b3\w1351_pets_xianglong_b3.mesh size 488876 vc 7422 fc 10585 sm 9 p 0x3f38a counts (3244, 4826, 73, 1544, 64, 350, 100, 192, 192) middle 169610 mid-20vc 21170 mid-28vc-2fc -59376
+  [middle] off=0x15D00 len=169610 len/vc=22.852 f32-like=0.588
+    head64 : 00 00 00 00 a9 4d 6c 3f a2 f1 c4 be c1 96 81 3a 6d 0f 6c 3f 20 1b c6 be ad 2d 01 3a 39 6a 7d bf 71 27 11 be 00 00 00 00 f0 73 7d bf 3a 17 10 be 00 00 00 00 ce 82 1b 3e da 07 7d 3f 16 1b f9 39
+    tail64 : 59 25 b7 3e 23 a3 6a 3e 94 45 3a 3f b7 02 7b 3f 8c 87 34 3f ef 30 5b 3f 0a b8 29 3f 6f 33 3b 3f 5e df 1a 3f a9 11 1b 3f cf 05 09 3f 04 a6 f5 3e 50 67 ea 3e d6 fd b4 3e 66 e2 c0 3e 55 73 68 3e
+    f32[0:16]: 0, 0.92306, -0.384656, 0.000988685, 0.92211, -0.386926, 0.000492777, -0.989902, -0.141752, 0, -0.99005, -0.140714, 0, 0.151866, 0.988401, 0.000475132
+    ascii runs>=4: 3570 -> [(27, ':9j}'), (147, ';%wi?'), (207, ':JUj?"%'), (220, 'Euj?p'), (255, ';&(k?3['), (376, '="f?'), (426, 'h?*n'), (507, ';&A#>'), (538, '|?6kA;:'), (605, "31>'#|?")]
+    stride20: best 4xf32 sum1 frac=0.004 at field 0  u16 max=65534 u16 mean=32012.8
+    stride24: best 4xf32 sum1 frac=0.007 at field 1  u16 max=65534 u16 mean=29331.8
+    stride28: best 4xf32 sum1 frac=0.005 at field 1  u16 max=65534 u16 mean=25524.6
+    stride32: best 4xf32 sum1 frac=0.005 at field 0  u16 max=65534 u16 mean=25453.2
+    f32x3@+0x0: unit_frac=1.000 |v|p50=1 max=1
+    f32x3@+0x15BE8: unit_frac=0.000 |v|p50=nan max=nan
+    f32x3@+0xE7F0: unit_frac=1.000 |v|p50=1 max=1
+  [tail] off=0x4EBC4 len=166376 len/vc=22.417 f32-like=0.447
+    head64 : ff ff ff ff 30 30 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 30 30 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+    tail64 : 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 c8 42 00 00 c8 42 00 00 c8 42 01 00 00 00 00 00 00 00
+    f32[0:16]: nan, 4.42539e-39, 0, 0, 0, 0, 0, 0, 0, 4.42539e-39, 0, 0, 0, 0, 0, 0
+    ascii runs>=4: 1886 -> [(72, 'bip001'), (264, 'bip001'), (296, 'bip001'), (332, 'bip001_footsteps'), (364, 'bip001_pelvis'), (556, 'bip001_footsteps'), (588, 'bip001_footsteps'), (677, 'jL?!8'), (784, 'bip001_pelvis'), (816, 'bip001_pelvis')]
+    stride20: best 4xf32 sum1 frac=0.086 at field 1  u16 max=65535 u16 mean=9665.1
+    stride24: best 4xf32 sum1 frac=0.083 at field 2  u16 max=65535 u16 mean=9601.6
+    stride28: best 4xf32 sum1 frac=0.081 at field 3  u16 max=65535 u16 mean=9645.8
+    stride32: best 4xf32 sum1 frac=0.074 at field 3  u16 max=65535 u16 mean=10033.0
+    f32x3@+0x0: unit_frac=0.106 |v|p50=nan max=nan
+    f32x3@+0x15BE8: unit_frac=0.079 |v|p50=0.2358 max=4.4208e+30
+    f32x3@+0xE7F0: unit_frac=0.085 |v|p50=0.2183 max=4.7418e+30
+====================================================================================================
+data\source\npc\model\w1351_model_kongmo_001\w1351_model_kongmo_001.mesh size 2480 vc 24 fc 12 sm 6 p 0x418 counts (2, 2, 2, 2, 2, 2) middle 480 mid-20vc 0 mid-28vc-2fc -216
+  [middle] off=0x238 len=480 len/vc=20.000 f32-like=0.400
+    head64 : 00 00 00 00 00 00 80 bf 00 00 00 00 00 00 00 00 00 00 80 bf 00 00 00 00 00 00 00 00 00 00 80 bf 00 00 00 00 00 00 00 00 00 00 80 bf 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00
+    tail64 : 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 80 3f 00 00 80 3f 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 80 3f 00 00 80 3f 00 00 00 00 00 00 80 3f
+    f32[0:16]: 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, 1, 0, 0
+    ascii runs>=4: 0 -> []
+    stride20: best 4xf32 sum1 frac=0.375 at field 0  u16 max=49024 u16 mean=4889.6
+    stride24: best 4xf32 sum1 frac=0.400 at field 2  u16 max=49024 u16 mean=4889.6
+    stride28: best 4xf32 sum1 frac=0.412 at field 3  u16 max=49024 u16 mean=4862.4
+    stride32: best 4xf32 sum1 frac=0.467 at field 0  u16 max=49024 u16 mean=4889.6
+    f32x3@+0x0: unit_frac=1.000 |v|p50=1 max=1
+    f32x3@+0xC0: unit_frac=0.583 |v|p50=1 max=1
+  [tail] off=0x478 len=1336 len/vc=55.667 f32-like=0.323
+    head64 : ff ff ff ff 30 30 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 30 30 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+    tail64 : 31 95 a3 bb 2f ff 7f bf 01 00 d0 36 00 00 00 00 2f ff 7f 3f 31 95 a3 bb 4c ef 2e b4 00 00 00 00 0a 29 50 34 58 f8 cf 36 00 00 80 3f 00 00 00 00 2b 45 bc 3b 2e c4 45 38 0a d7 a3 a4 00 00 80 3f
+    f32[0:16]: nan, 4.42539e-39, 0, 0, 0, 0, 0, 0, 0, 4.42539e-39, 0, 0, 0, 0, 0, 0
+    ascii runs>=4: 12 -> [(72, 'bone004'), (104, 'bone001'), (296, 'bone004'), (328, 'bone004'), (524, 'bone001'), (556, 'bone001'), (592, 'bone002'), (672, '9a_9'), (976, 'bone002'), (1008, 'bone002')]
+    stride20: best 4xf32 sum1 frac=0.318 at field 1  u16 max=65535 u16 mean=9521.9
+    stride24: best 4xf32 sum1 frac=0.255 at field 2  u16 max=65535 u16 mean=9521.9
+    stride28: best 4xf32 sum1 frac=0.234 at field 3  u16 max=65535 u16 mean=9550.8
+    stride32: best 4xf32 sum1 frac=0.268 at field 2  u16 max=65535 u16 mean=9555.2
+    f32x3@+0x0: unit_frac=0.333 |v|p50=nan max=nan
+    f32x3@+0x120: unit_frac=0.333 |v|p50=0.9998 max=7.0374e+22
+    f32x3@+0x1E0: unit_frac=0.208 |v|p50=0 max=7.0374e+22
+    f32x3@+0xC0: unit_frac=0.500 |v|p50=0.9998 max=7.0374e+22
+    f32x3@+0x240: unit_frac=0.208 |v|p50=0.5001 max=7.0374e+22
+    f32x3@+0x2A0: unit_frac=0.208 |v|p50=0.9998 max=1
+====================================================================================================
+data\effect\effectmodel\w1351_jianmo_v1.mesh size 4529 vc 80 fc 120 sm 1 p 0xb18 counts (120,) middle 1600 mid-20vc 0 mid-28vc-2fc -880
+  [middle] off=0x4D8 len=1600 len/vc=20.000 f32-like=1.000
+    head64 : 16 be 8c be ae 92 1c bf f8 ea 3d 3f aa e3 82 be 0d f4 18 bf 71 92 42 3f ae 97 e8 be 32 64 c8 be e6 de 4c 3f 4d ab 08 bf 6a 6a a7 be 42 a0 47 3f d1 a1 66 be 11 89 13 bf eb 1b 49 3f 42 95 d4 be
+    tail64 : 0a 90 4c 3f 7f 65 f0 3e 0a 90 4c 3f 2f 72 ce 3e 0a 90 4c 3f df 7e ac 3e 0a 90 4c 3f 8e 8b 8a 3e 0a 90 4c 3f 7d 30 51 3e 0a 90 4c 3f dd 49 0d 3e 0a 90 4c 3f 79 c6 92 3d 0a 90 4c 3f 92 93 af 3b
+    f32[0:16]: -0.274888, -0.611613, 0.741867, -0.255643, -0.597474, 0.760047, -0.454282, -0.391389, 0.800276, -0.533864, -0.326984, 0.779789, -0.225227, -0.57631, 0.785582, -0.415201
+    ascii runs>=4: 33 -> [(68, '^sU?'), (116, '1Jd?'), (188, '5<t?'), (296, 'oCf?'), (320, '4>e?x]'), (332, '/F{?'), (441, '3L?jd'), (475, '>v^_?<&'), (490, 'c?Kh'), (526, 'i?&F')]
+    stride20: best 4xf32 sum1 frac=0.000 at field None  u16 max=65346 u16 mean=25839.2
+    stride24: best 4xf32 sum1 frac=0.000 at field None  u16 max=65346 u16 mean=25815.1
+    stride28: best 4xf32 sum1 frac=0.000 at field None  u16 max=65346 u16 mean=25837.5
+    stride32: best 4xf32 sum1 frac=0.000 at field None  u16 max=65346 u16 mean=25839.2
+    f32x3@+0x0: unit_frac=1.000 |v|p50=1 max=0.98717
+    f32x3@+0x280: unit_frac=0.250 |v|p50=0.9816 max=1
+  [tail] off=0xDEC len=965 len/vc=12.062 f32-like=0.133
+    head64 : 50 61 72 74 69 63 6c 65 20 56 69 65 77 20 30 31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00
+    tail64 : 00 00 80 3f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80 3f
+    f32[0:16]: 7.68133e+31, 6.97695e+22, 6.88688e+22, 2.56298e-09, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0
+    ascii runs>=4: 8 -> [(0, 'Particle View 01'), (95, '?Particle View 01'), (191, '?Particle View 01'), (287, '?Particle View 01'), (383, '?Particle View 01'), (479, '?Particle View 01'), (575, '?Particle View 01'), (671, '?Particle View 01')]
+    stride20: best 4xf32 sum1 frac=0.479 at field 0  u16 max=64471 u16 mean=5011.8
+    stride24: best 4xf32 sum1 frac=0.600 at field 0  u16 max=64471 u16 mean=5011.8
+    stride28: best 4xf32 sum1 frac=0.441 at field 1  u16 max=64471 u16 mean=5053.9
+    stride32: best 4xf32 sum1 frac=0.533 at field 0  u16 max=64471 u16 mean=5011.8
+    f32x3@+0x0: unit_frac=0.400 |v|p50=1 max=2.2429e+36
+====================================================================================================
+data\effect\effectmodel\test_jianzhen.mesh size 2315476 vc 55864 fc 65942 sm 1 p 0x1d4b44 counts (65942,) middle 1249164 mid-20vc 131884 mid-28vc-2fc -446912
+  [middle] off=0xA3BB8 len=1249164 len/vc=22.361 f32-like=0.894
+    head64 : 72 e5 5a bf 4e 50 d9 be 29 80 98 3e 70 97 25 bf 4c c8 0e bf 1b 26 05 3f b4 08 4e bf 6e 11 87 bc d2 e1 17 3f a5 37 63 bf 9d 73 c6 3c 54 8a eb 3e ff f5 b0 3d 0f 02 7c bf 0d e7 1c 3e 3a 83 10 bf
+    tail64 : e1 28 3e 3f b0 a0 f8 3e 7e e2 3f 3f 4d 66 e5 3e ba a0 3b 3f 17 6c e6 3e d1 09 3d 3f 14 94 3e 3f ad 24 3e 3f fa fc d7 3e 0a 43 3a 3f b2 45 d8 3e 49 d7 3c 3f 4f 5b c7 3e 49 89 39 3f 02 1e c8 3e
+    f32[0:16]: -0.855064, -0.424441, 0.297853, -0.646842, -0.557744, 0.520113, -0.80482, -0.0164878, 0.593289, -0.887568, 0.0242251, 0.46004, 0.0864067, -0.984406, 0.153225, -0.564502
+    ascii runs>=4: 29366 -> [(142, 'q>}!,'), (335, '>*T='), (381, 'uf?fdD'), (555, '=z^y'), (683, '>Nw8='), (707, '>R;['), (719, '?*T='), (847, '<9%R?R'), (910, '/?w0]'), (1002, 'x<K=')]
+    stride20: best 4xf32 sum1 frac=0.000 at field None  u16 max=65531 u16 mean=32705.1
+    stride24: best 4xf32 sum1 frac=0.000 at field None  u16 max=65531 u16 mean=32774.2
+    stride28: best 4xf32 sum1 frac=0.000 at field None  u16 max=65531 u16 mean=32781.4
+    stride32: best 4xf32 sum1 frac=0.000 at field None  u16 max=65531 u16 mean=32643.1
+    f32x3@+0x0: unit_frac=1.000 |v|p50=1 max=0.99997
+    f32x3@+0xA3AA0: unit_frac=0.000 |v|p50=0 max=2.9388e-39
+    f32x3@+0x110C60: unit_frac=0.045 |v|p50=1.142 max=0.99134
+    f32x3@+0x6D1C0: unit_frac=0.346 |v|p50=1 max=0.99964
+  [tail] off=0x2354CC len=8 len/vc=0.000 f32-like=0.000
+    head64 : ff ff ff ff 00 00 00 00
+    tail64 : ff ff ff ff 00 00 00 00
+    f32[0:16]: nan, 0
+    ascii runs>=4: 0 -> []
+====================================================================================================
+data\source\npc\quest\w1351_boss_wangyuyan\w1351_boss_wangyuyan.mesh size 374036 vc 6118 fc 8041 sm 4 p 0x33caa counts (7137, 96, 116, 692) middle 138442 mid-20vc 16082 mid-28vc-2fc -48944
+  [middle] off=0x11FE0 len=138442 len/vc=22.629 f32-like=0.590
+    head64 : f5 08 02 32 86 6d 43 3e 6e 4b 7b 3f 91 28 4b be 77 96 a0 3e 84 b7 6d 3f 23 b1 45 be 3a b4 f6 3d a4 48 79 3f 3a 1d 13 be b1 e2 b8 bc 46 47 7d 3f 00 00 00 00 75 77 f0 bc c2 e3 7f 3f 00 00 00 00
+    tail64 : d5 3e 22 3f 09 0a 4e 3f a0 55 aa 3e 56 62 f5 3e 76 e4 1d 3f e0 59 4c 3f 9c ff 19 3f 8e 48 4c 3f 89 09 1e 3f 6b 94 4e 3f a8 9c 23 3f a1 98 4c 3f f6 b8 23 3f dd ff 4c 3f d5 3e 22 3f 09 0a 4e 3f
+    f32[0:16]: 7.56903e-09, 0.190847, 0.98162, -0.198397, 0.313648, 0.928581, -0.193059, 0.120461, 0.973765, -0.143666, -0.022569, 0.989369, 0, -0.0293538, 0.999569, 0
+    ascii runs>=4: 2907 -> [(5, 'mC>nK{?'), (33, 'Hy?:'), (44, 'FG}?'), (67, '>GTj?'), (138, 'B?$I'), (162, "1?I>'"), (173, 'd.?%'), (221, 'S5?+'), (233, 's-?K'), (259, '?L("')]
+    stride20: best 4xf32 sum1 frac=0.000 at field 1  u16 max=65526 u16 mean=29081.4
+    stride24: best 4xf32 sum1 frac=0.000 at field None  u16 max=65526 u16 mean=25861.1
+    stride28: best 4xf32 sum1 frac=0.000 at field 1  u16 max=65528 u16 mean=25627.2
+    stride32: best 4xf32 sum1 frac=0.000 at field 0  u16 max=65528 u16 mean=25462.4
+    f32x3@+0x0: unit_frac=1.000 |v|p50=1 max=1
+    f32x3@+0x11EC8: unit_frac=0.000 |v|p50=nan max=nan
+    f32x3@+0xBF30: unit_frac=0.338 |v|p50=1 max=1
+  [tail] off=0x3F930 len=113636 len/vc=18.574 f32-like=0.446
+    head64 : ff ff ff ff 30 30 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 30 30 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+    tail64 : 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 c8 42 00 00 c8 42 00 00 c8 42 01 00 00 00 00 00 00 00
+    f32[0:16]: nan, 4.42539e-39, 0, 0, 0, 0, 0, 0, 0, 4.42539e-39, 0, 0, 0, 0, 0, 0
+    ascii runs>=4: 976 -> [(72, 'bip001'), (264, 'bip001'), (296, 'bip001'), (332, 'bip001_footsteps'), (364, 'bip001_pelvis'), (556, 'bip001_footsteps'), (588, 'bip001_footsteps'), (664, '@*J&'), (784, 'bip001_pelvis'), (816, 'bip001_pelvis')]
+    stride20: best 4xf32 sum1 frac=0.070 at field 0  u16 max=65535 u16 mean=9254.0
+    stride24: best 4xf32 sum1 frac=0.074 at field 1  u16 max=65535 u16 mean=9155.0
+    stride28: best 4xf32 sum1 frac=0.077 at field 0  u16 max=65535 u16 mean=9126.5
+    stride32: best 4xf32 sum1 frac=0.075 at field 3  u16 max=65535 u16 mean=9177.6
+    f32x3@+0x0: unit_frac=0.034 |v|p50=nan max=nan
+    f32x3@+0x11EC8: unit_frac=0.121 |v|p50=0.4634 max=4.4208e+30
+    f32x3@+0xBF30: unit_frac=0.105 |v|p50=0.5446 max=4.7418e+30
+====================================================================================================
+mobile_maps_source\w1351_bpzd_dashubaoshi_001.mesh size 33128 vc 739 fc 409 sm 4 p 0x77c2 counts (138, 110, 108, 53) middle 21510 mid-20vc 6730 mid-28vc-2fc 0
+  [middle] off=0x23BC len=21510 len/vc=29.107 f32-like=0.502
+    head64 : f2 fa 84 be 2e a2 64 3f bf 0f bc 3e 53 88 ad bb 94 e9 7f 3f 10 d7 d1 3c ba 28 9d 3d e7 53 75 3f aa ea 8c 3e 53 88 ad 3b 94 e9 7f bf 13 d7 d1 bc f3 fa 84 3e 2d a2 64 bf bf 0f bc be ba 28 9d bd
+    tail64 : d6 d5 53 3f d8 4c 5e 3b 8d 12 5e 3f 6f 12 03 3b 07 28 57 3f d0 6c 10 3d 50 60 72 3f 8f 8d a4 3d 7e e2 79 3f 95 a3 6c 3d a0 c1 77 3f da 47 b6 3d f0 65 73 3f f6 e1 2e 3d 44 5d 72 3f 0b 92 73 3d
+    f32[0:16]: -0.259727, 0.8931, 0.367308, -0.00529579, 0.999658, 0.0256152, 0.0767378, 0.958311, 0.275228, 0.00529579, -0.999658, -0.0256153, 0.259727, -0.8931, -0.367308, -0.0767378
+    ascii runs>=4: 490 -> [(75, '>Z)g?'), (100, 'm7G?x'), (112, 'm7G?x'), (125, 'WM?9'), (135, '>l7G'), (147, '>l7G'), (182, 'I>13j?'), (316, ']\\m?'), (327, '>\\\\m'), (333, 's_=W<')]
+    stride20: best 4xf32 sum1 frac=0.000 at field None  u16 max=65525 u16 mean=26688.9
+    stride24: best 4xf32 sum1 frac=0.000 at field None  u16 max=65525 u16 mean=26687.7
+    stride28: best 4xf32 sum1 frac=0.000 at field None  u16 max=65525 u16 mean=26687.7
+    stride32: best 4xf32 sum1 frac=0.000 at field None  u16 max=65525 u16 mean=26687.7
+    f32x3@+0x0: unit_frac=1.000 |v|p50=1 max=0.99966
+    f32x3@+0x22A4: unit_frac=0.000 |v|p50=nan max=nan
+    f32x3@+0x1718: unit_frac=0.095 |v|p50=1.065 max=3.0206e+38
+  [tail] empty

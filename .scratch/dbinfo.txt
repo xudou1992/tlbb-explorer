@@ -1,0 +1,2 @@
+﻿db_size=148811776
+sqlite3=NOTFOUND

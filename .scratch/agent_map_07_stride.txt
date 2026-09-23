@@ -1,0 +1,20 @@
+w1351_ll_dl_002/1_0_-10.scene                  size=24356    N=32    RS=753  nstr=32    12+761N=24364    diff=-8      stridediffs=[(761, 31)]
+w1351_ll_dl_002/1_0_-4.scene                   size=19790    N=26    RS=753  nstr=26    12+761N=19798    diff=-8      stridediffs=[(761, 25)]
+w1351_ll_dl_002/1_0_-5.scene                   size=24356    N=32    RS=753  nstr=32    12+761N=24364    diff=-8      stridediffs=[(761, 31)]
+w1351_ll_dl_002/1_0_-6.scene                   size=9736     N=13    RS=753  nstr=14    12+761N=9905     diff=-169    stridediffs=[(761, 12), (256, 1)]
+w1351_ll_dl_002/1_0_-7.scene                   size=11419    N=15    RS=753  nstr=15    12+761N=11427    diff=-8      stridediffs=[(761, 14)]
+w1351_ll_dl_002/1_0_-8.scene                   size=23595    N=31    RS=753  nstr=31    12+761N=23603    diff=-8      stridediffs=[(761, 30)]
+w1351_ll_dl_002/1_1_-10.scene                  size=32727    N=43    RS=753  nstr=43    12+761N=32735    diff=-8      stridediffs=[(761, 42)]
+w1351_ll_dl_002/1_1_-2.scene                   size=35010    N=46    RS=753  nstr=85    12+761N=35018    diff=-8      stridediffs=[(28, 32), (733, 32), (761, 6), (25, 6)]
+w1351_ll_dl_002/1_1_-3.scene                   size=54796    N=72    RS=753  nstr=72    12+761N=54804    diff=-8      stridediffs=[(761, 71)]
+w1351_ll_dl_002/1_1_-4.scene                   size=63371    N=83    RS=753  nstr=87    12+761N=63175    diff=196     stridediffs=[(761, 81), (11, 2), (882, 1), (252, 1)]
+w1351_ll_dl_002/1_1_-5.scene                   size=57079    N=75    RS=753  nstr=75    12+761N=57087    diff=-8      stridediffs=[(761, 74)]
+w1351_ll_dl_002/1_1_-6.scene                   size=38815    N=51    RS=753  nstr=51    12+761N=38823    diff=-8      stridediffs=[(761, 50)]
+
+w1351_fb_jiehun_001/1_3_-5.scene               size=242326   N=321   RS=753  nstr=332   12+761N=244293   diff=-1967   stridediffs=[(761, 303), (24, 14), (737, 14)]
+w1351_ll_yxh_001/1_4_-8.scene                  size=127157   N=172   RS=753  nstr=175   12+761N=130904   diff=-3747   stridediffs=[(761, 161), (256, 7), (344, 6)]
+
+== GLOBAL: does 12+761*N >= size always? sample 900 grid753 scenes
+n=9288 {'deficit_le1600': 8439, 'deficit_gt1600': 494, 'size_ge_pred': 355}
+deficit percentiles p0/p1/p50/p95/p99: [-5566.   -3023.13    -8.      -8.     196.  ]
+RS values seen: only 753

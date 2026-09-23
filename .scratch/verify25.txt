@@ -1,0 +1,130 @@
+== 25 texture-member gids, expected hash ==
+  gid=1647   hash=5f6c71948be4ed00  ui/icon/wardrobe/w1351_nan_s_yifu_zhongshilifu.tga
+  gid=1670   hash=7aaca9d6341b3b38  ui/icon/wardrobe/w1351_nan_s_yifu_xianfeng_001.tga
+  gid=1739   hash=16a46e56bead38d8  ui/icon/wardrobe/w1351_nan_s_yifu_ysym_moren.tga
+  gid=1991   hash=4e161e3ccde3c964  ui/icon/wardrobe/w1351_nan_s_moyuqianyou_001.tga
+  gid=1994   hash=ec726a54cb9a91bb  ui/icon/wardrobe/w1351_nv_s_yifu_new_mrrmdz.tga
+  gid=2003   hash=30dc1978e422c1bc  ui/icon/wardrobe/w1351_nan_s_wanziqianhong_001.tga
+  gid=2030   hash=a9d9580f1060b215  ui/icon/wardrobe/w1351_nan_s_feilongchengfeng_001.tga
+  gid=2043   hash=722270967c9f419d  ui/icon/wardrobe/w1351_nan_s_yifu_qyss.tga
+  gid=2046   hash=a9f7e04c6e7ffbce  ui/icon/wardrobe/w1351_nan_s_shukuanganxiang_001.tga
+  gid=2055   hash=0e4239fea0cf1ed7  ui/icon/wardrobe/w1351_nv_s_feilongchengfeng_001.tga
+  gid=2065   hash=635e281f48c3c4f2  ui/icon/wardrobe/w1351_nan_s_fenmorensheng_001.tga
+  gid=2109   hash=e0f90e208768f7ee  ui/icon/wardrobe/w1351_nan_s_yifu_xlqy_qingshuang.tga
+  gid=2118   hash=0561193512960359  ui/icon/wardrobe/w1351_nv_s_yifu_mrrmdz.tga
+  gid=2147   hash=fc57d72fb20fef60  ui/icon/wardrobe/w1351_nan_s_shediaoyingxiong_001.tga
+  gid=2153   hash=f51fd88555bea68c  ui/icon/wardrobe/w1351_nan_s_huangjinzhanjia_001.tga
+  gid=2203   hash=d760a36053da600a  ui/icon/wardrobe/w1351_nv_s_yifu_xuancang.tga
+  gid=2213   hash=04327ab0b6f66f6b  ui/icon/wardrobe/w1351_nan_s_duanyuyuyan_001.tga
+  gid=2240   hash=ba6d32f04c3846fe  ui/icon/wardrobe/w1351_nv_s_fenmorensheng_001.tga
+  gid=2271   hash=759152a3e50bd055  ui/icon/wardrobe/w1351_nan_s_kulouzhanjia_001.tga
+  gid=2278   hash=64433b29cd5ed07f  ui/icon/wardrobe/w1351_nan_s_yifu_xianlvqiyuan_001.tga
+  gid=2281   hash=68d9bb74fe9e0788  ui/icon/wardrobe/w1351_nan_s_yifu_qingfengyijiang.tga
+  gid=2283   hash=7e8e2f23ffadd924  ui/icon/wardrobe/w1351_nan_s_zimohongchen_001.tga
+  gid=2285   hash=4cdd01eb4cde70dc  ui/icon/wardrobe/w1351_nan_s_jiehunlifu_001.tga
+  gid=2288   hash=dfa6cff8036d849d  ui/icon/wardrobe/w1351_nv_s_yifu_murongjianfu.tga
+  gid=2299   hash=1908483d67257a08  ui/icon/wardrobe/w1351_nv_s_yifu_bingcha.tga
+
+== shell probe output (raw, utf8-decoded) ==
+--- probe yifu (exit=0) ---
+   统计：带贴图线索 25 · 主体可读回 13080 · 名称可定位 0/22605
+     等级 A（完整定位）：0
+     等级 B（主体定位）：2601
+     等级 C（仅有名称）：10479
+     等级 D（只是线索）：0
+      2 · w1351_nan_s_yifu_mjrmdz · 角色 · 等级 B · 标签 ["动作集", "男性角色", "角色部件"] · 引用 0/32
+         技术：35dbb43e0a08baa3 图：无
+      3 · w1351_monster_yanshijiangong · 角色 · 等级 B · 标签 ["动作集", "怪物", "NPC"] · 引用 0/15
+         技术：5e2e84b2d7d5d99d 图：无
+      4 · w1351_npc_changbiyuan · 角色 · 等级 B · 标签 ["动作集", "NPC"] · 引用 0/3
+         技术：7dcd1df716ef1a18 图：无
+      9 · w1351_npc_daidaiqiu · 角色 · 等级 B · 标签 ["动作集", "NPC"] · 引用 0/5
+         技术：8c9ddc78ef3a8b0c 图：无
+      6 · w1351_pets_shenqie_b0 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/16
+         技术：0985c4cc2574b05e 图：无
+      24 · w1351_boss_caoshuang · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/6
+         技术：1cdd37acf5f2c8c8 图：无
+      6 · w1351_pets_shenqie_b0 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/16
+         技术：0985c4cc2574b05e 图：无
+      16 · w1351_pets_longgui_b2 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/8
+         技术：169b98eea0cbb843 图：无
+      19 · w1351_pets_qiongqi_b2 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/8
+         技术：0715115c253a26ea 图：无
+      20 · w1351_pets_yingzhao_b0 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/8
+         技术：0ced4aac7965775d 图：无
+      30 · w1351_pets_bingcan_b2 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/5
+         技术：0056b8cc3fae2472 图：无
+      1 · w1351_model_zq_qszd_h001 · 角色 · 等级 B · 标签 ["特效", "技能特效"] · 引用 0/1805
+         技术：092aa2c34e6d742e 图：无
+      10 · w1351_boss_gerong · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/4
+         技术：18126906d2332fd7 图：无
+      11 · w1351_boss_yudu · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/5
+         技术：c426ffb8dd583491 图：无
+      14 · w1351_boss_hongjiyaowang · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/2
+         技术：9abc47acecf44982 图：无
+      15 · w1351_boss_wangyan · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/5
+         技术：eeff95acf26fb03d 图：无
+--- probe shukuang (exit=0) ---
+   统计：带贴图线索 25 · 主体可读回 13080 · 名称可定位 0/22605
+     等级 A（完整定位）：0
+     等级 B（主体定位）：2601
+     等级 C（仅有名称）：10479
+     等级 D（只是线索）：0
+      2046 · w1351_nan_s_shukuanganxiang_001 · 界面 · 等级 B · 标签 ["物品图标", "界面", "男性角色"] · 引用 0/0
+         技术：a9f7e04c6e7ffbce 图：110x152 png
+      5737 · w1351_nv_s_shukuanganxiang_002 · 角色 · 等级 C · 标签 ["女性角色"] · 引用 0/1
+         技术：2c2f4ade8a7fd2ba 图：无
+      24 · w1351_boss_caoshuang · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/6
+         技术：1cdd37acf5f2c8c8 图：无
+      6 · w1351_pets_shenqie_b0 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/16
+         技术：0985c4cc2574b05e 图：无
+      16 · w1351_pets_longgui_b2 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/8
+         技术：169b98eea0cbb843 图：无
+      19 · w1351_pets_qiongqi_b2 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/8
+         技术：0715115c253a26ea 图：无
+      20 · w1351_pets_yingzhao_b0 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/8
+         技术：0ced4aac7965775d 图：无
+      30 · w1351_pets_bingcan_b2 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/5
+         技术：0056b8cc3fae2472 图：无
+      1 · w1351_model_zq_qszd_h001 · 角色 · 等级 B · 标签 ["特效", "技能特效"] · 引用 0/1805
+         技术：092aa2c34e6d742e 图：无
+      10 · w1351_boss_gerong · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/4
+         技术：18126906d2332fd7 图：无
+      11 · w1351_boss_yudu · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/5
+         技术：c426ffb8dd583491 图：无
+      14 · w1351_boss_hongjiyaowang · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/2
+         技术：9abc47acecf44982 图：无
+      15 · w1351_boss_wangyan · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/5
+         技术：eeff95acf26fb03d 图：无
+--- probe feilongchengfeng (exit=0) ---
+   统计：带贴图线索 25 · 主体可读回 13080 · 名称可定位 0/22605
+     等级 A（完整定位）：0
+     等级 B（主体定位）：2601
+     等级 C（仅有名称）：10479
+     等级 D（只是线索）：0
+      2030 · w1351_nan_s_feilongchengfeng_001 · 界面 · 等级 B · 标签 ["物品图标", "界面", "男性角色"] · 引用 0/0
+         技术：a9d9580f1060b215 图：110x152 png
+      2055 · w1351_nv_s_feilongchengfeng_001 · 界面 · 等级 B · 标签 ["物品图标", "界面", "女性角色"] · 引用 0/0
+         技术：0e4239fea0cf1ed7 图：110x152 webp
+      24 · w1351_boss_caoshuang · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/6
+         技术：1cdd37acf5f2c8c8 图：无
+      6 · w1351_pets_shenqie_b0 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/16
+         技术：0985c4cc2574b05e 图：无
+      16 · w1351_pets_longgui_b2 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/8
+         技术：169b98eea0cbb843 图：无
+      19 · w1351_pets_qiongqi_b2 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/8
+         技术：0715115c253a26ea 图：无
+      20 · w1351_pets_yingzhao_b0 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/8
+         技术：0ced4aac7965775d 图：无
+      30 · w1351_pets_bingcan_b2 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/5
+         技术：0056b8cc3fae2472 图：无
+      1 · w1351_model_zq_qszd_h001 · 角色 · 等级 B · 标签 ["特效", "技能特效"] · 引用 0/1805
+         技术：092aa2c34e6d742e 图：无
+      10 · w1351_boss_gerong · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/4
+         技术：18126906d2332fd7 图：无
+      11 · w1351_boss_yudu · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/5
+         技术：c426ffb8dd583491 图：无
+      14 · w1351_boss_hongjiyaowang · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/2
+         技术：9abc47acecf44982 图：无
+      15 · w1351_boss_wangyan · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/5
+         技术：eeff95acf26fb03d 图：无

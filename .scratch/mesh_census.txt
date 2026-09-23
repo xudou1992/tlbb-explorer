@@ -1,0 +1,31 @@
+total .mesh files scanned: 7996
+parseable (positions+indices located): 6221  (77.8%)
+drawable with file normals+uv (static layout): 2603
+drawable but no normals (skinned middle): 3618
+vertices drawable: 4,576,272 / triangles: 4,997,742 / models >20k verts: 11
+
+failure / outcome reasons:
+  ok_no_normals                        3618   45.2%   e.g. data\effect\effectmodel\test_jianzhen.mesh  {'size': 2315476, 'vc': 55864, 'fc': 65942, 'sm': 1, 'tag': 'mesh', 'banner': False, 'middle': 1249164, 'stride': 22.36, 'static': False, 'trailing': 8}
+  ok                                   2603   32.6%   e.g. data\effect\effectmodel\w1351_jianmo_v1.mesh  {'size': 4529, 'vc': 80, 'fc': 120, 'sm': 1, 'tag': 'mesh', 'banner': False, 'middle': 1600, 'stride': 20.0, 'static': True, 'trailing': 965}
+  no_self_consistent_index_block       1775   22.2%   e.g. data\effect\effectmodel\w1351_model_emiter_lf002.mesh  {'size': 18408, 'vc': 434, 'fc': 528, 'sm': 2, 'tag': 'mesh', 'banner': False}
+
+middle-segment bytes per vertex (successful parses, top 12):
+      20.0   2603
+      29.0    124
+     20.67    107
+      21.0     67
+      28.0     66
+     22.56     31
+      45.0     31
+     29.33     30
+     29.17     26
+     29.23     26
+     29.53     25
+     29.13     25
+
+type tag @0x40:
+  'mesh'         7996
+
+submesh/material-slot count distribution:
+  parsed ok : sm=1:6219, sm=2:1, sm=3:1
+  failed    : sm=2:864, sm=3:423, sm=4:170, sm=5:134, sm=6:84, sm=7:50, sm=8:16, sm=9:12

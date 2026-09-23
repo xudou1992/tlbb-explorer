@@ -1,0 +1,44 @@
+SEG 1          0000000140001000-0000000140C8A000 0xc89000    perm=5
+SEG 1          00000001411DE000-00000001411E2000 0x4000      perm=6
+SEG 3          0000000140C8A000-0000000140C8E000 0x4000      perm=5
+SEG 4          0000000140C8E000-0000000140CAB000 0x1d000     perm=5
+SEG 12         0000000140CAB000-0000000140CABD48 0xd48       perm=4
+SEG 5          0000000140CABD48-0000000141033000 0x3872b8    perm=4
+SEG 7          0000000141033000-0000000141125000 0xf2000     perm=6
+SEG 8          0000000141125000-00000001411AC000 0x87000     perm=4
+SEG 9          00000001411AC000-00000001411C0000 0x14000     perm=4
+SEG 10         00000001411C0000-00000001411DE000 0x1e000     perm=4
+SEG 11         00000001411E2000-000000014126A000 0x88000     perm=5
+
+=== entropy profile of every segment, 64K windows ===
+1          windows=201  high-entropy(>7.5)=2  zero-func-high-ent=['0000000140051000(8.00)', '0000000140061000(8.00)']
+1          windows=1  high-entropy(>7.5)=0  zero-func-high-ent=[]
+3          windows=1  high-entropy(>7.5)=0  zero-func-high-ent=[]
+4          windows=2  high-entropy(>7.5)=0  zero-func-high-ent=[]
+12         windows=1  high-entropy(>7.5)=0  zero-func-high-ent=[]
+5          windows=57  high-entropy(>7.5)=0  zero-func-high-ent=[]
+7          windows=16  high-entropy(>7.5)=0  zero-func-high-ent=[]
+8          windows=9  high-entropy(>7.5)=9  zero-func-high-ent=['0000000141125000(8.00)', '0000000141135000(8.00)', '0000000141145000(8.00)', '0000000141155000(8.00)', '0000000141165000(8.00)', '0000000141175000(8.00)', '0000000141185000(8.00)', '0000000141195000(8.00)', '00000001411A5000(7.84)']
+9          windows=2  high-entropy(>7.5)=2  zero-func-high-ent=['00000001411AC000(8.00)', '00000001411BC000(7.91)']
+10         windows=2  high-entropy(>7.5)=2  zero-func-high-ent=['00000001411C0000(8.00)', '00000001411D0000(7.81)']
+11         windows=9  high-entropy(>7.5)=0  zero-func-high-ent=[]
+
+=== entry & TLS & init ===
+start = 0000000140AC2A38  size=18
+TlsCallback_0 = 0000000140AC32C0  size=102
+
+=== xrefs to TLS callbacks ===
+  TlsCallback_0 <- 0000000140AC3331 (__dyn_tls_on_demand_init)
+  TlsCallback_0 <- 0000000140CADBD8 ()
+  TlsCallback_0 <- 0000000140CD3810 ()
+  TlsCallback_0 <- 00000001412506CC ()
+  start <- 0000000141250594 ()
+
+=== NEP2 import usage ===
+__imp_NEP2_64_1 = FFFFFFFFFFFFFFFF
+direct xrefs to import slot: 0
+ref NEP2_64_1 = 00000001411DEF28
+ref sub_1402DFBA0 = 00000001402DFBA0
+ref sub_1402DFA70 = 00000001402DFA70
+ref sub_140135A90 = 0000000140135A90
+ref sub_140133920 = 0000000140133920

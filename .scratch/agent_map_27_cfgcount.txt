@@ -1,0 +1,12 @@
+prefix occurrences: 73501
+parsed full paths: 72760  distinct: 72760
+in db: 4 ; NOT in db: 72756 (100.0% of cfg)
+
+missing-by-ext top: {'aniw1351': 18760, 'mtlw1351': 12114, 'meshw1351': 11765, 'tgaw1351': 11215, 'puw1351': 7739, 'mdlw1351': 2552, 'skew1351': 1840, 'collisionw13': 933, 'taniboss': 580, 'tanipets': 483, 'scenew1351': 310, 'sflw1351': 310, 'walkplanew13': 310, 'scene1': 193, 'oggmqj': 147, 'tga1': 145, 'tanigb': 101, 'tanits': 91, 'oggswsm': 88, 'tanimj': 57}
+all-cfg ext top: {'aniw1351': 18760, 'mtlw1351': 12114, 'meshw1351': 11765, 'tgaw1351': 11215, 'puw1351': 7739, 'mdlw1351': 2552, 'skew1351': 1840, 'collisionw13': 933, 'taniboss': 580, 'tanipets': 483, 'scenew1351': 310, 'sflw1351': 310, 'walkplanew13': 310, 'scene1': 193, 'oggmqj': 147, 'tga1': 145, 'tanigb': 101, 'tanits': 91, 'oggswsm': 88, 'tanimj': 57}
+
+terrain-ish paths in cfg: ['mobile_maps/w1351_cj_002/terrain/0.terraininfo1', 'mobile_maps/w1351_cj_002/terrain/1.terraininfo1', 'mobile_maps/w1351_cj_002/terrain/1_0_-1.tga1', 'mobile_maps/w1351_cj_002/terrain/1_0_-10.tga1', 'mobile_maps/w1351_fb_sxzc_001/terrain/1_0_-11.tga1', 'mobile_maps/w1351_fb_sxzc_001/terrain/1_0_-12.tga1']  count: 397
+map/scene paths in cfg: .scene=0 .map=0 .nav=0 .sfl=0
+mobile_maps/* paths in cfg: 1325 ; of these missing from db: 1325
+mobile_maps_source/* in cfg: 15773 ; missing from db: 15773
+missing mobile_maps_source examples: ['mobile_maps_source/decal/baihua.mtlbaihua', 'mobile_maps_source/decal/baihua.tgabaihua01', 'mobile_maps_source/decal/baihua01.mtlbaihua01', 'mobile_maps_source/decal/baihua01.tgabaihuaban', 'mobile_maps_source/decal/baihuaban.mtlbaihuaban', 'mobile_maps_source/decal/baihuaban.tgabaihuaban', 'mobile_maps_source/decal/baihuaban01.mtlbaihuaban', 'mobile_maps_source/decal/baihuaban01.tgabailiming']

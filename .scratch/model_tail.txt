@@ -1,0 +1,8 @@
+﻿#[derive(Serialize, Default, Clone, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct Page {
+    pub items: Vec<Card>,
+    pub total: usize,
+    pub scanned: usize,
+    pub ready: bool,
+    pub query_words: Vec<String>,

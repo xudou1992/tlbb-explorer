@@ -1,0 +1,26 @@
+inspect_2410 (15:19 build): mdl=None members=[{"role": "other", "roleZh": "附属文件", "name": "00a9fbe2315293e7", "path": null, "resolved": false}]
+missing=["网格 w1351_pets_jiuxiaozhanlong_b8.mesh：客户端未含此文件", "材质 w1351_pets_jiuxiaozhanlong_b8.mtl：客户端未含此文件", "骨骼 w1351_pets_jiuxiaozhanlong_b8.ske：客户端未含此文件", "附属文件 1 个：客户端未含这些文件，清单里只记了编号（编号见悬停提示与技术信息）"]
+canDo=[]
+mesh_real={
+ "path": "data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_yifu_001.mesh",
+ "vertexCount": 781,
+ "faceCount": 846,
+ "indexCount": 2538,
+ "submeshCount": 1,
+ "hasNormals": true,
+ "hasUvs": true,
+ "bboxMin": [
+  -0.4968708,
+  0.019410037,
+  -0.21708585
+ ],
+ "bboxMax": [
+  0.49809396,
+  2.2398627,
+  0.7578578
+ ],
+ "middleBytes": 15620,
+ "trailingBytes": 22184,
+ "buffer": "<40092 bytes b64>"
+}
+stats grades=[{"value": "A", "label": "完整定位", "count": 20}, {"value": "B", "label": "主体定位", "count": 2581}, {"value": "C", "label": "仅有名称", "count": 10479}, {"value": "D", "label": "只是线索", "count": 0}] total=13080 unnamed=921

@@ -1,0 +1,71 @@
+all source paths: 355 ; internal(project) paths: 54
+
+=== internal module directories (normalized) ===
+   14  3rdparty/poco-poco-1.9.4/Foundation/src
+   12  3rdparty/poco-poco-1.9.4/Net/src
+    9  3rdparty/poco-poco-1.9.4/NetSSL_OpenSSL/src
+    4  3rdparty/poco-poco-1.9.4/Foundation/include/Poco
+    3  3rdparty/cos-cpp-sdk-v5/src/op
+    3  3rdparty/cos-cpp-sdk-v5/src/util
+    3  Engine_Gfx/trunk/Code/RenderCore/Gfx/DX11
+    2  3rdparty/poco-poco-1.9.4/Crypto/src
+    1  3rdparty/cos-cpp-sdk-v5/src/trsf
+    1  3rdparty/cos-cpp-sdk-v5/third_party/include/Poco
+    1  3rdparty/poco-poco-1.9.4/Util/include/Poco/Util
+    1  W1351/Code_Inner/DevEnv/curl-7.67.0/lib/vtls
+
+=== every internal path verbatim ===
+  E:\W1351\Branches\Development\Code\DevEnv\cos-cpp-sdk-v5\src\op\base_op.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\cos-cpp-sdk-v5\src\op\cos_result.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\cos-cpp-sdk-v5\src\op\object_op.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\cos-cpp-sdk-v5\src\trsf\transfer_handler.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\cos-cpp-sdk-v5\src\util\auth_tool.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\cos-cpp-sdk-v5\src\util\http_sender.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\cos-cpp-sdk-v5\src\util\simple_dns_cache.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\cos-cpp-sdk-v5\third_party\include\Poco/RefCountedObject.h
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Crypto\src\OpenSSLInitializer.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Crypto\src\X509Certificate.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\include\Poco/RWLock.h
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\include\Poco/ScopedLock.h
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\include\Poco/SharedPtr.h
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\include\Poco/String.h
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\ErrorHandler.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\FileStreamFactory.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\FileStream_WIN32.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\File_WIN32U.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\Logger.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\MemoryPool.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\NotificationQueue.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\Path.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\RegularExpression.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\StreamCopier.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\TextConverter.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\TextIterator.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\ThreadPool.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\URIStreamOpener.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\NetSSL_OpenSSL\src\CertificateHandlerFactoryMgr.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\NetSSL_OpenSSL\src\Context.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\NetSSL_OpenSSL\src\HTTPSStreamFactory.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\NetSSL_OpenSSL\src\InvalidCertificateHandler.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\NetSSL_OpenSSL\src\PrivateKeyFactoryMgr.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\NetSSL_OpenSSL\src\PrivateKeyPassphraseHandler.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\NetSSL_OpenSSL\src\SSLManager.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\NetSSL_OpenSSL\src\SecureSocketImpl.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\NetSSL_OpenSSL\src\SecureStreamSocketImpl.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Net\src\HTTPChunkedStream.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Net\src\HTTPClientSession.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Net\src\HTTPFixedLengthStream.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Net\src\HTTPHeaderStream.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Net\src\HTTPSession.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Net\src\HTTPStream.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Net\src\HTTPStreamFactory.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Net\src\HostEntry.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Net\src\IPAddressImpl.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Net\src\Net.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Net\src\Socket.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Net\src\SocketImpl.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Util\include\Poco/Util/Application.h
+  F:\W1351\Engine_Gfx\trunk\Code\RenderCore\Gfx\DX11\DX11Def.cpp
+  F:\W1351\Engine_Gfx\trunk\Code\RenderCore\Gfx\DX11\DX11Devices.cpp
+  F:\W1351\Engine_Gfx\trunk\Code\RenderCore\Gfx\DX11\DX11Util.cpp
+  H:\W1351\W1351\Code_Inner\DevEnv\curl-7.67.0\lib\vtls\openssl.c

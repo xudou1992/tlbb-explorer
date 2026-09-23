@@ -1,0 +1,141 @@
+MDL total 2146   MESH total 7996
+
+== MDL by top-level bucket ==
+  data/source/npc/quest                     1425
+  data/source/npc/model                      458
+  data/source/npc/changjingdaoju             173
+  data/source/npc/wuqi                        27
+  data/source/player/w1351_nan                26
+  data/source/npc/guajian                     17
+  data/source/player/w1351_nv                 15
+  data/source/npc/dynamic                      5
+
+== MESH by top-level bucket ==
+  mobile_maps_source                        3264
+  data/source/npc/quest                     2047
+  data/effect                               1700
+  data/source/npc/model                      334
+  data/source/npc/changjingdaoju             163
+  data/source/npc/wuqi                       142
+  data/source/npc/toukui                     123
+  data/source/player/w1351_nan               117
+  data/source/player/w1351_nv                100
+  data/source/npc/dynamic                      5
+  data/source/npc/guajian                      1
+
+== quest/ name prefixes (2 words), MESH ==
+  npc_attack                          46
+  new_npc                             37
+  pets_dandanji                       31
+  pets_shenyuan                       18
+  wuqi_t                              17
+  pets_yanhun                         16
+  boss_sss                            13
+  boss_sysz                           11
+  npc_huhuoshi                         8
+  npc_husiluohan                       8
+  npc_xingwenshizhe                    8
+  npc_xunshanxianv                     8
+  npc_yudongshenshi                    8
+  npc_husijingang                      7
+  npc_xunshanxianzi                    7
+  shenghuo_yaocai                      7
+  npc_huyuanzunzhe                     6
+  npc_sunshan                          6
+  pets_tangguotianxin                  6
+  ui_14rdl                             6
+  boss_hunjianglong                    5
+  boss_lujunyi                         5
+  boss_wangyan                         5
+  boss_xuanjijingang                   5
+  boss_yudu                            5
+  monster_yelvyan                      5
+  npc_qiuerga                          5
+  npc_tongshuai2                       5
+  npc_zhaotianshi                      5
+  pets_bingcan                         5
+
+== quest/ name prefixes (2 words), MDL ==
+  new_npc                             36
+  npc_attack                          34
+  wuqi_t                              17
+  boss_sss                            11
+  boss_sysz                           10
+  pets_dandanji                       10
+  pets_tangguotianxin                 10
+  pets_renzheshengua                   9
+  pets_huanyizhiling                   9
+  pets_jianyinghu                      9
+  pets_jinyubaobao                     9
+  pets_lianyishou                      9
+  pets_maomi                           9
+  pets_mofamifeng                      9
+  pets_rongyanjushou                   9
+  pets_shenyuan                        9
+  pets_xianglong                       9
+  pets_xiaohualing                     9
+  pets_xiaomuling                      9
+  pets_xuanhaima                       9
+  pets_yuansukonglong                  9
+  pets_longgui                         8
+  pets_qiongqi                         8
+  pets_shenqie                         8
+  pets_tuxiaoyao                       8
+  pets_yanhun                          8
+  pets_yingzhao                        8
+  pets_jianlong                        7
+  pets_jiaoma                          7
+  pets_xiniu                           7
+
+== npc/model name prefixes ==
+  model_ani                           20
+  model_ymg02                         15
+  model_mhsn                          12
+  model_mr                            10
+  model_sl                            10
+  model_jingji                         9
+  model_wd                             9
+  model_qf                             8
+  model_wq                             8
+  model_em                             7
+  model_stone                          7
+  model_xx                             7
+  ani_model                            6
+  ani_ysym                             6
+  model_gbnan                          6
+
+== player ==
+  nan_s                               79
+  nv_s                                59
+  nv_t                                40
+  nan_t                               37
+  nan_kong                             1
+  nv_kong                              1
+
+== wuqi / toukui / guajian / changjingdaoju / dynamic sample ==
+  wuqi: 142 e.g. ['data/source/npc/wuqi/w1351_shenghuo_caiyaolian.mesh', 'data/source/npc/wuqi/w1351_shenghuo_kuangchu.mesh']
+  toukui: 123 e.g. ['data/source/npc/toukui/w1351_nan_t_toukui_aihuangmao_2601.mesh', 'data/source/npc/toukui/w1351_nan_t_toukui_aihuangmao_2602.mesh']
+  guajian: 1 e.g. ['data/source/npc/guajian/w1351_guajian_ysym_01/w1351_guajian_ysym_moren.mesh']
+  changjingdaoju: 163 e.g. ['data/source/npc/changjingdaoju/w1351_caiji_bosijihao_01/w1351_caiji_bosijihao_01.mesh', 'data/source/npc/changjingdaoju/w1351_caiji_chuchongji_001/w1351_caiji_chuchongji_001.mesh']
+  dynamic: 5 e.g. ['data/source/npc/dynamic/w1351_mrsz_buliandeng_001/w1351_mrsz_bulian_001.mesh', 'data/source/npc/dynamic/w1351_mrsz_buliandongtai_002/w1351_mrsz_bulian_002.mesh']
+
+== mobile_maps_source sample ==
+  count 3264 e.g. ['mobile_maps_source/w1351_bmy_caocong_001.mesh', 'mobile_maps_source/w1351_bmy_jueleicao_001.mesh', 'mobile_maps_source/w1351_bmy_laoshugen_001.mesh']
+  dl_huacu                            12
+  ll_dizhuanhuaweiyuan                12
+  cj_caodui                            9
+  dl_qiangmian                         8
+  ll_dizhuanxinhuawen                  8
+  kfjj_aiqiang                         7
+  bmy_shanshi                          6
+  dl_wangfu                            6
+  jiebai_taohuashu                     6
+  st_huoguoyu                          6
+  zhiwu_lvguanmucong                   6
+  dl_dizhuan                           5
+  gymx_dwzhalan                        5
+  jiehun_hunlimenchuang                5
+  ly_dzlongwen78                       5
+
+== effect sample ==
+  count 1700 e.g. ['data/effect/effectmodel/test_jianzhen.mesh', 'data/effect/effectmodel/test_jianzhen2.mesh', 'data/effect/effectmodel/w1351_an_model_wave_h002.mesh']

@@ -1,0 +1,15 @@
+   Compiling tlbb-core v0.1.0 (D:\TLGL\tlbb-explorer\crates\core)
+error: `<` is interpreted as a start of generic arguments for `u32`, not a comparison
+   --> crates\core\src\preview\geometry.rs:100:56
+    |
+100 |     (0..fc * 3).all(|i| u16_at(raw, at + i * 2) as u32 < vc)
+    |                                                        ^ --- interpreted as generic arguments
+    |                                                        |
+    |                                                        not interpreted as comparison
+    |
+help: try comparing the cast value
+    |
+100 |     (0..fc * 3).all(|i| (u16_at(raw, at + i * 2) as u32) < vc)
+    |                         +                              +
+
+error: could not compile `tlbb-core` (lib test) due to 1 previous error

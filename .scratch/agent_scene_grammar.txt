@@ -1,0 +1,43 @@
+scene files in db: 11933, maps with scenes: 300
+
+=== 地图 w1351_fb_sxzc_001: 133 个格子文件, 例 mobile_maps/w1351_fb_sxzc_001/1_-1_0.scene
+  size 分布: min=4 max=40776 n=133
+
+mobile_maps/w1351_fb_sxzc_001/1_3_-9.scene
+  size=40776 head u32=(54,753,0) f32@8=0.0000
+  names found=52  declared N=54   distinct=5
+  gaps between name starts (top 8): [(761, 51)]
+  (size-12)/N = 754.89   (size-12)/names = 783.92
+  matrices with 0,0,0,1 col AND x,y,z,1 row: 0/52
+  plausible length fields (back_from_record_start, value) top 6: []
+  mobile_maps/w1351_fb_sxzc_001/1_-1_0.scene: 只有 4 字节（空格子文件，u32@0=0）
+  全图抽样 107 个文件：N == 内嵌名字条数 的有 74 (69.2%)
+  最常见记录间距分布 top6: [(761, 91), (260, 1)]
+
+=== 地图 w1351_ll_dl_003: 119 个格子文件, 例 mobile_maps/w1351_ll_dl_003/1_-1_-10.scene
+  size 分布: min=4 max=103939 n=119
+
+mobile_maps/w1351_ll_dl_003/1_7_-4.scene
+  size=103939 head u32=(137,753,0) f32@8=0.0000
+  names found=135  declared N=137   distinct=33
+  gaps between name starts (top 8): [(761, 134)]
+  (size-12)/N = 758.59   (size-12)/names = 769.83
+  matrices with 0,0,0,1 col AND x,y,z,1 row: 0/60
+  plausible length fields (back_from_record_start, value) top 6: []
+  mobile_maps/w1351_ll_dl_003/1_-1_-10.scene: 只有 4 字节（空格子文件，u32@0=0）
+  全图抽样 103 个文件：N == 内嵌名字条数 的有 79 (76.7%)
+  最常见记录间距分布 top6: [(761, 99), (29, 1)]
+
+=== 地图 w1351_ll_loulan_001: 115 个格子文件, 例 mobile_maps/w1351_ll_loulan_001/1_-1_-10.scene
+  size 分布: min=4 max=93328 n=115
+
+mobile_maps/w1351_ll_loulan_001/1_3_-7.scene
+  size=93328 head u32=(123,753,0) f32@8=0.0000
+  names found=132  declared N=123   distinct=55
+  gaps between name starts (top 8): [(761, 110), (30, 7), (731, 7), (11, 2), (27, 1), (734, 1), (2683, 1), (252, 1)]
+  (size-12)/N = 758.67   (size-12)/names = 706.94
+  matrices with 0,0,0,1 col AND x,y,z,1 row: 0/60
+  plausible length fields (back_from_record_start, value) top 6: []
+  mobile_maps/w1351_ll_loulan_001/1_-1_-10.scene: 只有 4 字节（空格子文件，u32@0=0）
+  全图抽样 98 个文件：N == 内嵌名字条数 的有 26 (26.5%)
+  最常见记录间距分布 top6: [(761, 95)]

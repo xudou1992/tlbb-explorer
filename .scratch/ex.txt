@@ -1,0 +1,8 @@
+名称: w1351_nan_s_moyuqianyou_001
+副标题: 界面 · moyuqianyou
+目录: ui/icon/wardrobe
+图: previews/w1351_nan_s_moyuqianyou_001_04327ab0b6f66f6b.png RGBA32+border 110x152
+组成: [('材质', 1), ('贴图', 1)]
+标签: ['物品图标', '界面', '男性角色']
+等级: B 主体定位 - 主体可解码，部分依赖只有名称
+图文件存在: True

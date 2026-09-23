@@ -1,0 +1,458 @@
+.ske corpus: 1630
+parse: {'parse_ok': 1630}  failures sample: []
+EOF slack after strtab (capped 20): [(0, 816), (4, 814)]
+strings per file (capped 30): [(30, 1142), (4, 81), (12, 67), (10, 49), (9, 47), (8, 41), (7, 22), (13, 21), (22, 20), (21, 15), (11, 14), (26, 13), (18, 11), (16, 11)]
+body bytes = strtab_off-24 (top 14): [(4096, 322), (112, 81), (320, 56), (1920, 49), (2688, 42), (248, 41), (280, 38), (216, 31), (2376, 28), (2416, 24), (184, 22), (2504, 17), (312, 16), (472, 16)]
+corr(strings, body_bytes) = 0.952  n=1630  body range 112..112168  strings range 4..4743
+body_bytes/strings: p10=28.0 p50=46.0 p90=57.4
+body_bytes/bone_like_strings: n=1477 p50=76.8
+
+=== float scan of body region ===
+  small-float-rich: w1351_caiji_bosijihao_01.ske size=648 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_duchanchu_01.ske size=2544 body=1856 str=36 {'body': 1856, 'nwords': 464, 'finite': 464, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_duwugong_01.ske size=2376 body=1728 str=34 {'body': 1728, 'nwords': 432, 'finite': 432, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_duzhizhu_01.ske size=4120 body=3136 str=56 {'body': 3136, 'nwords': 784, 'finite': 784, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_hamigua_01.ske size=640 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_heihou_01.ske size=2952 body=2048 str=39 {'body': 2048, 'nwords': 512, 'finite': 512, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_honghou_01.ske size=2960 body=2048 str=39 {'body': 2048, 'nwords': 512, 'finite': 512, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_hongzhuangsuguo_01.ske size=680 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_huihou_01.ske size=2952 body=2048 str=39 {'body': 2048, 'nwords': 512, 'finite': 512, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_jinbi_01.ske size=568 body=280 str=10 {'body': 280, 'nwords': 70, 'finite': 70, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_liaoguojihao_01.ske size=664 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_meiguihua_001.ske size=3104 body=2360 str=41 {'body': 2360, 'nwords': 590, 'finite': 590, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_meirenzhuahonglian_01.ske size=688 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_muzhilingjian_01.ske size=664 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_putaogan_01.ske size=640 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_sanluobingqi.ske size=680 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_sanluodemogu_01.ske size=664 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_sanluodemuchai_01.ske size=672 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_sanluodesongguo_01.ske size=680 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_sanluodunpai.ske size=600 body=256 str=11 {'body': 256, 'nwords': 64, 'finite': 64, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_sanluokuijia.ske size=680 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_shizhilingjian_01.ske size=672 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_shuiqiu.ske size=816 body=448 str=14 {'body': 448, 'nwords': 112, 'finite': 112, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_shuishangxue_001.ske size=704 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_songjunjihao_01.ske size=664 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_tongzhilingjian_01.ske size=680 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_wudanglingzhi_01.ske size=664 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_wudangrenshen_01.ske size=664 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_wudangshouwu_01.ske size=664 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_xiaobaishe_01.ske size=1664 body=1152 str=25 {'body': 1152, 'nwords': 288, 'finite': 288, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_xiaohongshe_01.ske size=1672 body=1152 str=25 {'body': 1152, 'nwords': 288, 'finite': 288, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_xiaoqingshe_01.ske size=1672 body=1152 str=25 {'body': 1152, 'nwords': 288, 'finite': 288, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_xiguateng_001.ske size=656 body=376 str=10 {'body': 376, 'nwords': 94, 'finite': 94, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_xiguateng_002.ske size=656 body=376 str=10 {'body': 376, 'nwords': 94, 'finite': 94, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_xiguateng_003.ske size=656 body=376 str=10 {'body': 376, 'nwords': 94, 'finite': 94, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_xiguateng_004.ske size=656 body=376 str=10 {'body': 376, 'nwords': 94, 'finite': 94, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_xuelianhua_01.ske size=648 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_yanermei_01.ske size=640 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_yuebing_001.ske size=672 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_yuebing_002.ske size=672 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_yuebing_003.ske size=672 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_yuebing_004.ske size=672 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_caiji_zhenlongzhiguang_01.ske size=680 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_banruozhang.ske size=688 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_beimingshengong.ske size=1504 body=960 str=22 {'body': 960, 'nwords': 240, 'finite': 240, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_bilinzhen.ske size=680 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_chansiqinnashou.ske size=712 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_dagoubang.ske size=680 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_dagoubangfa.ske size=688 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_douzhuanxingyi.ske size=1496 body=960 str=22 {'body': 960, 'nwords': 240, 'finite': 240, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_ezuijian.ske size=672 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_gangzhua.ske size=672 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_guitoudao.ske size=680 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_hama.ske size=8784 body=6552 str=118 {'body': 6552, 'nwords': 1638, 'finite': 1638, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_huagongdafa.ske size=1480 body=960 str=22 {'body': 960, 'nwords': 240, 'finite': 240, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_jiashafumogong.ske size=704 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_lingboweibu.ske size=1480 body=960 str=22 {'body': 960, 'nwords': 240, 'finite': 240, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_liumaishenjian.ske size=704 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_longzhuashou.ske size=1488 body=960 str=22 {'body': 960, 'nwords': 240, 'finite': 240, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_luohanquan.ske size=688 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_lvboxiangludao.ske size=1104 body=640 str=17 {'body': 640, 'nwords': 160, 'finite': 160, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_panguanbi.ske size=1784 body=1216 str=26 {'body': 1216, 'nwords': 304, 'finite': 304, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_qiannianbingcan.ske size=1424 body=896 str=21 {'body': 896, 'nwords': 224, 'finite': 224, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_qiannianlingzhi.ske size=1344 body=832 str=20 {'body': 832, 'nwords': 208, 'finite': 208, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_qiannianrenshen.ske size=1504 body=960 str=22 {'body': 960, 'nwords': 240, 'finite': 240, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_qibaobanzhi.ske size=688 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_qimeigun.ske size=672 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_qingfengding.ske size=696 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_qinggangjian.ske size=696 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_qinlonggong.ske size=688 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_ranmudaofa.ske size=688 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_rousisuo.ske size=1864 body=1280 str=27 {'body': 1280, 'nwords': 320, 'finite': 320, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_ruanbian.ske size=3048 body=2240 str=42 {'body': 2240, 'nwords': 560, 'finite': 560, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_shandiandiao.ske size=4264 body=3072 str=55 {'body': 3072, 'nwords': 768, 'finite': 768, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_shengsifu.ske size=1472 body=960 str=22 {'body': 960, 'nwords': 240, 'finite': 240, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_shengsifulu.ske size=688 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_shibazhang.ske size=688 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_tianlongbabutu.ske size=1176 body=704 str=18 {'body': 704, 'nwords': 176, 'finite': 176, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_tianshanliuyangzhang.ske size=1528 body=960 str=22 {'body': 960, 'nwords': 240, 'finite': 240, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_tianshanxuelian.ske size=1816 body=1216 str=26 {'body': 1216, 'nwords': 304, 'finite': 304, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_tiashanzhemeishou.ske size=1512 body=960 str=22 {'body': 960, 'nwords': 240, 'finite': 240, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_xiangmodaofa.ske size=696 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_xiaowuxianggong.ske size=1504 body=960 str=22 {'body': 960, 'nwords': 240, 'finite': 240, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_xiuluodao.ske size=680 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_yanguoyuxi.ske size=688 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_yemingzhu.ske size=760 body=384 str=13 {'body': 384, 'nwords': 96, 'finite': 96, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_yijinjing.ske size=1472 body=960 str=22 {'body': 960, 'nwords': 240, 'finite': 240, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_yiyangzhifa.ske size=688 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_youlongjian.ske size=688 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_diancang_yugan.ske size=664 body=320 str=12 {'body': 320, 'nwords': 80, 'finite': 80, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_drop_bihebaoguo1.ske size=760 body=352 str=14 {'body': 352, 'nwords': 88, 'finite': 88, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_drop_bihebaoguo3.ske size=760 body=352 str=14 {'body': 352, 'nwords': 88, 'finite': 88, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_drop_dakaibaoguo1.ske size=760 body=352 str=14 {'body': 352, 'nwords': 88, 'finite': 88, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_drop_jian.ske size=712 body=352 str=14 {'body': 352, 'nwords': 88, 'finite': 88, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_npc_gouhuo.ske size=720 body=352 str=14 {'body': 352, 'nwords': 88, 'finite': 88, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_pvpcaiji_mie.ske size=560 body=280 str=10 {'body': 280, 'nwords': 70, 'finite': 70, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_pvpcaiji_sheng.ske size=568 body=280 str=10 {'body': 280, 'nwords': 70, 'finite': 70, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_candou1.ske size=488 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_candou2.ske size=488 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_candou3.ske size=488 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_dami1.ske size=480 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_dami2.ske size=480 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_dami3.ske size=480 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_gaoliang1.ske size=496 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_gaoliang2.ske size=496 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_gaoliang3.ske size=496 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_hongshu1.ske size=496 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_hongshu2.ske size=496 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_hongshu3.ske size=496 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_huangdou1.ske size=496 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_huangdou2.ske size=496 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_huangdou3.ske size=496 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_huasheng1.ske size=496 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_huasheng2.ske size=496 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_huasheng3.ske size=496 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_kuangshi1.ske size=488 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_kuangshi10.ske size=496 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_kuangshi2.ske size=488 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_kuangshi3.ske size=488 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_kuangshi4.ske size=488 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_kuangshi5.ske size=488 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_kuangshi6.ske size=488 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_kuangshi7.ske size=488 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_kuangshi8.ske size=488 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_kuangshi9.ske size=488 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_lvdou1.ske size=488 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_lvdou2.ske size=488 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_lvdou3.ske size=488 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_xiaomai1.ske size=496 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_xiaomai2.ske size=496 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_xiaomai3.ske size=496 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_yumi1.ske size=480 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_yumi2.ske size=480 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_yumi3.ske size=480 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_zhima1.ske size=488 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_zhima2.ske size=488 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shenghuo_zhima3.ske size=488 body=216 str=9 {'body': 216, 'nwords': 54, 'finite': 54, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_shuihu01.ske size=544 body=280 str=10 {'body': 280, 'nwords': 70, 'finite': 70, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ui_baoxiang_01.ske size=1656 body=1176 str=24 {'body': 1176, 'nwords': 294, 'finite': 294, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ui_baoxiang_02.ske size=1656 body=1176 str=24 {'body': 1176, 'nwords': 294, 'finite': 294, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ui_baoxiang_03.ske size=1656 body=1176 str=24 {'body': 1176, 'nwords': 294, 'finite': 294, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ui_baoxiang_04.ske size=1656 body=1176 str=24 {'body': 1176, 'nwords': 294, 'finite': 294, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ui_baoxiang_05.ske size=1656 body=1176 str=24 {'body': 1176, 'nwords': 294, 'finite': 294, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ui_baoxiang_06.ske size=2048 body=1496 str=29 {'body': 1496, 'nwords': 374, 'finite': 374, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ui_baoxiang_07.ske size=2200 body=1624 str=31 {'body': 1624, 'nwords': 406, 'finite': 406, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ui_baoxiang_08.ske size=2440 body=1816 str=34 {'body': 1816, 'nwords': 454, 'finite': 454, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ui_baoxiang_09.ske size=2984 body=2264 str=41 {'body': 2264, 'nwords': 566, 'finite': 566, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ui_baoxiang_10.ske size=1832 body=1280 str=27 {'body': 1280, 'nwords': 320, 'finite': 320, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_yqlygyw_lihe001.ske size=568 body=280 str=10 {'body': 280, 'nwords': 70, 'finite': 70, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_yqlygyw_xuyuanshu001.ske size=3000 body=2264 str=41 {'body': 2264, 'nwords': 566, 'finite': 566, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1352_pvpcaiji_xun.ske size=560 body=280 str=10 {'body': 280, 'nwords': 70, 'finite': 70, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1353_pvpcaiji_zhen.ske size=560 body=280 str=10 {'body': 280, 'nwords': 70, 'finite': 70, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1354_pvpcaiji_hua.ske size=560 body=280 str=10 {'body': 280, 'nwords': 70, 'finite': 70, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1355_pvpcaiji_yu.ske size=552 body=280 str=10 {'body': 280, 'nwords': 70, 'finite': 70, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1356_pvpcaiji_jing.ske size=560 body=280 str=10 {'body': 280, 'nwords': 70, 'finite': 70, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_mrsz_buliandeng_001.ske size=1344 body=952 str=19 {'body': 952, 'nwords': 238, 'finite': 238, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_mrsz_buliandongtai_002.ske size=1584 body=1144 str=22 {'body': 1144, 'nwords': 286, 'finite': 286, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_mrsz_denglong_001.ske size=872 body=568 str=13 {'body': 568, 'nwords': 142, 'finite': 142, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_mrsz_tielian_001.ske size=560 body=312 str=9 {'body': 312, 'nwords': 78, 'finite': 78, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_mrsz_tongyongwujiandongtai_001.ske size=2104 body=1528 str=28 {'body': 1528, 'nwords': 382, 'finite': 382, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_guajian_ysym_01.ske size=7160 body=5544 str=98 {'body': 5544, 'nwords': 1386, 'finite': 1386, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_guajian_ysym_01_nan.ske size=7192 body=5544 str=98 {'body': 5544, 'nwords': 1386, 'finite': 1386, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_an_model_wave_h001.ske size=560 body=312 str=9 {'body': 312, 'nwords': 78, 'finite': 78, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ani_model_9999_h005.ske size=880 body=568 str=13 {'body': 568, 'nwords': 142, 'finite': 142, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ani_model_lianhua_h001.ske size=8456 body=6776 str=110 {'body': 6776, 'nwords': 1694, 'finite': 1694, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ani_model_lianhua_h002.ske size=10768 body=8568 str=138 {'body': 8568, 'nwords': 2142, 'finite': 2142, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ani_model_maobi_w001.ske size=488 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ani_model_pets_xuanhaima_idle02_h001.ske size=656 body=280 str=10 {'body': 280, 'nwords': 70, 'finite': 70, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ani_model_qixiayingri_jian_c01.ske size=1160 body=688 str=21 {'body': 688, 'nwords': 172, 'finite': 172, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ani_ysym_bird_h001.ske size=11424 body=8728 str=142 {'body': 8728, 'nwords': 2182, 'finite': 2182, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ani_ysym_bird_h002.ske size=10280 body=7832 str=128 {'body': 7832, 'nwords': 1958, 'finite': 1958, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ani_ysym_moon_h001.ske size=608 body=280 str=10 {'body': 280, 'nwords': 70, 'finite': 70, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_ani_ysym_moon_h002.ske size=608 body=280 str=10 {'body': 280, 'nwords': 70, 'finite': 70, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_boss_hxw_c001.ske size=2856 body=2040 str=36 {'body': 2040, 'nwords': 510, 'finite': 510, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_flower_h001.ske size=1896 body=1400 str=26 {'body': 1400, 'nwords': 350, 'finite': 350, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_liqinglu_skill03_h001.ske size=760 body=440 str=11 {'body': 440, 'nwords': 110, 'finite': 110, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_liqinglu_skill04_h001.ske size=760 body=440 str=11 {'body': 440, 'nwords': 110, 'finite': 110, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_new_jiumozhi_skill04_h001.ske size=616 body=312 str=9 {'body': 312, 'nwords': 78, 'finite': 78, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_npc_liqinglu_hit_h001.ske size=840 body=504 str=12 {'body': 504, 'nwords': 126, 'finite': 126, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_npc_liqinglu_skill02_h001.ske size=856 body=504 str=12 {'body': 504, 'nwords': 126, 'finite': 126, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_npc_liqinglu_skill02_h002.ske size=856 body=504 str=12 {'body': 504, 'nwords': 126, 'finite': 126, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_zhenshoufuti_huandie01_w001.ske size=1480 body=1016 str=20 {'body': 1016, 'nwords': 254, 'finite': 254, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_zhenshoufuti_huandie02_w001.ske size=1792 body=1272 str=24 {'body': 1272, 'nwords': 318, 'finite': 318, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_zhenshoufuti_huandie02_w002.ske size=1792 body=1272 str=24 {'body': 1272, 'nwords': 318, 'finite': 318, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_zhenshoufuti_huandie03_w001.ske size=1792 body=1272 str=24 {'body': 1272, 'nwords': 318, 'finite': 318, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_zhenshoufuti_huandie04_w001.ske size=1792 body=1272 str=24 {'body': 1272, 'nwords': 318, 'finite': 318, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_zhenshoufuti_huandie04_w003.ske size=696 body=376 str=10 {'body': 376, 'nwords': 94, 'finite': 94, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_zhenshoufuti_huandie05_w001.ske size=1944 body=1400 str=26 {'body': 1400, 'nwords': 350, 'finite': 350, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_zhenshoufuti_youlong01_c01.ske size=1008 body=632 str=14 {'body': 632, 'nwords': 158, 'finite': 158, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_zhenshoufuti_youlong02_c01.ske size=2408 body=1784 str=32 {'body': 1784, 'nwords': 446, 'finite': 446, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_zhenshoufuti_youlong03_c01.ske size=2408 body=1784 str=32 {'body': 1784, 'nwords': 446, 'finite': 446, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_zhenshoufuti_youlong04_c01.ske size=2408 body=1784 str=32 {'body': 1784, 'nwords': 446, 'finite': 446, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_zhenshoufuti_youlong05_c01.ske size=2408 body=1784 str=32 {'body': 1784, 'nwords': 446, 'finite': 446, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ani_zhenshoufuti_youlong05plane_c01.ske size=1960 body=1400 str=26 {'body': 1400, 'nwords': 350, 'finite': 350, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_baiheliangchi_h001.ske size=1168 body=760 str=16 {'body': 760, 'nwords': 190, 'finite': 190, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_bamenjinsuo_h001.ske size=3256 body=2488 str=43 {'body': 2488, 'nwords': 622, 'finite': 622, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_bell_h002.ske size=3800 body=2632 str=75 {'body': 2632, 'nwords': 658, 'finite': 658, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_bell_lf001.ske size=568 body=280 str=10 {'body': 280, 'nwords': 70, 'finite': 70, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_bird_lf001.ske size=11304 body=8696 str=140 {'body': 8696, 'nwords': 2174, 'finite': 2174, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_bird_lf002.ske size=11304 body=8696 str=140 {'body': 8696, 'nwords': 2174, 'finite': 2174, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_boss_gss_fw_001.ske size=656 body=376 str=10 {'body': 376, 'nwords': 94, 'finite': 94, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_butterfly_lf001.ske size=1688 body=1208 str=23 {'body': 1208, 'nwords': 302, 'finite': 302, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_butterfly_lf002.ske size=2008 body=1464 str=27 {'body': 1464, 'nwords': 366, 'finite': 366, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_chuangjue_h001.ske size=4088 body=3000 str=51 {'body': 3000, 'nwords': 750, 'finite': 750, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_cloud_h002.ske size=2544 body=1728 str=50 {'body': 1728, 'nwords': 432, 'finite': 432, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_cygg_flow_c01.ske size=3800 body=2936 str=50 {'body': 2936, 'nwords': 734, 'finite': 734, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_dao_lf001.ske size=560 body=280 str=10 {'body': 280, 'nwords': 70, 'finite': 70, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_daoju_bixin_h001.ske size=1208 body=824 str=17 {'body': 824, 'nwords': 206, 'finite': 206, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_daoju_bixin_h002.ske size=1208 body=824 str=17 {'body': 824, 'nwords': 206, 'finite': 206, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_diaowenqizhen_s09.ske size=1680 body=1208 str=23 {'body': 1208, 'nwords': 302, 'finite': 302, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_diaowenqizhen_s11.ske size=1680 body=1208 str=23 {'body': 1208, 'nwords': 302, 'finite': 302, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_dingchunqiu_hand01.ske size=13880 body=11128 str=178 {'body': 11128, 'nwords': 2782, 'finite': 2782, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_dqz_dici_z001.ske size=408 body=184 str=7 {'body': 184, 'nwords': 46, 'finite': 46, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_dunpai_z001.ske size=400 body=184 str=7 {'body': 184, 'nwords': 46, 'finite': 46, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_em_nan_jt_posui_ani_x01.ske size=2000 body=1224 str=36 {'body': 1224, 'nwords': 306, 'finite': 306, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_em_nan_sword01.ske size=576 body=312 str=9 {'body': 312, 'nwords': 78, 'finite': 78, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_em_nv_lz_h001.ske size=4384 body=3448 str=58 {'body': 3448, 'nwords': 862, 'finite': 862, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_em_nv_lz_h002.ske size=1672 body=1208 str=23 {'body': 1208, 'nwords': 302, 'finite': 302, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_em_pl_h02.ske size=2920 body=2232 str=39 {'body': 2232, 'nwords': 558, 'finite': 558, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_em_pl_h03.ske size=2920 body=2232 str=39 {'body': 2232, 'nwords': 558, 'finite': 558, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_em_pl_h04.ske size=2920 body=2232 str=39 {'body': 2232, 'nwords': 558, 'finite': 558, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_emei_h003.ske size=864 body=568 str=13 {'body': 568, 'nwords': 142, 'finite': 142, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_emei_h004.ske size=864 body=568 str=13 {'body': 568, 'nwords': 142, 'finite': 142, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_fasheqi_h001.ske size=480 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_fazhen_ani_lf001.ske size=2912 body=1944 str=56 {'body': 1944, 'nwords': 486, 'finite': 486, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_feilongzaitian_h001.ske size=2792 body=2104 str=37 {'body': 2104, 'nwords': 526, 'finite': 526, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_fenghuang_h001.ske size=3920 body=2872 str=49 {'body': 2872, 'nwords': 718, 'finite': 718, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_fish_h02.ske size=4016 body=3128 str=53 {'body': 3128, 'nwords': 782, 'finite': 782, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_flower_lf001a.ske size=1200 body=824 str=17 {'body': 824, 'nwords': 206, 'finite': 206, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_flower_lf002a.ske size=1672 body=1208 str=23 {'body': 1208, 'nwords': 302, 'finite': 302, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_gb_cy_h001.ske size=1264 body=888 str=18 {'body': 888, 'nwords': 222, 'finite': 222, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_gb_hand_h01.ske size=1344 body=952 str=19 {'body': 952, 'nwords': 238, 'finite': 238, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_gb_long_h001.ske size=4664 body=3640 str=61 {'body': 3640, 'nwords': 910, 'finite': 910, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_gb_longtou_h01.ske size=1672 body=1208 str=23 {'body': 1208, 'nwords': 302, 'finite': 302, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_gb_nan_wq_h01.ske size=488 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_gbnan_long_h001.ske size=8704 body=6904 str=112 {'body': 6904, 'nwords': 1726, 'finite': 1726, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_gbnan_long_h002.ske size=4672 body=3640 str=61 {'body': 3640, 'nwords': 910, 'finite': 910, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_gbnan_long_h003.ske size=4280 body=3320 str=56 {'body': 3320, 'nwords': 830, 'finite': 830, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_gbnan_long_lg_h001.ske size=8712 body=6904 str=112 {'body': 6904, 'nwords': 1726, 'finite': 1726, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_gbnan_long_wy_h001.ske size=8712 body=6904 str=112 {'body': 6904, 'nwords': 1726, 'finite': 1726, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_gbnan_long_wy_h003.ske size=4288 body=3320 str=56 {'body': 3320, 'nwords': 830, 'finite': 830, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_gbnv_long_l_gx_h001.ske size=2160 body=1592 str=29 {'body': 1592, 'nwords': 398, 'finite': 398, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_gbnv_long_l_h001.ske size=8712 body=6904 str=112 {'body': 6904, 'nwords': 1726, 'finite': 1726, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_gbnv_long_l_lg_h001.ske size=8720 body=6904 str=112 {'body': 6904, 'nwords': 1726, 'finite': 1726, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_gbnv_long_r_h001.ske size=8712 body=6904 str=112 {'body': 6904, 'nwords': 1726, 'finite': 1726, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_gbnv_wuqi_h001.ske size=496 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_gfpy_z001.ske size=1816 body=1336 str=25 {'body': 1336, 'nwords': 334, 'finite': 334, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_gfpy_z002.ske size=1816 body=1336 str=25 {'body': 1336, 'nwords': 334, 'finite': 334, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_glass_ani_lf001.ske size=3800 body=2160 str=63 {'body': 2160, 'nwords': 540, 'finite': 540, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_guqin_nan.ske size=1824 body=1304 str=26 {'body': 1304, 'nwords': 326, 'finite': 326, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_guqin_nan_h001.ske size=1848 body=1304 str=26 {'body': 1304, 'nwords': 326, 'finite': 326, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_hdb_dilie_lf001.ske size=3840 body=2200 str=63 {'body': 2200, 'nwords': 550, 'finite': 550, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_hehua_h001_pbr.ske size=7624 body=5952 str=100 {'body': 5952, 'nwords': 1488, 'finite': 1488, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_hongbaoshi_s001.ske size=408 body=184 str=7 {'body': 184, 'nwords': 46, 'finite': 46, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_hua_hjyw_w001.ske size=3720 body=2872 str=49 {'body': 2872, 'nwords': 718, 'finite': 718, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_hua_zhaohuan_w001.ske size=3736 body=2872 str=49 {'body': 2872, 'nwords': 718, 'finite': 718, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_hua_zhaohuan_w002.ske size=3736 body=2872 str=49 {'body': 2872, 'nwords': 718, 'finite': 718, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_hua_zhaohuan_w003.ske size=3736 body=2872 str=49 {'body': 2872, 'nwords': 718, 'finite': 718, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_hudie_c001.ske size=792 body=504 str=12 {'body': 504, 'nwords': 126, 'finite': 126, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_hudie_h002.ske size=552 body=312 str=9 {'body': 312, 'nwords': 78, 'finite': 78, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_hxw_dun_c001.ske size=720 body=440 str=11 {'body': 440, 'nwords': 110, 'finite': 110, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_hxw_lf002.ske size=3048 body=2112 str=40 {'body': 2112, 'nwords': 528, 'finite': 528, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_hxw_stone_h01.ske size=3416 body=2304 str=66 {'body': 2304, 'nwords': 576, 'finite': 576, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_jgsb_jian_z001.ske size=408 body=184 str=7 {'body': 184, 'nwords': 46, 'finite': 46, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_jian_lf001.ske size=472 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_jian_lf002.ske size=1264 body=888 str=18 {'body': 888, 'nwords': 222, 'finite': 222, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_jian_lf003.ske size=472 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_jianyinghu_idle03_guiji_c001.ske size=640 body=280 str=10 {'body': 280, 'nwords': 70, 'finite': 70, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_jingji_b_h01.ske size=8304 body=6584 str=107 {'body': 6584, 'nwords': 1646, 'finite': 1646, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_jingji_b_h02.ske size=7432 body=5880 str=96 {'body': 5880, 'nwords': 1470, 'finite': 1470, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_jingji_buff_h01.ske size=4352 body=3384 str=57 {'body': 3384, 'nwords': 846, 'finite': 846, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_jingji_l_h01.ske size=4360 body=3384 str=57 {'body': 3384, 'nwords': 846, 'finite': 846, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_jingji_l_h02.ske size=4512 body=3512 str=59 {'body': 3512, 'nwords': 878, 'finite': 878, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_jingji_r_h01.ske size=4360 body=3384 str=57 {'body': 3384, 'nwords': 846, 'finite': 846, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_jingji_r_h02.ske size=6008 body=4728 str=78 {'body': 4728, 'nwords': 1182, 'finite': 1182, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_jingji_r_h03.ske size=6008 body=4728 str=78 {'body': 4728, 'nwords': 1182, 'finite': 1182, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_jingji_skill02_hand01.ske size=4328 body=3384 str=57 {'body': 3384, 'nwords': 846, 'finite': 846, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_jinyu_lf001.ske size=4696 body=3584 str=63 {'body': 3584, 'nwords': 896, 'finite': 896, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_jinyubaobao_gj_c001.ske size=584 body=312 str=9 {'body': 312, 'nwords': 78, 'finite': 78, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_jiumozhi_hoqiu_w002.ske size=664 body=376 str=10 {'body': 376, 'nwords': 94, 'finite': 94, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_jiuyinshenzhua_h001.ske size=4024 body=2936 str=50 {'body': 2936, 'nwords': 734, 'finite': 734, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_kanshu_nan_c01_01.ske size=1920 body=1400 str=26 {'body': 1400, 'nwords': 350, 'finite': 350, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_kanshu_nv_h001.ske size=2008 body=1432 str=28 {'body': 1432, 'nwords': 358, 'finite': 358, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_kanshu_nv_h001_1.ske size=2016 body=1432 str=28 {'body': 1432, 'nwords': 358, 'finite': 358, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_knife_h01.ske size=392 body=184 str=7 {'body': 184, 'nwords': 46, 'finite': 46, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_kongmo_001.ske size=632 body=376 str=10 {'body': 376, 'nwords': 94, 'finite': 94, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_lens02_qf_h01.ske size=11688 body=8888 str=143 {'body': 8888, 'nwords': 2222, 'finite': 2222, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_link_h01.ske size=8432 body=5256 str=148 {'body': 5256, 'nwords': 1314, 'finite': 1314, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_link_h02.ske size=1496 body=1080 str=21 {'body': 1080, 'nwords': 270, 'finite': 270, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_link_h02_fire01.ske size=1520 body=1080 str=21 {'body': 1080, 'nwords': 270, 'finite': 270, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_lion_h001.ske size=3904 body=3064 str=52 {'body': 3064, 'nwords': 766, 'finite': 766, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_lion_h002.ske size=3904 body=3064 str=52 {'body': 3064, 'nwords': 766, 'finite': 766, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_lion_h004.ske size=14520 body=11704 str=187 {'body': 11704, 'nwords': 2926, 'finite': 2926, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_lion_h004_1.ske size=14520 body=11704 str=187 {'body': 11704, 'nwords': 2926, 'finite': 2926, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_liuliyan_h001.ske size=640 body=376 str=10 {'body': 376, 'nwords': 94, 'finite': 94, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ls_tukuai_z001.ske size=952 body=544 str=17 {'body': 544, 'nwords': 136, 'finite': 136, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ls_yudu_h001.ske size=400 body=184 str=7 {'body': 184, 'nwords': 46, 'finite': 46, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_luoyingjian_h001.ske size=1440 body=1016 str=20 {'body': 1016, 'nwords': 254, 'finite': 254, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_meihuasannong_changqiang_h001.ske size=3976 body=2872 str=49 {'body': 2872, 'nwords': 718, 'finite': 718, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_meihuasannong_h001.ske size=3944 body=2872 str=49 {'body': 2872, 'nwords': 718, 'finite': 718, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mhsn_nancq01.ske size=3680 body=2680 str=46 {'body': 2680, 'nwords': 670, 'finite': 670, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mhsn_nandd01.ske size=3680 body=2680 str=46 {'body': 2680, 'nwords': 670, 'finite': 670, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mhsn_nanhuan01.ske size=3688 body=2680 str=46 {'body': 2680, 'nwords': 670, 'finite': 670, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mhsn_nansd01.ske size=3680 body=2680 str=46 {'body': 2680, 'nwords': 670, 'finite': 670, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mhsn_nanshan01.ske size=3688 body=2680 str=46 {'body': 2680, 'nwords': 670, 'finite': 670, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mhsn_nvdd01.ske size=3920 body=2872 str=49 {'body': 2872, 'nwords': 718, 'finite': 718, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mhsn_nvhuan01.ske size=3848 body=2808 str=48 {'body': 2808, 'nwords': 702, 'finite': 702, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mhsn_nvsd01.ske size=3840 body=2808 str=48 {'body': 2808, 'nwords': 702, 'finite': 702, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mhsn_nvshan01.ske size=3928 body=2872 str=49 {'body': 2872, 'nwords': 718, 'finite': 718, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mj_nan_stone_h01.ske size=4872 body=2992 str=85 {'body': 2992, 'nwords': 748, 'finite': 748, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mj_nv_jt_link_x01.ske size=2192 body=1560 str=30 {'body': 1560, 'nwords': 390, 'finite': 390, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mj_nv_jt_link_x02.ske size=1528 body=1080 str=21 {'body': 1080, 'nwords': 270, 'finite': 270, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mj_nv_jt_link_x03.ske size=1528 body=1080 str=21 {'body': 1080, 'nwords': 270, 'finite': 270, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mj_nv_jt_link_x04.ske size=1528 body=1080 str=21 {'body': 1080, 'nwords': 270, 'finite': 270, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mj_nv_jt_wing_x01.ske size=3288 body=2456 str=44 {'body': 2456, 'nwords': 614, 'finite': 614, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mr_cj_nan_jianzhen_glow_lf001.ske size=1360 body=736 str=20 {'body': 736, 'nwords': 184, 'finite': 184, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mr_cj_nan_jianzhen_glow_lf002.ske size=1256 body=704 str=18 {'body': 704, 'nwords': 176, 'finite': 176, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mr_cj_nan_jianzhen_lf001.ske size=1336 body=736 str=20 {'body': 736, 'nwords': 184, 'finite': 184, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mr_cj_nan_jianzhen_lf002.ske size=1232 body=704 str=18 {'body': 704, 'nwords': 176, 'finite': 176, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mr_cj_nan_path_lf002.ske size=512 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mr_cj_nv_jianzhen_glow_lf002.ske size=1112 body=664 str=16 {'body': 664, 'nwords': 166, 'finite': 166, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mr_cj_nv_jianzhen_glow_lf003.ske size=1576 body=1048 str=22 {'body': 1048, 'nwords': 262, 'finite': 262, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mr_cj_nv_jianzhen_lf002.ske size=1088 body=664 str=16 {'body': 664, 'nwords': 166, 'finite': 166, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mr_cj_nv_jianzhen_lf003.ske size=1560 body=1048 str=22 {'body': 1048, 'nwords': 262, 'finite': 262, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_mr_nv_cj_trail_ani_lf001.ske size=624 body=280 str=10 {'body': 280, 'nwords': 70, 'finite': 70, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_nan_wujian_piaodai_lf001.ske size=4472 body=3448 str=58 {'body': 3448, 'nwords': 862, 'finite': 862, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_nv_cj_canying_h001.ske size=5408 body=3960 str=66 {'body': 3960, 'nwords': 990, 'finite': 990, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_nv_wujian_piaodai_lf001.ske size=4472 body=3448 str=58 {'body': 3448, 'nwords': 862, 'finite': 862, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_nv_xy_juanzhou_h001.ske size=2080 body=1528 str=28 {'body': 1528, 'nwords': 382, 'finite': 382, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_pets_tgtx_c004.ske size=1520 body=1080 str=21 {'body': 1080, 'nwords': 270, 'finite': 270, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_pets_xhl_b7_c01.ske size=816 body=504 str=12 {'body': 504, 'nwords': 126, 'finite': 126, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_phoenix_h01.ske size=2696 body=1976 str=35 {'body': 1976, 'nwords': 494, 'finite': 494, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_pmf_lqs_ymgz_c01.ske size=1384 body=856 str=19 {'body': 856, 'nwords': 214, 'finite': 214, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_pmf_s012.ske size=1368 body=832 str=25 {'body': 832, 'nwords': 208, 'finite': 208, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_qf_h001.ske size=384 body=184 str=7 {'body': 184, 'nwords': 46, 'finite': 46, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_qf_h002.ske size=464 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_qf_h003.ske size=536 body=312 str=9 {'body': 312, 'nwords': 78, 'finite': 78, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_qf_skill02_dragon_h01.ske size=8728 body=6904 str=112 {'body': 6904, 'nwords': 1726, 'finite': 1726, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_qf_skill02_dragon_h02.ske size=2168 body=1592 str=29 {'body': 1592, 'nwords': 398, 'finite': 398, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_qf_skill02_dragon_h03.ske size=8728 body=6904 str=112 {'body': 6904, 'nwords': 1726, 'finite': 1726, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_qf_skill02_dragon_h04.ske size=7856 body=6008 str=98 {'body': 6008, 'nwords': 1502, 'finite': 1502, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_qf_skill02_dragon_h06.ske size=2168 body=1592 str=29 {'body': 1592, 'nwords': 398, 'finite': 398, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_qianghua_h001.ske size=408 body=184 str=7 {'body': 184, 'nwords': 46, 'finite': 46, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_qianlongwuyong_h001.ske size=2792 body=2104 str=37 {'body': 2104, 'nwords': 526, 'finite': 526, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_qinhuangdigong_zuanshi_s001.ske size=944 body=536 str=14 {'body': 536, 'nwords': 134, 'finite': 134, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_qinyun_qin_cx001.ske size=888 body=392 str=16 {'body': 392, 'nwords': 98, 'finite': 98, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_qizhi_h001.ske size=1568 body=1144 str=22 {'body': 1144, 'nwords': 286, 'finite': 286, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_qunmoluanwu_h001.ske size=2960 body=2104 str=37 {'body': 2104, 'nwords': 526, 'finite': 526, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ring_lf006.ske size=472 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_rlsz_z001.ske size=392 body=184 str=7 {'body': 184, 'nwords': 46, 'finite': 46, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_san_lf001.ske size=2656 body=1920 str=37 {'body': 1920, 'nwords': 480, 'finite': 480, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_san_lf002.ske size=1920 body=1368 str=27 {'body': 1368, 'nwords': 342, 'finite': 342, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_sceneeditor01_dragon_h02.ske size=8736 body=6904 str=112 {'body': 6904, 'nwords': 1726, 'finite': 1726, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_sceneeditor01_dragon_lg_h02.ske size=8744 body=6904 str=112 {'body': 6904, 'nwords': 1726, 'finite': 1726, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_shici_w003.ske size=1352 body=952 str=19 {'body': 952, 'nwords': 238, 'finite': 238, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_shuishangxue_lf001.ske size=2080 body=1528 str=28 {'body': 1528, 'nwords': 382, 'finite': 382, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_sl_cleave_h01.ske size=11936 body=8392 str=235 {'body': 8392, 'nwords': 2098, 'finite': 2098, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_sl_hand_h01.ske size=1272 body=888 str=18 {'body': 888, 'nwords': 222, 'finite': 222, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_sl_jiasha_h01.ske size=4200 body=3256 str=55 {'body': 3256, 'nwords': 814, 'finite': 814, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_sl_nan_shitou_x04.ske size=1552 body=1080 str=21 {'body': 1080, 'nwords': 270, 'finite': 270, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_sl_nan_zhong_x01.ske size=3336 body=2128 str=61 {'body': 2128, 'nwords': 532, 'finite': 532, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_sl_nan_zhong_x02.ske size=3336 body=2128 str=61 {'body': 2128, 'nwords': 532, 'finite': 532, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_sl_wan_h001.ske size=480 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_sl_wan_h002.ske size=488 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_sl_wuqi_h01.ske size=400 body=184 str=7 {'body': 184, 'nwords': 46, 'finite': 46, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_sphere_lf003.ske size=496 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_sphere_lf005.ske size=480 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_spider_dsxj_h01.ske size=1120 body=760 str=16 {'body': 760, 'nwords': 190, 'finite': 190, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_spider_h01.ske size=552 body=312 str=9 {'body': 312, 'nwords': 78, 'finite': 78, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_spider_h02.ske size=4224 body=3256 str=55 {'body': 3256, 'nwords': 814, 'finite': 814, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_spider_h03.ske size=1104 body=760 str=16 {'body': 760, 'nwords': 190, 'finite': 190, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_spider_h04.ske size=1104 body=760 str=16 {'body': 760, 'nwords': 190, 'finite': 190, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_spider_line_h002.ske size=1992 body=1464 str=27 {'body': 1464, 'nwords': 366, 'finite': 366, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_stone_c001.ske size=3000 body=2104 str=37 {'body': 2104, 'nwords': 526, 'finite': 526, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_stone_lf001.ske size=2056 body=1528 str=28 {'body': 1528, 'nwords': 382, 'finite': 382, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_stone_lf002.ske size=2216 body=1656 str=30 {'body': 1656, 'nwords': 414, 'finite': 414, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_stone_lf003.ske size=2536 body=1912 str=34 {'body': 1912, 'nwords': 478, 'finite': 478, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_stone_lf004.ske size=4352 body=3064 str=52 {'body': 3064, 'nwords': 766, 'finite': 766, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_stone_lf005.ske size=4744 body=2736 str=78 {'body': 2736, 'nwords': 684, 'finite': 684, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_stone_lf006.ske size=1664 body=1208 str=23 {'body': 1208, 'nwords': 302, 'finite': 302, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_sword_h01.ske size=392 body=184 str=7 {'body': 184, 'nwords': 46, 'finite': 46, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_sz_slnvtz_z01.ske size=488 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_tengji_h001.ske size=10096 body=8120 str=131 {'body': 8120, 'nwords': 2030, 'finite': 2030, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_tengji_skill02_buff_h01.ske size=4376 body=3384 str=57 {'body': 3384, 'nwords': 846, 'finite': 846, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_tengji_skill02_buff_h02.ske size=7464 body=5880 str=96 {'body': 5880, 'nwords': 1470, 'finite': 1470, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_tiangangbeidouzhen_h001.ske size=432 body=184 str=7 {'body': 184, 'nwords': 46, 'finite': 46, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_tianwaifeixian_h001.ske size=1176 body=760 str=16 {'body': 760, 'nwords': 190, 'finite': 190, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_tianwaifeixian_h02.ske size=496 body=248 str=8 {'body': 248, 'nwords': 62, 'finite': 62, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_tianxiawugou_h001.ske size=2784 body=2104 str=37 {'body': 2104, 'nwords': 526, 'finite': 526, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_tiger_v1.ske size=3448 body=2432 str=45 {'body': 2432, 'nwords': 608, 'finite': 608, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_tl_cy_h01.ske size=1576 body=1144 str=22 {'body': 1144, 'nwords': 286, 'finite': 286, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_tl_ftxd_jt_x01.ske size=7136 body=5368 str=88 {'body': 5368, 'nwords': 1342, 'finite': 1342, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_tl_ftxd_jt_x02.ske size=7136 body=5368 str=88 {'body': 5368, 'nwords': 1342, 'finite': 1342, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_tl_lg_h01.ske size=1576 body=1144 str=22 {'body': 1144, 'nwords': 286, 'finite': 286, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_trail_line_s1.ske size=1464 body=984 str=21 {'body': 984, 'nwords': 246, 'finite': 246, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_trail_line_s2.ske size=1464 body=984 str=21 {'body': 984, 'nwords': 246, 'finite': 246, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_trail_line_s3.ske size=1464 body=984 str=21 {'body': 984, 'nwords': 246, 'finite': 246, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_trail_line_s4.ske size=1464 body=984 str=21 {'body': 984, 'nwords': 246, 'finite': 246, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_trail_line_s5.ske size=1464 body=984 str=21 {'body': 984, 'nwords': 246, 'finite': 246, 'frac_small': 1.0, 'quat_hits': 0}
+  small-float-rich: w1351_model_ts_canying_h001.ske size=728 body=440 str=11 {'body': 440, 'nwords': 110, 'finite': 110, 'frac_small': 1.0, 'quat_hits': 0}
+bodies scanned=400 with any unit-quaternion-like f32 run=0
+
+=== chunk-tree dumps ===
+
+--- w1351_nan.ske size=275800 strtab@0x1B640 strings=4743 bone_like=121 flag=0
+    hdr=[1178813002, 0, 8, 275784, 86, 112168]
+@0x10 chunk id=86 size=112168 (data)
+    strings: w1351_nan.ske, data/source/player/w1351_nan/, ani, mr_cj_jt, w1351_nan_mr_cj_jt.ani, w1351_nan_clip0.anis, mr_idle01_jt, w1351_nan_mr_idle01_jt.ani, w1351_nan_clip1.anis, mr_cq_liufuyi, w1351_nan_mr_cq_liufuyi.ani, w1351_nan_clip2.anis, mr_qinggong, w1351_nan_mr_qinggong.ani, w1351_nan_clip3.anis, mr_qinggongbegin, w1351_nan_mr_qinggongbegin.ani, w1351_nan_clip4.anis, mr_qinggongend, w1351_nan_mr_qinggongend.ani, w1351_nan_clip5.anis, mr_huan_liufuyi, w1351_nan_mr_huan_liufuyi.ani, w1351_nan_clip6.anis, mr_sd_liufuyi, w1351_nan_mr_sd_liufuyi.ani, w1351_nan_clip7.anis, mr_dadao_qidingliuhe, w1351_nan_mr_dadao_qidingliuhe.ani, w1351_nan_clip8.anis, mr_cq_qidingliuhe, w1351_nan_mr_cq_qidingliuhe.ani, w1351_nan_clip9.anis, mr_sd_qidingliuhe, w1351_nan_mr_sd_qidingliuhe.ani, mr_danduan_qidingliuhe, w1351_nan_mr_danduan_qidingliuhe.ani, mr_huan_qidingliuhe, w1351_nan_mr_huan_qidingliuhe.ani, mr_shan_qidingliuhe
+    tail after strtab: 67 75 30 32 6d 5f 63 65 67 75 30 33 00 00 00 00
+    body first 128B: 59 00 00 00 02 00 00 00 04 00 00 00 02 00 00 00 81 6d 00 00 60 00 04 00 00 00 00 00 61 00 04 00 01 00 00 00 65 00 00 00 02 00 00 00 04 00 00 00 32 09 00 00 26 65 00 00 7e 00 04 00 02 00 00 00 61 00 04 00 02 00 00 00 67 00 00 00 03 00 00 00 06 00 00 00 00 00 00 00 00 00 00 00 60 00 04 00 03 00 00 00 61 00 04 00 04 00 00 00 04 01 04 00 05 00 00 00 67 00 00 00 03 00 00 00 06 00 00 00
+
+--- w1351_nv.ske size=271536 strtab@0x1B418 strings=4701 bone_like=122 flag=0
+    hdr=[1178813002, 0, 8, 271520, 86, 111616]
+@0x10 chunk id=86 size=111616 (data)
+    strings: w1351_nv.ske, data/source/npc/quest/w1351_nv/, ani, mr_qinggongend, w1351_nv_mr_qinggongend.ani, w1351_nv_clip0.anis, mr_qinggongbegin, w1351_nv_mr_qinggongbegin.ani, w1351_nv_clip1.anis, mr_qinggong, w1351_nv_mr_qinggong.ani, w1351_nv_clip2.anis, mr_huan_liufuyi, w1351_nv_mr_huan_liufuyi.ani, w1351_nv_clip3.anis, mr_cq_liufuyi, w1351_nv_mr_cq_liufuyi.ani, w1351_nv_clip4.anis, mr_kong_tianzengsuiyue, w1351_nv_mr_kong_tianzengsuiyue.ani, w1351_nv_clip5.anis, mr_dadao_tianzengsuiyue, w1351_nv_mr_dadao_tianzengsuiyue.ani, w1351_nv_clip6.anis, mr_cq_tianzengsuiyue, w1351_nv_mr_cq_tianzengsuiyue.ani, w1351_nv_clip7.anis, mr_danduan_tianzengsuiyue, w1351_nv_mr_danduan_tianzengsuiyue.ani, w1351_nv_clip8.anis, mr_sd_tianzengsuiyue, w1351_nv_mr_sd_tianzengsuiyue.ani, w1351_nv_clip9.anis, mr_shan_tianzengsuiyue, w1351_nv_mr_shan_tianzengsuiyue.ani, mr_huan_tianzengsuiyue, w1351_nv_mr_huan_tianzengsuiyue.ani, mr_kong_moshangxing, w1351_nv_mr_kong_moshangxing.ani, mr_dadao_moshangxing
+    tail after strtab: 75 30 32 77 5f 63 65 67 75 30 33 00 00 00 00 00
+    body first 128B: 59 00 00 00 02 00 00 00 04 00 00 00 02 00 00 00 f7 6c 00 00 60 00 04 00 00 00 00 00 61 00 04 00 01 00 00 00 65 00 00 00 02 00 00 00 04 00 00 00 24 09 00 00 8c 64 00 00 7e 00 04 00 02 00 00 00 61 00 04 00 02 00 00 00 67 00 00 00 03 00 00 00 06 00 00 00 00 00 00 00 00 00 00 00 60 00 04 00 03 00 00 00 61 00 04 00 04 00 00 00 04 01 04 00 05 00 00 00 67 00 00 00 03 00 00 00 06 00 00 00
+
+--- w1351_npc_duantai01.ske size=256 strtab@0x88 strings=4 bone_like=0 flag=0
+    hdr=[1178813002, 0, 8, 240, 86, 108]
+@0x10 chunk id=86 size=108 (data)
+    strings: w1351_npc_duantai01.ske, data/source/npc/quest/w1351_npc_duantai01, ani, 
+    tail after strtab: 75 61 6e 74 61 69 30 31 61 6e 69 00 00 00 00 00
+    body first 128B: 59 00 00 00 02 00 00 00 04 00 00 00 02 00 00 00 12 00 00 00 60 00 04 00 00 00 00 00 61 00 04 00 01 00 00 00 65 00 00 00 02 00 00 00 04 00 00 00 00 00 00 00 00 00 00 00 7e 00 04 00 02 00 00 00 61 00 04 00 02 00 00 00 5a 00 00 00 02 00 00 00 04 00 00 00 00 00 00 00 00 00 00 00 5b 00 02 00 00 00 00 00 5c 00 04 00 03 00 00 00 00 00 00 00
+
+--- w1351_npc_duantai02.ske size=256 strtab@0x88 strings=4 bone_like=0 flag=0
+    hdr=[1178813002, 0, 8, 240, 86, 108]
+@0x10 chunk id=86 size=108 (data)
+    strings: w1351_npc_duantai02.ske, data/source/npc/quest/w1351_npc_duantai02, ani, 
+    tail after strtab: 75 61 6e 74 61 69 30 32 61 6e 69 00 00 00 00 00
+    body first 128B: 59 00 00 00 02 00 00 00 04 00 00 00 02 00 00 00 12 00 00 00 60 00 04 00 00 00 00 00 61 00 04 00 01 00 00 00 65 00 00 00 02 00 00 00 04 00 00 00 00 00 00 00 00 00 00 00 7e 00 04 00 02 00 00 00 61 00 04 00 02 00 00 00 5a 00 00 00 02 00 00 00 04 00 00 00 00 00 00 00 00 00 00 00 5b 00 02 00 00 00 00 00 5c 00 04 00 03 00 00 00 00 00 00 00
+
+--- w1351_diancang_banruozhang.ske size=688 strtab@0x158 strings=12 bone_like=1 flag=0
+    hdr=[1178813002, 0, 8, 672, 86, 316]
+@0x10 chunk id=86 size=316 (data)
+    strings: w1351_diancang_banruozhang.ske, data/source/npc/changjingdaoju/w1351_diancang_banruozhang/, ani, t_pose, w1351_diancang_banruozhang_t_pose.ani, idle01, w1351_diancang_banruozhang_idle01.ani, idle02, w1351_diancang_banruozhang_idle02.ani, 0, 000, bone001
+    tail after strtab: 2e 61 6e 69 30 30 30 30 62 6f 6e 65 30 30 31 00
+    body first 128B: 59 00 00 00 02 00 00 00 04 00 00 00 02 00 00 00 46 00 00 00 60 00 04 00 00 00 00 00 61 00 04 00 01 00 00 00 65 00 00 00 02 00 00 00 04 00 00 00 03 00 00 00 1b 00 00 00 7e 00 04 00 02 00 00 00 61 00 04 00 02 00 00 00 67 00 00 00 02 00 00 00 04 00 00 00 00 00 00 00 00 00 00 00 60 00 04 00 03 00 00 00 61 00 04 00 04 00 00 00 67 00 00 00 02 00 00 00 04 00 00 00 00 00 00 00 00 00 00 00
+
+=== biggest .ske files by size ===
+  D:\TLGL\.scratch\out\tree\data\source\player\w1351_nan\w1351_nan.ske size=275800 strtab@0x1B640 strings=4743 body=112168 bone_like=121
+  D:\TLGL\.scratch\out\tree\data\source\player\w1351_nv\w1351_nv.ske size=271536 strtab@0x1B418 strings=4701 body=111616 bone_like=122
+  D:\TLGL\.scratch\out\tree\data\source\npc\quest\w1351_pets_xiaohualing_b5\w1351_pets_xiaohualing_b5.ske size=21080 strtab@0x3E60 strings=272 body=15944 bone_like=239
+  D:\TLGL\.scratch\out\tree\data\source\npc\quest\w1351_zuoqi_wanlishanhehong\w1351_zuoqi_wanlishanhehong.ske size=20632 strtab@0x3FF0 strings=270 body=16344 bone_like=247
+  D:\TLGL\.scratch\out\tree\data\source\npc\quest\w1351_pets_xianglong_b7\w1351_pets_xianglong_b7.ske size=20336 strtab@0x3D60 strings=268 body=15688 bone_like=235
+  D:\TLGL\.scratch\out\tree\data\source\npc\quest\w1351_npc_xinmurongfu\w1351_npc_xinmurongfu.ske size=18152 strtab@0x32E8 strings=239 body=13008 bone_like=187
+  D:\TLGL\.scratch\out\tree\data\source\npc\model\w1351_model_ymg02_jn_long_lg_h002\w1351_model_ymg02_jn_long_lg_h002.ske size=17024 strtab@0x3550 strings=217 body=13624 bone_like=210
+  D:\TLGL\.scratch\out\tree\data\source\npc\model\w1351_model_ymg02_jn_long_h002\w1351_model_ymg02_jn_long_h002.ske size=17016 strtab@0x3550 strings=217 body=13624 bone_like=210

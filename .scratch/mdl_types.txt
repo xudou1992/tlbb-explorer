@@ -1,0 +1,5 @@
+ext=.mdl types: [('JBCF', 2146)]
+
+other types: [('JBCF', 10166), ('ani', 11234), ('mesh', 7996)]
+
+samples: [('w1351_npc_biaoche3.mdl', 'JBCF', '.mdl'), ('w1351_diancang_qiannianlingzhi.mdl', 'JBCF', '.mdl'), ('w1351_pets_bingcan_b2.mdl', 'JBCF', '.mdl'), ('w1351_monster_xiyuqiezei.mdl', 'JBCF', '.mdl'), ('w1351_pets_songshu_b0.mdl', 'JBCF', '.mdl')]

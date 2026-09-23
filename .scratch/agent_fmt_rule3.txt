@@ -1,0 +1,151 @@
+corpus 7996 .mesh
+
+=== outcome ===
+  fwd_ok                       7996
+  both_ok                      6221
+  fwd_rescues_legacy           1775
+
+=== per sm: n / fwd_ok / fwd_fail / too_small ===
+  sm=1    n=6219   ok=6219   fail=0      too_small=0
+  sm=2    n=865    ok=865    fail=0      too_small=0
+  sm=3    n=424    ok=424    fail=0      too_small=0
+  sm=4    n=170    ok=170    fail=0      too_small=0
+  sm=5    n=134    ok=134    fail=0      too_small=0
+  sm=6    n=84     ok=84     fail=0      too_small=0
+  sm=7    n=50     ok=50     fail=0      too_small=0
+  sm=8    n=16     ok=16     fail=0      too_small=0
+  sm=9    n=12     ok=12     fail=0      too_small=0
+  sm=10   n=8      ok=8      fail=0      too_small=0
+  sm=11   n=6      ok=6      fail=0      too_small=0
+  sm=12   n=8      ok=8      fail=0      too_small=0
+
+=== rescue of legacy failures (the sm>=2 set) by sm ===
+  rescued: [(2, 864), (3, 423), (4, 170), (5, 134), (6, 84), (7, 50), (8, 16), (9, 12), (10, 8), (11, 6), (12, 8)]
+  still failing: []
+
+=== agreements ===
+  legacy_same: 6219
+  eof_same: 4802
+  no_eof_fit: 3179
+  static_eq_fwd_sm1: 2603
+  static_eq_fwd_smN: 165
+  eof_diff: 15
+  legacy_diff: 2
+
+=== distance from index-data end to EOF ===
+  t=0: 3721
+  t>4096: 2538
+  t<=256: 970
+  t<=8: 442
+  t<=4096: 325
+
+=== number of validating positions per file ===
+  1: 7976
+  2: 19
+  3: 1
+
+=== rescue examples (rel size vc fc sm p tail counts middle blockranges) ===
+  sm=2 data\effect\effectmodel\w1351_model_emiter_lf002.mesh
+     size=18408 vc=434 fc=528 sm=2 p=0x3B78 tail=8 counts=[264, 264] middle=9736 blocks=[(0, 211), (212, 433)]
+  sm=2 data\effect\effectmodel\w1351_model_fengsha_h001.mesh
+     size=53304 vc=1332 fc=1732 sm=2 p=0xA798 tail=0 counts=[1600, 132] middle=26640 blocks=[(0, 935), (936, 1331)]
+  sm=2 data\effect\effectmodel\w1351_model_gb_dz_w002.mesh
+     size=9088 vc=225 fc=200 sm=2 p=0x1EC8 tail=0 counts=[160, 40] middle=4900 blocks=[(0, 104), (105, 224)]
+  sm=2 data\effect\effectmodel\w1351_model_hjyw_hua_w001.mesh
+     size=147880 vc=3595 fc=4069 sm=2 p=0x1E242 tail=0 counts=[2212, 1857] middle=80038 blocks=[(0, 1929), (1930, 3594)]
+  sm=3 data\effect\effectmodel\w1351_model_emiter_lf004.mesh
+     size=17788 vc=436 fc=442 sm=3 p=0x3B0C tail=8 counts=[402, 8, 32] middle=9604 blocks=[(0, 359), (360, 375), (376, 435)]
+  sm=3 data\effect\effectmodel\w1351_model_sl_nan_jt_x26.mesh
+     size=156244 vc=3789 fc=5784 sm=3 p=0x1DAB8 tail=0 counts=[1344, 1900, 2540] middle=75780 blocks=[(0, 771), (772, 2024), (2025, 3788)]
+  sm=3 data\effect\effectmodel\w1351_model_yijinduangu_s01.mesh
+     size=5412 vc=136 fc=128 sm=3 p=0x1218 tail=0 counts=[32, 64, 32] middle=2720 blocks=[(0, 33), (34, 103), (104, 135)]
+  sm=3 data\source\npc\changjingdaoju\w1351_diancang_longzhuashou\w1351_diancang_longzhuashou.mesh
+     size=38204 vc=596 fc=580 sm=3 p=0x5020 tail=14200 counts=[388, 96, 96] middle=13080 blocks=[(0, 399), (400, 497), (498, 595)]
+  sm=4 data\effect\effectmodel\w1351_model_lantern_lf001.mesh
+     size=10856 vc=253 fc=308 sm=4 p=0x2320 tail=0 counts=[144, 32, 80, 52] middle=5676 blocks=[(0, 111), (112, 143), (144, 192), (193, 252)]
+  sm=4 data\effect\effectmodel\w1351_model_qb_hhlw_emitter_c001.mesh
+     size=5064 vc=128 fc=112 sm=4 p=0x1118 tail=0 counts=[28, 28, 28, 28] middle=2560 blocks=[(0, 31), (32, 63), (64, 95), (96, 127)]
+  sm=4 data\source\npc\quest\w1351_boss_shuangying\w1351_boss_shuangying_yifu_001.mesh
+     size=95632 vc=1065 fc=1298 sm=4 p=0x8638 tail=53468 counts=[986, 24, 192, 96] middle=21300 blocks=[(0, 758), (759, 786), (787, 1004), (1005, 1064)]
+  sm=4 data\source\npc\quest\w1351_boss_wangyuyan\w1351_boss_wangyuyan.mesh
+     size=374036 vc=6118 fc=8041 sm=4 p=0x33CAA tail=113636 counts=[7137, 96, 116, 692] middle=138442 blocks=[(0, 5401), (5402, 5465), (5466, 5539), (5540, 6117)]
+  sm=5 data\source\npc\quest\w1351_monster_bilinjiangshi\w1351_monster_bilinjiangshi.mesh
+     size=41820 vc=639 fc=676 sm=5 p=0x50F8 tail=17016 counts=[636, 8, 8, 16, 8] middle=12780 blocks=[(0, 534), (535, 558), (559, 582), (583, 614)]
+  sm=5 data\source\npc\quest\w1351_new_npc_liqinglu\w1351_new_npc_liqinglu.mesh
+     size=376812 vc=6313 fc=7850 sm=5 p=0x3538C tail=111696 counts=[6202, 369, 468, 332, 479] middle=141960 blocks=[(0, 5181), (5182, 5395), (5396, 5781), (5782, 5994)]
+  sm=5 data\source\npc\quest\w1351_new_npc_muwanqing\w1351_new_npc_muwanqing.mesh
+     size=400520 vc=6433 fc=7876 sm=5 p=0x362C0 tail=131356 counts=[5285, 1332, 598, 417, 244] middle=144412 blocks=[(0, 4201), (4202, 5234), (5235, 5900), (5901, 6226)]
+  sm=5 data\source\npc\quest\w1351_npc_fangjufang05\w1351_npc_fangjufang05.mesh
+     size=35880 vc=981 fc=698 sm=5 p=0x7BB8 tail=0 counts=[38, 286, 286, 4, 84] middle=19620 blocks=[(0, 65), (66, 456), (457, 860), (861, 866)]
+  sm=6 data\source\npc\model\w1351_model_kongmo_001\w1351_model_kongmo_001.mesh
+     size=2480 vc=24 fc=12 sm=6 p=0x418 tail=1336 counts=[2, 2, 2, 2, 2, 2] middle=480 blocks=[(0, 3), (4, 7), (8, 11), (12, 15)]
+  sm=6 data\source\npc\model\w1351_model_kongmo_001\w1351_model_kongmo_002.mesh
+     size=2480 vc=24 fc=12 sm=6 p=0x418 tail=1336 counts=[2, 2, 2, 2, 2, 2] middle=480 blocks=[(0, 3), (4, 7), (8, 11), (12, 15)]
+  sm=6 data\source\npc\model\w1351_model_kongmo_001\w1351_model_kongmo_003.mesh
+     size=2480 vc=24 fc=12 sm=6 p=0x418 tail=1336 counts=[2, 2, 2, 2, 2, 2] middle=480 blocks=[(0, 3), (4, 7), (8, 11), (12, 15)]
+  sm=6 data\source\npc\model\w1351_model_kongmo_001\w1351_model_kongmo_rlsz.mesh
+     size=2480 vc=24 fc=12 sm=6 p=0x418 tail=1336 counts=[2, 2, 2, 2, 2, 2] middle=480 blocks=[(0, 3), (4, 7), (8, 11), (12, 15)]
+  sm=7 data\source\npc\quest\w1351_npc_duantai01\w1351_npc_duantai01.mesh
+     size=159376 vc=4435 fc=2858 sm=7 p=0x22B78 tail=0 counts=[254, 34, 270, 766, 1090, 190, 254] middle=88700 blocks=[(0, 445), (446, 511), (512, 941), (942, 1808)]
+  sm=7 data\source\npc\quest\w1351_npc_duantai05\w1351_npc_duantai05.mesh
+     size=186576 vc=5201 fc=3306 sm=7 p=0x28B38 tail=0 counts=[802, 258, 26, 176, 16, 8, 2020] middle=104020 blocks=[(0, 1431), (1432, 1663), (1664, 1705), (1706, 2003)]
+  sm=7 data\source\npc\quest\w1351_npc_fangjufang04\w1351_npc_fangjufang04.mesh
+     size=52330 vc=1441 fc=985 sm=7 p=0xB538 tail=0 counts=[321, 18, 50, 192, 198, 182, 24] middle=28820 blocks=[(0, 342), (343, 355), (356, 433), (434, 750)]
+  sm=7 data\source\npc\quest\w1351_npc_jiusi02\w1351_npc_jiusi02.mesh
+     size=119162 vc=3309 fc=2161 sm=7 p=0x19EB8 tail=0 counts=[166, 438, 3, 104, 358, 802, 290] middle=66180 blocks=[(0, 283), (284, 971), (972, 980), (981, 1152)]
+  sm=8 data\source\npc\quest\w1351_npc_fangjufang02\w1351_npc_fangjufang02.mesh
+     size=64588 vc=1790 fc=1150 sm=8 p=0xE0D8 tail=96 counts=[214, 42, 428, 10, 292, 126, 2, 36] middle=35800 blocks=[(0, 350), (351, 411), (412, 1205), (1206, 1225)]
+  sm=8 data\source\npc\quest\w1351_npc_micang04\w1351_npc_micang04.mesh
+     size=62796 vc=1713 fc=1278 sm=8 p=0xD738 tail=0 counts=[32, 268, 704, 12, 128, 4, 98, 32] middle=34260 blocks=[(0, 63), (64, 333), (334, 1299), (1300, 1323)]
+  sm=8 data\source\npc\quest\w1351_npc_micang05\w1351_npc_micang05.mesh
+     size=120116 vc=3349 fc=2106 sm=8 p=0x1A3B8 tail=0 counts=[1646, 8, 20, 54, 218, 30, 98, 32] middle=66980 blocks=[(0, 2542), (2543, 2554), (2555, 2594), (2595, 2688)]
+  sm=8 data\source\npc\quest\w1351_npc_wujufang05\w1351_npc_wujufang05.mesh
+     size=161320 vc=4526 fc=2696 sm=8 p=0x236D8 tail=0 counts=[751, 497, 60, 430, 274, 192, 394, 98] middle=90520 blocks=[(0, 1112), (1113, 2002), (2003, 2120), (2121, 2942)]
+  sm=9 data\source\npc\quest\w1351_npc_micang02\w1351_npc_micang02.mesh
+     size=124448 vc=3428 fc=2406 sm=9 p=0x1AD98 tail=0 counts=[522, 280, 312, 180, 777, 48, 54, 84, 149] middle=68560 blocks=[(0, 1037), (1038, 1511), (1512, 1924), (1925, 2253)]
+  sm=9 data\source\npc\quest\w1351_npc_xianya04\w1351_npc_xianya04.mesh
+     size=162544 vc=4518 fc=2942 sm=9 p=0x235D8 tail=0 counts=[4, 430, 74, 762, 808, 28, 32, 580, 224] middle=90360 blocks=[(0, 5), (6, 701), (702, 807), (808, 2099)]
+  sm=9 data\source\npc\quest\w1351_npc_xianya05\w1351_npc_xianya05.mesh
+     size=313944 vc=8626 fc=6266 sm=9 p=0x43758 tail=0 counts=[448, 328, 74, 946, 498, 334, 22, 3154, 462] middle=172520 blocks=[(0, 507), (508, 1147), (1148, 1253), (1254, 2857)]
+  sm=9 data\source\npc\quest\w1351_pets_xianglong_b3\w1351_pets_xianglong_b3.mesh
+     size=488876 vc=7422 fc=10585 sm=9 p=0x3F38A tail=166376 counts=[3244, 4826, 73, 1544, 64, 350, 100, 192, 192] middle=169610 blocks=[(0, 2364), (2365, 5638), (5639, 5713), (5714, 6699)]
+  sm=10 data\source\npc\quest\w1351_npc_jiaochang05\w1351_npc_jiaochang05.mesh
+     size=129866 vc=3609 fc=2343 sm=10 p=0x1C438 tail=0 counts=[192, 36, 594, 88, 940, 200, 6, 16, 10, 261] middle=72180 blocks=[(0, 191), (192, 255), (256, 1279), (1280, 1383)]
+  sm=10 mobile_maps_source\w1351_jiehun_fwyoulang_001.mesh
+     size=161773 vc=3477 fc=2772 sm=10 p=0x23608 tail=197 counts=[2, 2, 88, 78, 32, 64, 2368, 98, 16, 24] middle=102900 blocks=[(0, 3), (4, 7), (8, 119), (120, 228)]
+  sm=10 mobile_maps_source\w1351_mrsz_xiaotingzi_001.mesh
+     size=62368 vc=1369 fc=910 sm=10 p=0xDE1C tail=8 counts=[152, 40, 176, 32, 24, 40, 48, 48, 104, 246] middle=40152 blocks=[(0, 231), (232, 289), (290, 465), (466, 490)]
+  sm=10 mobile_maps_source\w1351_mtld_fwyoulang_002.mesh
+     size=98736 vc=2098 fc=1812 sm=10 p=0x15710 tail=0 counts=[18, 24, 32, 1618, 68, 16, 2, 16, 2, 16] middle=62368 blocks=[(0, 23), (24, 53), (54, 107), (108, 1913)]
+  sm=11 mobile_maps_source\w1351_ll_qingzhensimen_001.mesh
+     size=49220 vc=1064 fc=792 sm=11 p=0xAD88 tail=0 counts=[72, 24, 16, 148, 16, 20, 16, 36, 172, 160, 112] middle=31376 blocks=[(0, 113), (114, 141), (142, 169), (170, 381)]
+  sm=11 mobile_maps_source\w1351_mrsz_tingxiangshuixie_001.mesh
+     size=151100 vc=3320 fc=2246 sm=11 p=0x21964 tail=8 counts=[140, 146, 43, 134, 116, 822, 489, 222, 100, 32, 2] middle=97452 blocks=[(0, 167), (168, 435), (436, 509), (510, 691)]
+  sm=11 mobile_maps_source\w1351_mrsz_zhujianzhu_002.mesh
+     size=178116 vc=3995 fc=2248 sm=11 p=0x282E0 tail=8 counts=[276, 56, 324, 554, 108, 92, 400, 76, 156, 126, 80] middle=116356 blocks=[(0, 537), (538, 621), (622, 1267), (1268, 2375)]
+  sm=11 mobile_maps_source\w1351_mtld_fwyoulang_001.mesh
+     size=170371 vc=3639 fc=2987 sm=11 p=0x25106 tail=591 counts=[161, 18, 78, 2, 64, 16, 98, 2492, 24, 32, 2] middle=107866 blocks=[(0, 183), (184, 207), (208, 316), (317, 320)]
+  sm=12 mobile_maps_source\w1351_mrsz_canhezhuangjianzhu_001.mesh
+     size=226368 vc=5028 fc=3114 sm=12 p=0x32B0C tail=8 counts=[112, 815, 128, 108, 252, 760, 506, 88, 128, 9, 88, 120] middle=147012 blocks=[(0, 159), (160, 1385), (1386, 1629), (1630, 1901)]
+  sm=12 mobile_maps_source\w1351_mrsz_changhuilangting_001.mesh
+     size=171424 vc=3802 fc=2376 sm=12 p=0x265B8 tail=8 counts=[276, 96, 568, 92, 88, 56, 48, 324, 48, 256, 272, 252] middle=111208 blocks=[(0, 392), (393, 526), (527, 1406), (1407, 1542)]
+  sm=12 mobile_maps_source\w1351_mrsz_damen_001.mesh
+     size=360472 vc=7947 fc=5282 sm=12 p=0x50414 tail=8 counts=[412, 834, 272, 250, 184, 1030, 184, 436, 348, 976, 248, 108] middle=233080 blocks=[(0, 551), (552, 1723), (1724, 2169), (2170, 2567)]
+  sm=12 mobile_maps_source\w1351_mrsz_gusuxiaojianzhu_001.mesh
+     size=253780 vc=5684 fc=3260 sm=13 p=0x392B0 tail=8 counts=[104, 48, 134, 136, 990, 420, 452, 660, 12, 116, 144, 16, 28] middle=165672 blocks=[(0, 195), (196, 303), (304, 490), (491, 708)]
+
+=== problems ===
+  [eof_diff] ('data\\source\\npc\\changjingdaoju\\w1351_caiji_shuiqiu\\w1351_caiji_shuiqiu.mesh', 1428, 3, 1, 1, 'fwd=0x17A eof=0x43C tail_eof=334')
+  [eof_diff] ('data\\source\\npc\\model\\w1351_model_hongbaoshi_s001\\w1351_model_hongbaoshi_s001.mesh', 12576, 287, 96, 1, 'fwd=0x24F8 eof=0x2948 tail_eof=1428')
+  [eof_diff] ('data\\source\\npc\\model\\w1351_model_jianyinghu_idle03_guiji_c001\\w1351_model_jianyinghu_idle03_guiji_c001.mesh', 956, 4, 2, 1, 'fwd=0x19C eof=0x33C tail_eof=112')
+  [eof_diff] ('data\\source\\npc\\model\\w1351_model_jinyubaobao_gj_c001\\w1351_model_jinyubaobao_gj_c001.mesh', 1216, 4, 2, 1, 'fwd=0x19C eof=0x35C tail_eof=340')
+  [eof_diff] ('data\\source\\npc\\model\\w1351_model_mr_cj_nan_path_lf002\\w1351_model_mr_cj_nan_path_lf002.mesh', 956, 4, 2, 1, 'fwd=0x19C eof=0x33C tail_eof=112')
+  [eof_diff] ('data\\source\\npc\\model\\w1351_model_mr_nv_cj_trail_ani_lf001\\w1351_model_mr_nv_cj_trail_ani_lf001.mesh', 956, 4, 2, 1, 'fwd=0x19C eof=0x33C tail_eof=112')
+  [eof_diff] ('data\\source\\npc\\model\\w1351_model_pets_xhl_b7_c01\\w1351_model_pets_xhl_b7_c01.mesh', 33440, 594, 198, 1, 'fwd=0x4B58 eof=0x7344 tail_eof=2740')
+  [eof_diff] ('data\\source\\npc\\model\\w1351_model_wq_em_h01\\w1351_model_wq_em_h01.mesh', 73224, 1694, 618, 1, 'fwd=0xD9AC eof=0xF260 tail_eof=7464')
+  [eof_diff] ('data\\source\\npc\\model\\w1351_model_xx_nan_jt_x02\\w1351_model_xx_nan_jt_x02.mesh', 11140, 219, 76, 1, 'fwd=0x1D10 eof=0x24C8 tail_eof=1264')
+  [eof_diff] ('data\\source\\npc\\model\\w1351_model_zq_hd_h001\\w1351_model_zq_hd_h001.mesh', 1576, 24, 12, 1, 'fwd=0x430 eof=0x51C tail_eof=192')
+  [eof_diff] ('data\\source\\npc\\model\\w1351_modle_yxh_queqiao_line02\\w1351_modle_yxh_queqiao_line02.mesh', 956, 4, 2, 1, 'fwd=0x19C eof=0x33C tail_eof=112')
+  [eof_diff] ('data\\source\\npc\\quest\\chuansong001\\chuansong001.mesh', 1132, 6, 2, 1, 'fwd=0x1DC eof=0x300 tail_eof=348')
+  [legacy_diff] ('data\\source\\npc\\quest\\w1351_denglong01\\w1351_denglong01.mesh', 75346, 1080, 609, 2, 'legacy=0xA35A fwd=0x8818')
+  [legacy_diff] ('data\\source\\npc\\quest\\w1351_monster_qinjiazhaijiefei\\w1351_monster_qinjiazhaijiefei_shoutao_001.mesh', 16272, 190, 70, 3, 'legacy=0x3858 fwd=0x18D8')

@@ -1,0 +1,22 @@
+== EVIDENCE: filename grid index vs baked position (floor(x/32), floor(z/32))
+  matched 18192/18193 = 99.995%   mismatches sample [('1_1_-4', 1.1022096248882105e-36, 1.1432484582553924e+33, 4.057500516130297e-11)]
+
+== JOIN (clean-name records only)
+  hit=16777 miss=1423 rate 92.181%
+  of misses: 6 are truncation artifacts (suffix of a real asset name), 1417 genuinely absent (7.786% of all)
+  distinct genuinely-missing names: 358 ; examples: ['w1351_em_qiang8tou_001.mesh', 'w1351_sysz_shibanqiaocj_002.mesh', 'w1351_sysz_tingzi_001.mesh', 'w1351_sysz_zhuzicj_001.mesh', 'w1351_sysz_zhuzicj_001.mesh', 'w1351_sysz_zhuzicj_002.mesh', 'w1351_cy_zhalanweilan_002.mesh', 'w1351_cy_zhalanweilan_002.mesh', 'w1351_fh_qiaopo_001.mesh', 'w1351_fh_xiaoshucong_001.mesh', 'w1351_fh_xiaoshucong_001.mesh', 'w1351_fh_zhuandui_001.mesh', 'w1351_fh_zhuandui_001.mesh', 'w1351_bpzd_sijichengqiang_001.mesh', 'w1351_bpzd_sijichengqiang_001.mesh', 'w1351_bpzd_sijichengqiang_001.mesh', 'w1351_bpzd_sijichengqiangxie_001.mesh', 'w1351_lyxj_shitouque_001.mesh', 'w1351_lyxj_shitouque_001.mesh', 'w1351_lyxj_dulunche_001.mesh']
+
+== POINTER POLLUTION (record-relative buckets of 64B)
+  records containing >=1 0x7f.. u64: 18189/18812 = 96.7%
+  total such u64: 165058 over 18812 records ; 8.77 per record ; bytes 1320464 = 70.19 B/record (9.22% of record bytes)
+    rec+   0 :      1 hits
+    rec+  64 :  15059 hits
+    rec+ 128 :  36354 hits
+    rec+ 192 :  51168 hits
+    rec+ 256 :  62103 hits
+    rec+ 448 :      4 hits
+    rec+ 512 :      2 hits
+    rec+ 576 :      3 hits
+    rec+ 640 :     52 hits
+    rec+ 704 :    312 hits
+  => polluted byte range inside a record: see buckets; matrix@0..63 and name@64.. are clean iff no bucket <361

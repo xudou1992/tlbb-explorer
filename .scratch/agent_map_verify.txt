@@ -1,0 +1,25 @@
+resources.hash rows: 105327
+ResourcePath.cfg resources rows: 1 -> [('4b761249ad5d605c', 'data', 282715384, 10853872)]
+extracted ResourcePath.cfg candidates: ['D:\\TLGL\\.scratch\\out\\tree\\ResourcePath.cfg']
+  D:\TLGL\.scratch\out\tree\ResourcePath.cfg size=10853872 magic=b'JBCF' -> None
+C1: 没能从解包树里读到 JRPC，跳过（不下结论）
+
+C2 .scene rows in db: 11933
+
+  mobile_maps/w1351_cj_002/1_4_-4.scene size=37991 head=(52,753,0) 12+761*52=39584 vs 37991
+    rec0 matrix=[0.279, 0.0, -0.474, 0.0, 0.0, 0.29, 0.0, 0.0, 0.474, 0.0, 0.279, 0.0, 156.038, -0.002, -120.835, 1.0]  name='w1351_cj_caodui_001.mesh'
+    rec1 matrix=[-0.186, 0.0, -0.518, 0.0, 0.0, 0.29, 0.0, 0.0, 0.518, 0.0, -0.186, 0.0, 154.65, -0.028, -127.271, 1.0]  name='w1351_cj_caodui_001.mesh'
+    checked 49: row-last-0001 0, name ends .mesh 46
+    grid cells floor(x/32),floor(z/32) first40: [((4, -4), 40)]  filename parts=['1', '4', '-4.scene']
+
+  mobile_maps/w1351_cj_002/1_4_-5.scene size=24303 head=(33,753,0) 12+761*33=25125 vs 24303
+    rec0 matrix=[0.237, 0.0, -0.496, 0.0, 0.0, 0.29, 0.0, 0.0, 0.496, 0.0, 0.237, 0.0, 152.278, -0.011, -131.732, 1.0]  name='w1351_cj_caodui_001.mesh'
+    rec1 matrix=[-0.289, 0.0, -0.468, 0.0, 0.0, 0.29, 0.0, 0.0, 0.468, 0.0, -0.289, 0.0, 158.25, -0.077, -133.582, 1.0]  name='w1351_cj_caodui_001.mesh'
+    checked 31: row-last-0001 0, name ends .mesh 31
+    grid cells floor(x/32),floor(z/32) first40: [((4, -5), 31)]  filename parts=['1', '4', '-5.scene']
+
+  mobile_maps/w1351_cj_002/1_5_-4.scene size=48012 head=(66,753,0) 12+761*66=50238 vs 48012
+    rec0 matrix=[0.517, 0.0, 0.0, 0.0, 0.0, 0.257, 0.0, 0.0, 0.0, 0.0, 0.517, 0.0, 168.005, -0.0, -121.052, 1.0]  name='w1351_cj_caodui_001.mesh'
+    rec1 matrix=[0.528, 0.0, -0.154, 0.0, 0.0, 0.29, 0.0, 0.0, 0.154, 0.0, 0.528, 0.0, 174.562, -0.002, -123.183, 1.0]  name='w1351_cj_caodui_001.mesh'
+    checked 62: row-last-0001 0, name ends .mesh 60
+    grid cells floor(x/32),floor(z/32) first40: [((5, -4), 40)]  filename parts=['1', '5', '-4.scene']

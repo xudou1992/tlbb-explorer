@@ -1,0 +1,18 @@
+
+### data\effect\effectmodel\w1351_model_gb_long_h01.mesh vc=72 fc=102 sm=1 middle=1644 tail=1728
+    4xf32 weight layout: stride=24 w_off=0 score=0.750 n=72 idx=None bone_max=None
+
+### data\effect\effectmodel\w1351_model_t_canying_h003.mesh vc=15 fc=5 sm=1 middle=310 tail=1632
+    4xf32 weight layout: stride=24 w_off=0 score=0.721 n=68 idx=None bone_max=None
+
+### data\effect\effectmodel\w1351_model_xy_nv_jt_x03.mesh vc=110 fc=108 sm=1 middle=2200 tail=1452
+    4xf32 weight layout: stride=20 w_off=0 score=0.583 n=72 idx=None bone_max=None
+
+### data\effect\effectmodel\w1351_model_xy_pose_h03_glow01.mesh vc=120 fc=60 sm=1 middle=2520 tail=1736
+    4xf32 weight layout: stride=24 w_off=0 score=0.736 n=72 idx=None bone_max=None
+
+=== aggregate ===
+  located                      7996
+  no_candidate_region          5251
+  no_skin_layout_in_candidate  2741
+  has_4xf32_weight_layout      4

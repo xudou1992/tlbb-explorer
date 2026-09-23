@@ -1,0 +1,44 @@
+== joint (b1,b2) pair census over 416000 cells (w1351_ll_cs_001.map)
+   (5, 8)        218941  52.6300%
+   (0, 0)        185313  44.5464%
+   (0, 8)          8917  2.1435%
+   (3, 8)           647  0.1555%
+   (1, 8)           643  0.1546%
+   (2, 8)           521  0.1252%
+   (4, 8)           483  0.1161%
+   (16, 16)         419  0.1007%
+   (16, 0)          110  0.0264%
+   (161, 109)         2  0.0005%
+   (201, 194)         2  0.0005%
+   (114, 119)         1  0.0002%
+   (6, 77)            1  0.0002%
+   distinct pairs: 13
+
+== per-map byte-lane census (12 maps)
+  w1351_fb_sxzc_001.map          nchunk=552  b1 uniq=11  max=143   b2 uniq=8   max=79    frac(0,0)=0.095
+  w1351_fb_songliao_001.map      nchunk=441  b1 uniq=6   max=5     b2 uniq=2   max=8     frac(0,0)=0.309
+  w1351_ll_dl_002.map            nchunk=420  b1 uniq=12  max=249   b2 uniq=7   max=237   frac(0,0)=0.373
+  w1351_ll_ml_001.map            nchunk=420  b1 uniq=10  max=220   b2 uniq=5   max=146   frac(0,0)=0.508
+  w1351_ll_qingyuan_001.map      nchunk=420  b1 uniq=10  max=95    b2 uniq=5   max=157   frac(0,0)=0.436
+  w1351_ll_cy_001.map            nchunk=420  b1 uniq=10  max=179   b2 uniq=7   max=232   frac(0,0)=0.502
+  w1351_ll_loulan_001.map        nchunk=420  b1 uniq=12  max=235   b2 uniq=8   max=212   frac(0,0)=0.370
+  w1351_hd_lyfhc_002.map         nchunk=420  b1 uniq=6   max=5     b2 uniq=2   max=8     frac(0,0)=0.338
+  w1351_ll_wls_001.map           nchunk=400  b1 uniq=14  max=252   b2 uniq=11  max=238   frac(0,0)=0.434
+  w1351_ll_dh_001.map            nchunk=400  b1 uniq=12  max=245   b2 uniq=8   max=145   frac(0,0)=0.506
+  w1351_ll_xwd_001.map           nchunk=400  b1 uniq=8   max=193   b2 uniq=3   max=131   frac(0,0)=0.473
+  w1351_ll_ly_001.map            nchunk=400  b1 uniq=18  max=251   b2 uniq=11  max=237   frac(0,0)=0.367
+  w1351_fb_difu_001.map          nchunk=16   b1 uniq=8   max=191   b2 uniq=4   max=16    frac(0,0)=0.130
+  w1351_fb_menpaiyanwuting_002.map nchunk=16   b1 uniq=4   max=5     b2 uniq=2   max=8     frac(0,0)=0.304
+  w1351_fb_shaxing_002.map       nchunk=16   b1 uniq=4   max=5     b2 uniq=2   max=8     frac(0,0)=0.289
+
+== f32-array search over whole .map (window 4096B, all values in [-200,300], smooth)
+  w1351_fb_sxzc_001.map            n=575364  longest f32-runs(in [-200,300]): [(28, 575336)]
+       run @0x70 len=575336  mean -0.00 std 0.00  meandiff 0.000
+  w1351_fb_songliao_001.map        n=459350  longest f32-runs(in [-200,300]): [(18, 459332)]
+       run @0x48 len=459332  mean -0.00 std 0.00  meandiff 0.000
+  w1351_ll_dl_002.map              n=441326  longest f32-runs(in [-200,300]): [(22, 441304)]
+       run @0x58 len=441304  mean -0.00 std 0.01  meandiff 0.000
+  w1351_ll_ml_001.map              n=440774  longest f32-runs(in [-200,300]): [(55143, 385631), (32, 54070), (54103, 1039)]
+       run @0x35d9c len=385631  mean 0.00 std 0.00  meandiff 0.000
+       run @0x80 len=54070  mean 0.00 std 0.00  meandiff 0.000
+       run @0x34d5c len=1039  mean 0.00 std 0.00  meandiff 0.000

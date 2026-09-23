@@ -1,0 +1,88 @@
+class_with_ns 1445, distinct namespaces 29
+
+########## namespace <global>  (796 classes) ##########
+AbstractNode, ActionGroup, AffectorTranslator, AliasTranslator, AlignAffector, AlignAffectorFactory, AlignAffectorTranslator, AlignAffectorWriter, AnimationEndEventHandeler, AnimationMotionTag, AnimationRuntimeInfo, AnimationSFXTag, AnimationSFXTagLifeRangeEventHandeler, AnimationSFXTagSceneLifeRangeEventHandeler, AnimationSoundTag, AnimationTagContainer, AnimationTagID, AnimationTagSFXMotionSwithEventHandeler, AnimationUpdateExtraInfoCollector, ArchiveStream, AsynFileResource, AsyncResource, AsyncSocketStream, AtomAbstractNode, AttrBase, AuxGeomShader, AuxGeomShaderPlus, BaseCollider, BaseColliderFactory, BaseColliderTranslator, BaseColliderWriter, BaseForceAffector, BaseForceAffectorFactory, BaseForceAffectorTranslator, BaseForceAffectorWriter, BaseSpeedAffector, BaseSpeedAffectorFactory, BaseSpeedAffectorTranslator, BaseSpeedAffectorWriter, BeamRenderer, BeamRendererFactory, BeamRendererTranslator, BeamRendererVisualData, BeamRendererWriter, BehaviourTranslator, BillboardChain, BillboardRenderer, BillboardRendererFactory, BillboardRendererTranslator, BillboardRendererWriter, BillboardSet, BinaryConfigFile, BinaryTableFile, BinaryTableFileCache, BinaryTableIndexTable, BinaryTableLineSubValue, BinaryTableLineTable, BinaryTableLines, BinaryTableLuaArrayValue, BinaryTableLuaMapValue, BinaryTableLuaSetValue, BinaryTableRangeTable, BlendRTSInfoCollector, BloomDownShader, BloomGatherShader, BloomUpShader, BoxCollider, BoxColliderExtern, BoxColliderExternFactory, BoxColliderExternTranslator, BoxColliderExternWriter, BoxColliderFactory, BoxColliderTranslator, BoxColliderWriter, BoxEmitter, BoxEmitterFactory, BoxEmitterTranslator, BoxEmitterWriter, BoxRenderer, BoxRendererFactory, BoxRendererWriter, BoxSet, Buff, BufferedSocketStream, BuiltinScriptTranslatorManager, CBezierSplineFloat, CBezierSplineVec3, CEnvironmentPreset, CSceneEnv, CSceneEnvVariables
+
+########## namespace UI  (203 classes) ##########
+AbnormityAreaParticleEmitter, AgitationParticleController, AlphaParticleController, Anchor, AnchorList, AnchorMgr, AnimateElement, AnimateMgr, AreaTestFile, AreaTestMgr, BaffleParticleController, Button, Camera, CharGraphy, CharacterParticleEmitter, CharacterTexture, CheckBox, Clipper, CollectedTexture, CollectedTextureBuffer, CollectedTexturePage, Color, ColorMgr, ColorPallet, ColorParticleController, ColorRect, CoordinateOffset, CoordinateSize, CoordinateValue, CursorMgr, CycleParticleEmitter, DataBinder, DataBinderMgr, Decompiler, Document, DocumentComponentTank, DocumentLineTank, DragonBones, DragonBonesAnimate, DragonBonesArmatureDisplay, DragonBonesDisplay, DragonBonesFactory, DragonBonesSlot, DragonBonesTextureAtlasData, DragonBonesTextureData, DrawBlock, DrawData, DrawGroup, Edit, EventMgrGroup, FileAvi, FileGif, FileMgr, FileMkv, FileWebP, FloatageParticleController, Font, FontFace, FontFaceFreeType, FontGroup, FontInfo, FontMgr, FontSystemFreeType, FrameAnimate, GifDecoder, GpuProgramMgr, GpuProgramResource, GradientColorRect, GraphicMgr, GraphicSystemBlade, GravityParticleController, HevcDecoder, HotKeyMgr, IAudioDecoder, IDrawScene, IEventHandler, IFileSystem, IFontFace, IFontSystem, IGpuProgram, IGraphicSystem, ILogSystem, IMediaFile, IMemoryAllocator, IMovie, IMovieSystem, IPlatform, IReadFile, ISound, ISoundSystem
+
+########## namespace Poco  (78 classes) ##########
+ASCIIEncoding, AssertionViolationException, BadCastException, Base64Decoder, Base64DecoderBuf, Base64DecoderIOS, Base64Encoder, Base64EncoderBuf, Base64EncoderIOS, BugcheckException, CircularReferenceException, CountingIOS, CountingOutputStream, CountingStreamBuf, CreateFileException, DataException, DataFormatException, DigestBuf, DigestEngine, DigestIOS, DigestOutputStream, DirectoryNotEmptyException, ErrorHandler, Exception, ExistsException, File, FileAccessDeniedException, FileException, FileExistsException, FileIOS, FileImpl, FileInputStream, FileNotFoundException, FileReadOnlyException, FileStreamBuf, FileStreamFactory, IOException, IllegalStateException, InvalidAccessException, InvalidArgumentException, Latin1Encoding, Latin2Encoding, Latin9Encoding, LogicException, MD5Engine, NotFoundException, NotImplementedException, NullIOS, NullOutputStream, NullPointerException, NullStreamBuf, OpenFileException, OutOfMemoryException, PathNotFoundException, PathSyntaxException, RandomBuf, RandomIOS, RandomInputStream, RangeException, ReadFileException, RefCountedObject, RegularExpressionException, RuntimeException, SHA1Engine, SyntaxException, SystemException, TextEncoding, TimeoutException, URIRedirection, URIStreamFactory, URISyntaxException, UTF16Encoding, UTF32Encoding, UTF8Encoding, Windows1250Encoding, Windows1251Encoding, Windows1252Encoding, WriteFileException
+
+########## namespace Net  (62 classes) ##########
+AcceptCertificateHandler, CertificateHandlerFactory, CertificateValidationException, ConnectionAbortedException, ConnectionRefusedException, ConnectionResetException, ConsoleCertificateHandler, Context, DNSException, HTTPAuthenticationParams, HTTPChunkedIOS, HTTPChunkedInputStream, HTTPChunkedOutputStream, HTTPChunkedStreamBuf, HTTPClientSession, HTTPException, HTTPFixedLengthIOS, HTTPFixedLengthInputStream, HTTPFixedLengthOutputStream, HTTPFixedLengthStreamBuf, HTTPHeaderIOS, HTTPHeaderInputStream, HTTPHeaderOutputStream, HTTPHeaderStreamBuf, HTTPIOS, HTTPInputStream, HTTPMessage, HTTPOutputStream, HTTPRequest, HTTPResponse, HTTPResponseIOS, HTTPResponseStream, HTTPResponseStreamBuf, HTTPSClientSession, HTTPSStreamFactory, HTTPSession, HTTPStreamBuf, HTTPStreamFactory, HostNotFoundException, InvalidCertificateHandler, InvalidSocketException, KeyConsoleHandler, KeyFileHandler, MessageException, MessageHeader, NameValueCollection, NetException, NoMessageException, PrivateKeyFactory, PrivateKeyPassphraseHandler, RejectCertificateHandler, SSLConnectionUnexpectedlyClosedException, SSLContextException, SSLException, SecureSocketImpl, SecureStreamSocket, SecureStreamSocketImpl, Session, Socket, SocketImpl, StreamSocket, StreamSocketImpl
+
+########## namespace dragonBones  (61 classes) ##########
+ActionData, ActionTimelineState, Animation, AnimationConfig, AnimationData, AnimationState, Armature, ArmatureData, ArmatureDisplayData, BaseFactory, BaseObject, BinaryDataParser, Bone, BoneAllTimelineState, BoneData, BonePose, BoneRotateTimelineState, BoneScaleTimelineState, BoneTimelineState, BoneTranslateTimelineState, BoundingBoxData, BoundingBoxDisplayData, CanvasData, Constraint, ConstraintData, ConstraintTimelineState, DataParser, DeformTimelineState, DeformVertices, DisplayData, DragonBones, DragonBonesData, EllipseBoundingBoxData, EventObject, IAnimatable, IArmatureProxy, IEventDispatcher, IKConstraint, IKConstraintData, IKConstraintTimelineState, ImageDisplayData, JSONDataParser, MeshDisplayData, PolygonBoundingBoxData, RectangleBoundingBoxData, SkinData, Slot, SlotColorTimelineState, SlotData, SlotDislayTimelineState, SlotTimelineState, TextureAtlasData, TextureData, TimelineData, TimelineState, TransformObject, TweenTimelineState, UserData, WeightData, WorldClock, ZOrderTimelineState
+
+########## namespace Gfx  (59 classes) ##########
+BlackCubeArrayTexture, BlackTextureCube, BlendState, BoundShaderState, CacheGraphicsPipelineState, CachePipelineState, ComputeContext, ComputeFence, ComputePipelineState, ComputePipelineStateFallback, ComputeShader, DefaultRenderQueryPool, DepthStencilState, Device, DomainShader, FBlackTextureDepthCube, FrameFlipTrackingRunnable, GPUFence, GPUProfilerEventNode, GPUProfilerEventNodeStats, GenericGPUFence, GenericStagingBuffer, GeometryShader, GraphicsContext, GraphicsContextPSOFallback, GraphicsPipelineState, GraphicsPipelineStateFallBack, HullShader, IGfxModule, IndexBuffer, PixelShader, RasterizerState, RenderQuery, RenderQueryPool, Resource, ResourceArrayInterface, SamplerState, ScreenSpaceVertexBuffer, Shader, ShaderResourceView, SolidColorTextureCube, StagingBuffer, StructuredBuffer, Texture, Texture2D, Texture2DArray, Texture3D, TextureCube, TextureReference, UniformBuffer, UnitCubeIndexBuffer, UnitCubeVertexBuffer, UnorderedAccessView, Vector4VertexDeclaration, VertexBuffer, VertexDeclaration, VertexShader, Viewport, WhiteTextureCube
+
+########## namespace FileSystem  (41 classes) ##########
+AsynchronismReadPackagedFile, AsynchronismReadUnPackagedFile, BaseUrl, Compresser, DownloadManager, DownloadingFile, EmptyFileMappingBuffer, FileLinkManager, FileMapping, FileMappingBuffer, FileMappingSystem, HttpDownloader, HttpFileDownloadSystem, IEventHandler, IFileContentConverter, IFileDownloadSystem, IFileDownloader, IFileMapping, IFileMappingBuffer, IFileMappingSystem, IFileSystem, ILogSystem, IMemoryAllocator, IReadFile, IWriteFile, IdleUpdateTask, LogManager, LzmaAllocator, MemoryFile, MergingFile, PackageConfigFileReader, PackageFile, PackageManager, PackagedFile, RemoteFile, ResourceGroup, UnPackagedFile, UpdateGroup, UpdateManager, UpdateServer, WriteFile
+
+########## namespace DX11Gfx  (40 classes) ##########
+BaseShaderResource, BaseTexture2D, BaseTexture2DArray, BaseTextureCube, BlendState, BoundShaderState, BufferedGPUTiming, ComputeShader, ConstantBuffer, DX11RenderQueryBatcher, DepthStencilState, Device, DisjointTimeStampQuery, DomainShader, DynamicBuffer, EventNode, EventNodeFrame, EventQuery, GeometryShader, GfxModule, HullShader, IndexBuffer, PixelShader, RasterizerState, RenderQuery, SamplerState, ShaderResourceView, StagingBuffer, StateCacheBase, StructuredBuffer, Texture3D, TextureBase, TextureReference, UniformBuffer, UnorderedAccessView, VertexBuffer, VertexDeclaration, VertexShader, Viewport, WinD3D11ConstantBuffer
+
+########## namespace SoundEngine  (25 classes) ##########
+AudioDecoder, AudioDecoderMgr, AudioFile, AudioFileBuffer, FileMgr, IEventHandler, IFileSystem, ILogSystem, IMemoryAllocator, IReadFile, ISound, ISoundEngine, ISoundFile, ISoundFileInner, MemoryReadFile, Sound, SoundEngineFileSystem, SoundEngineLogSystem, SoundEngineMemoryAllocator, SoundEngineReadFile, SoundFileMp3, SoundFileOgg, SoundFileResource, SoundFileUser, SoundFileWave
+
+########## namespace std  (24 classes) ##########
+_Facet_base, _Generic_error_category, _Iostream_error_category2, _Ref_count_base, _System_error, __non_rtti_object, bad_alloc, bad_array_new_length, bad_cast, bad_exception, bad_function_call, bad_typeid, bad_weak_ptr, codecvt_base, error_category, exception, invalid_argument, ios_base, length_error, logic_error, out_of_range, range_error, runtime_error, system_error
+
+########## namespace Mp3Decoder  (13 classes) ##########
+Fdct, Huff, Hybrid, IMemoryAllocator, IMp3Decoder, L3AudioDecoder, Mdct, Mp3MemoryAllocator, Msis, Quant, Sbt, Window, WindowB
+
+########## namespace qcloud_cos  (12 classes) ##########
+BaseOp, BaseReq, BaseResp, BucketOp, ObjectOp, ObjectReq, PutObjectByFileReq, PutObjectByFileResp, PutObjectReq, PutObjectResp, ServiceOp, UserCancelException
+
+########## namespace Impl  (6 classes) ##########
+IPAddressImpl, IPv4AddressImpl, IPv4SocketAddressImpl, IPv6AddressImpl, IPv6SocketAddressImpl, SocketAddressImpl
+
+########## namespace yasli  (4 classes) ##########
+ContainerInterface, SharedString, StringInterface, StringSTL
+
+########## namespace Util  (3 classes) ##########
+EmptyOptionException, OptionException, UnknownOptionException
+
+########## namespace XML  (2 classes) ##########
+Locator, LocatorImpl
+
+########## namespace locale  (2 classes) ##########
+_Locimp, facet
+
+########## namespace FileMgr  (2 classes) ##########
+LogSystem, MemoryAllocator
+
+########## namespace StencilingGeometry  (2 classes) ##########
+FStencilConeIndexBuffer, FStencilConeVertexBuffer
+
+########## namespace rapidxml  (1 classes) ##########
+parse_error
+
+########## namespace ios_base  (1 classes) ##########
+failure
+
+########## namespace Any  (1 classes) ##########
+ValueHolder
+
+########## namespace Platform  (1 classes) ##########
+WebBrowserGameEvent
+
+########## namespace ThreadWebBrowser  (1 classes) ##########
+WebViewEventHandler
+
+########## namespace _time_dst  (1 classes) ##########
+Time_DST
+
+########## namespace DownloadingFile  (1 classes) ##########
+DownloadBlock
+
+########## namespace UpdateGroup  (1 classes) ##########
+UpdateTask
+
+########## namespace BillboardSet  (1 classes) ##########
+BillboardSetRenderData
+
+########## namespace SoundFileMp3  (1 classes) ##########
+Mp3MemoryAllcator

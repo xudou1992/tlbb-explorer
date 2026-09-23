@@ -1,0 +1,159 @@
+      %u/%u/%u MB VideoMem/DedicatedSystemMem/SharedSystemMem, Outputs:%d, VendorId:0x%x
+ %.2x
+ HTTP/%1[23] %d
+ HTTP/%1d.%1d%c%3d
+ RTSP/%1d.%1d%c%3d
+ public key hash: sha256//%s
+"%.3s %c%c %.4s"
+"%.8s"
+"%s" of negative number isn't portable%.0ld%s
+#include "/Shader/Generated/UniformBuffers/%s.h"
+%.0s%ld digraph(s) converted
+%.0s%ld trigraph(s) converted
+%.14s.%03dZ
+%.5f:%.5f
+%016llx_%u_%u.pak
+%d / %m / %y
+%d%2.2d%2.2d-%2.2d%2.2d%2.2d[%s:%p]: 
+%d.%d.%d.%d/%d.%d.%d.%d
+%m / %d / %y
+%s %s HTTP/1.0
+%s %s RTSP/1.0
+%s HTTP/%s
+%s is not allowed by Standard%.0ld%s
+%s%016llx.dat
+%s%d_%2.2d_%2.2d/
+%s%s.log
+%s%s.netrc
+%s%s_%d_%2.2d_%2.2d_%2.2d_%2.2d_%2.2d.log
+%s.dll
+%s/%lx.%lx.%lx%s
+%s/%s
+%s/_tlbb/t_job.tab
+%s/_tlbb/t_npc_fight_attr_scale.tab
+%s/_tlbb/t_npc_level_fight_attr.tab
+%s:%s(%d) send_size: %llu, time_consumed: %llu ms, rate: %.2f MB/s
+%s://%s
+%s://%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s
+%sDivision by zero%.0ld%s
+%sterrain/%d.TerrainInfo
+%sterrain/%d_%d_%d.Block
+%sterrain/%d_%d_%d.tga
+(nDirection >= 0) No Move...nLastX,nLastY:%d,%d,Dir:%d
+(nDirection >= DIRECTION_COUNT * 3 / 4) No Move...nLastX,nLastY:%d,%d,Dir:%d
+(nDirection >= DIRECTION_COUNT / 2) No Move...nLastX,nLastY:%d,%d,Dir:%d
+(nDirection >= DIRECTION_COUNT / 4) No Move...nLastX,nLastY:%d,%d,Dir:%d
+/* %s:%ld
+/*%s %ld*/
+/*%s%s:%d-%d
+/*%s*/
+/*%s>*/
+/*<%s
+/*m%s %ld:%d-%ld:%d*/
+/*m%s*/
+/*undef %ld*//*%s*/
+/Shader/Generated/UniformBuffers/%s.h
+1_%d_%d.scene
+<\%d>
+?%u/L;
+?%u/L;羠芎
+@Unknown encoding: %s%.0ld%.0s
+APPEND %s (\Seen) {%I64d}
+Already seen #else at line %.0s%ld
+Bad PASV/EPSV response: %03d
+Buffer overflow expanding macro "%s" at %.0ld"%s"
+Bug: Punctuator is mis-implemented %.0s0lx%x
+CONNECT %s HTTP/%s
+Can't use the character %.0s0x%02lx
+CheckLockedFileContent failed, Index.uHash=%016llx, uHash=%016llx, Index.uCrc=%u, uIndexCrc=%u, Index.uFileCrc=%u, uCrc=%u, Index.uSize=%u, Index.uOccupiedSize=%u, Index.uFileSize=%u, Index.usVersion=
+Constant "%s"%.0ld%s is out of range
+Constant "%s"%.0ld%s is out of range of (unsigned) long
+Content-Range: bytes %s%I64d/%I64d
+Content-Range: bytes %s/%I64d
+Converted %.0s0x%02lx to a space
+Converted \ to %s
+Couldn't find host %s in the .netrc file; using defaults
+Empty character constant %s%.0ld%s
+End of %s with %.0ld%s
+Exceeded indexable light count(%u / %llu)
+FTP response aborted due to select/poll error: %d
+GPixelFormats[imageData.format].Supported %d
+GPixelFormats[imageData.format].Supported %d %u
+GameThread waiting for RenderThread timed out after %.02f secs
+HTTP/1.%d %d
+Identifier longer than %.0s%ld characters "%s"
+Illegal #directive "%s%.0ld%s"
+Illegal control character %.0s0lx%02x in quotation
+Illegal control character %.0s0x%lx, skipped the character
+Illegal shift count %.0s"%ld"%s
+In #asm block started at line %.0s%ld
+Index.uCrc=%u, Index.uFileCrc=%u, Index.uOffset=%u, Index.uSize=%u, Index.uOccupiedSize=%u, Index.uFileSize=%u, Index.usVersion=%u, FilePosition.uOffset=%u, FilePosition.uSize=%u, FilePosition.uFileSi
+Integer character constant %s%.0ld%s is out of range
+Integer character constant %s%.0ld%s is out of range of unsigned long
+LL suffix is used in other than C99 mode "%s"%.0ld%s
+Line number %.0s"%ld" got beyond range
+Line number %.0s"%ld" is out of range
+Logical source line longer than %.0s%ld bytes
+Macro started at line %.0s%ld swallowed directive-like line
+More than %.0s%ld constants stacked at %s
+More than %.0s%ld macros defined
+More than %.0s%ld nesting of #if (#ifdef) sections%s
+More than %.0s%ld nesting of #include
+More than %.0s%ld nesting of parens
+More than %.0s%ld operators and parens stacked at %s
+More than %.0s%ld parameters
+Multi-character or multi-byte character constant %s%.0ld%s isn't portable
+Multi-character wide character constant %s%.0ld%s isn't portable
+Out of memory (required size is %.0s0x%lx bytes)
+Package file "%s" is dirty, Header.uSignature =%u, uSignature=%u, Header.uSize=%u, uSize=%u, Header.uCrc=%u, uHeaderCrc=%u.
+Quotation longer than %.0s%ld bytes
+Replacement text "%s" of macro %.0ld"%s" involved subsequent text
+Result of "%s" is out of range%.0ld%s
+SSL connection using %s / %s
+Shift count %.0s"%ld" is larger than bit count of long%s
+Start query product information %u / 100.
+Start update version file %s, version=%u, size=%u, (%u / 100).
+String literal longer than %.0s%ld bytes %s
+TLS 1.3 cipher selection: %s
+Taking a very long time for getting query data (%.1f s)
+Too long encoding name: %s%.0ld%.0s
+Too long header name "%s%.0ld%s"
+UCN cannot specify the value %.0s"%08lx"
+Undefined escape sequence%s %.0ld'%s'
+Undefined symbol "%s"%.0ld%s
+Unknown #directive "%s"%.0ld%s
+Unterminated character constant %s%.0ld%s
+Unterminated header name %s%.0ld%s
+Wait GPU to catch up timed outed : (%.1f s) (ErrorCode %08x)
+Wide character constant %s%.0ld%s is out of range
+Wide character constant %s%.0ld%s is out of range of unsigned long
+[settings/npc/DoodadTemplate.tab] Line:%d ID:(%u) was invalid!
+[settings/npc/NpcTemplate.tab]Line:%d was invalid!
+\%02X
+\%03d
+_%d.ref
+collected%d.tga
+failed setting TLS 1.3 cipher suite: %s
+failed to load WS2_32.DLL (%u)
+file://%s%s%s
+ftp://%s:%s@%s
+game_%d.log
+lprof_%s.out
+no field package.preload['%s']
+piSocketStream = %p, nSocket = %d, Send buffer full! Please use "sysctl -a | grep net.ipv4.tcp_wmem" to check your system settings. 
+poco/%d.%d.%d
+select/poll on SSL socket, errno: %d
+settings/_tlbb/AttrContainer/t_AttrAction%d.tab
+settings/_tlbb/AttrContainer/t_AttrActionGroup%d.tab
+settings/_tlbb/AttrContainer/t_AttrCondition%d.tab
+settings/_tlbb/AttrContainer/t_AttrFormulaSub%d.tab
+settings/_tlbb/AttrContainer/t_AttrLuaFormula%d.tab
+settings/_tlbb/AttrContainer/t_AttrType%d.tab
+settings/_tlbb/AttrContainer/t_AttrValue%d.tab
+sizeof: Illegal type combination with "%s"%.0ld%s
+sizeof: Unknown type "%s"%.0ld%s
+sizp->bits:0x%x sizp->size:0x%x sizp->psize:0x%x ev.val:0x%lx
+update_%u_%u.pak
+value[%d].val = 
+ze=%u, FilePosition.uFileCrc=%u, FilePosition.usVersion=%u.
+嚡%s\*

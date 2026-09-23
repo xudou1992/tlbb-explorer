@@ -1,0 +1,9 @@
+exit=exit=0
+
+---- dist ----
+app.js 19417
+index.html 5292
+style.css 12365
+---- js size ----
+app.js = 19417
+index.html = 5292

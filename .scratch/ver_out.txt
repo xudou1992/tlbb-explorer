@@ -1,0 +1,171 @@
+
+==== OGRE definitive markers  (0 hits) ====
+
+==== PDB paths  (2 hits) ====
+  D:\TLBB_OB\Code\Fantasy\Source\x64\Release\tlbbgl_x64.pdb
+  compiler: cl /Zi /Fdossl_static.pdb /Gs0 /GF /Gy /MT /W3 /wd4090 /nologo /O2 -DL_ENDIAN -DOPENSSL_PIC -DOPENSSL_CPUID_OBJ -DOPENSSL_IA32_SSE2 -DOPENSSL_BN_ASM_MONT -DOPENSSL_BN_ASM_MONT5 -DOPENSSL_BN_
+
+==== source file paths  (75 hits) ====
+  $!Ih}W.h
+  ..\crypto\engine\eng_cnf.c
+  ..\crypto\engine\eng_ctrl.c
+  ..\crypto\engine\eng_dyn.c
+  ..\crypto\engine\eng_fat.c
+  ..\crypto\engine\eng_init.c
+  ..\crypto\engine\eng_lib.c
+  ..\crypto\engine\eng_list.c
+  ..\crypto\engine\eng_pkey.c
+  ..\crypto\engine\eng_table.c
+  ..\crypto\engine\tb_asnmth.c
+  ..\crypto\engine\tb_cipher.c
+  ..\crypto\engine\tb_digest.c
+  ..\crypto\engine\tb_pkmeth.c
+  C:\Program Files\Common Files\SSL
+  C:\Program Files\Common Files\SSL/cert.pem
+  C:\Program Files\Common Files\SSL/certs
+  D:\TLBB_OB\Code\Fantasy\Source\x64\Release\tlbbgl_x64.pdb
+  D:\proj_test\openssl-1.1.1c\out_release_64\out_release_64\lib\engines-1_1
+  E:\W1351\Branches\Development\Code\DevEnv\cos-cpp-sdk-v5\src\op\base_op.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\cos-cpp-sdk-v5\src\op\cos_result.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\cos-cpp-sdk-v5\src\op\object_op.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\cos-cpp-sdk-v5\src\trsf\transfer_handler.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\cos-cpp-sdk-v5\src\util\auth_tool.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\cos-cpp-sdk-v5\src\util\http_sender.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\cos-cpp-sdk-v5\src\util\simple_dns_cache.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\cos-cpp-sdk-v5\third_party\include\Poco/RefCountedObject.h
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Crypto\src\OpenSSLInitializer.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Crypto\src\X509Certificate.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\include\Poco/RWLock.h
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\include\Poco/ScopedLock.h
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\include\Poco/SharedPtr.h
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\include\Poco/String.h
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\ErrorHandler.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\FileStreamFactory.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\FileStream_WIN32.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\File_WIN32U.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\Logger.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\MemoryPool.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\NotificationQueue.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\Path.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\RegularExpression.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\StreamCopier.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\TextConverter.cpp
+  E:\W1351\Branches\Development\Code\DevEnv\poco-poco-1.9.4\Foundation\src\TextIterator.cpp
+
+==== engine codenames  (32 hits) ====
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UBeginRenderingUITag@?1??BeginRenderToTexture@GraphicSystemBlade@UI@@UEAA_NPEBURENDER_TO_TEXTURE_DATA@4@@Z@V<lambda_ee77777d89ada20a5661627c473fa490>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UBeginWorldMatrixTag@?1??BeginRender@GraphicSystemBlade@UI@@UEAA_NPEBUMATRIX44@4@00@Z@V<lambda_d130a6efb517389a5ae5b7c1456c72f3>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UBeginWorldMatrixTag@?1??EndRender@GraphicSystemBlade@UI@@UEAAXXZ@V<lambda_0590f39c96813eaee8705c843eec1684>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UBeginWorldMatrixTag@?1??EndWorldMatrix@GraphicSystemBlade@UI@@UEAAXXZ@V<lambda_74b7c5cd66dad89b6dcb3635c548fd36>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UBeginWorldMatrixTag@?4??BeginWorldMatrix@GraphicSystemBlade@UI@@UEAA_NPEBUMATRIX44@4@@Z@V<lambda_10792938ca015f6cd0e0283de8133fab>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UDrawUIVetexTag@?1??DrawVertex@GraphicSystemBlade@UI@@UEAA_NPEBUDRAW_VERTEX_DATA@4@@Z@V<lambda_aed114a26bb91cbc1a3fcebf4efeec18>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UEndRenderingUITag@?1??EndRenderToTexture@GraphicSystemBlade@UI@@UEAAXXZ@V<lambda_64cf518f59d994fb900f248b185fc7ec>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UEndUIScissorTag@?1??EndScissor@GraphicSystemBlade@UI@@UEAAXXZ@V<lambda_e146856d3cdaaf0a8ea50bf28541632e>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UReadSurfaceCommandTag@?4??GetData@UITextureBlade@UI@@UEAAPEAEPEAI@Z@V<lambda_4a4c326060971313ed94e3ecff6cabc7>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UUIDrawSceneBeginTag@?7??DrawScene@GraphicSystemBlade@UI@@UEAA_NPEBUDRAW_SCENE_DATA@4@@Z@V<lambda_42540266525afab51f42c8f5a060b078>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UUIDrawSceneEndTag@?7??DrawScene@GraphicSystemBlade@UI@@UEAA_NPEBUDRAW_SCENE_DATA@4@@Z@V<lambda_d77af23d33957b493dacdb80777de7d0>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UUIScissorTag@?1??BeginScissor@GraphicSystemBlade@UI@@UEAA_NPEAUSCISSOR@4@@Z@V<lambda_36baa53a0ba5c7dc26f1a7b349b53999>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UUIScissorTag@?1??EndScissor@GraphicSystemBlade@UI@@UEAAXXZ@V<lambda_b8a826d098b9b9a42bb24b72c6c4fc07>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UUIScissorTag@?6??EndScissor@GraphicSystemBlade@UI@@UEAAXXZ@V<lambda_a20d2019295028bd0077ed5a9722457d>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UUIScissorTag@?BG@??BeginScissor@GraphicSystemBlade@UI@@UEAA_NPEAUSCISSOR@4@@Z@V<lambda_16c6d4d4964c29b77063a1ed3bb77d8f>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UUIScissorTag@?BH@??EndScissor@GraphicSystemBlade@UI@@UEAAXXZ@V<lambda_639a679f197ce0de5f5593f240aa80f7>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UUIScissorTag@?BJ@??BeginScissor@GraphicSystemBlade@UI@@UEAA_NPEAUSCISSOR@4@@Z@V<lambda_201876e9575a46d4d4bb4c1c239f7e33>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UUIScissorTag@?BP@??EndScissor@GraphicSystemBlade@UI@@UEAAXXZ@V<lambda_9d7238d3f5d453fece54c78e806a91bc>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UUIScissorTag@?CB@??BeginScissor@GraphicSystemBlade@UI@@UEAA_NPEAUSCISSOR@4@@Z@V<lambda_776c4cc2d5744a65185d3175b69241f9>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UUIScissorTag@?P@??EndScissor@GraphicSystemBlade@UI@@UEAAXXZ@V<lambda_faf254645f821e6a3c719201456b6c2d>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UUnlockUIIndexBufferTag@?1??Upload@IndexBufferBlade@UI@@UEAAXPEAGI@Z@V<lambda_2fc6919d6f3cb8bc9502aa616d4eb34f>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UUnlockUIVertexBufferTag@?1??Upload@VertexBufferBlade@UI@@UEAAXPEAUVERTEX@4@I@Z@V<lambda_c98496897b0192b01aa903fbb9581f33>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UUpdateUISubTextureTag@?9??UploadSubTexture@UITextureBlade@UI@@UEAA_NPEAUUPLOAD_SUB_TEXTURE_INFO@4@I_N@Z@V<lambda_073904e0f4a6dbdde5cd0652c97bc3e1>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UUpdateUITextureTag@?1??ClearTexture@UITextureBlade@UI@@UEAA_NXZ@V<lambda_1ffabb7ec0c82287142c43a8ca4b1ac3>@@@@@@
+  .?AV?$GenericTask@V?$RenderCommandWrapper@UUpdateUITextureTag@?7??UploadSubTexture@UITextureBlade@UI@@UEAA_NPEAUUPLOAD_SUB_TEXTURE_INFO@4@I_N@Z@V<lambda_daf83d96a9bb9c76d3993d43e041e6a3>@@@@@@
+  .?AVGraphicSystemBlade@UI@@
+  .?AVIndexBufferBlade@UI@@
+  .?AVUIGpuProgramBlade@UI@@
+  .?AVUITextureBlade@UI@@
+  .?AVUITextureResourceBlade@UI@@
+
+==== PhysX / physics  (7 hits) ====
+  physx_actor_group
+  physx_angular_damping
+  physx_angular_velocity
+  physx_group_mask
+  physx_material_index
+  physx_shape
+  physx_shape_group
+
+==== Factory/Translator/Writer triad  (1 hits) ====
+  pFactory
+
+==== pak/package/archive  (20 hits) ====
+  %016llx_%u_%u.pak
+  .?AVArchiveStream@@
+  .?AVPackageFile@FileSystem@@
+  .?AVPackageManager@FileSystem@@
+  FileSystem::PackageManager::CheckOutPackagedFile
+  FileSystem::PackageManager::ConvertFileContent
+  FileSystem::PackageManager::CreateUpdatePackage
+  FileSystem::PackageManager::GetPackagedFileAttributeAndTime
+  FileSystem::PackageManager::LoadPackage
+  FileSystem::PackageManager::LoadUpdatePackages
+  FileSystem::PackageManager::OpenReadFile
+  FileSystem::PackageManager::ReCompressConvertFileContentAndHaveDecodeKey
+  FileSystem::PackageManager::ReCompressHaveDecodeKey
+  Load idle update task config file %016llx.pak success.
+  Update file %016llx.pak failed.
+  add packaged file %016llx.pak failed.
+  data.pak
+  the content of file %016llx.pak is not correct.
+  update_%u_%u.pak
+  updater.pak
+
+==== network protocol / packet  (3 hits) ====
+  SendRequest
+  internal error: unknown opcode in find_fixedlength()
+  opcodes
+
+==== threads  (47 hits) ====
+  .?AU?$Cmd@UCmdGfxThreadFence@Gfx@@@Gfx@@
+  .?AUCmdGfxThreadFence@Gfx@@
+  .?AUFrameOffsetThread@Gfx@@
+  .?AV?$GenericTask@VDispatchGfxThreadTask@Gfx@@@@
+  .?AV?$GenericTask@VExecuteGfxThreadTask@Gfx@@@@
+  .?AV?$GenericTask@VOwnershipOfGfxThreadTask@@@@
+  .?AV?$GenericTask@VThreadReturnTask@@@@
+  .?AVCommonTaskSchedulerThread@@
+  .?AVComputeThread@@
+  .?AVFPThreadSyncEvent@@
+  .?AVGfxThread@@
+  .?AVMovieThread@UI@@
+  .?AVRenderingThread@@
+  .?AVRenderingThreadTickHeartbeat@@
+  .?AVRunnableThread@@
+  .?AVRunnableThreadPThread@@
+  .?AVSingleThreadRunnable@@
+  .?AVSpeciaTaskSchedulerThread@@
+  .?AVTaskSchedulerThreadBase@@
+  .?AVThreadRunnable@@
+  .?AVThreadWebBrowser@@
+  .?AVUniversalComputeThreads@@
+  .?AVWebViewEventHandler@ThreadWebBrowser@@
+  ConvertFiberToThread
+  ConvertThreadToFiber
+  CreateThread
+  ExitThread
+  FreeLibraryAndExitThread
+  GetCurrentThread
+  GetCurrentThreadId
+  GetExitCodeThread
+  GetMergeThreadCount
+  GetThreadContext
+  GfxThread
+  OpenThread
+  RenderThread
+  ResumeThread
+  SetMergeThreadCount
+  SetThreadAffinityMask
+  SetThreadContext
+  SetThreadPriority
+  SuspendThread
+  SwitchToThread
+  Thread32First
+  Thread32Next

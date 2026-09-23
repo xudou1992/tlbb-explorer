@@ -1,0 +1,28 @@
+D:\TLGL\tlbb-explorer\app\src-tauri\target\debug\tlbb-shell.exe  size=17777664
+   meshCanvas             no
+   secMesh                no
+   MeshViewer             no
+   listOf                 no
+   zh:立体模型                no
+   zh:画不出来提示              no
+   zh:索引块报错               YES
+   zh:客户端未含此文件            YES
+   showMeshes             no
+   asset_inspect          YES
+   mesh_data              YES
+   mdl_compose            YES
+   zh:只看解出图片的             no
+D:\TLGL\.scratch\rc3\debug\tlbb-shell.exe  size=17207808
+   meshCanvas             no
+   secMesh                no
+   MeshViewer             no
+   listOf                 no
+   zh:立体模型                no
+   zh:画不出来提示              no
+   zh:索引块报错               no
+   zh:客户端未含此文件            no
+   showMeshes             no
+   asset_inspect          no
+   mesh_data              no
+   mdl_compose            YES
+   zh:只看解出图片的             no

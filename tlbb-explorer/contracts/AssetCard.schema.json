@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tlbb.local/contracts/AssetCard.schema.json",
+  "title": "资产卡片（Rust tlbb-core 产出）",
+  "description": "单张资产卡片对象，即 cards.json 中 卡片[] 的元素。键名沿用 Rust asset_cards.rs 里 serde rename 出的中文键。整卡片只描述一个资源组（agroups 一行）。凡不能从容器解码的东西一律不写成预览，无图时用占位轮廓键。",
+  "$ref": "#/$defs/卡片",
+  "$defs": {
+    "十六位": {
+      "description": "16 位小写十六进制摘要（Rust 用 {:016x}，Python identity 用 hexdigest[:16]）。",
+      "type": "string",
+      "pattern": "^[0-9a-f]{16}$"
+    },
+    "卡片": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "名称", "副标题", "类型", "场景", "所在目录",
+        "预览", "预览说明", "占位", "组成", "引用名称", "标签",
+        "证据", "技术信息"
+      ],
+      "properties": {
+        "名称": {
+          "type": "string",
+          "minLength": 1,
+          "description": "茎名原文，逐字不改。无茎名时按 display_name() 退化为 hub_path 去扩展名的基名，再退化为 16 位标识（见 evidence：客户端不携带中文显示名）。绝不臆造中文名。"
+        },
+        "副标题": {
+          "type": "string",
+          "description": "场景词 + 由茎名机械切分出的尾段（subtitle()）。尾段永远是名称的字面子串，因此不含任何翻译。形如 '角色 · moyuqianyou'。"
+        },
+        "类型": {
+          "description": "labels::kind_zh(g.kind)：面向玩家的分类中文名。封闭枚举。",
+          "type": "string",
+          "enum": ["NPC / 怪物", "玩家角色", "场景物件", "特效", "界面资源", "共享材质", "其他资源"]
+        },
+        "场景": {
+          "description": "scenario_of(kind)：UI 复核用的六个评审场景之一。仅由 kind 派生，不依赖猜测标签。封闭枚举。",
+          "type": "string",
+          "enum": ["角色", "场景", "特效", "界面", "物品", "其他"]
+        },
+        "所在目录": {
+          "type": "string",
+          "description": "g.dir，安装内相对目录；可为空串（792 个资源组无路径）。"
+        },
+        "预览": {
+          "description": "Rust 侧缩略图用『相对文件路径』表达（previews/<茎名>_<16位hash>.png|webp）；解码不出图时为 null。注意：Python 侧同一语义用内联 data URI，二者形态冲突见 README。",
+          "type": ["string", "null"],
+          "pattern": "^previews/[^/]+\\.(png|webp)$"
+        },
+        "预览说明": {
+          "description": "解码出的图像规格，如 'RGBA32+border 110x152'。与 预览 严格同现或同为 null。",
+          "type": ["string", "null"]
+        },
+        "占位": {
+          "description": "无图时卡片绘制的轮廓键（placeholder_for）。取自卡片内嵌 SVG 精灵集，封闭枚举；绝不用它伪造预览。",
+          "type": "string",
+          "enum": ["character", "beast", "building", "effect", "panel", "item", "node"]
+        },
+        "组成": {
+          "type": "array",
+          "description": "按 role_zh 中文标签聚合的成员计数芯片；两个读起来相同的角色会并成一片，绝不出现两片同名。顺序遵循 ROLE_ORDER。",
+          "items": { "$ref": "#/$defs/组成项" }
+        },
+        "引用名称": {
+          "type": "array",
+          "description": "出站引用：该资源内部文件名表里的名字（group_names）。只表达『引没引到实体』，不含入站『谁用我』。",
+          "items": { "$ref": "#/$defs/引用名称项" }
+        },
+        "标签": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "tag_zh 结果，去重后展示。此枚举刻意不封闭：tag_zh 对未知标签原样透传，新增标签不得破坏契约（见 README『为何标签开放而等级/状态封闭』）。常见值：宠物/怪物/首领/建筑/地表贴图组/地图摆件/特效/动作集/角色部件/男性角色/女性角色/遮罩/界面/武器/坐骑/配饰/物品图标/场景特效/技能特效/共享材质/未分类。",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "证据": { "$ref": "#/$defs/证据" },
+        "技术信息": { "$ref": "#/$defs/技术信息" }
+      },
+      "allOf": [
+        {
+          "comment": "预览 与 预览说明 必须成对：都为空或都非空（make_preview 一次性返回二元组）。",
+          "if": { "properties": { "预览": { "type": "null" } }, "required": ["预览"] },
+          "then": { "properties": { "预览说明": { "type": "null" } } },
+          "else": { "properties": { "预览说明": { "type": "string" } } }
+        }
+      ]
+    },
+    "组成项": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["类型", "数量"],
+      "properties": {
+        "类型": {
+          "description": "labels::role_zh(role)：成员角色中文名。封闭枚举（含 role_zh 的兜底值 未归类文件）。",
+          "type": "string",
+          "enum": ["模型", "网格", "材质", "动作", "骨骼", "贴图", "场景", "配置", "音频", "地图", "特效文件", "附属文件", "未归类文件"]
+        },
+        "数量": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "引用名称项": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["类型", "名称", "状态"],
+      "properties": {
+        "类型": {
+          "description": "按文件名后缀判定的引用类别（build_card 内 match）。封闭枚举。",
+          "type": "string",
+          "enum": ["贴图", "材质", "模型", "骨骼", "动作", "场景", "其他"]
+        },
+        "名称": { "type": "string", "minLength": 1, "description": "被引用的文件名原文（含扩展名）。" },
+        "状态": {
+          "description": "引用状态只有两值：该名字是否指向本机持有的可解码资源。本样本中『已定位』出现 0 次（实测 0/429），但契约保留封闭枚举。",
+          "type": "string",
+          "enum": ["已定位", "仅有名称"]
+        }
+      }
+    },
+    "证据": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["定位等级", "等级说明", "缺口", "名称来源"],
+      "description": "定位置信轴（Rust 证据）。与 Python『资源身份证』(内容身份轴) 语义不同，二者在 Evidence.schema.json 中统一，见 README。",
+      "properties": {
+        "定位等级": {
+          "description": "evidence::grade(&Signals).label()。输入信号：hub_decoded、role_kinds、members、refs_total(仅贴图)、refs_located。封闭枚举。",
+          "type": "string",
+          "enum": ["A 完整定位", "B 主体定位", "C 名称证据", "D 推测"]
+        },
+        "等级说明": {
+          "description": "evidence::grade(&Signals).note()，与 定位等级 一一对应。封闭枚举。",
+          "type": "string",
+          "enum": [
+            "主体与全部依赖均已定位",
+            "主体可解码，部分依赖只有名称",
+            "仅持有主体，依赖关系来自名称",
+            "未能解码任何内容，条目仅为线索"
+          ]
+        },
+        "缺口": {
+          "type": "array",
+          "uniqueItems": true,
+          "description": "evidence::gaps(&Signals)：以事实口吻列出 B/C 卡片缺什么。封闭枚举集合。",
+          "items": {
+            "type": "string",
+            "enum": [
+              "贴图引用只有名称，未指向具体资源",
+              "部分贴图引用未定位",
+              "组成单一，未见模型/材质/动作的完整搭配",
+              "主体文件未能解码"
+            ]
+          }
+        },
+        "名称来源": {
+          "description": "名称是茎名原文还是仅凭标识区分。封闭枚举。",
+          "type": "string",
+          "enum": ["客户端茎名（原文展示，未翻译）", "无路径记录，仅以标识区分"]
+        }
+      }
+    },
+    "技术信息": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["标识", "所在包", "成员数", "名称数", "资产指纹", "判定依据"],
+      "description": "折叠面板内『给程序看』的信息。",
+      "properties": {
+        "标识": { "$ref": "#/$defs/十六位", "description": "hub 资源哈希，{:016x}。" },
+        "所在包": {
+          "type": "string",
+          "description": "hub 所在 pak 名（data*/data_1…）；hub_asset 缺失时为默认空串，故允许 ''。"
+        },
+        "成员数": { "type": "integer", "minimum": 0 },
+        "名称数": { "type": "integer", "minimum": 0, "description": "group_names 计数，恒等于 引用名称.length。" },
+        "资产指纹": {
+          "description": "asset_fingerprint.fp_asset（sqlite.rs 实测 SELECT fp_asset）；无指纹时 null。用于版本比对的匹配主键。",
+          "type": ["string", "null"],
+          "pattern": "^[0-9a-f]{16}$"
+        },
+        "判定依据": {
+          "type": "array",
+          "description": "取前 6 个标签命中，格式 '原始英文标签 (置信度)'，置信度 ∈ low|medium|high。刻意保留英文原文（技术信息层不做中文清洗）。",
+          "items": { "type": "string", "pattern": "^[a-z0-9._-]+ \\((low|medium|high)\\)$" }
+        }
+      }
+    },
+    "卡片集文档": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "生成时间", "数据来源", "资源组总数", "卡片数", "有预览图",
+        "场景分布", "定位等级分布", "引用名称总数", "引用可定位", "说明", "卡片"
+      ],
+      "description": "cards.json 顶层信封。",
+      "properties": {
+        "生成时间": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2} UTC$" },
+        "数据来源": { "type": "string" },
+        "资源组总数": { "type": "integer", "minimum": 0 },
+        "卡片数": { "type": "integer", "minimum": 0 },
+        "有预览图": { "type": "integer", "minimum": 0 },
+        "场景分布": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^(角色|场景|特效|界面|物品|其他)$": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "定位等级分布": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[ABCD] .+$": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "引用名称总数": { "type": "integer", "minimum": 0 },
+        "引用可定位": { "type": "integer", "minimum": 0 },
+        "说明": { "type": "string" },
+        "卡片": { "type": "array", "items": { "$ref": "#/$defs/卡片" } }
+      }
+    }
+  }
+}

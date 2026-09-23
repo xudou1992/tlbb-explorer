@@ -1,0 +1,7 @@
+records with sane matrix: 14472
+mean |m[4],m[6],m[7]| (row1 off-diagonal + w) = 0.01199, 0.01307, 0.00000 ; |m[5]| median 1.0000
+mean |m[1],m[2],m[3]| (row0) = 0.01008 0.43297 0.00000 ; |m[0]|,|m[8]|,|m[10]| vs |m[5]| equal? frac(|r0norm-r1norm|<1e-3)=0.7844
+row norms: |r0-r1|<1e-3 frac 0.7844 ; |r2-r1|<1e-3 frac 0.7851  => uniform-scale, Y axis = row1
+m[3],m[7],m[11] (4th col) mean abs: 0.00000 0.00000 0.00000 ; m[15] values [(1.0, 14472)]
+XZ rotation only? mean |m[1]|(row0.y)=0.01008 mean |m[9]|(row2.y)=0.01309
+orthogonality row0.row2/(|r0||r2|) mean abs 0.00000

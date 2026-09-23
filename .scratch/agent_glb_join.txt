@@ -1,0 +1,9 @@
+exact resources rows: 1 [{'hash': '1f039a5b901b3a60', 'path': 'data/effect/effectmodel/test_jianzhen.mesh', 'type': 'mesh'}]
+   amembers: []
+exact2 resources rows: 1 [{'hash': 'bcd65050a62986b7', 'path': 'data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_yifu_001.mesh', 'type': 'mesh'}]
+   amembers: [{'gid': 245}]
+sample paths: ['data/effect/effectmodel/test_jianzhen.mesh', 'data/effect/effectmodel/test_jianzhen2.mesh', 'data/effect/effectmodel/w1351_an_model_wave_h002.mesh']
+mesh resources: 7996
+members total: 48122
+mesh members: 3941
+distinct kind: [{'kind': 'effect', 'n': 6473}, {'kind': 'map-prop', 'n': 3463}, {'kind': 'npc', 'n': 1961}, {'kind': 'other', 'n': 921}, {'kind': 'player', 'n': 204}, {'kind': 'shared-material', 'n': 36}, {'kind': 'ui', 'n': 22}]

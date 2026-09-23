@@ -1,0 +1,51 @@
+== dangling overview ==
+  total rows: 14377
+  by ext:
+    '.tga'       8672
+    '.ani'       4328
+    '.mesh'      587
+    '.mtl'       530
+    '.ske'       244
+    '.dds'       12
+    '.png'       4
+
+== dangling .tga top names ==
+    ('w1351_point_l007.tga', 347, 347, 'shared')
+    ('w1351_mask_h011.tga', 296, 296, 'shared')
+    ('w1351_mask_em_jt_x01.tga', 268, 268, 'shared')
+    ('moon_03.tga', 264, 264, 'shared')
+    ('w1351_smoke_h021_a.tga', 230, 230, 'shared')
+    ('w1351_mask_l018.tga', 226, 226, 'shared')
+    ('w1351_mask_xuzhu_tslyz_x02.tga', 206, 206, 'shared')
+    ('data/effect/textures/point_light/w1351_point_h021.tga', 205, 205, 'shared')
+    ('sunset.tga', 191, 191, 'shared')
+    ('w1351_texture_c005.tga', 188, 188, 'shared')
+    ('w1351_mask_s004.tga', 181, 181, 'shared')
+    ('w1351_ring_z003.tga', 173, 173, 'shared')
+    ('w1351_point_h021.tga', 152, 152, 'shared')
+    ('w1351_mask_h013.tga', 145, 145, 'shared')
+    ('w1351_point_s001.tga', 144, 144, 'shared')
+
+== name forms ==
+  resources.name (.tga):
+    'icon_mr_skill_lingshenshi.tga'
+    'f_sjdt_yn.tga'
+    'icon_buff_meishi.tga'
+    'f_juese_menpai9.tga'
+    'i_fb_tzsl_ditu_bmq.tga'
+    'f_sjdt_tls.tga'
+  refs.name (.tga):
+    'w1351_smeh_shandong1_001.tga'
+    'w1351_smeh_jitanqiang_001.tga'
+    'w1351_smeh_jitandizuan_001.tga'
+    'w1351_smeh_jianzhu_001.tga'
+    'w1351_smeh_jianzhu2_001.tga'
+    'w1351_smeh_zuanqiang_001.tga'
+
+== join tests: refs.name vs resources.name ==
+EXCEPTION:
+Traceback (most recent call last):
+  File "D:\TLGL\.scratch\probe_dangling.py", line 40, in <module>
+    p(f"  exact:            {cur.execute(chr(39)+'SELECT COUNT(*) FROM refs r WHERE lower(r.kind)=? AND EXISTS (SELECT 1 FROM resources x WHERE x.name = r.name)'+chr(39), ('.tga',)).fetchone()[0]}")
+                             ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: near "'SELECT COUNT(*) FROM refs r WHERE lower(r.kind)=? AND EXISTS (SELECT 1 FROM resources x WHERE x.name = r.name)'": syntax error

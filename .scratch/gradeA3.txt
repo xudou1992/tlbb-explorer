@@ -1,0 +1,12 @@
+=== replicating baseline grade computation ===
+  A: 2
+  B: 2599
+  C: 10479
+  D: 0
+
+=== the A groups ===
+    (1994, 'w1351_nv_s_yifu_new_mrrmdz', 'ui/icon/wardrobe', 2, 1, 1, 2)
+    (2118, 'w1351_nv_s_yifu_mrrmdz', 'ui/icon/wardrobe', 2, 1, 1, 2)
+
+=== sanity: any group where tot>0? ===
+   9569

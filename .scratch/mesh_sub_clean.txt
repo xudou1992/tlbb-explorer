@@ -1,0 +1,5 @@
+﻿vc=47775 fc=36850 sm=7 size=2206108
+pos_end=0x8c08c static_idx=0x1754f8
+u32@static_idx = 1061383727
+blocks: []
+sum=0 (fc=36850) no

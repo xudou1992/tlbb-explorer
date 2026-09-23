@@ -1,0 +1,115 @@
+======== content magic by declared type (unique hashes) ========
+texture    26520 | JMT1/RGBA=12726, JMT1/DXT1=9742, JMT1/COLW=2175, JMT1/ALI8=1792, JMT1/COLR=85
+ani        14233 | banner/ani=14233
+JBCF       13403 | JBCF=13403
+geom       12676 | bin/00000000=12676
+scene      10414 | bin/01000000=373, bin/03000000=349, bin/04000000=299, bin/0b000000=297, bin/10000000=293
+mesh        8467 | banner/mesh=8467
+JBPU        8029 | JBPU=8029
+binary      3657 | bin/01000000=513, bin/02000000=405, bin/010000ff=277, bin/80000000=227, bin/05000000=160
+GATA        2560 | GATA=2560
+tiny        1890 | bin/00000000=1890
+mapref       887 | bin/03000000=300, bin/04000000=296, bin/05000000=291
+text         593 | text/ascii=526, text/utf8=63, text/gbk=3, no-payload=1
+xml          549 | text/ascii=546, bin/3c000000=2, text/utf8=1
+NAVF         455 | NAVF=455
+set          316 | banner/=316
+wav          218 | riff/WAVE=218
+ogg          168 | ogg=168
+table        154 | text/ascii=90, bin/01000000=21, bin/010000ff=19, bin/02000000=9, bin/04000000=3
+webp          48 | riff/WEBP=48
+mp3           39 | mp3=39
+missing       27 | no-payload=27
+jpeg          10 | jpeg=10
+pe             8 | no-payload=8
+png            3 | png=3
+JLUA           1 | JLUA=1
+JSTR           1 | JSTR=1
+JMDL           1 | JMDL=1
+
+======== content magic by real extension ========
+(unnamed)  48053 | bin/00000000=13353, JMT1/RGBA=12726, JMT1/DXT1=9742, banner/ani=2999
+.scene     11933 | bin/00000000=1239, bin/01000000=408, bin/03000000=318, bin/04000000=301
+.ani       11234 | banner/ani=11234
+.mtl        8536 | JBCF=8536
+.mesh       7996 | banner/mesh=7996
+.pu         7806 | JBPU=7806
+.tani       2560 | GATA=2560
+.tga        2259 | JMT1/COLW=2174, JMT1/COLR=85
+.mdl        2146 | JBCF=2146
+.ske        1630 | JBCF=1630
+.sfl         297 | JBCF=297
+.map         274 | bin/01000000=274
+.wav         220 | riff/WAVE=218, ogg=2
+.ogg         166 | ogg=166
+.pak          58 | no-payload=58
+.webp         48 | riff/WEBP=48
+.nav          25 | NAVF=25
+.anis         20 | banner/=20
+.cur          15 | bin/00000200=15
+.dll          14 | no-payload=14
+.jpg          10 | jpeg=10
+.txt           4 | bin/54465452=3, JLUA=1
+.xml           4 | bin/55494d4c=2, text/ascii=1, text/utf8=1
+.ttf           3 | bin/00010000=3
+
+======== RECORD counts by content magic (total 114975) ========
+   banner/ani                  20802  18.09%
+   bin/00000000                14716  12.80%
+   JBCF                        13717  11.93%
+   JMT1/RGBA                   12738  11.08%
+   JMT1/DXT1                    9782   8.51%
+   JBPU                         9574   8.33%
+   banner/mesh                  8497   7.39%
+   GATA                         2635   2.29%
+   JMT1/COLW                    2177   1.89%
+   JMT1/ALI8                    1806   1.57%
+   text/ascii                   1162   1.01%
+   bin/01000000                  991   0.86%
+   bin/03000000                  791   0.69%
+   bin/04000000                  788   0.69%
+   bin/05000000                  763   0.66%
+   bin/02000000                  733   0.64%
+   NAVF                          465   0.40%
+   bin/06000000                  414   0.36%
+   bin/07000000                  410   0.36%
+   bin/08000000                  399   0.35%
+   bin/10000000                  373   0.32%
+   bin/0a000000                  368   0.32%
+   bin/0b000000                  362   0.31%
+   bin/09000000                  358   0.31%
+   bin/0f000000                  353   0.31%
+   banner/                       338   0.29%
+   bin/0e000000                  325   0.28%
+   bin/0c000000                  320   0.28%
+   bin/0d000000                  319   0.28%
+   bin/010000ff                  307   0.27%
+   bin/11000000                  305   0.27%
+   bin/12000000                  292   0.25%
+   bin/13000000                  263   0.23%
+   bin/14000000                  255   0.22%
+   bin/16000000                  242   0.21%
+   bin/15000000                  241   0.21%
+   bin/80000000                  230   0.20%
+   riff/WAVE                     218   0.19%
+   bin/17000000                  204   0.18%
+   bin/19000000                  199   0.17%
+
+======== bytes by (type, magic) ========
+   texture    JMT1/DXT1             1908.9 MB
+   texture    JMT1/ALI8             1796.5 MB
+   geom       bin/00000000          1390.6 MB
+   ani        banner/ani            1059.5 MB
+   set        banner/                673.4 MB
+   mesh       banner/mesh            453.4 MB
+   binary     bin/80000000           357.1 MB
+   binary     no-payload             273.0 MB
+   binary     bin/010000ff           231.2 MB
+   texture    JMT1/RGBA              208.9 MB
+   binary     bin/01000000           203.5 MB
+   webp       riff/WEBP              107.0 MB
+   mp3        mp3                     72.9 MB
+   pe         no-payload              72.0 MB
+   wav        riff/WAVE               53.7 MB
+   JBCF       JBCF                    33.6 MB
+   total 9.34 GB

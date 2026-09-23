@@ -1,0 +1,69 @@
+mdl with 0 resolved: 185  by cls: Counter({'宠物/坐骑': 165, '武器/挂件': 15, '玩家角色': 3, '怪物/NPC': 1, '怪物/NPC(BOSS)': 1})
+
+data/source/npc/guajian/w1351_guajian_ysym_01/w1351_guajian_ysym_01.mdl  bodies=1 base='data/source/npc/guajian/w1351_guajian_ysym_01/' name='w1351_guajian_ysym_01'
+data/source/npc/guajian/w1351_guajian_ysym_01/w1351_guajian_ysym_biyuqing.mdl  bodies=1 base='data/source/npc/guajian/w1351_guajian_ysym_01/' name='w1351_guajian_ysym_biyuqing'
+data/source/npc/guajian/w1351_guajian_ysym_01/w1351_guajian_ysym_biyuqing_nan.mdl  bodies=1 base='data/source/npc/guajian/w1351_guajian_ysym_01/' name='w1351_guajian_ysym_biyuqing'
+data/source/npc/guajian/w1351_guajian_ysym_01/w1351_guajian_ysym_chenxi.mdl  bodies=1 base='data/source/npc/guajian/w1351_guajian_ysym_01/' name='w1351_guajian_ysym_chenxi'
+data/source/npc/guajian/w1351_guajian_ysym_01/w1351_guajian_ysym_chenxi_nan.mdl  bodies=1 base='data/source/npc/guajian/w1351_guajian_ysym_01/' name='w1351_guajian_ysym_chenxi_nan'
+data/source/npc/guajian/w1351_guajian_ysym_01/w1351_guajian_ysym_chijinliuyun.mdl  bodies=1 base='data/source/npc/guajian/w1351_guajian_ysym_01/' name='w1351_guajian_ysym_chijinliuyun'
+
+-- meshes named with slash in strtab: 0 slots
+
+== player class rows ==
+w1351_nan.mdl                                              bodies=1 res=1 draw=1 outcome=first_ok         first_sm=1 vc=8
+w1351_nan_s_qiaofeng.mdl                                   bodies=1 res=0 draw=0 outcome=no_mesh_resolved first_sm=None vc=None
+w1351_nan_s_yifu_duanyu.mdl                                bodies=2 res=1 draw=0 outcome=all_fail         first_sm=4 vc=4041
+w1351_nan_s_yifu_emrmdz.mdl                                bodies=2 res=1 draw=0 outcome=all_fail         first_sm=3 vc=4678
+w1351_nan_s_yifu_gbrmdz.mdl                                bodies=2 res=1 draw=0 outcome=all_fail         first_sm=2 vc=4569
+w1351_nan_s_yifu_hhxk_jichu.mdl                            bodies=1 res=1 draw=0 outcome=all_fail         first_sm=4 vc=4625
+w1351_nan_s_yifu_mjrmdz.mdl                                bodies=2 res=1 draw=0 outcome=all_fail         first_sm=2 vc=3176
+w1351_nan_s_yifu_murongfu.mdl                              bodies=1 res=0 draw=0 outcome=no_mesh_resolved first_sm=None vc=None
+w1351_nan_s_yifu_new_dingchunqiu.mdl                       bodies=2 res=1 draw=0 outcome=all_fail         first_sm=4 vc=8917
+w1351_nan_s_yifu_new_duanyanqing.mdl                       bodies=2 res=1 draw=0 outcome=all_fail         first_sm=5 vc=4846
+w1351_nan_s_yifu_qingzhuliuyun.mdl                         bodies=2 res=1 draw=0 outcome=all_fail         first_sm=3 vc=4693
+w1351_nan_s_yifu_shengdanpaidui.mdl                        bodies=1 res=1 draw=0 outcome=all_fail         first_sm=2 vc=3168
+w1351_nan_s_yifu_slrmdz.mdl                                bodies=2 res=1 draw=0 outcome=all_fail         first_sm=2 vc=5138
+w1351_nan_s_yifu_tlrmdz.mdl                                bodies=2 res=1 draw=0 outcome=all_fail         first_sm=4 vc=5234
+w1351_nan_s_yifu_tsrmdz.mdl                                bodies=2 res=1 draw=1 outcome=first_ok         first_sm=1 vc=3876
+w1351_nan_s_yifu_txfh_moreng.mdl                           bodies=1 res=1 draw=0 outcome=all_fail         first_sm=5 vc=4013
+w1351_nan_s_yifu_txfh_yanzhilei.mdl                        bodies=2 res=1 draw=0 outcome=all_fail         first_sm=5 vc=4013
+w1351_nan_s_yifu_wdrmdz.mdl                                bodies=2 res=1 draw=0 outcome=all_fail         first_sm=2 vc=3669
+w1351_nan_s_yifu_wulinzhizun.mdl                           bodies=1 res=1 draw=0 outcome=all_fail         first_sm=3 vc=5763
+w1351_nan_s_yifu_xianfeng_001.mdl                          bodies=2 res=1 draw=0 outcome=all_fail         first_sm=5 vc=9022
+w1351_nan_s_yifu_xxrmdz.mdl                                bodies=2 res=1 draw=0 outcome=all_fail         first_sm=3 vc=4120
+w1351_nan_s_yifu_xyrmdz.mdl                                bodies=2 res=1 draw=0 outcome=all_fail         first_sm=3 vc=2899
+w1351_nan_s_yifu_ysym_moren.mdl                            bodies=1 res=1 draw=0 outcome=all_fail         first_sm=6 vc=5507
+w1351_nan_s_yifu_yszm_moreng.mdl                           bodies=1 res=1 draw=0 outcome=all_fail         first_sm=4 vc=5021
+w1351_nan_s_yifu_zhongshilifu.mdl                          bodies=2 res=1 draw=0 outcome=all_fail         first_sm=5 vc=8886
+w1351_nan_s_yuyuqinchou_001.mdl                            bodies=2 res=1 draw=0 outcome=all_fail         first_sm=3 vc=3119
+w1351_nv.mdl                                               bodies=1 res=1 draw=1 outcome=first_ok         first_sm=1 vc=8
+w1351_nv_s_yifu_emrmdz.mdl                                 bodies=2 res=1 draw=0 outcome=all_fail         first_sm=6 vc=7228
+w1351_nv_s_yifu_gbrmdz.mdl                                 bodies=2 res=1 draw=0 outcome=all_fail         first_sm=5 vc=5468
+w1351_nv_s_yifu_mjrmdz.mdl                                 bodies=2 res=1 draw=0 outcome=all_fail         first_sm=5 vc=5242
+w1351_nv_s_yifu_new_kangmin.mdl                            bodies=2 res=1 draw=0 outcome=all_fail         first_sm=7 vc=5221
+w1351_nv_s_yifu_slrmdz.mdl                                 bodies=2 res=1 draw=0 outcome=all_fail         first_sm=6 vc=9581
+w1351_nv_s_yifu_tlrmdz.mdl                                 bodies=2 res=1 draw=0 outcome=all_fail         first_sm=6 vc=5722
+w1351_nv_s_yifu_tsrmdz.mdl                                 bodies=2 res=1 draw=0 outcome=all_fail         first_sm=4 vc=5502
+w1351_nv_s_yifu_wangyuyan.mdl                              bodies=2 res=1 draw=0 outcome=all_fail         first_sm=7 vc=4619
+w1351_nv_s_yifu_wdrmdz.mdl                                 bodies=2 res=1 draw=0 outcome=all_fail         first_sm=6 vc=5163
+w1351_nv_s_yifu_xxrmdz.mdl                                 bodies=2 res=1 draw=0 outcome=all_fail         first_sm=6 vc=5225
+w1351_nv_s_yifu_xyrmdz.mdl                                 bodies=2 res=1 draw=0 outcome=all_fail         first_sm=7 vc=5564
+w1351_nv_s_yifu_ysym_moren.mdl                             bodies=2 res=1 draw=0 outcome=all_fail         first_sm=7 vc=8439
+w1351_nv_s_yifu_yszm_qingfeng.mdl                          bodies=2 res=0 draw=0 outcome=no_mesh_resolved first_sm=None vc=None
+w1351_nv_s_yuyuqinchou_001.mdl                             bodies=2 res=1 draw=0 outcome=all_fail         first_sm=5 vc=3546
+
+== pets zero-resolved examples (detail) ==
+data/source/npc/quest/w1351_npc_xiguaguai_001/w1351_pets_renzheshengua_b1.mdl bodies=1 how={'missing': 1}
+data/source/npc/quest/w1351_npc_xiguaguai_001/w1351_pets_renzheshengua_b2.mdl bodies=1 how={'missing': 1}
+data/source/npc/quest/w1351_npc_xiguaguai_001/w1351_pets_renzheshengua_b4.mdl bodies=1 how={'missing': 1}
+data/source/npc/quest/w1351_npc_xiguaguai_001/w1351_pets_renzheshengua_b6.mdl bodies=1 how={'missing': 1}
+data/source/npc/quest/w1351_npc_xiguaguai_001/w1351_pets_renzheshengua_b8.mdl bodies=1 how={'missing': 1}
+data/source/npc/quest/w1351_pets_baozi_b0/w1351_pets_baozi_b2.mdl bodies=1 how={'missing': 1}
+data/source/npc/quest/w1351_pets_baozi_b0/w1351_pets_baozi_b3.mdl bodies=1 how={'missing': 1}
+data/source/npc/quest/w1351_pets_baozi_b0/w1351_pets_baozi_b4.mdl bodies=1 how={'missing': 1}
+
+== all_fail outcome, cls counts ==
+Counter({'怪物/NPC': 131, '宠物/坐骑': 72, '场景道具': 35, '玩家角色': 35, '怪物/NPC(BOSS)': 9, '武器/挂件': 3})
+
+== first body sm distribution among all_fail ==
+Counter({2: 115, 3: 38, 4: 36, 6: 33, 5: 33, 7: 18, 8: 7, 9: 4, 10: 1})

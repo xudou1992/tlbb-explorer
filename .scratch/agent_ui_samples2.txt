@@ -1,0 +1,382 @@
+==== inspect_245.json ====
+keys=['found', 'what', 'names', 'dir', 'parts', 'counts', 'members', 'mdl', 'missing', 'canDo', 'anims', 'previews', 'elapsedMs', 'note']
+found=True mdl_is_null=False parts=21 counts={'mesh': 2, 'mtl': 2, 'ani': 15, 'ske': 1, 'tex': 0}
+  mdl.name=w1351_monster_xiyuqiezei skels=1 bodies=2
+  skels=[{"role": "骨骼", "name": "w1351_monster_xiyuqiezei.ske", "resolved": true, "hash": "037814e46345f042", "path": "data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei.ske"}]
+  body label='MainBodyMesh' mesh={"role": "网格", "name": "w1351_monster_xiyuqiezei_yifu_001.mesh", "resolved": true, "hash": "bcd65050a62986b7", "path": "data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_yifu_001.mesh"} material={"role": "材质", "name": "w1351_monster_xiyuqiezei_yifu_001.mtl", "resolved": true, "hash": "bd1e39c275b16280", "path": "data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_yifu_001.mtl"} slots=3
+  body label='ArmMesh' mesh={"role": "网格", "name": "w1351_monster_xiyuqiezei_shoutao_001.mesh", "resolved": true, "hash": "a56297fce1a4f1c2", "path": "data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_shoutao_001.mesh"} material={"role": "材质", "name": "w1351_monster_xiyuqiezei_shoutao_001.mtl", "resolved": true, "hash": "c4a94716927a09a2", "path": "data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_shoutao_001.mtl"} slots=3
+  members(first6)=[{"role": "model", "roleZh": "模型", "name": "w1351_monster_xiyuqiezei.mdl", "path": "data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei.mdl", "resolved": true}, {"role": "mesh", "roleZh": "网格", "name": "w1351_monster_xiyuqiezei_shoutao_001.mesh", "path": "data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_shoutao_001.mesh", "resolved": true}, {"role": "mesh", "roleZh": "网格", "name": "w1351_monster_xiyuqiezei_yifu_001.mesh", "path": "data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_yifu_001.mesh", "resolved": true}, {"role": "material", "roleZh": "材质", "name": "w1351_monster_xiyuqiezei_shoutao_001.mtl", "path": "data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_shoutao_001.mtl", "resolved": true}, {"role": "material", "roleZh": "材质", "name": "w1351_monster_xiyuqiezei_yifu_001.mtl", "path": "data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei_yifu_001.mtl", "resolved": true}, {"role": "skeleton", "roleZh": "骨骼", "name": "w1351_monster_xiyuqiezei.ske", "path": "data/source/npc/quest/w1351_monster_xiyuqiezei/w1351_monster_xiyuqiezei.ske", "resolved": true}]
+  missing=["贴图 w1351_monster_xiyuqiezei_shoutao_001.tga：名字对不上实体（贴图类常态）", "贴图 w1351_monster_xiyuqiezei_yifu_001.tga：名字对不上实体（贴图类常态）"]
+  canDo=["组成树", "贴图预览", "动作名单", "立体预览（2 个网格）"]
+  previews={"items": [{"label": "template_default_npc.mtl（材质槽）", "ok": false, "dataUrl": "", "reason": "类型 JBCF 不是可预览图片"}], "total": 1, "shown": 1}
+==== detail_245.json ====
+keys=['card', 'refs', 'gaps', 'nameSource', 'hubDecoded', 'members', 'tech']
+{
+ "card": {
+  "gid": 245,
+  "name": "w1351_monster_xiyuqiezei",
+  "subtitle": "角色 · xiyuqiezei",
+  "kind": "NPC / 怪物",
+  "scenario": "角色",
+  "grade": "B",
+  "gradeWord": "主体定位",
+  "gradeNote": "主体能打开，部分零件只有名字",
+  "tags": [
+   "动作集",
+   "怪物",
+   "NPC"
+  ],
+  "parts": [
+   {
+    "label": "模型",
+    "count": 1
+   },
+   {
+    "label": "网格",
+    "count": 2
+   },
+   {
+    "label": "材质",
+    "count": 2
+   },
+   {
+    "label": "骨骼",
+    "count": 1
+   },
+   {
+    "label": "动作",
+    "count": 15
+   }
+  ],
+  "placeholder": "character",
+  "memberTotal": 21,
+  "refTotal": 2,
+  "locatedTotal": 0,
+  "named": true,
+  "previewHash": null
+ },
+ "refs": [
+  {
+   "name": "w1351_monster_xiyuqiezei_shoutao_001.mtl",
+   "kind": "材质",
+   "status": "已找到",
+   "located": true
+  },
+  {
+   "name": "w1351_monster_xiyuqiezei_yifu_001.mtl",
+   "kind": "材质",
+   "status": "已找到",
+   "located": true
+  },
+  {
+   "name": "w1351_monster_xiyuqiezei_shoutao_001.mesh",
+   "kind": "网格",
+   "status": "已找到",
+   "located": true
+  },
+  {
+   "name": "w1351_monster_xiyuqiezei_yifu_001.mesh",
+   "kind": "网格",
+   "status": "已找到",
+   "located": true
+  },
+  {
+   "name": "w1351_monster_xiyuqiezei.ske",
+   "kind": "骨骼",
+   "status": "已找到",
+   "located": true
+  },
+  {
+   "name": "w1351_monster_xiyuqiezei_shoutao_001.tga",
+   "kind": "贴图",
+   "status": "只有名字",
+   "located": false
+  },
+  {
+   "name": "w1351_monster_xiyuqiezei_yifu_001.tga",
+   "kind": "贴图",
+   "status": "只有名字",
+   "located": false
+  }
+ ],
+ "gaps": [
+  "贴图引用只有名称，未指向具体资源"
+ ],
+ "nameSource": "客户端文件名（原文展示，未翻译）",
+ "hubDecoded": true,
+ "members": [
+  {
+   "roleWord": "动作",
+   "name": "w1351_monster_xiyuqiezei_behit01.ani",
+   "hasImage": false,
+   "hash": "1a2545b8c7c1d09a"
+  },
+  {
+   "roleWord": "动作",
+   "name": "w1351_monster_xiyuqiezei_dead.ani",
+   "hasImage": false,
+   "hash": "a50e431940a097dc"
+  },
+  {
+   "roleWord": "动作",
+   "name": "w1351_monster_xiyuqiezei_deadbegin.ani",
+   "hasImage": false,
+   "hash": "028c25ec805e675b"
+  },
+  {
+   "roleWord": "动作",
+   "name": "w1351_monster_xiyuqiezei_fight_idle01.ani",
+   "hasImage": false,
+   "hash": "d45db4390f240632"
+  },
+  {
+   "roleWord": "动作",
+   "name": "w1351_monster_xiyuqiezei_flyingdead.ani",
+   "hasImage": false,
+   "hash": "1b75afc8147d04ce"
+  },
+  {
+   "roleWord": "动作",
+   "name": "w1351_monster_xiyuqiezei_flyingdeadbegin.ani",
+   "hasImage": false,
+   "hash": "0e4233fda4e17b36"
+  },
+  {
+   "roleWord": "动作",
+   "name": "w1351_monster_xiyuqiezei_hit01.ani",
+   "hasImage": false,
+   "hash": "9e
+==== inspect_2299.json ====
+keys=['found', 'what', 'names', 'dir', 'parts', 'counts', 'members', 'mdl', 'missing', 'canDo', 'anims', 'previews', 'elapsedMs', 'note']
+found=True mdl_is_null=True parts=2 counts={'mesh': 0, 'mtl': 1, 'ani': 0, 'ske': 0, 'tex': 1}
+  members(first6)=[{"role": "material", "roleZh": "材质", "name": "w1351_nv_s_yifu_bingcha.mtl", "path": "data/source/player/w1351_nv/w1351_nv_yifu/w1351_nv_s_yifu_bingcha.mtl", "resolved": true}, {"role": "texture", "roleZh": "贴图", "name": "w1351_nv_s_yifu_bingcha.tga", "path": "ui/icon/wardrobe/w1351_nv_s_yifu_bingcha.tga", "resolved": true}]
+  missing=[]
+  canDo=["贴图预览"]
+  previews={"items": [{"label": "w1351_nv_s_yifu_bingcha.tga（材质槽）", "ok": true, "dataUrl": "data:image/webp;base64,UklGRhghAABXRUJQVlA4WAoAAAAQAAAAbwAAlwAAQUxQSHIMAAABCYZt20aC5fa++PYfuN8KEf2fAM2r3nEh1UYkMU44YQcJJYsmUJi156mSks9Iotsoz79hc2cHYPHaDjDzHrbZ2ZTo/QXagb4B2AvTGhgK2raRmvBnve+OQURMQHqOuvIAlzldkvLboju6DPMXi7HrQ6+A2Di5wRdOqm17sodDkb0lRWiA/DQJSECHWYAOeNxGI3877fco3gAREzAB2LBtOyZJ0nW/X0QWsxNdmWW0bY7tWdu2bdv27ti2Z9q2baPsiu997h+RlfG97xF97N+ImADfkWyrtm3bVkTKtU3muZj11wfVYOo5p4/JU4KImACER/fOPs7Y9o338//Sda9ZaTz8imtfGL55BRC28boXhM0bCEwo7FUvCKdPNRGWoxlw/neOv+aUF82GU4iQw7++6S2/MT3Wlv798RnL0EqB3/xzX/eDMb7WfMuJf/gp
+==== detail_2299.json ====
+keys=['card', 'refs', 'gaps', 'nameSource', 'hubDecoded', 'members', 'tech']
+{
+ "card": {
+  "gid": 2299,
+  "name": "w1351_nv_s_yifu_bingcha",
+  "subtitle": "界面 · bingcha",
+  "kind": "界面资源",
+  "scenario": "界面",
+  "grade": "A",
+  "gradeWord": "完整定位",
+  "gradeNote": "主体和它用到的零件都找到了",
+  "tags": [
+   "物品图标",
+   "角色部件",
+   "界面",
+   "女性角色"
+  ],
+  "parts": [
+   {
+    "label": "材质",
+    "count": 1
+   },
+   {
+    "label": "贴图",
+    "count": 1
+   }
+  ],
+  "placeholder": "item",
+  "memberTotal": 2,
+  "refTotal": 1,
+  "locatedTotal": 1,
+  "named": true,
+  "previewHash": "1908483d67257a08"
+ },
+ "refs": [],
+ "gaps": [],
+ "nameSource": "客户端文件名（原文展示，未翻译）",
+ "hubDecoded": true,
+ "members": [
+  {
+   "roleWord": "材质",
+   "name": "w1351_nv_s_yifu_bingcha.mtl",
+   "hasImage": false,
+   "hash": "fc73ecab5c5d0eea"
+  },
+  {
+   "roleWord": "贴图",
+   "name": "w1351_nv_s_yifu_bingcha.tga",
+   "hasImage": true,
+   "hash": "1908483d67257a08"
+  }
+ ],
+ "tech": {
+  "id": "1908483d67257a08",
+  "container": "data_1",
+  "offset": 707950240,
+  "bytes": 8508,
+  "codec": "WEBP",
+  "fingerprint": "cdc33793365097b9",
+  "rules": [
+   "item-icon (high)",
+   "player-part (high)",
+   "ui (high)",
+   "player-female (medium)"
+  ],
+  "names": 0,
+  "folder": "ui/icon/wardrobe",
+  "path": "ui/icon/wardrobe/w1351_nv_s_yifu_bingcha.tga"
+ }
+}
+==== inspect_30.json ====
+keys=['found', 'what', 'names', 'dir', 'parts', 'counts', 'members', 'mdl', 'missing', 'canDo', 'anims', 'previews', 'elapsedMs', 'note']
+found=True mdl_is_null=False parts=29 counts={'mesh': 5, 'mtl': 5, 'ani': 13, 'ske': 1, 'tex': 0}
+  mdl.name=w1351_pets_bingcan_b0 skels=1 bodies=1
+  skels=[{"role": "骨骼", "name": "w1351_pets_bingcan_b0.ske", "resolved": true, "hash": "7b79598231309fcd", "path": "data/source/npc/quest/w1351_pets_bingcan_b0/w1351_pets_bingcan_b0.ske"}]
+  body label='MainBodyMesh' mesh={"role": "网格", "name": "w1351_pets_bingcan_b0.mesh", "resolved": true, "hash": "a24fc95803cce351", "path": "data/source/npc/quest/w1351_pets_bingcan_b0/w1351_pets_bingcan_b0.mesh"} material={"role": "材质", "name": "w1351_pets_bingcan_b0.mtl", "resolved": true, "hash": "788dfeba313562ea", "path": "data/source/npc/quest/w1351_pets_bingcan_b0/w1351_pets_bingcan_b0.mtl"} slots=0
+  members(first6)=[{"role": "model", "roleZh": "模型", "name": "w1351_pets_bingcan_b0.mdl", "path": "data/source/npc/quest/w1351_pets_bingcan_b0/w1351_pets_bingcan_b0.mdl", "resolved": true}, {"role": "model", "roleZh": "模型", "name": "w1351_pets_bingcan_b1.mdl", "path": "data/source/npc/quest/w1351_pets_bingcan_b0/w1351_pets_bingcan_b1.mdl", "resolved": true}, {"role": "model", "roleZh": "模型", "name": "w1351_pets_bingcan_b2.mdl", "path": "data/source/npc/quest/w1351_pets_bingcan_b0/w1351_pets_bingcan_b2.mdl", "resolved": true}, {"role": "model", "roleZh": "模型", "name": "w1351_pets_bingcan_b3.mdl", "path": "data/source/npc/quest/w1351_pets_bingcan_b0/w1351_pets_bingcan_b3.mdl", "resolved": true}, {"role": "model", "roleZh": "模型", "name": "w1351_pets_bingcan_b4.mdl", "path": "data/source/npc/quest/w1351_pets_bingcan_b0/w1351_pets_bingcan_b4.mdl", "resolved": true}, {"role": "mesh", "roleZh": "网格", "name": "w1351_pets_bingcan_b0.mesh", "path": "data/source/npc/quest/w1351_pets_bingcan_b0/w1351_pets_bingcan_b0.mesh", "resolved": true}]
+  missing=["贴图 w1351_pets_bingcan_b0.tga：名字对不上实体（贴图类常态）", "贴图 w1351_pets_bingcan_b1.tga：名字对不上实体（贴图类常态）", "贴图 w1351_pets_bingcan_b2.tga：名字对不上实体（贴图类常态）", "贴图 w1351_pets_bingcan_b3.tga：名字对不上实体（贴图类常态）", "贴图 w1351_pets_bingcan_b4.tga：名字对不上实体（贴图类常态）"]
+  canDo=["组成树", "贴图预览", "动作名单", "立体预览（1 个网格）"]
+  previews={"items": [{"label": "template_default_npc.mtl（材质槽）", "ok": false, "dataUrl": "", "reason": "类型 JBCF 不是可预览图片"}], "total": 1, "shown": 1}
+==== detail_30.json ====
+keys=['card', 'refs', 'gaps', 'nameSource', 'hubDecoded', 'members', 'tech']
+{
+ "card": {
+  "gid": 30,
+  "name": "w1351_pets_bingcan_b2",
+  "subtitle": "角色 · b2",
+  "kind": "NPC / 怪物",
+  "scenario": "角色",
+  "grade": "B",
+  "gradeWord": "主体定位",
+  "gradeNote": "主体能打开，部分零件只有名字",
+  "tags": [
+   "动作集",
+   "NPC",
+   "宠物"
+  ],
+  "parts": [
+   {
+    "label": "模型",
+    "count": 5
+   },
+   {
+    "label": "网格",
+    "count": 5
+   },
+   {
+    "label": "材质",
+    "count": 5
+   },
+   {
+    "label": "骨骼",
+    "count": 1
+   },
+   {
+    "label": "动作",
+    "count": 13
+   }
+  ],
+  "placeholder": "beast",
+  "memberTotal": 29,
+  "refTotal": 5,
+  "locatedTotal": 0,
+  "named": true,
+  "previewHash": null
+ },
+ "refs": [
+  {
+   "name": "w1351_pets_bingcan_b2.mtl",
+   "kind": "材质",
+   "status": "已找到",
+   "located": true
+  },
+  {
+   "name": "w1351_pets_bingcan_b2.mesh",
+   "kind": "网格",
+   "status": "已找到",
+   "located": true
+  },
+  {
+   "name": "w1351_pets_bingcan_b0.ske",
+   "kind": "骨骼",
+   "status": "已找到",
+   "located": true
+  },
+  {
+   "name": "w1351_pets_bingcan_b0.tga",
+   "kind": "贴图",
+   "status": "只有名字",
+   "located": false
+  },
+  {
+   "name": "w1351_pets_bingcan_b1.tga",
+   "kind": "贴图",
+   "status": "只有名字",
+   "located": false
+  },
+  {
+   "name": "w1351_pets_bingcan_b2.tga",
+   "kind": "贴图",
+   "status": "只有名字",
+   "located": false
+  },
+  {
+   "name": "w1351_pets_bingcan_b3.tga",
+   "kind": "贴图",
+   "status": "只有名字",
+   "located": false
+  },
+  {
+   "name": "w1351_pets_bingcan_b4.tga",
+   "kind": "贴图",
+   "status": "只有名字",
+   "located": false
+  }
+ ],
+ "gaps": [
+  "贴图引用只有名称，未指向具体资源"
+ ],
+ "nameSource": "客户端文件名（原文展示，未翻译）",
+ "hubDecoded": true,
+ "members": [
+  {
+   "roleWord": "动作",
+   "name": "w1351_pets_bingcan_b0_behit01.ani",
+   "hasImage": false,
+   "hash": "5e86a17071b93756"
+  },
+  {
+   "roleWord": "动作",
+   "name": "w1351_pets_bingcan_b0_dead.ani",
+   "hasImage": false,
+   "hash": "3d5b1d6113b0606b"
+  },
+  {
+   "roleWord": "动作",
+   "name": "w1351_pets_bingcan_b0_deadbegin.ani",
+   "hasImage": false,
+   "hash": "508b25a4b6952de7"
+  },
+  {
+   "roleWord": "动作",
+   "name": "w1351_pets_bingcan_b0_fight_idle01.ani",
+   "hasImage": false,
+   "hash": "1fb3fe81ccadfdd3"
+  },
+  {
+   "roleWord": "动作",
+   "name": "w1351_pets_bingcan_b0_hit01.ani",
+   "hasImage": false,
+   "hash": "f42eabb33c82c105"
+  },
+  {
+   "roleWord": "动作",
+   "name": "w1351_pets_bingcan_b0_hit02.ani",
+   "hasImage": false,
+   "hash": "381b0ab439b37fa8"
+  },
+  {
+   "roleWord": "动作",
+   "name": "w1351_pets_bingcan_b0_idle01.ani",
+   "hasImage": false,
+   "hash": "fdb67dd2eef76382"
+  },
+  {
+

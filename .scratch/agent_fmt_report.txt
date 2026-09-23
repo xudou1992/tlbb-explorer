@@ -1,0 +1,64 @@
+.mesh / .ske 逆向结论报告（agent_fmt，全部为 UTF-8）
+
+════════ 1. 多子网格索引布局：已解出（100% 恢复） ════════
+规则（伪码，sm=0 时按 1 处理）：
+    pos_end = 0x118 + vc*12
+    for p in range(pos_end, len-4*sm-6*fc+1, 2):        # 实测 p%4 ∈ {0,2}
+        counts = [u32(p+4i) for i in 0..sm-1]            # 关键：计数数组步长 4 字节
+        if sum(counts)!=fc or max(counts)>fc: continue
+        idx = u16[3*fc] @ p+4*sm
+        if any(v>=vc for v in idx): continue
+        return p                                         # 取第一个命中（最早）
+    第 i 块索引 = p + 4*sm + 6*sum(counts[:i])，长 counts[i]*3 个 u16
+★ 恢复率：7996/7996 = 100%；旧解析器失败的 1775 个全部救回
+   sm=2:864 3:423 4:170 5:134 6:84 7:50 8:16 9:12 10:8 11:6 12:8（合计 1775）
+★ 反向验证：sm=1 的 6219 个成功样本 100% 与原行为同位置（legacy_same 6219，0 例冲突）；
+   静态布局交叉验证 2603(sm=1)+165(sm≥2) 例，new p == pos_end+vc*20，无误判。
+★ 唯一性：7976 文件只有 1 个命中位置，19 个 2 个，1 个 3 个（都是 vc≤6 的微模型）。
+★ 顺带纠正旧解析器 2 个假阳性：w1351_denglong01.mesh 旧 0xA35A→正解 0x8818(middle=20vc 精确)；
+   w1351_monster_qinjiazhaijiefei_shoutao_001.mesh 旧 0x3858→正解 0x18D8(middle=20vc 精确)。
+★ 反例/推翻的假设：
+   (a)「索引块贴着 EOF」不成立：tail=len-(p+4sm+6fc) 分布 =0:3721, ≤8:442, ≤256:970,
+       ≤4096:325, >4096:2538（角色网格尾部最大 131356B）。
+   (b)「块间 [u32 count][索引] 交替」不成立：计数是连续的 sm 个 u32，索引紧随其后
+       （emiter_lf002 @0x3B78 读得 264,264，索引 0x3B80 起，Σ=528=fc，tail=8=ff ff ff ff 00 00 00 00）。
+   (c)「头部 0x98..0x117 有子网格表」不成立：该段只有 u16@0x114 非零（274/530/594/786），
+       它与中间段 A 强相关（274→20、530→28、594→44），但不是偏移表。
+★ 结构佐证：各块顶点范围严格连续不重叠（emiter [(0,211),(212,433)]；
+   fwzhongxing sm=7 counts=[26461,1531,12,1752,6772,240,82] Σ=36850=fc，p=0x1E49D4 tail=0）。
+
+════════ 2. 蒙皮"中间段"：已证实不是骨骼索引/权重 ════════
+middle = A*vc + B*fc，全量分布：A=28 B=2 :2785｜A=20 B=0 :2768｜A=20 B=2 :1879｜
+A=44 B=2 :173｜A=29 B=0 :132｜A=28 B=0 :116｜A=21 :69｜A=45 :36｜A=36/22/23/30/37 :<20
+字节级证明 middle 开头 12*vc 必是单位法线流（‖v‖=1 比例 1.000，连续 run 恰等于 vc）：
+test_jianzhen 55864、emiter_lf002 434、fwzhongxing 47775、dashubaoshi 739、
+dasongshuduan 259、shanshi_009 1064、duantai01 4435。
+其余 = 8*vc(UV) [+8*vc 第二套 UV] [+2*fc 面级 u16]；jianzhen 1249164 = 20*55864+2*65942 精确。
+权重检验（对 middle 额外区 + 尾块，stride 12/16/20/22/24/28/32/36/40/44/48，字段偏移全试）：
+4×f32∈[0,1] 且 Σ≈1、4×u8 Σ=255/100 → 2741 个有候选区的文件最高仅 0.086（噪声）；
+唯一 4 例"命中"(0.72~0.75) 命中区其实是节点表里的单位矩阵 (1,0,0,0)，属假阳性。
+→ 结论：.mesh 内不存在逐顶点骨骼索引/权重（已证实为"不存在"，不是"没解"）。
+
+════════ 3. .ske：已证实没有任何骨骼变换数据 ════════
+1630/1630 JBCF 解析成功；字符串表之后剩余字节 = 0 或 4 字节（816/814 各半）；
+root(id=86) body 112..112168B，与字符串数 corr=0.952，body/字符串 p50=46B → 是属性节点树；
+全文件"真浮点"(指数 100..150) 最长连续 run：p50=1、p90=2、max=2（一组 4x4 矩阵需 ≥12）；
+单位四元数样 f32x4 窗口：1629/1630 文件 = 0，唯一 1 例 =4（文本区巧合）。
+→ .ske 只有骨骼名 + clip 名/索引（指向 .ani/.anis），无矩阵、无关键帧。
+
+════════ 4. 骨骼线框缺的那一段：已躺在 .mesh 尾部，只是没解 ════════
+索引块之后的 tail = 命名节点表：32B/条 = [u32 parent(根=0xFFFFFFFF)][u32 ?][char name[24]]
+  muwanqing 280 条（bip001, bone089..092）、wangyuyan 196、kongmo_001 4（bone001/002/004）、
+  jianmo_v1 965B = 10×96B 记录 = name[32] + 4x4 单位矩阵（@0xDE+32 起 f32 可见 1,0,0,0 / 0,1,0,0）
+tail 中 4x4 f32 正交旋转窗口计数：muwanqing 467、wangyuyan 377、kongmo 20、jianmo 8。
+交叉：muwanqing 尾名 77/280 出现在同名 .ske 字符串表（其余为 .ske 未列出的节点）。
+→ 做线框只需再解 .mesh 尾部节点表（名字+parent+矩阵），不必等 .ske。
+
+脚本（D:\TLGL\.scratch\）：agent_fmt_lib.py（共享定位器）、agent_fmt_rule3.py（全量规则验证）、
+agent_fmt_streams.py（middle/tail 尺寸模型 + 头部字段交叉表）、agent_fmt_mid.py（法线/UV 流检测）、
+agent_fmt_skin.py（权重布局打分）、agent_fmt_ske.py / agent_fmt_ske2.py（.ske 普查）、
+agent_fmt_tailprobe.py / agent_fmt_mats.py / agent_fmt_nodes.py（尾部节点表与矩阵）、
+早期探索 agent_fmt_probe1.py / probe2.py / rule.py / rule2.py
+结果（同目录）：agent_fmt_rule3.txt/.json、agent_fmt_streams.txt、agent_fmt_mid.txt、
+agent_fmt_skin.txt、agent_fmt_ske.txt、agent_fmt_ske2.txt、agent_fmt_tailprobe.txt、
+agent_fmt_mats.txt、agent_fmt_nodes.txt、agent_fmt_probe1.txt、agent_fmt_probe2.txt

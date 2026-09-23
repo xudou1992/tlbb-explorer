@@ -1,0 +1,1 @@
+sqlite: refs_total=98504 resolved=61408 dangling=14377 assets_citing=21352 assets_citing_resolved=20576 distinct_targets=21410

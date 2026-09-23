@@ -1,0 +1,38 @@
+面板会出现的组（重复 v1 口径核对）：1659
+=== 首帧自动加载的那个网格的结果 ===
+  D2 正常出灰模                                                             1397   84.2%
+  D3 后端 mesh_data 解析失败 → 「这个模型暂时画不出来」                                   262   15.8%
+
+  失败按类型：[('npc', 228), ('player', 34)]
+  失败样本的 sm（子网格数 0x94）分布：[(2, 10), (5, 1), (3, 1)]
+  失败样本：
+   gid=2 w1351_nan_s_yifu_mjrmdz [player] data/source/npc/quest/w1351_cj_diao/w1351_cj_diao.mesh
+      找不到与头部面数 20139 自洽的索引块——拒绝解析  meta={'vc': 18041, 'fc': 20139, 'sm': 2, 'size': 1149346}
+   gid=7 w1351_zuoqi_yuexiaxun_lan [npc] data/source/npc/quest/w1351_zuoqi_yuexiaxun/w1351_zuoqi_yuexiaxun.mesh
+      找不到与头部面数 6997 自洽的索引块——拒绝解析  meta={'vc': 6278, 'fc': 6997, 'sm': 5, 'size': 397992}
+   gid=18 w1351_zuoqi_hudie_hei [npc] data/source/npc/quest/w1351_monster_heimoguai01/w1351_monster_heimoguai01.mesh
+      找不到与头部面数 1920 自洽的索引块——拒绝解析  meta={'vc': 1118, 'fc': 1920, 'sm': 2, 'size': 80304}
+   gid=37 w1351_pets_xiaohualing_b2 [npc] data/source/npc/quest/w1351_pets_xiaohualing_b0/w1351_pets_xiaohualing_b0.mesh
+      找不到与头部面数 4240 自洽的索引块——拒绝解析  meta={'vc': 3307, 'fc': 4240, 'sm': 2, 'size': 228996}
+   gid=44 w1351_pets_kongque_b2 [npc] data/source/npc/quest/w1351_pets_kongque_b0/w1351_pets_kongque_b0.mesh
+      找不到与头部面数 426 自洽的索引块——拒绝解析  meta={'vc': 432, 'fc': 426, 'sm': 2, 'size': 35380}
+   gid=45 w1351_npc_xinmurongfu [npc] data/source/npc/quest/w1351_npc_xinmurongfu/w1351_npc_xinmurongfu.mesh
+      找不到与头部面数 7130 自洽的索引块——拒绝解析  meta={'vc': 5945, 'fc': 7130, 'sm': 2, 'size': 370964}
+   gid=48 w1351_boss_pangqi [npc] data/source/npc/quest/w1351_boss_pangqi/w1351_boss_pangqi.mesh
+      找不到与头部面数 6164 自洽的索引块——拒绝解析  meta={'vc': 3709, 'fc': 6164, 'sm': 2, 'size': 220612}
+   gid=68 w1351_pets_xiaohualing_b8 [npc] data/source/npc/quest/w1351_pets_xiaohualing_b5/w1351_pets_xiaohualing_b5.mesh
+      找不到与头部面数 5961 自洽的索引块——拒绝解析  meta={'vc': 4771, 'fc': 5961, 'sm': 2, 'size': 347696}
+   gid=73 w1351_npc_xunshanxianv_02 [npc] data/source/npc/quest/w1351_npc_xunshanxianv_02/w1351_npc_xunshanxianv_02_yifu_001.mesh
+      找不到与头部面数 1330 自洽的索引块——拒绝解析  meta={'vc': 1119, 'fc': 1330, 'sm': 2, 'size': 95912}
+   gid=74 w1351_npc_duanyanqing [npc] data/source/npc/quest/w1351_npc_duanyanqing/w1351_npc_duanyanqing.mesh
+      找不到与头部面数 2984 自洽的索引块——拒绝解析  meta={'vc': 1922, 'fc': 2984, 'sm': 2, 'size': 120432}
+   gid=117 w1351_boss_yuelaosan [npc] data/source/npc/quest/w1351_boss_yuelaosan/w1351_boss_yuelaosan.mesh
+      找不到与头部面数 3212 自洽的索引块——拒绝解析  meta={'vc': 3541, 'fc': 3212, 'sm': 2, 'size': 193804}
+   gid=151 w1351_boss_yunpiaopiao [npc] data/source/npc/quest/w1351_boss_yunpiaopiao/w1351_boss_yunpiaopiao_yifu_001.mesh
+      找不到与头部面数 4621 自洽的索引块——拒绝解析  meta={'vc': 3878, 'fc': 4621, 'sm': 3, 'size': 234704}
+
+tree 里找不到的路径样本（最多 8）：[]
+
+=== 全量：所有被 .mdl 引用且定位到的网格文件（去重按文件） ===
+  被 .mdl 引用且名字定位到实体的 .mesh（有 path、去重）：4049 → {'失败': 310, '可画': 3739}
+  其中解析失败文件的 sm 分布：[(2, 136), (3, 45), (4, 40), (5, 31), (6, 29), (7, 17), (8, 7), (9, 4), (10, 1)]

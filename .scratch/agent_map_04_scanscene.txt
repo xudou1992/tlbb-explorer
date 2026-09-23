@@ -1,0 +1,50 @@
+
+#### out/tree/mobile_maps/w1351_ll_dl_002\1_0_-10.scene  size=24356
+u32[0:8]: (32, 753, 0, 1059481190, 0, 0, 0, 0)
+f32[0:24] @0x08: [0.0, 0.65, 0.0, 0.0, 0.0, 0.0, 0.65, 0.0, 0.0, 0.0, 0.0, 0.65, 0.0, 26.2658, 6.0, -293.372, 1.0, 0.0, 1.1043384623138707e+27, 6.811821344232495e+25, 1.7249183496526627e+19, 0.0, 4.5976241230660743e+24, 0.0567]
+n_strings>=4: 68
+string ext histogram: {'(noext)': 36, 'mesh': 32}
+n asset-like strings: 32 first 12: [(75, '?w1351_dl_bajiao_001.mesh'), (836, '?w1351_dl_chenglou_005a.mesh'), (1597, '?w1351_dl_chenglou_005a.mesh'), (2358, '?w1351_dl_chengqiang_001.mesh'), (3119, '?w1351_dl_chengqiang_001.mesh'), (3880, '?w1351_dl_chengqiang_001.mesh'), (4641, '?w1351_dl_chengqiang_001.mesh'), (5402, '?w1351_dl_chengqiang_001.mesh'), (6163, '?w1351_dl_darongshu_002.mesh'), (6924, '?w1351_dl_fangwu_001.mesh'), (7685, '?w1351_dl_fangwu_001.mesh'), (8446, '?w1351_dl_huacu_001a.mesh')]
+n 0x7f.. u64 (aligned): 40 density per KB: 1.68
+  ptr span: 3160 .. 21632, first 10: [np.int64(3160), np.int64(3208), np.int64(3216), np.int64(3224), np.int64(3272), np.int64(3288), np.int64(3304), np.int64(3320), np.int64(3336), np.int64(3368)]
+  per-4KB ptr counts: 10 0 10 10 0 10
+
+#### out/tree/mobile_maps/w1351_ll_dl_002\1_0_-4.scene  size=19790
+u32[0:8]: (26, 753, 0, 1059481190, 0, 0, 0, 0)
+f32[0:24] @0x08: [0.0, 0.65, 0.0, 0.0, 0.0, 0.0, 0.65, 0.0, 0.0, 0.0, 0.0, 0.65, 0.0, 18.736, 6.0, -108.355, 1.0, 0.0, 1.1043384623138707e+27, 6.811821344232495e+25, 1.7249183496526627e+19, 0.0, 4.5976241230660743e+24, 0.0567]
+n_strings>=4: 78
+string ext histogram: {'(noext)': 51, 'mesh': 27}
+n asset-like strings: 27 first 12: [(75, '?w1351_dl_bajiao_002.mesh'), (836, '?w1351_dl_bajiao_002.mesh'), (1597, '?w1351_dl_fangwuxiaoyuan_002.mesh'), (2358, '?w1351_dl_loutia_001.mesh'), (2384, '02.mesh'), (3119, '?w1351_dl_minjumhongmu_001.mesh'), (3880, '?w1351_dl_minjumhongmu_001.mesh'), (4641, '?w1351_dl_minjumhongmu_001.mesh'), (5402, '?w1351_dl_qiangmian_001.mesh'), (6163, '?w1351_dl_qiangmian_002.mesh'), (6924, '?w1351_dl_qiangmian_002.mesh'), (7685, '?w1351_dl_qiangmian_004.mesh')]
+n 0x7f.. u64 (aligned): 30 density per KB: 1.55
+  ptr span: 3160 .. 15544, first 10: [np.int64(3160), np.int64(3208), np.int64(3216), np.int64(3224), np.int64(3272), np.int64(3288), np.int64(3304), np.int64(3320), np.int64(3336), np.int64(3368)]
+  per-4KB ptr counts: 10 0 10 10 0
+
+#### out/tree/mobile_maps/w1351_ll_dl_002\1_0_-5.scene  size=24356
+u32[0:8]: (32, 753, 0, 1059481190, 0, 0, 0, 0)
+f32[0:24] @0x08: [0.0, 0.65, 0.0, 0.0, 0.0, 0.0, 0.65, 0.0, 0.0, 0.0, 0.0, 0.65, 0.0, 30.9937, 6.0, -159.908, 1.0, 0.0, 1.1043384623138707e+27, 6.811821344232495e+25, 1.8965677824072907e+31, 0.0, 3.369365984229146e+27, 0.0]
+n_strings>=4: 82
+string ext histogram: {'(noext)': 44, 'mesh': 38}
+n asset-like strings: 38 first 12: [(75, '?w1351_dl_bajiaoshu_001.mesh'), (836, '?w1351_dl_chenglou_005a.mesh'), (1597, '?w1351_dl_chengqiang_001.mesh'), (2358, '?w1351_dl_chengqiang_001.mesh'), (3119, '?w1351_dl_chengqiangwan_001.mesh'), (3880, '?w1351_dl_fangwuxiaoyuan_002.mesh'), (4641, '?w1351_dl_huacu_002.mesh'), (4666, '002.mesh'), (5402, '?w1351_dl_huacu_007a.mesh'), (5428, '02.mesh'), (6163, '?w1351_dl_huacu_010.mesh'), (6189, '02.mesh')]
+n 0x7f.. u64 (aligned): 40 density per KB: 1.68
+  ptr span: 3160 .. 21632, first 10: [np.int64(3160), np.int64(3208), np.int64(3216), np.int64(3224), np.int64(3272), np.int64(3288), np.int64(3304), np.int64(3320), np.int64(3336), np.int64(3368)]
+  per-4KB ptr counts: 10 0 10 10 0 10
+
+#### out/tree/mobile_maps/w1351_ll_dl_002\1_0_-6.scene  size=9736
+u32[0:8]: (13, 753, 0, 3200258797, 0, 1057481631, 0, 0)
+f32[0:24] @0x08: [0.0, -0.3751, 0.0, 0.5308, 0.0, 0.0, 0.65, 0.0, 0.0, -0.5308, 0.0, -0.3751, 0.0, 30.2748, 6.0, -177.554, 1.0, 0.0, 1.1043384623138707e+27, 6.811821344232495e+25, 1.8965677824072907e+31, 0.0, 3.369365984229146e+27, 0.0]
+n_strings>=4: 34
+string ext histogram: {'(noext)': 20, 'mesh': 12, 'pu': 2}
+n asset-like strings: 12 first 12: [(75, '?w1351_dl_bajiaoshu_001.mesh'), (836, '?w1351_dl_chenglou_002.mesh'), (1597, '?w1351_dl_chengqiang_001.mesh'), (2358, '?w1351_dl_chengqiang_001.mesh'), (3119, '?w1351_dl_huacu_007a.mesh'), (3880, '?w1351_dl_huacu_007a.mesh'), (4641, '?w1351_dl_huacu_007a.mesh'), (5402, '?w1351_dl_huacu_007a.mesh'), (6163, '?w1351_dl_putaojia_002.mesh'), (6924, '?w1351_dl_yezishu_001.mesh'), (7685, '?w1351_dl_yezishu_001.mesh'), (8446, '?w1351_em_zhuguocong_001.mesh')]
+n 0x7f.. u64 (aligned): 21 density per KB: 2.21
+  ptr span: 3160 .. 9456, first 10: [np.int64(3160), np.int64(3208), np.int64(3216), np.int64(3224), np.int64(3272), np.int64(3288), np.int64(3304), np.int64(3320), np.int64(3336), np.int64(3368)]
+  per-4KB ptr counts: 10 0 11
+
+#### out/tree/mobile_maps/w1351_fb_jiehun_001/1_3_-5.scene  size=242326
+u32[0:8]: (321, 753, 0, 1063717437, 0, 0, 0, 0)
+f32[0:24] @0x08: [0.0, 0.9025, 0.0, 0.0, 0.0, 0.0, 0.9025, 0.0, 0.0, 0.0, 0.0, 0.9025, 0.0, 118.014, 2.6613, -148.809, 1.0, 0.0, 4.3138221184135575e+24, 1.8523273564339316e+28, 1.7748361558699305e+28, 1.8524491934891897e+28, 2.9458715581825696e+32, 0.0]
+n_strings>=4: 481
+string ext histogram: {'mesh': 351, '(noext)': 130}
+n asset-like strings: 351 first 12: [(75, '?w1351_dh_hongdenglongchuan_001.mesh'), (836, '?w1351_dh_hongdenglongchuan_001.mesh'), (1597, '?w1351_dh_hongdenglongchuan_001.mesh'), (2358, '?w1351_dh_hongdenglongchuan_001.mesh'), (3119, '?w1351_dl_tanzi_001.mesh'), (3144, 'an_001.mesh'), (3880, '?w1351_dl_tanzi_001.mesh'), (3905, 'an_001.mesh'), (4641, '?w1351_dl_tanzi_001.mesh'), (4666, 'an_001.mesh'), (5402, '?w1351_dl_tanzi_001.mesh'), (5427, 'an_001.mesh')]
+n 0x7f.. u64 (aligned): 160 density per KB: 0.68
+  ptr span: 3208 .. 240744, first 10: [np.int64(3208), np.int64(3256), np.int64(3304), np.int64(3312), np.int64(9296), np.int64(9344), np.int64(9392), np.int64(9400), np.int64(15384), np.int64(15432)]
+  per-4KB ptr counts: 4 0 4 4 0 4 4 0 4 4 0 4 4 0 4 4 0 4 4 0 4 4 0 4 4 0 4 4 0 4 4 1 3 4 4 0 4 4 0 4 4 0 4 4 0 4 4 0 4 4 0 4 4 0 4 4 0 4 4 0

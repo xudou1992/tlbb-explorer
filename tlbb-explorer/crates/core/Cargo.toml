@@ -1,0 +1,22 @@
+[package]
+name = "tlbb-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Read-only JPAK container, decoder and catalog layer for TLBB assets"
+
+[lib]
+name = "tlbb_core"
+path = "src/lib.rs"
+
+[dependencies]
+memmap2.workspace = true
+crc32fast.workspace = true
+rusqlite = { version = "0.40.2", features = ["bundled"] }
+png = "0.17"
+pinyin = "0.11.0"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+
+[dev-dependencies]
+sha2 = "0.10"

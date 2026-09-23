@@ -1,0 +1,30 @@
+=== 地图 ID 前缀分类（目录名第2段）===
+  ('fb', 146)
+  ('ll', 105)
+  ('gj', 40)
+  ('hd', 2)
+  ('empt', 2)
+  ('cj', 2)
+=== scene 里那 6 个网格名能不能在清单里定位到 ===
+  w1351_cj_hehua_001.mesh                  命中 1  位置 mobile_maps_source
+  w1351_fbgf_pingfengerxiao_001.mesh       命中 1  位置 mobile_maps_source
+  w1351_fbgf_pingfengzheng_001.mesh        命中 1  位置 mobile_maps_source
+  w1351_fbgf_shujiazai_001.mesh            命中 1  位置 mobile_maps_source
+=== 地图材质引用的贴图（refs 里 from 为 mobile_maps_source 的 .mtl）===
+  kind=.tga 条数=6379 能对上实体=0
+  kind=.mtl 条数=3288 能对上实体=3288
+=== 地图 .mtl 引用的贴图名样例（是否悬空）===
+  ('w1351_smeh_shandong1_001.tga', None)
+  ('w1351_smeh_jitanqiang_001.tga', None)
+  ('w1351_smeh_jitandizuan_001.tga', None)
+  ('w1351_smeh_jianzhu_001.tga', None)
+  ('w1351_smeh_jianzhu2_001.tga', None)
+  ('w1351_smeh_zuanqiang_001.tga', None)
+=== 有没有地图配置表候选 ===
+  ('settings/GameWorldConstList.ini', 'text', 5365)
+=== settings/ 下有什么 ===
+  ('settings/GMCmd.tab', 'text', 136814)
+  ('settings/GameWorldConstList.ini', 'text', 5365)
+  ('settings/Text/NameFilter.txt', 'binary', 80764)
+  ('settings/Text/TextFilter.txt', 'binary', 3232)
+  ('settings/Text/BanTextFilter.txt', 'table', 8)

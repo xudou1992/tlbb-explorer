@@ -1,0 +1,9 @@
+grades:
+   A 完整定位 2
+   B 主体定位 2599
+   C 名称证据 10479
+grade_coverage: {'decode_unmeasured': 13080}
+totals.groups: 13080
+image_sources:
+   同目录兜底 921
+   引用定位 25

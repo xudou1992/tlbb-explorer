@@ -1,0 +1,103 @@
+rtti_total 2029
+--- RTTI namespace histogram ---
+   839  <global>
+    81  Z
+    73  Net
+    49  PEAVBlendState
+    41  std
+    39  Gfx
+    19  UI
+    18  $0A
+    15  DX11Gfx
+    13  spline
+    12  X
+    11  2
+    11  PEAVDepthStencilState
+    10  UEAAXXZ
+     8  Poco
+     8  XZ
+     7  3
+     7  PEAVRasterizerState
+     5  _W
+     5  G
+     5  D
+     5  V?$AttrInt
+     4  IMemoryAllocator
+     4  MemoryPool
+     4  Window
+     4  $0PP
+     3  Util
+     3  qcloud_cos
+     3  ILogSystem
+     3  IFileSystem
+     3  IEventHandler
+     3  IReadFile
+     3  dragonBones
+     3  PEAVSamplerState
+     3  QEAAXXZ
+     3  UVec3
+     3  UVec4
+     3  Mp3Decoder
+     2  $00
+     2  ios_base
+     2  Any
+     2  XML
+     2  locale
+     2  ISound
+     2  IWriteFile
+     2  XHPEBD
+     2  HPEBDHHPEBD
+     2  FileMgr
+     2  VSharedString
+     2  Texture
+     2  DragonBones
+     2  DownloadingFile
+     2  UpdateGroup
+     2  UEAA_NXZ
+     2  _N_K
+     2  I_K
+     2  $03$03UVec4
+     2  IEAA_NXZ
+     2  $0M
+     2  $03$03
+     2  V?$DenormalizedQuadVertexBuffer
+     2  _K_K
+     2  VTaskEvent
+     2  SoundFileMp3
+     2  II
+     2  IndexBuffer
+     2  VertexDeclaration
+     2  GeometryShader
+     2  RasterizerState
+     2  DomainShader
+--- per-namespace class lists (depth<=2, readable) ---
+[<global>] n=6 :: , FileSystem, Poco, SoundEngine, UI, std
+[IMemoryAllocator] n=4 :: FileSystem, Mp3Decoder, SoundEngine, UI
+[ILogSystem] n=3 :: FileSystem, SoundEngine, UI
+[IFileSystem] n=3 :: FileSystem, SoundEngine, UI
+[IEventHandler] n=3 :: FileSystem, SoundEngine, UI
+[IReadFile] n=3 :: FileSystem, SoundEngine, UI
+[ISound] n=2 :: SoundEngine, UI
+[IWriteFile] n=2 :: FileSystem, UI
+[FileMgr] n=2 :: SoundEngine, UI
+[Window] n=2 :: Mp3Decoder, UI
+[Texture] n=2 :: Gfx, UI
+[DragonBones] n=2 :: UI, dragonBones
+[IndexBuffer] n=2 :: DX11Gfx, Gfx
+[VertexDeclaration] n=2 :: DX11Gfx, Gfx
+[GeometryShader] n=2 :: DX11Gfx, Gfx
+[RasterizerState] n=2 :: DX11Gfx, Gfx
+[DomainShader] n=2 :: DX11Gfx, Gfx
+[ComputeShader] n=2 :: DX11Gfx, Gfx
+[UnorderedAccessView] n=2 :: DX11Gfx, Gfx
+[StructuredBuffer] n=2 :: DX11Gfx, Gfx
+[HullShader] n=2 :: DX11Gfx, Gfx
+[Texture3D] n=2 :: DX11Gfx, Gfx
+[VertexBuffer] n=2 :: DX11Gfx, Gfx
+[RenderQuery] n=2 :: DX11Gfx, Gfx
+[UniformBuffer] n=2 :: DX11Gfx, Gfx
+[TextureReference] n=2 :: DX11Gfx, Gfx
+[GPUProfiler] n=2 :: DX11Gfx, Gfx
+[SamplerState] n=2 :: DX11Gfx, Gfx
+[VertexShader] n=2 :: DX11Gfx, Gfx
+[BlendState] n=2 :: DX11Gfx, Gfx

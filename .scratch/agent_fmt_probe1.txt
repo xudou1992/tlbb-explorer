@@ -1,0 +1,272 @@
+### data\effect\effectmodel\w1351_model_emiter_lf002.mesh  size=18408
+vc=434 fc=528 sm=2 ver=1 tag=b'mesh' banner=False
+expect single-block size = 0x118 + vc*12 + vc*20 + 4 + fc*6 = 17340
+pos_end=0x1570  static_idx=0x3758  EOF-hint
+hdr u32 @0x8C.. : [0x8c]434, [0x90]528, [0x94]2, [0x98]0, [0x9c]0, [0xa0]0, [0xa4]0, [0xa8]0, [0xac]0, [0xb0]0, [0xb4]0, [0xb8]0, [0xbc]0, [0xc0]0, [0xc4]0, [0xc8]0, [0xcc]0, [0xd0]0, [0xd4]0, [0xd8]0, [0xdc]0, [0xe0]0, [0xe4]0, [0xe8]0, [0xec]0, [0xf0]0, [0xf4]0
+hdr nonzero u16 @0x98..: [0x114]274
+tail 64B of file: af 01 71 01 70 01 a4 01 a9 01 a6 01 ac 01 a8 01 a3 01 ac 01 af 01 a4 01 a8 01 a3 01 aa 01 ac 01 a7 01 af 01 a8 01 b1 01 ae 01 b0 01 77 01 60 01 ae 01 ae 01 b1 01 77 01 ff ff ff ff 00 00 00 00
+candidates >=0x1570: 6
+  off=0x3B78 (15224) n=264 p%8=0 gap_from_pos_end=0x2608 (9736) max_idx=264 end=0x41AC
+  off=0x3B7C (15228) n=264 p%8=4 gap_from_pos_end=0x260C (9740) max_idx=211 end=0x41B0
+  off=0x3B84 (15236) n=2 p%8=4 gap_from_pos_end=0x2614 (9748) max_idx=5 end=0x3B94
+  off=0x3B96 (15254) n=2 p%8=6 gap_from_pos_end=0x2626 (9766) max_idx=8 end=0x3BA6
+  off=0x3C04 (15364) n=3 p%8=4 gap_from_pos_end=0x2694 (9876) max_idx=28 end=0x3C1A
+  off=0x3C0C (15372) n=9 p%8=4 gap_from_pos_end=0x269C (9884) max_idx=33 end=0x3C46
+sm=2: sum of all candidate counts = 544 vs fc=528
+### mobile_maps_source\w1351_st_fwzhongxing_001.mesh  size=2206108
+vc=47775 fc=36850 sm=7 ver=1 tag=b'mesh' banner=False
+expect single-block size = 0x118 + vc*12 + vc*20 + 4 + fc*6 = 1750184
+pos_end=0x8C08C  static_idx=0x1754F8  EOF-hint
+hdr u32 @0x8C.. : [0x8c]47775, [0x90]36850, [0x94]7, [0x98]0, [0x9c]0, [0xa0]0, [0xa4]0, [0xa8]0, [0xac]0, [0xb0]0, [0xb4]0, [0xb8]0, [0xbc]0, [0xc0]0, [0xc4]0, [0xc8]0, [0xcc]0, [0xd0]0, [0xd4]0, [0xd8]0, [0xdc]0, [0xe0]0, [0xe4]0, [0xe8]0, [0xec]0, [0xf0]0, [0xf4]0
+hdr nonzero u16 @0x98..: [0x114]530
+tail 64B of file: 95 ba 96 ba 96 ba 92 ba 94 ba 96 ba 97 ba 93 ba 93 ba 92 ba 96 ba 98 ba 93 ba 97 ba 99 ba 9a ba 9b ba 91 ba 9c ba 9d ba 9d ba 9e ba 91 ba 99 ba 9c ba 90 ba 90 ba 9a ba 99 ba 90 ba 9c ba 91 ba
+candidates >=0x8C08C: 111
+  off=0x117B97 (1145751) n=187 p%8=7 gap_from_pos_end=0x8BB0B (572171) max_idx=32768 end=0x117FFD
+  off=0x117B9F (1145759) n=63 p%8=7 gap_from_pos_end=0x8BB13 (572179) max_idx=32768 end=0x117D1D
+  off=0x117BAB (1145771) n=63 p%8=3 gap_from_pos_end=0x8BB1F (572191) max_idx=32768 end=0x117D29
+  off=0x117BB7 (1145783) n=63 p%8=7 gap_from_pos_end=0x8BB2B (572203) max_idx=32768 end=0x117D35
+  off=0x117BC3 (1145795) n=63 p%8=3 gap_from_pos_end=0x8BB37 (572215) max_idx=32768 end=0x117D41
+  off=0x117BCF (1145807) n=63 p%8=7 gap_from_pos_end=0x8BB43 (572227) max_idx=32768 end=0x117D4D
+  off=0x117BDB (1145819) n=63 p%8=3 gap_from_pos_end=0x8BB4F (572239) max_idx=32768 end=0x117D59
+  off=0x117BE7 (1145831) n=63 p%8=7 gap_from_pos_end=0x8BB5B (572251) max_idx=32768 end=0x117D65
+  off=0x117BF3 (1145843) n=63 p%8=3 gap_from_pos_end=0x8BB67 (572263) max_idx=32768 end=0x117D71
+  off=0x117BFF (1145855) n=63 p%8=7 gap_from_pos_end=0x8BB73 (572275) max_idx=32768 end=0x117D7D
+  off=0x117C0B (1145867) n=63 p%8=3 gap_from_pos_end=0x8BB7F (572287) max_idx=32768 end=0x117D89
+  off=0x117C17 (1145879) n=63 p%8=7 gap_from_pos_end=0x8BB8B (572299) max_idx=32768 end=0x117D95
+  off=0x117C23 (1145891) n=63 p%8=3 gap_from_pos_end=0x8BB97 (572311) max_idx=32768 end=0x117DA1
+  off=0x117C2F (1145903) n=63 p%8=7 gap_from_pos_end=0x8BBA3 (572323) max_idx=32768 end=0x117DAD
+  off=0x117C3B (1145915) n=63 p%8=3 gap_from_pos_end=0x8BBAF (572335) max_idx=32768 end=0x117DB9
+  off=0x117C47 (1145927) n=63 p%8=7 gap_from_pos_end=0x8BBBB (572347) max_idx=32768 end=0x117DC5
+  off=0x117C53 (1145939) n=63 p%8=3 gap_from_pos_end=0x8BBC7 (572359) max_idx=32768 end=0x117DD1
+  off=0x117C5F (1145951) n=63 p%8=7 gap_from_pos_end=0x8BBD3 (572371) max_idx=32768 end=0x117DDD
+  off=0x117C6B (1145963) n=63 p%8=3 gap_from_pos_end=0x8BBDF (572383) max_idx=32768 end=0x117DE9
+  off=0x117C77 (1145975) n=63 p%8=7 gap_from_pos_end=0x8BBEB (572395) max_idx=32768 end=0x117DF5
+  off=0x117C83 (1145987) n=63 p%8=3 gap_from_pos_end=0x8BBF7 (572407) max_idx=32768 end=0x117E01
+  off=0x117C8F (1145999) n=63 p%8=7 gap_from_pos_end=0x8BC03 (572419) max_idx=32768 end=0x117E0D
+  off=0x117C9B (1146011) n=63 p%8=3 gap_from_pos_end=0x8BC0F (572431) max_idx=32768 end=0x117E19
+  off=0x117CA7 (1146023) n=63 p%8=7 gap_from_pos_end=0x8BC1B (572443) max_idx=32768 end=0x117E25
+  off=0x117CB3 (1146035) n=63 p%8=3 gap_from_pos_end=0x8BC27 (572455) max_idx=32768 end=0x117E31
+  off=0x117CBF (1146047) n=63 p%8=7 gap_from_pos_end=0x8BC33 (572467) max_idx=32768 end=0x117E3D
+  off=0x117CCB (1146059) n=63 p%8=3 gap_from_pos_end=0x8BC3F (572479) max_idx=32768 end=0x117E49
+  off=0x117CD7 (1146071) n=63 p%8=7 gap_from_pos_end=0x8BC4B (572491) max_idx=32768 end=0x117E55
+  off=0x117CE3 (1146083) n=63 p%8=3 gap_from_pos_end=0x8BC57 (572503) max_idx=32768 end=0x117E61
+  off=0x117CEF (1146095) n=63 p%8=7 gap_from_pos_end=0x8BC63 (572515) max_idx=32768 end=0x117E6D
+  off=0x117CFB (1146107) n=63 p%8=3 gap_from_pos_end=0x8BC6F (572527) max_idx=32768 end=0x117E79
+  off=0x117D07 (1146119) n=63 p%8=7 gap_from_pos_end=0x8BC7B (572539) max_idx=32768 end=0x117E85
+  off=0x117D13 (1146131) n=63 p%8=3 gap_from_pos_end=0x8BC87 (572551) max_idx=32768 end=0x117E91
+  off=0x117D1F (1146143) n=63 p%8=7 gap_from_pos_end=0x8BC93 (572563) max_idx=32768 end=0x117E9D
+  off=0x117D2B (1146155) n=63 p%8=3 gap_from_pos_end=0x8BC9F (572575) max_idx=32768 end=0x117EA9
+  off=0x117D37 (1146167) n=63 p%8=7 gap_from_pos_end=0x8BCAB (572587) max_idx=32768 end=0x117EB5
+  off=0x117D43 (1146179) n=63 p%8=3 gap_from_pos_end=0x8BCB7 (572599) max_idx=32768 end=0x117EC1
+  off=0x117D4F (1146191) n=63 p%8=7 gap_from_pos_end=0x8BCC3 (572611) max_idx=32768 end=0x117ECD
+  off=0x117D5B (1146203) n=63 p%8=3 gap_from_pos_end=0x8BCCF (572623) max_idx=32768 end=0x117ED9
+  off=0x117D67 (1146215) n=63 p%8=7 gap_from_pos_end=0x8BCDB (572635) max_idx=32768 end=0x117EE5
+  off=0x117D73 (1146227) n=63 p%8=3 gap_from_pos_end=0x8BCE7 (572647) max_idx=32768 end=0x117EF1
+  off=0x117D7F (1146239) n=63 p%8=7 gap_from_pos_end=0x8BCF3 (572659) max_idx=32768 end=0x117EFD
+  off=0x117D8B (1146251) n=63 p%8=3 gap_from_pos_end=0x8BCFF (572671) max_idx=32768 end=0x117F09
+  off=0x117D97 (1146263) n=63 p%8=7 gap_from_pos_end=0x8BD0B (572683) max_idx=32768 end=0x117F15
+  off=0x117DA3 (1146275) n=63 p%8=3 gap_from_pos_end=0x8BD17 (572695) max_idx=32768 end=0x117F21
+  off=0x117DAF (1146287) n=63 p%8=7 gap_from_pos_end=0x8BD23 (572707) max_idx=32768 end=0x117F2D
+  off=0x117DBB (1146299) n=63 p%8=3 gap_from_pos_end=0x8BD2F (572719) max_idx=32768 end=0x117F39
+  off=0x117DC7 (1146311) n=63 p%8=7 gap_from_pos_end=0x8BD3B (572731) max_idx=32768 end=0x117F45
+  off=0x117DD3 (1146323) n=63 p%8=3 gap_from_pos_end=0x8BD47 (572743) max_idx=32768 end=0x117F51
+  off=0x117DDF (1146335) n=63 p%8=7 gap_from_pos_end=0x8BD53 (572755) max_idx=32768 end=0x117F5D
+  off=0x117DEB (1146347) n=63 p%8=3 gap_from_pos_end=0x8BD5F (572767) max_idx=32768 end=0x117F69
+  off=0x117DF7 (1146359) n=63 p%8=7 gap_from_pos_end=0x8BD6B (572779) max_idx=32768 end=0x117F75
+  off=0x117E03 (1146371) n=63 p%8=3 gap_from_pos_end=0x8BD77 (572791) max_idx=32768 end=0x117F81
+  off=0x117E0F (1146383) n=63 p%8=7 gap_from_pos_end=0x8BD83 (572803) max_idx=32768 end=0x117F8D
+  off=0x117E1B (1146395) n=63 p%8=3 gap_from_pos_end=0x8BD8F (572815) max_idx=32768 end=0x117F99
+  off=0x117E27 (1146407) n=63 p%8=7 gap_from_pos_end=0x8BD9B (572827) max_idx=32768 end=0x117FA5
+  off=0x117E33 (1146419) n=63 p%8=3 gap_from_pos_end=0x8BDA7 (572839) max_idx=32768 end=0x117FB1
+  off=0x117E3F (1146431) n=63 p%8=7 gap_from_pos_end=0x8BDB3 (572851) max_idx=32768 end=0x117FBD
+  off=0x117E4B (1146443) n=63 p%8=3 gap_from_pos_end=0x8BDBF (572863) max_idx=32768 end=0x117FC9
+  off=0x117E57 (1146455) n=63 p%8=7 gap_from_pos_end=0x8BDCB (572875) max_idx=32768 end=0x117FD5
+  off=0x117E63 (1146467) n=63 p%8=3 gap_from_pos_end=0x8BDD7 (572887) max_idx=32768 end=0x117FE1
+  off=0x117E6F (1146479) n=63 p%8=7 gap_from_pos_end=0x8BDE3 (572899) max_idx=32768 end=0x117FED
+  off=0x117E7B (1146491) n=63 p%8=3 gap_from_pos_end=0x8BDEF (572911) max_idx=32768 end=0x117FF9
+  off=0x117E87 (1146503) n=63 p%8=7 gap_from_pos_end=0x8BDFB (572923) max_idx=32768 end=0x118005
+  off=0x117E93 (1146515) n=63 p%8=3 gap_from_pos_end=0x8BE07 (572935) max_idx=32768 end=0x118011
+  off=0x117E9F (1146527) n=63 p%8=7 gap_from_pos_end=0x8BE13 (572947) max_idx=32768 end=0x11801D
+  off=0x117EAB (1146539) n=63 p%8=3 gap_from_pos_end=0x8BE1F (572959) max_idx=32768 end=0x118029
+  off=0x117EB7 (1146551) n=63 p%8=7 gap_from_pos_end=0x8BE2B (572971) max_idx=32768 end=0x118035
+  off=0x117EC3 (1146563) n=63 p%8=3 gap_from_pos_end=0x8BE37 (572983) max_idx=32768 end=0x118041
+  off=0x117ECF (1146575) n=63 p%8=7 gap_from_pos_end=0x8BE43 (572995) max_idx=32768 end=0x11804D
+  off=0x117EDB (1146587) n=63 p%8=3 gap_from_pos_end=0x8BE4F (573007) max_idx=32768 end=0x118059
+  off=0x117EE7 (1146599) n=63 p%8=7 gap_from_pos_end=0x8BE5B (573019) max_idx=32768 end=0x118065
+  off=0x117EF3 (1146611) n=63 p%8=3 gap_from_pos_end=0x8BE67 (573031) max_idx=32768 end=0x118071
+  off=0x117EFF (1146623) n=63 p%8=7 gap_from_pos_end=0x8BE73 (573043) max_idx=32768 end=0x11807D
+  off=0x117F0B (1146635) n=63 p%8=3 gap_from_pos_end=0x8BE7F (573055) max_idx=32768 end=0x118089
+  off=0x117F17 (1146647) n=63 p%8=7 gap_from_pos_end=0x8BE8B (573067) max_idx=32768 end=0x118095
+  off=0x117F23 (1146659) n=63 p%8=3 gap_from_pos_end=0x8BE97 (573079) max_idx=32768 end=0x1180A1
+  off=0x117F2F (1146671) n=63 p%8=7 gap_from_pos_end=0x8BEA3 (573091) max_idx=32768 end=0x1180AD
+  off=0x117F3B (1146683) n=63 p%8=3 gap_from_pos_end=0x8BEAF (573103) max_idx=32768 end=0x1180B9
+  off=0x117F47 (1146695) n=63 p%8=7 gap_from_pos_end=0x8BEBB (573115) max_idx=32768 end=0x1180C5
+sm=7: sum of all candidate counts = 43795 vs fc=36850
+### data\effect\effectmodel\test_jianzhen.mesh  size=2315476
+vc=55864 fc=65942 sm=1 ver=1 tag=b'mesh' banner=False
+expect single-block size = 0x118 + vc*12 + vc*20 + 4 + fc*6 = 2183584
+pos_end=0xA3BB8  static_idx=0x1B4818  EOF-hint
+hdr u32 @0x8C.. : [0x8c]55864, [0x90]65942, [0x94]1, [0x98]0, [0x9c]0, [0xa0]0, [0xa4]0, [0xa8]0, [0xac]0, [0xb0]0, [0xb4]0, [0xb8]0, [0xbc]0, [0xc0]0, [0xc4]0, [0xc8]0, [0xcc]0, [0xd0]0, [0xd4]0, [0xd8]0, [0xdc]0, [0xe0]0, [0xe4]0, [0xe8]0, [0xec]0, [0xf0]0, [0xf4]0
+hdr nonzero u16 @0x98..: [0x114]274
+tail 64B of file: 2d da 2f da 30 da 2e da 2e da 2d da 2f da 30 da 2f da 31 da 31 da 32 da 30 da 20 da 1f da 33 da 32 da 31 da 34 da 34 da 35 da 32 da 36 da 37 da 35 da 35 da 34 da 36 da ff ff ff ff 00 00 00 00
+candidates >=0xA3BB8: 253
+  off=0x14D371 (1364849) n=256 p%8=1 gap_from_pos_end=0xA97B9 (694201) max_idx=512 end=0x14D975
+  off=0x14D372 (1364850) n=1 p%8=2 gap_from_pos_end=0xA97BA (694202) max_idx=0 end=0x14D37C
+  off=0x14D7F3 (1366003) n=256 p%8=3 gap_from_pos_end=0xA9C3B (695355) max_idx=512 end=0x14DDF7
+  off=0x14D7F4 (1366004) n=1 p%8=4 gap_from_pos_end=0xA9C3C (695356) max_idx=0 end=0x14D7FE
+  off=0x14F7B5 (1374133) n=256 p%8=5 gap_from_pos_end=0xABBFD (703485) max_idx=512 end=0x14FDB9
+  off=0x14F7B6 (1374134) n=1 p%8=6 gap_from_pos_end=0xABBFE (703486) max_idx=0 end=0x14F7C0
+  off=0x151669 (1381993) n=256 p%8=1 gap_from_pos_end=0xADAB1 (711345) max_idx=2048 end=0x151C6D
+  off=0x15166A (1381994) n=1 p%8=2 gap_from_pos_end=0xADAB2 (711346) max_idx=0 end=0x151674
+  off=0x1518CB (1382603) n=256 p%8=3 gap_from_pos_end=0xADD13 (711955) max_idx=4096 end=0x151ECF
+  off=0x1518CC (1382604) n=1 p%8=4 gap_from_pos_end=0xADD14 (711956) max_idx=0 end=0x1518D6
+  off=0x15190D (1382669) n=1024 p%8=5 gap_from_pos_end=0xADD55 (712021) max_idx=4096 end=0x153111
+  off=0x15190E (1382670) n=4 p%8=6 gap_from_pos_end=0xADD56 (712022) max_idx=8 end=0x15192A
+  off=0x15228F (1385103) n=512 p%8=7 gap_from_pos_end=0xAE6D7 (714455) max_idx=2048 end=0x152E93
+  off=0x152290 (1385104) n=2 p%8=0 gap_from_pos_end=0xAE6D8 (714456) max_idx=0 end=0x1522A0
+  off=0x1522C9 (1385161) n=256 p%8=1 gap_from_pos_end=0xAE711 (714513) max_idx=2048 end=0x1528CD
+  off=0x1522CA (1385162) n=1 p%8=2 gap_from_pos_end=0xAE712 (714514) max_idx=2 end=0x1522D4
+  off=0x1522CF (1385167) n=256 p%8=7 gap_from_pos_end=0xAE717 (714519) max_idx=2048 end=0x1528D3
+  off=0x1522D0 (1385168) n=1 p%8=0 gap_from_pos_end=0xAE718 (714520) max_idx=0 end=0x1522DA
+  off=0x1522DB (1385179) n=512 p%8=3 gap_from_pos_end=0xAE723 (714531) max_idx=2048 end=0x152EDF
+  off=0x1522DC (1385180) n=2 p%8=4 gap_from_pos_end=0xAE724 (714532) max_idx=2 end=0x1522EC
+  off=0x1522E1 (1385185) n=512 p%8=1 gap_from_pos_end=0xAE729 (714537) max_idx=2048 end=0x152EE5
+  off=0x1522E2 (1385186) n=2 p%8=2 gap_from_pos_end=0xAE72A (714538) max_idx=0 end=0x1522F2
+  off=0x152313 (1385235) n=256 p%8=3 gap_from_pos_end=0xAE75B (714587) max_idx=2048 end=0x152917
+  off=0x152314 (1385236) n=1 p%8=4 gap_from_pos_end=0xAE75C (714588) max_idx=2 end=0x15231E
+  off=0x15231B (1385243) n=512 p%8=3 gap_from_pos_end=0xAE763 (714595) max_idx=2048 end=0x152F1F
+  off=0x15231C (1385244) n=2 p%8=4 gap_from_pos_end=0xAE764 (714596) max_idx=0 end=0x15232C
+  off=0x15232D (1385261) n=512 p%8=5 gap_from_pos_end=0xAE775 (714613) max_idx=2048 end=0x152F31
+  off=0x15232E (1385262) n=2 p%8=6 gap_from_pos_end=0xAE776 (714614) max_idx=0 end=0x15233E
+  off=0x152347 (1385287) n=1024 p%8=7 gap_from_pos_end=0xAE78F (714639) max_idx=2048 end=0x153B4B
+  off=0x152348 (1385288) n=4 p%8=0 gap_from_pos_end=0xAE790 (714640) max_idx=4 end=0x152364
+  off=0x15234F (1385295) n=512 p%8=7 gap_from_pos_end=0xAE797 (714647) max_idx=2048 end=0x152F53
+  off=0x152350 (1385296) n=2 p%8=0 gap_from_pos_end=0xAE798 (714648) max_idx=2 end=0x152360
+  off=0x15235B (1385307) n=256 p%8=3 gap_from_pos_end=0xAE7A3 (714659) max_idx=2048 end=0x15295F
+  off=0x15235C (1385308) n=1 p%8=4 gap_from_pos_end=0xAE7A4 (714660) max_idx=4 end=0x152366
+  off=0x152363 (1385315) n=1024 p%8=3 gap_from_pos_end=0xAE7AB (714667) max_idx=2048 end=0x153B67
+  off=0x152364 (1385316) n=4 p%8=4 gap_from_pos_end=0xAE7AC (714668) max_idx=4 end=0x152380
+  off=0x15236D (1385325) n=1024 p%8=5 gap_from_pos_end=0xAE7B5 (714677) max_idx=2048 end=0x153B71
+  off=0x15236E (1385326) n=4 p%8=6 gap_from_pos_end=0xAE7B6 (714678) max_idx=4 end=0x15238A
+  off=0x152373 (1385331) n=1024 p%8=3 gap_from_pos_end=0xAE7BB (714683) max_idx=2048 end=0x153B77
+  off=0x152374 (1385332) n=4 p%8=4 gap_from_pos_end=0xAE7BC (714684) max_idx=4 end=0x152390
+  off=0x15237D (1385341) n=256 p%8=5 gap_from_pos_end=0xAE7C5 (714693) max_idx=2048 end=0x152981
+  off=0x15237E (1385342) n=1 p%8=6 gap_from_pos_end=0xAE7C6 (714694) max_idx=1 end=0x152388
+  off=0x152385 (1385349) n=256 p%8=5 gap_from_pos_end=0xAE7CD (714701) max_idx=2048 end=0x152989
+  off=0x152386 (1385350) n=1 p%8=6 gap_from_pos_end=0xAE7CE (714702) max_idx=1 end=0x152390
+  off=0x15238B (1385355) n=256 p%8=3 gap_from_pos_end=0xAE7D3 (714707) max_idx=2048 end=0x15298F
+  off=0x15238C (1385356) n=1 p%8=4 gap_from_pos_end=0xAE7D4 (714708) max_idx=0 end=0x152396
+  off=0x15251F (1385759) n=2048 p%8=7 gap_from_pos_end=0xAE967 (715111) max_idx=2048 end=0x155523
+  off=0x152520 (1385760) n=8 p%8=0 gap_from_pos_end=0xAE968 (715112) max_idx=0 end=0x152554
+  off=0x152559 (1385817) n=256 p%8=1 gap_from_pos_end=0xAE9A1 (715169) max_idx=1024 end=0x152B5D
+  off=0x15255A (1385818) n=1 p%8=2 gap_from_pos_end=0xAE9A2 (715170) max_idx=2 end=0x152564
+  off=0x15255F (1385823) n=256 p%8=7 gap_from_pos_end=0xAE9A7 (715175) max_idx=1024 end=0x152B63
+  off=0x152560 (1385824) n=1 p%8=0 gap_from_pos_end=0xAE9A8 (715176) max_idx=0 end=0x15256A
+  off=0x15256B (1385835) n=512 p%8=3 gap_from_pos_end=0xAE9B3 (715187) max_idx=1024 end=0x15316F
+  off=0x15256C (1385836) n=2 p%8=4 gap_from_pos_end=0xAE9B4 (715188) max_idx=2 end=0x15257C
+  off=0x152571 (1385841) n=512 p%8=1 gap_from_pos_end=0xAE9B9 (715193) max_idx=1024 end=0x153175
+  off=0x152572 (1385842) n=2 p%8=2 gap_from_pos_end=0xAE9BA (715194) max_idx=0 end=0x152582
+  off=0x1525A3 (1385891) n=256 p%8=3 gap_from_pos_end=0xAE9EB (715243) max_idx=1024 end=0x152BA7
+  off=0x1525A4 (1385892) n=1 p%8=4 gap_from_pos_end=0xAE9EC (715244) max_idx=2 end=0x1525AE
+  off=0x1525AB (1385899) n=512 p%8=3 gap_from_pos_end=0xAE9F3 (715251) max_idx=1024 end=0x1531AF
+  off=0x1525AC (1385900) n=2 p%8=4 gap_from_pos_end=0xAE9F4 (715252) max_idx=0 end=0x1525BC
+  off=0x1525BD (1385917) n=512 p%8=5 gap_from_pos_end=0xAEA05 (715269) max_idx=1024 end=0x1531C1
+  off=0x1525BE (1385918) n=2 p%8=6 gap_from_pos_end=0xAEA06 (715270) max_idx=0 end=0x1525CE
+  off=0x1525D7 (1385943) n=1024 p%8=7 gap_from_pos_end=0xAEA1F (715295) max_idx=1024 end=0x153DDB
+  off=0x1525D8 (1385944) n=4 p%8=0 gap_from_pos_end=0xAEA20 (715296) max_idx=4 end=0x1525F4
+  off=0x1525DF (1385951) n=512 p%8=7 gap_from_pos_end=0xAEA27 (715303) max_idx=1024 end=0x1531E3
+  off=0x1525E0 (1385952) n=2 p%8=0 gap_from_pos_end=0xAEA28 (715304) max_idx=2 end=0x1525F0
+  off=0x1525EB (1385963) n=256 p%8=3 gap_from_pos_end=0xAEA33 (715315) max_idx=1024 end=0x152BEF
+  off=0x1525EC (1385964) n=1 p%8=4 gap_from_pos_end=0xAEA34 (715316) max_idx=4 end=0x1525F6
+  off=0x1525F3 (1385971) n=1024 p%8=3 gap_from_pos_end=0xAEA3B (715323) max_idx=1024 end=0x153DF7
+  off=0x1525F4 (1385972) n=4 p%8=4 gap_from_pos_end=0xAEA3C (715324) max_idx=4 end=0x152610
+  off=0x1525FD (1385981) n=1024 p%8=5 gap_from_pos_end=0xAEA45 (715333) max_idx=1024 end=0x153E01
+  off=0x1525FE (1385982) n=4 p%8=6 gap_from_pos_end=0xAEA46 (715334) max_idx=4 end=0x15261A
+  off=0x152603 (1385987) n=1024 p%8=3 gap_from_pos_end=0xAEA4B (715339) max_idx=1024 end=0x153E07
+  off=0x152604 (1385988) n=4 p%8=4 gap_from_pos_end=0xAEA4C (715340) max_idx=4 end=0x152620
+  off=0x15260D (1385997) n=256 p%8=5 gap_from_pos_end=0xAEA55 (715349) max_idx=1024 end=0x152C11
+  off=0x15260E (1385998) n=1 p%8=6 gap_from_pos_end=0xAEA56 (715350) max_idx=1 end=0x152618
+  off=0x152615 (1386005) n=256 p%8=5 gap_from_pos_end=0xAEA5D (715357) max_idx=1024 end=0x152C19
+  off=0x152616 (1386006) n=1 p%8=6 gap_from_pos_end=0xAEA5E (715358) max_idx=1 end=0x152620
+  off=0x15261B (1386011) n=256 p%8=3 gap_from_pos_end=0xAEA63 (715363) max_idx=1024 end=0x152C1F
+  off=0x15261C (1386012) n=1 p%8=4 gap_from_pos_end=0xAEA64 (715364) max_idx=0 end=0x152626
+sm=1: sum of all candidate counts = 575735 vs fc=65942
+### mobile_maps_source\w1351_bmy_shanshi_009.mesh  size=53336
+vc=1064 fc=1311 sm=2 ver=1 tag=b'mesh' banner=False
+expect single-block size = 0x118 + vc*12 + vc*20 + 4 + fc*6 = 42198
+pos_end=0x32F8  static_idx=0x8618  EOF-hint
+hdr u32 @0x8C.. : [0x8c]1064, [0x90]1311, [0x94]2, [0x98]0, [0x9c]0, [0xa0]0, [0xa4]0, [0xa8]0, [0xac]0, [0xb0]0, [0xb4]0, [0xb8]0, [0xbc]0, [0xc0]0, [0xc4]0, [0xc8]0, [0xcc]0, [0xd0]0, [0xd4]0, [0xd8]0, [0xdc]0, [0xe0]0, [0xe4]0, [0xe8]0, [0xec]0, [0xf0]0, [0xf4]0
+hdr nonzero u16 @0x98..: [0x114]530
+tail 64B of file: 19 04 18 04 1d 04 1e 04 18 04 18 04 17 04 1d 04 1e 04 1f 04 1b 04 1b 04 18 04 1e 04 20 04 21 04 22 04 22 04 23 04 20 04 23 04 22 04 24 04 24 04 25 04 23 04 25 04 24 04 26 04 26 04 27 04 25 04
+candidates >=0x32F8: 4
+  off=0xB196 (45462) n=1262 p%8=6 gap_from_pos_end=0x7E9E (32414) max_idx=1004 end=0xCF2E
+  off=0xB19A (45466) n=49 p%8=2 gap_from_pos_end=0x7EA2 (32418) max_idx=63 end=0xB2C4
+  off=0xB1BC (45500) n=6 p%8=4 gap_from_pos_end=0x7EC4 (32452) max_idx=19 end=0xB1E4
+  off=0xB1F0 (45552) n=23 p%8=0 gap_from_pos_end=0x7EF8 (32504) max_idx=48 end=0xB27E
+sm=2: sum of all candidate counts = 1340 vs fc=1311
+### mobile_maps_source\w1351_bpzd_dashubaoshi_001.mesh  size=33128
+vc=739 fc=409 sm=4 ver=1 tag=b'mesh' banner=False
+expect single-block size = 0x118 + vc*12 + vc*20 + 4 + fc*6 = 26386
+pos_end=0x23BC  static_idx=0x5D78  EOF-hint
+hdr u32 @0x8C.. : [0x8c]739, [0x90]409, [0x94]4, [0x98]0, [0x9c]0, [0xa0]0, [0xa4]0, [0xa8]0, [0xac]0, [0xb0]0, [0xb4]0, [0xb8]0, [0xbc]0, [0xc0]0, [0xc4]0, [0xc8]0, [0xcc]0, [0xd0]0, [0xd4]0, [0xd8]0, [0xdc]0, [0xe0]0, [0xe4]0, [0xe8]0, [0xec]0, [0xf0]0, [0xf4]0
+hdr nonzero u16 @0x98..: [0x114]530
+tail 64B of file: d1 02 d2 02 d1 02 d0 02 d3 02 d4 02 d5 02 d6 02 d5 02 d4 02 d7 02 bb 02 d8 02 b9 02 d8 02 bb 02 d9 02 da 02 db 02 dc 02 db 02 da 02 dd 02 de 02 df 02 e0 02 de 02 e1 02 df 02 de 02 e2 02 e1 02
+candidates >=0x23BC: 5
+  off=0x77C2 (30658) n=138 p%8=2 gap_from_pos_end=0x5406 (21510) max_idx=233 end=0x7B02
+  off=0x77C6 (30662) n=110 p%8=6 gap_from_pos_end=0x540A (21514) max_idx=179 end=0x7A5E
+  off=0x77CA (30666) n=108 p%8=2 gap_from_pos_end=0x540E (21518) max_idx=175 end=0x7A56
+  off=0x77CE (30670) n=53 p%8=6 gap_from_pos_end=0x5412 (21522) max_idx=96 end=0x7910
+  off=0x78CC (30924) n=83 p%8=4 gap_from_pos_end=0x5510 (21776) max_idx=213 end=0x7AC2
+sm=4: sum of all candidate counts = 492 vs fc=409
+### mobile_maps_source\w1351_bpzd_dasongshuduan_001.mesh  size=12096
+vc=259 fc=180 sm=4 ver=1 tag=b'mesh' banner=False
+expect single-block size = 0x118 + vc*12 + vc*20 + 4 + fc*6 = 9652
+pos_end=0xD3C  static_idx=0x2178  EOF-hint
+hdr u32 @0x8C.. : [0x8c]259, [0x90]180, [0x94]4, [0x98]0, [0x9c]0, [0xa0]0, [0xa4]0, [0xa8]0, [0xac]0, [0xb0]0, [0xb4]0, [0xb8]0, [0xbc]0, [0xc0]0, [0xc4]0, [0xc8]0, [0xcc]0, [0xd0]0, [0xd4]0, [0xd8]0, [0xdc]0, [0xe0]0, [0xe4]0, [0xe8]0, [0xec]0, [0xf0]0, [0xf4]0
+hdr nonzero u16 @0x98..: [0x114]530
+tail 64B of file: f3 00 f0 00 f4 00 f5 00 f6 00 f7 00 f8 00 f9 00 f9 00 fa 00 f7 00 e2 00 e3 00 fb 00 fb 00 fc 00 e2 00 f6 00 fd 00 f4 00 fe 00 ff 00 00 01 ff 00 01 01 00 01 01 01 02 01 00 01 00 01 02 01 fe 00
+candidates >=0xD3C: 5
+  off=0x2AF8 (11000) n=97 p%8=0 gap_from_pos_end=0x1DBC (7612) max_idx=140 end=0x2D42
+  off=0x2AFC (11004) n=60 p%8=4 gap_from_pos_end=0x1DC0 (7616) max_idx=102 end=0x2C68
+  off=0x2B00 (11008) n=19 p%8=0 gap_from_pos_end=0x1DC4 (7620) max_idx=24 end=0x2B76
+  off=0x2B04 (11012) n=4 p%8=4 gap_from_pos_end=0x1DC8 (7624) max_idx=6 end=0x2B20
+  off=0x2B10 (11024) n=3 p%8=0 gap_from_pos_end=0x1DD4 (7636) max_idx=8 end=0x2B26
+sm=4: sum of all candidate counts = 183 vs fc=180
+### mobile_maps_source\w1351_bpzd_dasongshujiao_001.mesh  size=14108
+vc=301 fc=222 sm=3 ver=1 tag=b'mesh' banner=False
+expect single-block size = 0x118 + vc*12 + vc*20 + 4 + fc*6 = 11248
+pos_end=0xF34  static_idx=0x26B8  EOF-hint
+hdr u32 @0x8C.. : [0x8c]301, [0x90]222, [0x94]3, [0x98]0, [0x9c]0, [0xa0]0, [0xa4]0, [0xa8]0, [0xac]0, [0xb0]0, [0xb4]0, [0xb8]0, [0xbc]0, [0xc0]0, [0xc4]0, [0xc8]0, [0xcc]0, [0xd0]0, [0xd4]0, [0xd8]0, [0xdc]0, [0xe0]0, [0xe4]0, [0xe8]0, [0xec]0, [0xf0]0, [0xf4]0
+hdr nonzero u16 @0x98..: [0x114]530
+tail 64B of file: 21 01 20 01 21 01 22 01 20 01 20 01 22 01 1e 01 23 01 24 01 25 01 24 01 26 01 25 01 26 01 27 01 25 01 25 01 27 01 23 01 28 01 29 01 2a 01 2a 01 29 01 2b 01 2b 01 29 01 2c 01 29 01 28 01 2c 01
+candidates >=0xF34: 4
+  off=0x31DC (12764) n=134 p%8=4 gap_from_pos_end=0x22A8 (8872) max_idx=190 end=0x3504
+  off=0x31E0 (12768) n=8 p%8=0 gap_from_pos_end=0x22AC (8876) max_idx=80 end=0x3214
+  off=0x31E4 (12772) n=80 p%8=4 gap_from_pos_end=0x22B0 (8880) max_idx=124 end=0x33C8
+  off=0x31F0 (12784) n=3 p%8=0 gap_from_pos_end=0x22BC (8892) max_idx=8 end=0x3206
+sm=3: sum of all candidate counts = 225 vs fc=222
+### mobile_maps_source\w1351_bpzd_gouhuoyuanguo_001.mesh  size=26500
+vc=578 fc=386 sm=3 ver=1 tag=b'mesh' banner=False
+expect single-block size = 0x118 + vc*12 + vc*20 + 4 + fc*6 = 21096
+pos_end=0x1C30  static_idx=0x4958  EOF-hint
+hdr u32 @0x8C.. : [0x8c]578, [0x90]386, [0x94]3, [0x98]0, [0x9c]0, [0xa0]0, [0xa4]0, [0xa8]0, [0xac]0, [0xb0]0, [0xb4]0, [0xb8]0, [0xbc]0, [0xc0]0, [0xc4]0, [0xc8]0, [0xcc]0, [0xd0]0, [0xd4]0, [0xd8]0, [0xdc]0, [0xe0]0, [0xe4]0, [0xe8]0, [0xec]0, [0xf0]0, [0xf4]0
+hdr nonzero u16 @0x98..: [0x114]530
+tail 64B of file: 33 02 30 02 34 02 35 02 36 02 36 02 37 02 34 02 38 02 39 02 3a 02 3a 02 3b 02 38 02 3c 02 3d 02 33 02 33 02 32 02 3c 02 36 02 3e 02 3f 02 3f 02 37 02 36 02 3a 02 40 02 41 02 41 02 3b 02 3a 02
+candidates >=0x1C30: 3
+  off=0x5E6C (24172) n=66 p%8=4 gap_from_pos_end=0x423C (16956) max_idx=194 end=0x5FFC
+  off=0x5E70 (24176) n=194 p%8=0 gap_from_pos_end=0x4240 (16960) max_idx=281 end=0x6300
+  off=0x5E74 (24180) n=126 p%8=4 gap_from_pos_end=0x4244 (16964) max_idx=190 end=0x616C
+sm=3: sum of all candidate counts = 386 vs fc=386
+### mobile_maps_source\w1351_bpzd_shicaojiazi_001.mesh  size=18364
+vc=393 fc=294 sm=3 ver=1 tag=b'mesh' banner=False
+expect single-block size = 0x118 + vc*12 + vc*20 + 4 + fc*6 = 14624
+pos_end=0x1384  static_idx=0x3238  EOF-hint
+hdr u32 @0x8C.. : [0x8c]393, [0x90]294, [0x94]3, [0x98]0, [0x9c]0, [0xa0]0, [0xa4]0, [0xa8]0, [0xac]0, [0xb0]0, [0xb4]0, [0xb8]0, [0xbc]0, [0xc0]0, [0xc4]0, [0xc8]0, [0xcc]0, [0xd0]0, [0xd4]0, [0xd8]0, [0xdc]0, [0xe0]0, [0xe4]0, [0xe8]0, [0xec]0, [0xf0]0, [0xf4]0
+hdr nonzero u16 @0x98..: [0x114]530
+tail 64B of file: 7f 01 6a 01 6e 01 6d 01 80 01 80 01 82 01 6e 01 71 01 74 01 83 01 83 01 84 01 71 01 7c 01 7b 01 85 01 85 01 86 01 7c 01 7b 01 7e 01 87 01 87 01 88 01 7b 01 6b 01 6a 01 6d 01 6d 01 70 01 6b 01
+candidates >=0x1384: 4
+  off=0x40CC (16588) n=36 p%8=4 gap_from_pos_end=0x2D48 (11592) max_idx=152 end=0x41A8
+  off=0x40D0 (16592) n=106 p%8=0 gap_from_pos_end=0x2D4C (11596) max_idx=152 end=0x4350
+  off=0x40D4 (16596) n=152 p%8=4 gap_from_pos_end=0x2D50 (11600) max_idx=215 end=0x4468
+  off=0x40E0 (16608) n=3 p%8=0 gap_from_pos_end=0x2D5C (11612) max_idx=10 end=0x40F6
+sm=3: sum of all candidate counts = 297 vs fc=294

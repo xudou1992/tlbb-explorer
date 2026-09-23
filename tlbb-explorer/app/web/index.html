@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b0e10" />
+    <title>天龙八部·归来 · 资源浏览器</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#list">跳到资产列表</a>
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo" aria-hidden="true"><i></i></span>
+        <div>
+          <h1>资源浏览器</h1>
+          <p id="lead">只读打开客户端资源</p>
+        </div>
+      </div>
+      <div class="top-status">
+        <span class="pill"><i class="dot"></i>只读</span>
+        <span class="reading" id="progressText" aria-live="polite">正在读取…</span>
+        <i class="bar" aria-hidden="true"><b id="bar"></b></i>
+        <button type="button" id="openHealth" class="ghost">库状态</button>
+      </div>
+    </header>
+
+    <main class="workspace" id="workspace">
+      <!-- 01 筛选：只回答「我要找哪一批」 -->
+      <aside class="pane rail">
+        <label class="field search">
+          <span>找资产</span>
+          <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="中文名或客户端原名，如：曹霜、w1351…" />
+        </label>
+        <p class="hint" id="words" aria-live="polite"></p>
+
+        <section class="group"><h2>类型</h2><div class="chips" id="kinds"></div></section>
+        <section class="group"><h2>用途</h2><div class="chips" id="scenarios"></div></section>
+        <section class="group"><h2>证据等级</h2><div class="chips" id="grades"></div></section>
+
+        <label class="check"><input id="onlyImage" type="checkbox" /><span>只看贴图名能对上的</span></label>
+        <button type="button" id="unnamed" class="ghost wide">看未命名资源</button>
+
+        <dl class="rail-stats" id="stats"></dl>
+        <p class="rail-note"><b>为什么有些地方是「缺」</b><br />客户端只保存名称，没有路径，这是客户端的设计，不是解析失败。</p>
+      </aside>
+
+      <!-- 02 列表：一条资产一行 -->
+      <section class="pane list">
+        <div class="list-head">
+          <span id="count" aria-live="polite">—</span>
+          <button type="button" id="reset" class="ghost">清空</button>
+        </div>
+        <div id="rows" class="rows"></div>
+        <p class="empty" id="empty" hidden><strong>没有符合条件的资产</strong><span>换个关键词，或点「清空」。</span></p>
+      </section>
+
+      <!-- 03 详情：一条资产说清楚 -->
+      <section class="pane detail" id="detailPane">
+        <div class="empty-guide" id="guide">
+          <strong>从左边挑一条资产</strong>
+          <p>这里会说清：它是什么、由什么组成、缺了什么、还能看什么。</p>
+        </div>
+
+        <div id="body" hidden>
+          <header class="d-head">
+            <div>
+              <h2 id="dName"></h2>
+              <p id="dCn" class="d-cn"></p>
+            </div>
+            <span class="grade" id="dGrade"></span>
+          </header>
+          <p class="d-sum" id="dSum"></p>
+
+          <section class="d-sec" id="secAbs" hidden>
+            <h3>有什么 · 缺什么</h3>
+            <ul class="abs" id="abs"></ul>
+          </section>
+
+          <section class="d-sec" id="secMesh" hidden>
+            <h3>立体模型</h3>
+            <div class="mesh-head">
+              <p id="meshMeta" class="dim"></p>
+              <div class="chips" id="meshPick"></div>
+            </div>
+            <div class="mesh-stage">
+              <canvas id="meshCanvas" aria-label="立体模型预览"></canvas>
+              <p id="meshState" class="mesh-state" hidden></p>
+              <p class="mesh-hint">按住拖动旋转 · 滚轮远近 · 双击回到正面</p>
+            </div>
+            <div id="meshTech" class="mesh-tech"></div>
+          </section>
+
+          <section class="d-sec" id="secPv" hidden>
+            <h3>图片 <em id="pvCount"></em></h3>
+            <div class="pvgrid" id="pvGrid"></div>
+            <p class="dim" id="pvNote"></p>
+          </section>
+
+          <section class="d-sec" id="secTree">
+            <h3>由什么组成 <em id="treeCount"></em></h3>
+            <div id="tree"></div>
+          </section>
+
+          <section class="d-sec" id="secGap">
+            <h3>缺什么 <em id="gapCount"></em></h3>
+            <ul class="lines" id="gaps"></ul>
+          </section>
+
+          <section class="d-sec" id="secCan">
+            <h3>还能看什么</h3>
+            <div class="row" id="canDo"></div>
+          </section>
+
+          <details class="d-raw">
+            <summary>技术信息（给排查的人看）</summary>
+            <dl class="tech" id="tech"></dl>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <!-- 库状态：整屏浮层，看完退回资产页 -->
+    <section class="overlay" id="health" hidden aria-label="库状态">
+      <div class="overlay-head">
+        <h2>库状态</h2>
+        <button type="button" id="closeHealth" class="ghost">返回资产</button>
+      </div>
+      <div id="healthBody"></div>
+    </section>
+
+    <footer class="app-footer">
+      <span>名称一律保持客户端原文</span>
+      <span>不自动猜测资源之间的关系</span>
+    </footer>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

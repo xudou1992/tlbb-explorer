@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tlbb.local/contracts/VersionDiff.schema.json",
+  "title": "版本比较结果（跨快照差异，基于 asset_fingerprint 分层）",
+  "description": "两份版本快照（AssetReport 的 版本快照文档）逐资产比对的结果。核心可表达性要求：区分 新增/删除/变更/仅名称变化，并且必须能区分『真实内容变化』与『指纹/打包变化』——靠 asset_fingerprint 表的八列 fp_*（fp_asset/fp_model/fp_skeleton/fp_mesh/fp_material/fp_animation/fp_texture/fp_names）逐层判定，重打包只动打包层、不动内容层。无既有产物文件：本契约由 crosscheck.js 依据 out/versionA.json 与 versions/示例_下一版.json 现算现验。",
+  "$ref": "#/$defs/差异文档",
+  "$defs": {
+    "指纹层名": {
+      "description": "asset_fingerprint 的可比内容层列名（不含打包层：重打包对内容指纹不可见）。封闭枚举。",
+      "type": "string",
+      "enum": ["fp_asset", "fp_model", "fp_skeleton", "fp_mesh", "fp_material", "fp_animation", "fp_texture", "fp_names"]
+    },
+    "指纹值": {
+      "description": "某指纹列取值：16 位十六进制，或 DB 哨兵 '-'（该层无内容，如 fp_texture 实测 8512/8537 为 '-'）。注意不是 null——入 ingest 时须把 null 归一为 '-'，反之读到 '-' 不得当成有指纹。",
+      "type": "string",
+      "pattern": "^([0-9a-f]{16}|-)$"
+    },
+    "指纹": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fp_asset", "fp_model", "fp_skeleton", "fp_mesh", "fp_material", "fp_animation", "fp_texture", "fp_names"],
+      "description": "一行 asset_fingerprint（不含 gid/计数）。跨版本比对的逐层事实源。",
+      "properties": {
+        "fp_asset": { "$ref": "#/$defs/指纹值" },
+        "fp_model": { "$ref": "#/$defs/指纹值" },
+        "fp_skeleton": { "$ref": "#/$defs/指纹值" },
+        "fp_mesh": { "$ref": "#/$defs/指纹值" },
+        "fp_material": { "$ref": "#/$defs/指纹值" },
+        "fp_animation": { "$ref": "#/$defs/指纹值" },
+        "fp_texture": { "$ref": "#/$defs/指纹值" },
+        "fp_names": { "$ref": "#/$defs/指纹值" }
+      }
+    },
+    "差异项": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["变更类型", "判定", "名称", "种类", "内容变化", "指纹变化", "变化层"],
+      "properties": {
+        "变更类型": {
+          "description": "归一后的语义桶：新增=新资产出现；删除=资产消失；变更=内容有实质改动(结构变化/内容微调/身份证不同)；仅名称变化=只有引用名层动、内容未动；未变=相同。封闭枚举。",
+          "type": "string",
+          "enum": ["新增", "删除", "变更", "仅名称变化", "未变"]
+        },
+        "判定": {
+          "description": "identity.py compare() 的原始判定词，保留以便与两套口径对账（它是本契约的事实来源之一）。封闭枚举。",
+          "type": "string",
+          "enum": ["相同", "仅重新打包", "结构变化", "内容微调", "身份证不同", "资产消失", "新资产出现"]
+        },
+        "名称": { "type": "string", "description": "stem 原文，无茎名时回退 gid。" },
+        "种类": { "type": "string", "enum": ["npc", "player", "map-prop", "effect", "ui", "shared-material", "other"] },
+        "匹配方式": {
+          "type": "string",
+          "description": "A↔B 如何配对（compare 顺序：先唯一(路径)、再唯一(身份证)、再成员重叠）；新增项无配对记 新增。封闭枚举。",
+          "enum": ["路径", "身份证", "成员重叠", "新增"]
+        },
+        "内容变化": {
+          "type": "boolean",
+          "description": "真实内容变化的唯一判据：id_content 变，或任一 fp_<角色层> 变。false 表示内容逐字未动。"
+        },
+        "指纹变化": {
+          "type": "boolean",
+          "description": "指纹/打包层是否变：id_pack 变即真（重打包会触发）。与 内容变化 正交——『内容变化=false 且 指纹变化=true』正是重打包。"
+        },
+        "仅重新打包": { "type": "boolean", "description": "内容未变、仅存储字节/压缩变（判定=仅重新打包）。" },
+        "仅名称变化": { "type": "boolean", "description": "只有引用名层变（fp_names/id_names 动，内容层不动）。" },
+        "变化层": {
+          "type": "array", "uniqueItems": true,
+          "description": "哪些 asset_fingerprint 层发生变化；空数组=内容层全等。封闭枚举（fp_* 八列）。",
+          "items": { "$ref": "#/$defs/指纹层名" }
+        },
+        "基线指纹": { "$ref": "#/$defs/指纹", "description": "可选：A 侧逐层指纹（有 asset_fingerprint 可 join 时给出）。" },
+        "目标指纹": { "$ref": "#/$defs/指纹", "description": "可选：B 侧逐层指纹。" },
+        "说明": { "type": "string", "description": "compare() 的人类可读变化描述，如『新增 2 个动作；1 个文件内容被替换』。" }
+      },
+      "allOf": [
+        {
+          "comment": "内容变化=true 只可能出现在 变更；仅名称变化/未变/仅重新打包 不得谎称内容变化。",
+          "if": { "properties": { "内容变化": { "const": true } }, "required": ["内容变化"] },
+          "then": { "properties": { "变更类型": { "enum": ["变更", "新增"] } } }
+        },
+        {
+          "if": { "properties": { "变更类型": { "const": "未变" } }, "required": ["变更类型"] },
+          "then": { "properties": { "内容变化": { "const": false }, "变化层": { "maxItems": 0 } } }
+        },
+        {
+          "if": { "properties": { "变更类型": { "const": "仅名称变化" } }, "required": ["变更类型"] },
+          "then": { "properties": { "内容变化": { "const": false }, "变化层": { "allOf": [{ "contains": { "const": "fp_names" } }, { "maxItems": 1 }] } } }
+        },
+        {
+          "if": { "properties": { "判定": { "const": "仅重新打包" } }, "required": ["判定"] },
+          "then": { "properties": { "内容变化": { "const": false }, "仅重新打包": { "const": true } } }
+        }
+      ]
+    },
+    "差异文档": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["版本", "基线", "目标", "统计", "明细"],
+      "properties": {
+        "版本": { "type": "integer", "minimum": 1, "description": "比对算法/契约版本。" },
+        "基线": { "type": "string", "description": "A 快照标识（路径或名）。" },
+        "目标": { "type": "string", "description": "B 快照标识。" },
+        "生成时间": { "type": "string" },
+        "统计": {
+          "type": "object",
+          "description": "按 compare() 原始判定词的计数，便于与 Python 口径逐项核对。",
+          "additionalProperties": false,
+          "patternProperties": { "^(相同|仅重新打包|结构变化|内容微调|身份证不同|资产消失|新资产出现)$": { "type": "integer", "minimum": 0 } }
+        },
+        "变化计数": {
+          "type": "object",
+          "description": "按归一语义桶的计数。",
+          "additionalProperties": false,
+          "patternProperties": { "^(新增|删除|变更|仅名称变化|未变)$": { "type": "integer", "minimum": 0 } }
+        },
+        "明细": { "type": "array", "items": { "$ref": "#/$defs/差异项" } }
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+独立核对：catalog.refs(.mdl→.mesh)  vs  agent_impact_census 的定位结果
+
+口径                                   我方(tree)  DB(refs表)
+.mdl→.mesh 槽位总数                          3028       3028
+其中引用名对不到实体                                241        240
+带 >=1 个网格引用的 .mdl                        2145       2145
+全部引用都落空的 .mdl                             184        183
+
+逐条差异 1 处：
+  计数不一致 data/source/npc/quest/w1351_zuoqi_baishi/w1351_zuoqi_shizi.mdl mine bodies=1 resolved=0 | db tot=1 unres=0
+
+只在我方出现、DB 里没有该 .mdl 的引用记录: 0

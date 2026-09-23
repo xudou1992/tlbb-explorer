@@ -1,0 +1,21 @@
+=== w1351_npc_biaoche3.mdl (4728 bytes hex, 16 runs) ===
+  JBCF
+  5L;V
+  >}@h
+  }@h?l\
+  ij?u
+  >}@h
+  }@h?l\
+  R_V=7
+  %Z.?
+  GZ.?
+  R_V=7
+  %Z.?
+  ^4=w
+  p+wm
+  ?$JB
+  w1351_npc_biaoche3data/source/npc/quest/w1351_npc_biaoche3/w1351_npc_biaoche3.skeMainBodyMeshw1351_npc_biaoche3.meshw1351_npc_biaoche3.mtlbaoxiang01w1351_other_biaocheb3_bx01tx_002zishen01w1351_other_biaocheb3_zishen01tx_005head01w1351_other_biaocheb3_yan01tx_headhead02tx_head001trail01w1351_other_biaocheb5_trail01weijiw1351_other_biaocheb5_weiji01origintopbone026tx_009bone049tx_006bone027bone051tx_004bone052tx_007bone067tx_008bone068tx_003bone069tx_001bone029tx_centerbip001_spine2tx_chesttx_ccenterbip002_spine2tx_chest001tx_b_foot01bip001_l_foottx_b_footbip001_r_foottx_b_foot03bip002_l_foottx_b_foot02bip002_r_footbip001_headbip002_headtx_f_foot01bip001_l_finger0tx_f_footbip001_r_finger0tx_f_foot03bip002_l_finger0tx_f_foot02bip002_r_finger0
+
+=== w1351_monster_xiyuqiezei.mdl (568 bytes hex, 2 runs) ===
+  JBCF
+  GHS'w1351_monster_xiyuqiezeidata/source/npc/quest/w1351_monster_xiyuqiezei/MainBodyMeshw1351_monster_xiyuqiezei_yifu_001.meshw1351_monster_xiyuqiezei_yifu_001.mtlArmMeshw1351_monster_xiyuqiezei_shoutao_001.meshw1351_monster_xiyuqiezei_shoutao_001.mtlw1351_monster_xiyuqiezei.ske

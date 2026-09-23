@@ -1,0 +1,54 @@
+=== tlbb-shell processes ===
+=== all processes with tlbb in name ===
+=== exe files ===
+MTIME=2026-09-23 15:18:39  SIZE=17777664  PATH=D:\TLGL\tlbb-explorer\app\src-tauri\target\debug\tlbb-shell.exe
+MTIME=2026-09-23 10:37:08  SIZE=17207808  PATH=D:\TLGL\.scratch\rc3\debug\tlbb-shell.exe
+MISSING  D:\TLGL\tlbb-explorer\app\src-tauri\target\release\tlbb-shell.exe
+=== web sources + dist ===
+MTIME=2026-09-23 13:56:12  SIZE=1336  D:\TLGL\tlbb-explorer\app\web\api.js
+MTIME=2026-09-23 14:31:18  SIZE=1700  D:\TLGL\tlbb-explorer\app\web\app.js
+MTIME=2026-09-22 14:52:58  SIZE=690  D:\TLGL\tlbb-explorer\app\web\build.mjs
+MTIME=2026-09-23 15:47:17  SIZE=10191  D:\TLGL\tlbb-explorer\app\web\detail.js
+MTIME=2026-09-23 14:00:01  SIZE=5957  D:\TLGL\tlbb-explorer\app\web\health.js
+MTIME=2026-09-23 14:31:06  SIZE=5317  D:\TLGL\tlbb-explorer\app\web\index.html
+MTIME=2026-09-23 15:06:39  SIZE=4847  D:\TLGL\tlbb-explorer\app\web\list.js
+MTIME=2026-09-23 13:59:38  SIZE=10403  D:\TLGL\tlbb-explorer\app\web\mesh-viewer.js
+MTIME=2026-09-23 15:37:51  SIZE=3337  D:\TLGL\tlbb-explorer\app\web\mesh.js
+MTIME=2026-09-23 14:30:18  SIZE=672  D:\TLGL\tlbb-explorer\app\web\state.js
+MTIME=2026-09-23 15:07:07  SIZE=14324  D:\TLGL\tlbb-explorer\app\web\style.css
+MTIME=2026-09-23 13:56:02  SIZE=1408  D:\TLGL\tlbb-explorer\app\web\ui.js
+MTIME=2026-09-23 13:56:12  SIZE=1336  D:\TLGL\tlbb-explorer\app\web\dist\api.js
+MTIME=2026-09-23 14:31:18  SIZE=1700  D:\TLGL\tlbb-explorer\app\web\dist\app.js
+MTIME=2026-09-23 15:15:32  SIZE=8632  D:\TLGL\tlbb-explorer\app\web\dist\detail.js
+MTIME=2026-09-23 14:00:01  SIZE=5957  D:\TLGL\tlbb-explorer\app\web\dist\health.js
+MTIME=2026-09-23 14:31:06  SIZE=5317  D:\TLGL\tlbb-explorer\app\web\dist\index.html
+MTIME=2026-09-23 15:06:39  SIZE=4847  D:\TLGL\tlbb-explorer\app\web\dist\list.js
+MTIME=2026-09-23 13:59:38  SIZE=10403  D:\TLGL\tlbb-explorer\app\web\dist\mesh-viewer.js
+MTIME=2026-09-23 13:58:21  SIZE=2983  D:\TLGL\tlbb-explorer\app\web\dist\mesh.js
+MTIME=2026-09-23 14:30:18  SIZE=672  D:\TLGL\tlbb-explorer\app\web\dist\state.js
+MTIME=2026-09-23 15:07:07  SIZE=14324  D:\TLGL\tlbb-explorer\app\web\dist\style.css
+MTIME=2026-09-23 13:56:02  SIZE=1408  D:\TLGL\tlbb-explorer\app\web\dist\ui.js
+=== rust sources ===
+MTIME=2026-09-23 14:29:59  SIZE=39323  D:\TLGL\tlbb-explorer\app\src-tauri\src\data.rs
+MTIME=2026-09-23 15:26:06  SIZE=38262  D:\TLGL\tlbb-explorer\app\src-tauri\src\inspector.rs
+MTIME=2026-09-23 15:07:30  SIZE=20026  D:\TLGL\tlbb-explorer\app\src-tauri\src\lib.rs
+MTIME=2026-09-22 15:04:55  SIZE=391  D:\TLGL\tlbb-explorer\app\src-tauri\src\main.rs
+MTIME=2026-09-23 10:35:56  SIZE=15286  D:\TLGL\tlbb-explorer\app\src-tauri\src\mdl_view.rs
+MTIME=2026-09-23 13:41:14  SIZE=5127  D:\TLGL\tlbb-explorer\app\src-tauri\src\mesh_view.rs
+MTIME=2026-09-23 14:25:37  SIZE=7107  D:\TLGL\tlbb-explorer\app\src-tauri\src\model.rs
+MTIME=2026-09-23 14:25:01  SIZE=5579  D:\TLGL\tlbb-explorer\app\src-tauri\src\present.rs
+=== core crate sources (newest 12) ===
+MTIME=2026-09-23 13:51:07  D:\TLGL\tlbb-explorer\crates\core\src\catalog\sqlite.rs
+MTIME=2026-09-23 11:34:11  D:\TLGL\tlbb-explorer\crates\core\src\preview\geometry.rs
+MTIME=2026-09-23 11:25:01  D:\TLGL\tlbb-explorer\crates\core\src\bin\view.rs
+MTIME=2026-09-23 10:59:41  D:\TLGL\tlbb-explorer\crates\core\src\preview\mod.rs
+MTIME=2026-09-23 09:58:11  D:\TLGL\tlbb-explorer\crates\core\src\preview\summary.rs
+MTIME=2026-09-23 09:37:40  D:\TLGL\tlbb-explorer\crates\core\src\bin\asset_cards.rs
+MTIME=2026-09-23 09:37:40  D:\TLGL\tlbb-explorer\crates\core\src\bin\asset_report.rs
+MTIME=2026-09-22 19:55:58  D:\TLGL\tlbb-explorer\crates\core\src\bin\catalog_baseline.rs
+MTIME=2026-09-22 19:48:05  D:\TLGL\tlbb-explorer\crates\core\src\catalog\mod.rs
+MTIME=2026-09-22 19:47:59  D:\TLGL\tlbb-explorer\crates\core\src\catalog\evidence.rs
+MTIME=2026-09-22 19:47:57  D:\TLGL\tlbb-explorer\crates\core\src\bin\wall_harvest.rs
+MTIME=2026-09-22 18:33:45  D:\TLGL\tlbb-explorer\crates\core\src\bin\texture_cluster.rs
+=== now ===
+NOW=2026-09-23 15:47:26

@@ -1,0 +1,47 @@
+== relations table: edge kinds ==
+  'use-mtl'                    37672
+  'model-part'                 30966
+  'use-ani'                    11314
+  'same-stem'                  9686
+  'use-mesh'                   8491
+  'use-ske'                    2139
+  'use-tex'                    25
+  'use-pu'                     7
+  'ref'                        3
+
+== member role totals (all groups) ==
+  'scene'        11383
+  'animation'    11193
+  'material'     8519
+  'effect'       7806
+  'mesh'         3941
+  'model'        2061
+  'skeleton'     1630
+  'other'        1311
+  'map'          253
+  'texture'      25
+
+== sharing: how many groups does one member-hash participate in? ==
+  (fan-in = number of distinct groups a member hash appears in)
+  skeleton   distinct=1630   shared_by_2plus=0      top_fan=[('000c3aa4de73', 1), ('002bb988c484', 1), ('006407a46717', 1), ('0067afe8f4fe', 1), ('0089a2ece0f9', 1)]
+  material   distinct=8519   shared_by_2plus=0      top_fan=[('0000d3655988', 1), ('0021fa0cab92', 1), ('002dba0d74e4', 1), ('00395e75181d', 1), ('003fe5746713', 1)]
+  animation  distinct=11193  shared_by_2plus=0      top_fan=[('0009c599cce8', 1), ('0012fae4149a', 1), ('0019d99efcc9', 1), ('001c936e8689', 1), ('001cc60af8b9', 1)]
+  mesh       distinct=3941   shared_by_2plus=0      top_fan=[('000611928485', 1), ('00068f5e5b41', 1), ('00069e0d4ace', 1), ('00080c16711a', 1), ('000b7690ae63', 1)]
+  model      distinct=2061   shared_by_2plus=0      top_fan=[('0037196c462a', 1), ('0043c3742558', 1), ('0056b8cc3fae', 1), ('007cb62c6345', 1), ('00afee1413d5', 1)]
+  texture    distinct=25     shared_by_2plus=0      top_fan=[('04327ab0b6f6', 1), ('056119351296', 1), ('0e4239fea0cf', 1), ('16a46e56bead', 1), ('1908483d6725', 1)]
+
+== bone library example: the most-shared skeletons ==
+  000c3aa4de7395e8 fan=1     data/source/npc/quest/w1351_pets_lianyishou_b5/w1351_pets_lianyishou_b5.ske
+
+== animation library: clips per group ==
+  groups with animations=1511  total_clips=11193  max_in_one=31
+
+== how many groups would a relation browser show as 'connected'? ==
+  groups with >=1 member:                 13080
+  groups whose members are shared:        0
+  groups where ALL members are private:   13080
+
+== refs vs relations: where does cross-asset linkage actually live? ==
+  refs rows:      98504
+  relations rows: 100303
+  refs resolving to a resource: 61408

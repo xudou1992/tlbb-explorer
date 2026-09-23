@@ -1,0 +1,69 @@
+=== refs columns ===
+  from_hash TEXT
+  from_path TEXT
+  name TEXT
+  kind TEXT
+  to_hash TEXT
+  ambig INT
+
+=== distinct kind values (raw) ===
+  ['.mtl'] 38694
+  ['.tga'] 30585
+  ['.ani'] 15622
+  ['.mesh'] 9316
+  ['.ske'] 4210
+  ['.png'] 36
+  ['.anis'] 20
+  ['.dds'] 14
+  ['.pu'] 7
+
+=== extension-ish: do any kind values start with a dot? ===
+  dotted kinds: 98504
+
+=== dangling table schema ===
+  name TEXT
+  ext TEXT
+  n_refs INT
+  n_src INT
+  cls TEXT
+
+=== dangling class distribution ===
+  cls=['unique'] names=11561 citations=11561
+  cls=['shared'] names=2816 citations=25535
+
+=== dangling ext distribution ===
+  ext=['.tga'] 8672
+  ext=['.ani'] 4328
+  ext=['.mesh'] 587
+  ext=['.mtl'] 530
+  ext=['.ske'] 244
+  ext=['.dds'] 12
+  ext=['.png'] 4
+
+=== cited_by for the top resolved hash: from_path null rate ===
+  f487698d200a12cf rows=2933 blank_from_path=64
+  4c960dcf576ae89f rows=2535 blank_from_path=146
+  ba563f11a8e3f8e6 rows=2027 blank_from_path=0
+  ab20d21d79ffc818 rows=1141 blank_from_path=3
+  33fe410fba589836 rows=657 blank_from_path=57
+
+=== refs sample rows for template_default.mtl's hash ===
+  hash: f487698d200a12cf
+    ('0000d365598844e0', 'mobile_maps_source/w1351_smeh_shandongkou_001.mtl', '.mtl', 'template_default.mtl', 0)
+    ('0021fa0cab920fba', 'mobile_maps_source/w1351_bmy_yabianshu_004.mtl', '.mtl', 'template_default.mtl', 0)
+    ('00395e75181d3ef3', 'mobile_maps_source/w1351_ly__fwshuangcenglou_001.mtl', '.mtl', 'template_default.mtl', 0)
+    ('0059cefbe3da3b18', 'mobile_maps_source/w1351_kls_shizhenjilianbei_001.mtl', '.mtl', 'template_default.mtl', 0)
+    ('005f398ca0071480', 'mobile_maps_source/w1351_shuilao_qiang_003.mtl', '.mtl', 'template_default.mtl', 0)
+    ('0098b37a7081bfd7', 'mobile_maps_source/w1351_nh_yanshixi_001.mtl', '.mtl', 'template_default.mtl', 0)
+    ('00ad6e9dfea790dc', '', '.mtl', 'template_default.mtl', 0)
+    ('00b460254a37661e', 'mobile_maps_source/w1351_yaxy_gangtiewushi_001.mtl', '.mtl', 'template_default.mtl', 0)
+
+=== how many refs rows have from_path at all ===
+  total=98504 blank=5350
+
+=== distinct from_hash count vs rows ===
+  distinct from_hash: 21352
+
+=== do from_hash values join to resources? ===
+  from_hash joinable: 21352
+  from_hash is a group hub: 12832

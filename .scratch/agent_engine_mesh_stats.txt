@@ -1,0 +1,55 @@
+mesh files 4732
+top (headerSize, idxBytes, stride) -> count
+(280, 2, 34) 24
+(280, 2, 33) 10
+(512, 2, 30) 9
+(280, 2, 35) 7
+(512, 2, 26) 6
+(280, 2, 36) 5
+(280, 4, 30) 5
+(280, 4, 26) 5
+(512, 2, 29) 4
+(512, 2, 79) 4
+(512, 2, 31) 3
+(512, 2, 34) 3
+(512, 2, 13) 2
+(512, 2, 22) 2
+(280, 4, 25) 2
+(280, 4, 29) 2
+(280, 2, 140) 2
+(512, 2, 15) 1
+(512, 2, 32) 1
+(512, 2, 18) 1
+(512, 2, 20) 1
+(512, 2, 23) 1
+(280, 4, 31) 1
+(512, 2, 28) 1
+(280, 4, 28) 1
+
+('out/tree/data\\effect\\effectmodel\\w1351_model_biaoche_quan_001_pbr.mesh', 4, 2, 1, 436, 280, 2, 36)
+('out/tree/data\\effect\\effectmodel\\w1351_model_bingkuaii_l001.mesh', 12, 20, 1, 788, 512, 2, 13)
+('out/tree/data\\effect\\effectmodel\\w1351_model_bingningshuanghua_h001.mesh', 38, 52, 1, 1812, 512, 2, 26)
+('out/tree/data\\effect\\effectmodel\\w1351_model_boss_hyz_cone_c04.mesh', 114, 180, 1, 5012, 512, 2, 30)
+('out/tree/data\\effect\\effectmodel\\w1351_model_brz_w001.mesh', 20, 10, 1, 1012, 512, 2, 22)
+('out/tree/data\\effect\\effectmodel\\w1351_model_bx02_w001.mesh', 12, 8, 1, 740, 512, 2, 15)
+('out/tree/data\\effect\\effectmodel\\w1351_model_bx03_w001.mesh', 10, 8, 1, 676, 280, 4, 30)
+('out/tree/data\\effect\\effectmodel\\w1351_model_bxsq_sl_h005.mesh', 50, 64, 1, 2396, 512, 2, 30)
+('out/tree/data\\effect\\effectmodel\\w1351_model_bxsq_xx_h002.mesh', 109, 114, 1, 4684, 512, 2, 32)
+('out/tree/data\\effect\\effectmodel\\w1351_model_bx_ui_z03.mesh', 12, 6, 1, 896, 512, 2, 29)
+('out/tree/data\\effect\\effectmodel\\w1351_model_caihong_w001.mesh', 44, 60, 1, 2180, 280, 2, 35)
+('out/tree/data\\effect\\effectmodel\\w1351_model_cylinder_lf001.mesh', 82, 80, 1, 3548, 280, 2, 34)
+('out/tree/data\\effect\\effectmodel\\w1351_model_cylinder_lf003.mesh', 54, 52, 1, 2428, 280, 2, 34)
+('out/tree/data\\effect\\effectmodel\\w1351_model_cylinder_lf006.mesh', 82, 80, 1, 3548, 280, 2, 34)
+('out/tree/data\\effect\\effectmodel\\w1351_model_cy_h001.mesh', 114, 180, 1, 5012, 512, 2, 30)
+('out/tree/data\\effect\\effectmodel\\w1351_model_dcq_hand_h001.mesh', 74, 142, 1, 3796, 280, 2, 36)
+('out/tree/data\\effect\\effectmodel\\w1351_model_diaoyutubiao_t01.mesh', 4, 2, 1, 436, 280, 2, 36)
+('out/tree/data\\effect\\effectmodel\\w1351_model_dunpai_h001.mesh', 228, 228, 1, 8948, 512, 2, 31)
+('out/tree/data\\effect\\effectmodel\\w1351_model_emiter_jiumozhi_lf001.mesh', 60, 80, 1, 2852, 512, 2, 31)
+('out/tree/data\\effect\\effectmodel\\w1351_model_emiter_lf001.mesh', 90, 136, 1, 4252, 280, 4, 26)
+('out/tree/data\\effect\\effectmodel\\w1351_model_emiter_lf003.mesh', 50, 60, 1, 2372, 512, 2, 30)
+('out/tree/data\\effect\\effectmodel\\w1351_model_em_nan_jt_posui_x12.mesh', 4, 2, 1, 424, 280, 2, 33)
+('out/tree/data\\effect\\effectmodel\\w1351_model_eyeswind_lf001.mesh', 126, 192, 1, 5860, 280, 4, 26)
+('out/tree/data\\effect\\effectmodel\\w1351_model_flower_h001.mesh', 69, 67, 1, 3028, 280, 2, 34)
+('out/tree/data\\effect\\effectmodel\\w1351_model_flower_h002.mesh', 28, 12, 1, 1276, 280, 2, 33)
+
+submesh count distribution (top 15): [(1, 2418), (2, 54), (3, 14), (6, 10), (4, 4)]

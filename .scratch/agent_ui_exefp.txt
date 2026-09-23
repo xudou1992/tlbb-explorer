@@ -1,0 +1,12 @@
+== D:\TLGL\tlbb-explorer\app\src-tauri\target\debug\tlbb-shell.exe size=17777664
+  assets: index.html=Y, app.js=Y, mesh.js=Y, mesh-viewer.js=Y, detail.js=Y, list.js=Y, api.js=Y, health.js=Y, ui.js=Y, state.js=Y, style.css=Y
+  cmds  : list_groups=Y, card_detail=Y, asset_inspect=Y, asset_list=Y, mesh_data=Y, mdl_compose=Y, ref_health=Y, cited_by=Y, group_preview=Y, top_cited=n, stats=Y, preview=Y
+  zh    : 没有找到 id==Y, 立体模型=n, 组成树=Y, 网格几何解析失败=Y, 这台机器开不了=n, 资产组=n, resources.db=Y
+== D:\TLGL\.scratch\rc3\debug\tlbb-shell.exe size=17207808
+  assets: index.html=Y, app.js=Y, mesh.js=n, mesh-viewer.js=n, detail.js=n, list.js=n, api.js=n, health.js=n, ui.js=n, state.js=n, style.css=Y
+  cmds  : list_groups=Y, card_detail=Y, asset_inspect=n, asset_list=n, mesh_data=n, mdl_compose=Y, ref_health=Y, cited_by=Y, group_preview=Y, top_cited=n, stats=Y, preview=Y
+  zh    : 没有找到 id==n, 立体模型=n, 组成树=Y, 网格几何解析失败=n, 这台机器开不了=n, 资产组=n, resources.db=Y
+== D:\TLGL\.scratch\rc_app\debug\tlbb-shell.exe size=16812544
+  assets: index.html=Y, app.js=Y, mesh.js=n, mesh-viewer.js=n, detail.js=n, list.js=n, api.js=n, health.js=n, ui.js=n, state.js=n, style.css=Y
+  cmds  : list_groups=Y, card_detail=Y, asset_inspect=n, asset_list=n, mesh_data=n, mdl_compose=n, ref_health=n, cited_by=n, group_preview=Y, top_cited=n, stats=Y, preview=Y
+  zh    : 没有找到 id==n, 立体模型=n, 组成树=n, 网格几何解析失败=n, 这台机器开不了=n, 资产组=n, resources.db=Y

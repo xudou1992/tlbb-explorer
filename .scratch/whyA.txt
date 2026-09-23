@@ -1,0 +1,20 @@
+=== group 1994 in detail ===
+  group: (1994, 'ec726a54cb9a91bb', 'ui/icon/wardrobe/w1351_nv_s_yifu_new_mrrmdz.tga', 'ui/icon/wardrobe', 'w1351_nv_s_yifu_new_mrrmdz', 'ui', 2, 0, 1, 0, 0, 1)
+  members:
+    ('09f4ec94f8c57517', 'material', 'data/source/player/w1351_nv/w1351_nv_yifu/w1351_nv_s_yifu_new_mrrmdz.mtl', 'JBCF')
+    ('ec726a54cb9a91bb', 'texture', 'ui/icon/wardrobe/w1351_nv_s_yifu_new_mrrmdz.tga', 'texture')
+  agroup_names:
+    ('w1351_nv_s_yifu_new_mrrmdz_pbr.tga', 'unique')
+  refs via members:
+    ('data/sharematerial/material/skin/template_default_skin.mtl', '.mtl', '62cdd1ff024d6b95', '09f4ec94f8c57517')
+    ('data/sharematerial/material/skin/template_derfault_fashion.mtl', '.mtl', '2f73248e758b85d1', '09f4ec94f8c57517')
+    ('w1351_nv_s_yifu_new_mrrmdz.tga', '.tga', 'ec726a54cb9a91bb', '09f4ec94f8c57517')
+    ('w1351_nv_s_yifu_new_mrrmdz_pbr.tga', '.tga', None, '09f4ec94f8c57517')
+
+=== does kind=='贴图' ever appear as a stored value? ===
+  distinct kinds: ['.ani', '.anis', '.dds', '.mesh', '.mtl', '.png', '.pu', '.ske', '.tga']
+
+=== group 2118 ===
+    ('6ef8c475ce55d543', 'material', 'data/source/player/w1351_nv/w1351_nv_yifu/w1351_nv_s_yifu_mrrmdz.mtl', 'JBCF')
+    ('0561193512960359', 'texture', 'ui/icon/wardrobe/w1351_nv_s_yifu_mrrmdz.tga', 'texture')
+   name: ('w1351_nv_s_yifu_mrrmdz_pbr.tga', 'unique')

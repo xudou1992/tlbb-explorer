@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>天龙素材浏览台 · 客户端立体模型</title>
+<link rel="stylesheet" href="./style.css" />
+<script type="importmap">
+{ "imports": {
+  "three": "./node_modules/three/build/three.module.js",
+  "three/addons/": "./node_modules/three/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<header id="top">
+  <div class="brand">
+    <b>天龙素材浏览台</b>
+    <span id="sum">正在读清单…</span>
+  </div>
+  <input id="q" type="search" placeholder="搜名字 / 目录 / 标签，例如 caoshuang、宠物、山石" autocomplete="off" />
+  <div class="honest">
+    只读客户端资源；模型是形状本身。<b>为什么没有花纹和动作</b>
+    <div id="why" class="pop" hidden></div>
+  </div>
+</header>
+
+<main id="layout">
+  <aside id="side">
+    <h3>按客户端目录</h3>
+    <div id="cats" class="pills"></div>
+    <h3>材质槽</h3>
+    <div id="slots" class="pills"></div>
+    <h3>三角面</h3>
+    <div id="tris" class="pills"></div>
+    <p id="sideNote" class="dim"></p>
+  </aside>
+
+  <section id="wallWrap">
+    <div id="wallTop">
+      <span id="count"></span>
+      <span id="loading" class="dim"></span>
+    </div>
+    <div id="wall"></div>
+  </section>
+
+  <section id="detail" hidden>
+    <button id="close" class="x" title="关闭">×</button>
+    <div class="stage">
+      <canvas id="cv"></canvas>
+      <div id="slotbar" class="pills"></div>
+      <div id="stageHint" class="dim">拖动转 · 滚轮远近 · 双击回到正面</div>
+    </div>
+    <div class="card">
+      <h2 id="dName"></h2>
+      <p id="dSub" class="dim"></p>
+      <dl id="facts"></dl>
+      <h4>这个模型由什么组成</h4>
+      <ul id="parts"></ul>
+      <h4>还看不到什么</h4>
+      <ul id="gaps"></ul>
+      <details><summary>技术信息（给排查的人看）</summary><dl id="tech"></dl></details>
+    </div>
+  </section>
+</main>
+
+<script type="module" src="./js/app.js"></script>
+</body>
+</html>

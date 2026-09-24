@@ -24,7 +24,10 @@ KernelDumpAnalyzer.exe
 DirectX/
 tmg_x64/
 webview_x64/
-web-viewer/
+# 网页浏览台的**源码要入库**（32KB），只排掉 281MB 的 .glb 产物与本地日志。
+# 原来整目录 `web-viewer/` 一刀切，把 v0.1 交付物本体也挡在外面了。
+web-viewer/model/
+web-viewer/serve.log
 tmglog/
 user_data/
 _t_ws/

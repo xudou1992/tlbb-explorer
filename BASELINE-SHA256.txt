@@ -1,0 +1,28 @@
+# BASELINE-SHA256 · v0.1-mesh-browser / v0.2-model-stable 冻结面
+# 生成：bash tools/baseline.sh > BASELINE-SHA256.txt
+# 时间：2026-09-24 09:17
+
+d1538faaa7d4c1aa293fc5cf20e1275cc76f9f96398683b9b0964ad91747e51f *tlbb-explorer/crates/core/src/preview/geometry.rs
+a64c7d0344bc16b3a4efb4c0943e9406350d12f602da03470e7d091ccdc75214 *tlbb-explorer/crates/core/src/export/gltf.rs
+f1d813b18af7462c20f26c118dcd3d7f3b13c1b67bef2ecc2d443e2db5e88371 *tlbb-explorer/crates/core/src/export/mod.rs
+dbb32e16fc891e7eb96dd3114e4a22983fbdea9ad4ec1b73977b415344e46b13 *tlbb-explorer/app/src-tauri/src/mesh_view.rs
+8cd9a077ebc0b6440f15f374952fb1c4e64b0ecc8d317224711910e6a6b2b4cb *tlbb-explorer/app/web/lib/detailState.js
+24d580e32547dd4221039330063bdaec07c2170501d449041c52a2d53551df9a *tlbb-explorer/app/web/lib/seq.js
+c18fa40a7eb7278cb55bede57256c5513d93d73dfad4f837efa2a68cbf83c281 *tlbb-explorer/app/web/lib/meshLayout.js
+14c3b432ceb2b62941c8a1979774b36f2e8d89e3e26e60c8dbaac970cc4df1e9 *tlbb-explorer/app/web/lib/wording.js
+348af767114b23df062515ed03b82ef01a710ca2fc9afe43f2086a2901b80fd8 *tlbb-explorer/app/web/detail.js
+bdd811cbc4ff99e0c6f02d16dfddad76c49b6758108484dddba62daa3e413698 *tlbb-explorer/app/web/mesh.js
+527d0b00fb937ef32d9c7b8d850b640ab3e1858309c94e520117a2c54dac3642 *tlbb-explorer/app/web/mesh-viewer.js
+6c7631585be92a1379a4550d11e1c0a2f7f940c11354722f67131b10ba677123 *tlbb-explorer/app/tests/detailState.test.js
+0963f336359d830b1aa46df9b228acb87b71d9be1e741b9d1594182fd322d4b5 *tlbb-explorer/app/tests/seq.test.js
+24b5615f0b02b8e284ff0fe85095d310fff8e970cb6e548156ecad4416e05afe *tlbb-explorer/app/tests/meshLayout.test.js
+4c31f3aaac7e465bf98811195cc22ea078d47f55b6fc78b6180cde7cfa43657c *tlbb-explorer/app/tests/wording.test.js
+bfd3cf40e188524419fadccc7c7819af94814ea2d8f94049d62d9de2aba08d68 *web-viewer/index.html
+ef415f8cd45d51750decd3aff5b971a0a14c721ba2dbd4911ff3ba707c0e07f9 *web-viewer/js/app.js
+2d77b0c9c8eea9b8977ecd4d931308eaaca0dde6ada9bc332693e560b21623a7 *web-viewer/js/viewer.js
+395c7a602169516c0bfcb9d584dc6e7172db25fe2e9eb5686ad3cd9b2cde1c2d *web-viewer/js/data.js
+d2c28b59339c0b205fc2238338b6c5f636d33e3a0b1ccce40a4707cf76273e89 *web-viewer/js/thumbs.js
+1b7ec805ac7390b5c0c1e9748c80abb6d3a0b16f340c96b400f00a4b67eac332 *web-viewer/MILESTONE-v0.1-mesh-browser.md
+
+# ---- MOVING（另一会话在改，只记漂移不作基线）----
+91a438498527b6e28ea2e40441062fa71900793557d47997050f102bd07700a1 *tlbb-explorer/crates/core/src/preview/scene.rs

@@ -626,8 +626,60 @@ impl Catalog {
         found.map(|h| hash_of(&h)).transpose()
     }
 
-    pub fn by_type(&self, rtype: &str, limit: usize) -> Result<Vec<Asset>> {
-        let sql = format!("SELECT {ASSET_COLS} FROM resources WHERE type = ?1 ORDER BY hash LIMIT ?2");
+    /// 有哪些地图（按 `.scene` 格子文件数排序的目录清单）。
+    ///
+    /// 口径：**有至少一个格子文件的目录**，不是"客户端承认存在的地图全集"——
+    /// 两者在本机是否相等未证，界面引用这条时必须带上"按下过东西的格子数"这句
+    /// 分母说明（红线：统计数字要有口径）。
+    pub fn map_dirs(&self, limit: usize) -> Result<Vec<(String, usize)>> {
+        let lim = limit.min(i64::MAX as usize) as i64;
+        self.rows(
+            "SELECT dir, COUNT(*) FROM resources              WHERE ext = '.scene' AND dir LIKE 'mobile_maps/%'              GROUP BY dir ORDER BY COUNT(*) DESC, dir LIMIT ?1",
+            &[&lim],
+            |r| {
+                let n: i64 = r.get(1)?;
+                Ok((r.get::<_, String>(0)?, n as usize))
+            },
+        )
+    }
+
+    /// 一张地图下的全部格子文件。空的 `dir` 一律不查：那等于"没有任何路径"，
+    /// 按它匹配会把别人的格子当成这张图的（同 `textures_in_dir` 的理由）。
+    pub fn scene_grids(&self, dir: &str) -> Result<Vec<(u64, String)>> {
+        if dir.trim().is_empty() {
+            return Ok(Vec::new());
+        }
+        self.rows(
+            "SELECT hash, name FROM resources WHERE dir = ?1 AND ext = '.scene' ORDER BY name",
+            &[&dir],
+            |r| {
+                let h: String = r.get(0)?;
+                Ok((hash_of(&h).unwrap_or(0), r.get::<_, String>(1)?))
+            },
+        )
+    }
+
+    /// 按**裸文件名**在指定目录里解析哈希。
+    ///
+    /// 格子里的物件名是 `w1351_dl_bajiao_001.mesh` 这种裸名（带扩展名、不带目录），
+    /// 而 `hash_by_path` 要整路径，直接喂必查空——实测 256 条里只有 1 条能对上的
+    /// 差异就出在这。所以地图这条路必须按 `dir + name` 查。
+    pub fn hash_by_name_in(&self, dir: &str, name: &str) -> Result<Option<u64>> {
+        if dir.trim().is_empty() || name.trim().is_empty() {
+            return Ok(None);
+        }
+        let found: Option<String> = self
+            .con
+            .query_row(
+                "SELECT hash FROM resources WHERE dir = ?1 AND name = ?2 LIMIT 1",
+                [&dir, &name],
+                |r| r.get::<_, Option<String>>(0),
+            )
+            .unwrap_or(None);
+        found.map(|h| hash_of(&h)).transpose()
+    }
+
+    pub fn by_type(&self, rtype: &str, limit: usize) -> Result<Vec<Asset>> {        let sql = format!("SELECT {ASSET_COLS} FROM resources WHERE type = ?1 ORDER BY hash LIMIT ?2");
         let lim = limit.min(i64::MAX as usize) as i64;
         self.rows(&sql, &[&rtype, &lim], Asset::from_row)
     }

@@ -37,6 +37,9 @@ MOVING=(
 echo "# BASELINE-SHA256 · v0.1-mesh-browser / v0.2-model-stable 冻结面"
 echo "# 生成：bash tools/baseline.sh > BASELINE-SHA256.txt"
 echo "# 时间：$(date '+%Y-%m-%d %H:%M')"
+echo "# 修订 v0.2.1（2026-09-24）：mesh-viewer.js 经批准改动一次——实例矩阵全链路"
+echo "#   不再双转置（527d0b00 → 61f87da7）。改动前的哈希在 git 里，对比用"
+echo "#   git diff BASELINE-SHA256.txt；本文件正文由脚本生成，不要手改。"
 echo
 sha256sum "${FROZEN[@]}"
 echo

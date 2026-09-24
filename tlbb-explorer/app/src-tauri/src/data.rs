@@ -308,13 +308,24 @@ impl AppData {
         }
     }
 
-    fn asset(&self, hash: u64) -> Option<Asset> {
+    /// 和 `q` 同一把锁，但**失败如实报出来**。`q` 把错误吞成 Default 是为了「卡片再薄
+    /// 也要能渲染」；地图命令照它做就会把一次 SQL 失败显示成「这张图一个格子都没有」，
+    /// 那是假空不是空（红线：加载失败不许伪成功）。
+    pub(crate) fn try_q<T>(
+        &self,
+        f: impl FnOnce(&Catalog) -> tlbb_core::catalog::sqlite::Result<T>,
+    ) -> Result<T, String> {
+        let c = self.cat.lock().map_err(|_| "目录锁被一次 panic 占着，查不了".to_string())?;
+        f(&c).map_err(|e| format!("查目录失败：{e}"))
+    }
+
+    pub(crate) fn asset(&self, hash: u64) -> Option<Asset> {
         self.q(|c| c.asset(hash))
     }
 
     /// Locate and read one resource: the catalog says which container and payload offset,
     /// the container's own index record says how to decrypt and expand it.
-    fn read(&self, hash: u64) -> Option<Vec<u8>> {
+    pub(crate) fn read(&self, hash: u64) -> Option<Vec<u8>> {
         let asset = self.asset(hash)?;
         let slot = *self.by_name.get(&asset.pak)?;
         let recs = self.by_hash.get(&hash)?;

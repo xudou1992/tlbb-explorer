@@ -4,6 +4,7 @@
 
 mod data;
 mod inspector;
+mod map_view;
 mod mdl_view;
 mod model;
 mod mesh_view;
@@ -163,7 +164,9 @@ pub fn run() {
             mdl_view::mdl_compose,
             inspector::asset_list,
             inspector::asset_inspect,
-            mesh_view::mesh_data
+            mesh_view::mesh_data,
+            map_view::map_list,
+            map_view::map_scene
         ])
         .run(tauri::generate_context!())
         .expect("工作台窗口未能启动");

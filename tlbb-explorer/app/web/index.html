@@ -22,6 +22,7 @@
         <span class="pill"><i class="dot"></i>只读</span>
         <span class="reading" id="progressText" aria-live="polite">正在读取…</span>
         <i class="bar" aria-hidden="true"><b id="bar"></b></i>
+        <button type="button" id="openMap" class="ghost">地图</button>
         <button type="button" id="openHealth" class="ghost">库状态</button>
       </div>
     </header>
@@ -128,6 +129,35 @@
         <button type="button" id="closeHealth" class="ghost">返回资产</button>
       </div>
       <div id="healthBody"></div>
+    </section>
+
+    <!-- 地图浏览器：与「库状态」同一形状的整屏浮层，资产链路一行不改 -->
+    <section class="overlay" id="maps" hidden aria-label="地图浏览器">
+      <div class="overlay-head">
+        <h2>地图 · 灰模</h2>
+        <button type="button" id="closeMap" class="ghost">返回资产</button>
+      </div>
+      <p class="map-banner" id="mapBanner"></p>
+      <div class="map-wrap">
+        <aside class="map-list">
+          <div id="mapRows" class="maprows"></div>
+          <p class="dim" id="mapState" hidden></p>
+        </aside>
+        <div class="map-stage">
+          <canvas id="mapCanvas" aria-label="地图灰模预览" hidden></canvas>
+          <p class="mesh-hint">按住拖动旋转 · 滚轮远近 · 双击回到正面</p>
+        </div>
+        <aside class="map-info">
+          <h3>这张图有什么</h3>
+          <dl class="tech" id="mapInfo"></dl>
+          <h3>读不通的格子 · 按原因聚合</h3>
+          <ul class="abs" id="mapAbs"></ul>
+          <section class="d-sec" id="secMapMiss" hidden>
+            <h3>名字对不上的（原样列，不猜）</h3>
+            <ul class="lines" id="mapMiss"></ul>
+          </section>
+        </aside>
+      </div>
     </section>
 
     <footer class="app-footer">

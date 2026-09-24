@@ -8,6 +8,7 @@ import * as api from "./api.js";
 import { state } from "./state.js";
 import { refresh, refreshStats, resetFilters, toggleUnnamed } from "./list.js";
 import { openHealth, closeHealth } from "./health.js";
+import { openMap, closeMap } from "./map.js";
 
 let searchTimer = 0;
 el("q").addEventListener("input", (e) => {
@@ -25,8 +26,13 @@ el("reset").addEventListener("click", resetFilters);
 el("unnamed").addEventListener("click", toggleUnnamed);
 el("openHealth").addEventListener("click", openHealth);
 el("closeHealth").addEventListener("click", closeHealth);
+el("openMap").addEventListener("click", openMap);
+el("closeMap").addEventListener("click", closeMap);
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeHealth();
+  if (e.key === "Escape") {
+    closeHealth();
+    closeMap();
+  }
 });
 
 // Rust 侧每读完一批广播一次：界面因此能边读边用，但用户正在操作时不打断。

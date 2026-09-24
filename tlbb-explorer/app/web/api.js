@@ -25,3 +25,6 @@ export const meshData = (name, hash) => call("mesh_data", { name, hash: hash || 
 export const refHealth = (danglingLimit) => call("ref_health", { danglingLimit });
 /// key 是 16 位编号或客户端原文名：悬空的名字没有编号，只能按名字反查。
 export const citedBy = (key, limit) => call("cited_by", { key, limit });
+/// 地图侧两个命令：清单 + 一张图的全部格子（一次回包，不逐个物件问）。
+export const mapList = (limit) => call("map_list", { limit });
+export const mapScene = (id) => call("map_scene", { id });

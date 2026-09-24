@@ -313,10 +313,15 @@ export function loaded(gid, d, insp) {
   const meshes = (insp.mdl && insp.mdl.bodies ? insp.mdl.bodies : [])
     .filter((b) => b.mesh && b.mesh.hash)
     .map((b) => ({ name: b.mesh.path || b.mesh.name, hash: b.mesh.hash, label: b.mesh.name }));
+  // 面板常驻：画不出时最忌讳整块隐藏——用户看到的是"工具坏了"。原因不在这儿另编
+  // 一套，直接复用 absencesOf 里那条「立体模型」，两边说的必须是同一处判断。
+  const meshRow = absences.find((a) => a.label === "立体模型") || null;
   s.mesh = {
-    visible: meshes.length > 0,
+    visible: true,
+    hasView: meshes.length > 0,
     meshes,
     active: meshes.length ? 0 : -1,
+    why: meshRow ? meshRow.why : "",
     meta: "",
     tech: "",
     state: "",

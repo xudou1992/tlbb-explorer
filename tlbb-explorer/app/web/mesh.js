@@ -54,6 +54,9 @@ function paintPick() {
 
 async function pick(k) {
   current = k;
+  // 上一次可能是 paintEmpty 把画布收掉的：必须在 ensure() 建上下文之前放回来，
+  // 隐藏中的 canvas 量不到尺寸。
+  el("meshCanvas").hidden = false;
   paintPick();
   const m = meshes[k];
   const my = seq.next();
@@ -105,16 +108,26 @@ export function hideMeshes() {
   if (viewer) viewer.stop();
 }
 
+/// 画不出时的样子：画布收掉，但面板不消失，理由就写在这一栏里。
+/// 文案来自 lib/detailState.js 的 absencesOf —— 和下面「缺什么」里那条是同一句，
+/// 不在这里另编一套原因，否则两处口径迟早分家。
+function paintEmpty(why) {
+  el("meshCanvas").hidden = true;
+  el("meshPick").innerHTML = "";
+  el("meshMeta").textContent = "";
+  el("meshTech").innerHTML = "";
+  status(why || "这一组没读到可画的网格。");
+}
+
 /// meshState = lib/detailState.js 算出来的 s.mesh。
 export function showMeshes(meshState) {
   seq.next(); // 换资产就作废上一批在途请求
   meshes = (meshState && meshState.meshes) || [];
-  const panel = el("secMesh");
+  el("secMesh").hidden = !(meshState && meshState.visible);
   if (!meshes.length) {
-    panel.hidden = true;
     if (viewer) viewer.stop();
+    paintEmpty(meshState && meshState.why);
     return;
   }
-  panel.hidden = false;
   pick(Math.min(Math.max(meshState.active ?? 0, 0), meshes.length - 1));
 }

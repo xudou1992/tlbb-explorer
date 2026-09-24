@@ -316,3 +316,23 @@ test("非 ready 状态不渲染这个区块（也不留空壳）", () => {
   assert.equal(loading(1).absences.html, "");
   assert.equal(failed(1, "x").absences.html, "");
 });
+
+// ---- 立体面板不许静默消失（实测命中 84.4% 的资产组：没有可画网格的组）----
+// 关键不是"有没有原因"，而是**两处必须是同一句**：立体区自己编一套说法的话，
+// 和下面「缺什么」迟早分家，那时用户看到两个互相矛盾的解释。
+test("画不出立体时面板还在，且理由是「缺什么」里那一句", () => {
+  const cases = [
+    ["没有模型定义", { ...INSPECT_A, mdl: null }],
+    ["定义了部件但一个网格都没定位到", { ...INSPECT_A, mdl: { bodies: [{ mesh: { name: "a.mesh", hash: null }, material: { name: "a.mtl" } }] } }],
+    ["一组里根本没有网格文件", { ...INSPECT_A, mdl: null, members: [] }],
+  ];
+  for (const [名, insp] of cases) {
+    const s = loaded(245, DETAIL_A, insp);
+    assert.equal(s.mesh.visible, true, `${名}：面板必须常驻，空白会让人以为工具坏了`);
+    assert.equal(s.mesh.hasView, false, `${名}：但没网格可画时不许假装能画`);
+    const row = s.absences.items.find((r) => r.label === "立体模型");
+    assert.ok(row && row.why.length > 0, `${名}：必须给出一句原因`);
+    assert.equal(s.mesh.why, row.why, `${名}：立体区与「缺什么」必须是同一句判断`);
+    assert.ok(!/[0-9a-f]{16}/.test(s.mesh.why), `${名}：原因里不许出现编号`);
+  }
+});

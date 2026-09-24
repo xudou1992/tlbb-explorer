@@ -17,8 +17,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
-  identity, translate, rotateY, scaleMat, mul, transformPoint, toColumnMajor,
-  normalMatrix3, toColumnMajor3, shapeScaleError, expandInstances, boundsAccumulator,
+  identity, translate, rotateY, scaleMat, mul, transformPoint, transposeRotationBlock,
+  normalMatrix3, shapeScaleError, expandInstances, boundsAccumulator,
   worldBounds, pixelRay, rayBox, nearestHit,
 } from "../web/lib/instanceMath.js";
 
@@ -69,18 +69,58 @@ test("identity 乘任何矩阵都不改变它", () => {
   assert.ok(nearVec([...mul(m, identity())], [...m]));
 });
 
-test("toColumnMajor 是转置，且只在一边有非对称数值时看得出来", () => {
-  // 用平移做探针：行主序的 m[12] 转置后必须出现在 m[3]。
-  const row = translate(5, 6, 7);
-  const col = toColumnMajor(row);
-  assert.equal(col[3], 5);
-  assert.equal(col[7], 6);
-  assert.equal(col[11], 7);
-  assert.equal(col[12], 0);
-  // 转两次回到原样（对合）。
-  assert.deepEqual([...toColumnMajor(col)], [...row]);
-  // 对称阵转置后不变——所以千万不能拿 identity 当转置的测试用例。
-  assert.deepEqual([...toColumnMajor(identity())], [...identity()]);
+// ==========================================================================
+// 跨层契约：`.scene` 记录里那 16 个 f32 直读进前端，到喂 GL 之前**排布不许变**。
+//
+// 这一组断言的锚点不是本文件的任何函数，而是**客户端字节布局这个外部事实**：
+// 全库实测（三张图 7,406 条）平移落在 flat[12..14]、齐次位在 flat[3,7,11,15]，
+// 且 floor(x/32) 与格子文件名下标 100% 吻合。所以"平移进、平移出"是可判定的。
+// 曾经这里多做一次整阵转置，把平移搬到 [3,7,11]：地图首帧全部物件叠在原点，
+// 而**不报任何错**——那时代码里没有一个测试能发现，因为旧夹具把转置写进了约定。
+// ==========================================================================
+
+/// 一条真实的 `.scene` 记录前 64 字节（单位旋转 + 平移 100,50,200）按 f32 直读的结果。
+const SCENE_ROW = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 100, 50, 200, 1];
+
+test("契约：`.scene` 直读的平移必须原样待在 [12..14]，不许被搬到别处", () => {
+  const out = expandInstances([{ meshIndex: 0, matrix: SCENE_ROW }], 1);
+  assert.deepEqual([out.model[12], out.model[13], out.model[14]], [100, 50, 200]);
+  assert.deepEqual([out.model[3], out.model[7], out.model[11], out.model[15]], [0, 0, 0, 1]);
+});
+
+test("契约：真实地图尺度下，实例的世界位置就是矩阵里的平移", () => {
+  // 取 w1351_ll_dl_002 里那种量级：z 在负半边（floor 判据靠它）。
+  const row = [-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, -1234.5, 12.25, -987.5, 1];
+  const out = expandInstances([{ meshIndex: 0, matrix: row }], 1);
+  assert.deepEqual(
+    transformPoint(out.model.subarray(0, 16), [0, 0, 0]),
+    [-1234.5, 12.25, -987.5],
+    "局部原点必须被摆到记录里那个世界坐标",
+  );
+});
+
+test("契约：GL 布局下的 view 矩阵，pixelRay 取到的相机位置等于 -Rᵀ·t", () => {
+  // 相机在 (0,0,+10) 看向 -Z：view = 沿 Z 平移 -10，平移按 GL 布局就在 [12..14]。
+  const v = translate(0, 0, -10);
+  assert.deepEqual([v[12], v[13], v[14]], [0, 0, -10], "先确认 translate 的排布本身");
+  const ray = pixelRay(400, 300, RECT, v, FOV, ASPECT);
+  assert.ok(nearVec(ray.origin, [0, 0, 10], 1e-6), `origin=[${ray.origin}]`);
+});
+
+test("朝向开关只翻旋转块，绝不动平移与齐次位", () => {
+  const out = expandInstances([{ meshIndex: 0, matrix: SCENE_ROW }], 1, { transposeRotation: true });
+  assert.deepEqual([out.model[12], out.model[13], out.model[14]], [100, 50, 200], "开关不许把平移带跑");
+  assert.deepEqual([out.model[3], out.model[7], out.model[11], out.model[15]], [0, 0, 0, 1]);
+  // 非对称探针：转置必须真的改变 [1],[4] 这一对。
+  const skew = [1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9, 0, 100, 50, 200, 1];
+  const t = transposeRotationBlock(skew);
+  assert.deepEqual([t[1], t[4]], [4, 2]);
+  assert.deepEqual([t[2], t[8]], [7, 3]);
+  assert.deepEqual([t[6], t[9]], [8, 6]);
+  assert.deepEqual([...t.slice(12)], [100, 50, 200, 1]);
+  // 转两次回原样（对合），且单位阵测不出转置——所以探针必须用非对称的。
+  assert.deepEqual([...transposeRotationBlock(t)], skew);
+  assert.deepEqual([...transposeRotationBlock(identity())], [...identity()]);
 });
 
 // --------------------------------------------------------------------------
@@ -141,13 +181,16 @@ test("scaleMat 只缩放三个基向量，不动平移", () => {
 // expandInstances：行主序进来，列主序 + 法线矩阵出去
 // --------------------------------------------------------------------------
 
-test("expandInstances 预转置：喂 GL 的那份是列主序", () => {
+test("expandInstances 原样收进缓冲：GL 布局进、GL 布局出，中间不转置", () => {
   const out = expandInstances([{ meshIndex: 0, matrix: [...translate(5, 6, 7)] }], 1);
   assert.equal(out.count, 1);
-  assert.equal(out.modelColumnMajor[3], 5, "平移量该在列主序的 m[3]");
-  assert.equal(out.modelColumnMajor[12], 0);
-  // 原始那一份保持行主序不变，调试时能对照。
-  assert.equal(out.model[12], 5);
+  assert.equal(out.model[12], 5, "平移必须还在 [12..14]——它一旦被搬走，全图叠原点");
+  assert.equal(out.model[13], 6);
+  assert.equal(out.model[14], 7);
+  assert.deepEqual([out.model[3], out.model[7], out.model[11]], [0, 0, 0]);
+  // 只留一份缓冲：喂 GL 用的和存的就是同一套字节。
+  assert.equal(out.model.length, 16);
+  assert.ok(!("modelColumnMajor" in out), "不该再有第二份转置好的缓冲");
 });
 
 test("引用不到的网格编号：抛错，不画一个洞", () => {
@@ -199,23 +242,19 @@ test("法线矩阵不含平移：含平移的实例和纯旋转版本的 9 个�
   for (let i = 0; i < 9; i++) assert.ok(near(a[i], b[i], 1e-6), `第 ${i} 项 ${a[i]} vs ${b[i]}`);
 });
 
-test("法线矩阵喂 GL 前必须转置：normalMatrix3 给行主序，GL 要列主序", () => {
-  // 这是本文件里最贵的一条。两个 3x3 都是 9 个 float，转置错了**不报错**，
-  // 表现只是"光照角度怪怪的"，很容易被当成美术参数问题放过去。
+test("法线矩阵已经是 GL 布局：三个基向量在前，喂 uniformMatrix3fv 前不再转置", () => {
+  // 这里曾经"最贵"：两个 3x3 都是 9 个 float，多转一次**不报错**，只是光照整体偏，
+  // 看起来像美术参数没调好。normalMatrix3 输出的就是 GL 要的那份，转置反而是错。
   const r = rotateY(Math.PI / 2);
   const n = normalMatrix3(r);
-  // 行主序：第一行是 (0,0,-1)，第二行 (0,1,0)，第三行 (1,0,0)。
-  assert.ok(nearVec([...n.slice(0, 3)], [0, 0, -1], 1e-6), `行主序首行=[${n.slice(0, 3)}]`);
-  // 转成列主序后：第一行变 (0,0,1)，首元素不再是 0,0,-1。
-  const c = toColumnMajor3(n);
-  assert.ok(nearVec([...c.slice(0, 3)], [0, 0, 1], 1e-6), `列主序首行=[${c.slice(0, 3)}]`);
-  // 转置必须改变结果（对称阵测不出来，所以这里特意用个非对称的）。
-  assert.notDeepEqual([...c], [...n]);
-  // 转两次是对合。
-  assert.deepEqual([...toColumnMajor3(c)], [...n]);
-  // expandInstances 交出来的那份已经是列主序，且和手工转置的结果一致。
+  // GL 布局下第 0 列 = X 基向量的像。rotateY(+90°) 把 +X 送到 -Z（文件头实测那条）。
+  assert.ok(nearVec([...n.slice(0, 3)], [0, 0, -1], 1e-6), `第 0 列=[${n.slice(0, 3)}]`);
+  assert.ok(nearVec([...n.slice(3, 6)], [0, 1, 0], 1e-6));
+  assert.ok(nearVec([...n.slice(6, 9)], [1, 0, 0], 1e-6));
+  // 9 个数与旋转块的前三列一一对应，没有第二份排布。
+  assert.ok(nearVec([...n], [r[0], r[1], r[2], r[4], r[5], r[6], r[8], r[9], r[10]], 1e-6));
   const out = expandInstances([{ meshIndex: 0, matrix: [...r] }], 1);
-  for (let i = 0; i < 9; i++) assert.ok(near(out.normal[i], c[i], 1e-6), `第 ${i} 项`);
+  for (let i = 0; i < 9; i++) assert.ok(near(out.normal[i], n[i], 1e-6), `第 ${i} 项与 normalMatrix3 不一致`);
 });
 
 test("均匀缩放：法线矩阵把它归一化掉，方向不受影响", () => {
@@ -373,8 +412,9 @@ const RECT = { left: 0, top: 0, width: 800, height: 600 };
 const ASPECT = 800 / 600;
 const FOV = Math.PI / 4.5;
 
-/// 造一个"相机在 (0,0,+d)、看向 -Z"的列主序 view 矩阵，用于反投影测试。
-const lookFromZ = (d) => toColumnMajor(translate(0, 0, -d));
+/// 造一个"相机在 (0,0,+d)、看向 -Z"的 view 矩阵，用于反投影测试。
+/// GL 布局下 view = translate(0,0,-d) 直接就是它，**不需要也不允许再转置**。
+const lookFromZ = (d) => translate(0, 0, -d);
 
 test("屏幕正中 → 射线沿 -Z 直直打出去", () => {
   const ray = pixelRay(400, 300, RECT, lookFromZ(10), FOV, ASPECT);
@@ -408,13 +448,27 @@ test("相机被挪到别处时，反投影里的起点和方向都跟着走", ()
   assert.ok(nearVec(ray.dir, [0, 0, -1], 1e-6));
 
   // 相机带 90° 旋转时，屏幕正中那条射线必须跟着拐，不能再直着打 -Z。
-  // 实测：世界基向量被转到 (10,0,0) 起点、方向 +X。
-  // 这一条是"方向到底按 R 的行还是列算"的直接判据——算错了这里会得到
-  // 方向反号或起点跑错轴，而**不会**报错，只表现为点选恒不中。
-  const turned = toColumnMajor(mul(translate(0, 0, -10), rotateY(Math.PI / 2)));
+  // 期望值是从几何反推的，不是拿实现对自身：V = T(0,0,-10)·Ry(90°)（和 draw() 的
+  // 拼法同序），世界点 p 映到 Ry·p + (0,0,-10)。
+  //   · 原点映到 (0,0,-10) = 相机前方 10 ⇒ 相机在离原点 10 处；
+  //   · 解 Ry·eye = (0,0,10)：Ry(90°) 的三个基向量是 col0=(0,0,-1)、col1=(0,1,0)、
+  //     col2=(1,0,0)，于是 (eye) 满足 (z, y, -x) = (0,0,10) ⇒ **eye = (-10, 0, 0)**；
+  //   · 前方 = Ry⁻¹·(0,0,-1) = 各列与 (0,0,-1) 点乘 ⇒ **+X**，从 (-10,0,0) 指回原点。
+  // 这一条同时是"起点按列取还是按行取"的判据：取错不报错，只表现为点选恒不中。
+  const turned = mul(translate(0, 0, -10), rotateY(Math.PI / 2));
   const r3 = pixelRay(400, 300, RECT, turned, FOV, ASPECT);
-  assert.ok(nearVec(r3.origin, [10, 0, 0], 1e-6), `origin=[${r3.origin}]`);
+  assert.ok(nearVec(r3.origin, [-10, 0, 0], 1e-6), `origin=[${r3.origin}]`);
   assert.ok(nearVec(r3.dir, [1, 0, 0], 1e-6), `dir=[${r3.dir}]`);
+  // 上面两个数是手算的，这条不是：相机是按"盯着世界原点"摆的，所以原点必须落在
+  // 屏幕正中央那条射线上。判据 = |(-eye) × dir| 为 0。它不依赖本文件任何函数，
+  // 起点按行取还是按列取在这里立刻见分晓——转置错的那版这条是 10，直接红。
+  const toOrigin = r3.origin.map((v) => -v);
+  const cross = [
+    r3.dir[1] * toOrigin[2] - r3.dir[2] * toOrigin[1],
+    r3.dir[2] * toOrigin[0] - r3.dir[0] * toOrigin[2],
+    r3.dir[0] * toOrigin[1] - r3.dir[1] * toOrigin[0],
+  ];
+  assert.ok(near(Math.hypot(...cross), 0, 1e-9), `屏幕中心的射线没穿过世界原点：|×|=${Math.hypot(...cross)}`);
 });
 
 test("rayBox：正对着打中，t 是进入面的距离", () => {

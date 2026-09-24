@@ -4,22 +4,32 @@
 //
 // 两条**贯穿全文件的约定**，读任何一段代码前先记住：
 //
-//   1) 本文件的矩阵一律是**行主序、列向量**：m[c*4+r] 表示第 r 行第 c 列，
-//      点变换写作 `p' = M * p`，展开即 p'.x = m[0]*x + m[4]*y + m[8]*z  + m[12]。
-//      这和 mesh-viewer.js 里内联的 mat4、以及 WebGL 的 uniformMatrix4fv 完全一致
-//      （后者 false=不转置，要的就是列主序；两者进 GL 的字节布局反正一样）。
+//   1) 矩阵一律是 **GL 布局**：`m[c*4+r]` 是第 r 行第 c 列（即 `uniformMatrix4fv`
+//      要的列主序存储），点变换写作 `p' = M * p`，展开即
+//      `p'.x = m[0]*x + m[4]*y + m[8]*z + m[12]`。
+//      于是：三个基向量在 `[0,1,2] [4,5,6] [8,9,10]`，**平移在 `[12,13,14]`**，
+//      齐次位在 `[3,7,11]`（恒 0）与 `[15]`（恒 1）。
+//      `mul` / `transformPoint` / `rotateY` / `pixelRay` 全部按这一套下标写，
+//      没有第二种排布，也**不需要任何转置**。
 //
-//   2) 实例矩阵用**行主序的 16 个 f32 数组**从 Rust 侧过 IPC 交给前端，
-//      前端必须 toColumnMajor() 之后才能喂 gl.uniformMatrix4fv。这两件事
-//      在内存里长得一样、错了却不会报错（只会画成镜像/旋转反的），
-//      所以每个入口都必须在注释里点名自己吃的是哪一种排布。
+//   2) `.scene` 记录里那 16 个 f32 从 Rust 侧**原样直读**过来，就已经是上面这套
+//      下标（客户端存的就是平移在 `[12..14]`）。中间**任何一步再转置都会把平移
+//      搬走**：物件会全部叠到原点，而且不报错。这里曾因为注释把这套排布叫作
+//      "行主序"，导致 `expandInstances` 多做一次转置 + `pixelRay` 从 `[3,7,11]`
+//      取相机，两处同时静默错。所以每个入口都必须点名自己吃的是哪一种排布。
+//
+//   ⚠ 唯一还没证的：**旋转块要不要转置**。上面那条只钉死平移。旋转部分客户端
+//      存的是 `R` 还是 `Rᵀ` 目前没有证据（样本 257 个实例里 0 个旋转块对称，
+//      所以这个歧义对每个实例都活着），由 `expandInstances` 的
+//      `transposeRotation` 开关承担，默认 `false`（原样直读）。真机比对朝向后
+//      一行翻转。**在比对之前，界面不许声称物件朝向正确。**
 
 /// 恒等阵。
 export function identity() {
   return new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 }
 
-/// 平移阵。行主序下平移量落在 m[12..14]。
+/// 平移阵。GL 布局下平移量落在 m[12..14]。
 export function translate(x, y, z) {
   return new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, y, z, 1]);
 }
@@ -35,7 +45,7 @@ export function rotateY(rad) {
 }
 
 /// M * S 的均匀缩放形式：只缩放前三个基向量，不动平移。
-/// 行主序下三个基向量分别躺在 {m[0],m[1],m[2]}、{m[4],m[5],m[6]}、{m[8],m[9],m[10]}，
+/// GL 布局下三个基向量分别躺在 {m[0],m[1],m[2]}、{m[4],m[5],m[6]}、{m[8],m[9],m[10]}，
 /// 所以乘 s 是逐元素散开，不是简单的切片运算。
 export function scaleMat(m, s) {
   const o = new Float32Array(m);
@@ -45,7 +55,7 @@ export function scaleMat(m, s) {
   return o;
 }
 
-/// a * b（先 b 后 a）。行主序、列向量：
+/// a * b（先 b 后 a）。GL 布局：
 /// (a*b)[c*4+r] = Σ_k a[k*4+r] * b[c*4+k]，即 a 的第 r 行的第 k 个元素配 b 的第 c 列第 k 个。
 export function mul(a, b) {
   const o = new Float32Array(16);
@@ -67,15 +77,21 @@ export function transformPoint(m, p) {
   ];
 }
 
-/// 行主序 f32 → 列主序 f32，喂 gl.uniformMatrix4fv。
+/// 只转置旋转块（左上 3x3），**平移 `[12..14]` 与齐次位 `[3,7,11,15]` 一个都不动**。
 ///
-/// 转置这件事**静默**失败：矩阵里的平移量会跑到最后一列，屏幕上表现为
-/// 一堆物件被压扁/拉飞，而不是报错。所以不让调用方自己记得转，统一从这里走。
-export function toColumnMajor(m) {
-  const o = new Float32Array(16);
-  for (let c = 0; c < 4; c++) {
-    for (let r = 0; r < 4; r++) o[c * 4 + r] = m[r * 4 + c];
-  }
+/// 这是「客户端存的到底是 `R` 还是 `Rᵀ`」这个未证问题的唯一开关：整阵转置会连平移
+/// 一起搬走（那就是全图塌原点的事故），所以这里刻意只做 3x3。转置错了不报错——
+/// 表现为物件朝向镜像/反转，位置仍然全对，所以只能靠真机比对定，不能靠看图顺眼。
+export function transposeRotationBlock(m) {
+  const o = new Float32Array(m);
+  const swap = (a, b) => {
+    const t = o[a];
+    o[a] = o[b];
+    o[b] = t;
+  };
+  swap(1, 4);
+  swap(2, 8);
+  swap(6, 9);
   return o;
 }
 
@@ -94,8 +110,8 @@ export function toColumnMajor(m) {
 ///   * **含剪切**——同理会歪，且比非等比更明显。
 ///   * 判定：调用方要确认摆放数据只用等比缩放，可用 shapeScaleError() 抽样检查。
 ///
-/// 返回同样是**行主序**的 9 元数组（[m00,m01,m02, m10,m11,m12, m20,m21,m22]）。
-/// 喂 gl.uniformMatrix3fv 之前必须过 toColumnMajor3。
+/// 返回 **GL 布局**的 9 元数组：三个归一化后的基向量依次躺在 `[0..2] [3..5] [6..8]`，
+/// 也就是列主序 3x3，可以直接喂 `gl.uniformMatrix3fv`，不用再转一次。
 export function normalMatrix3(m) {
   const cols = [
     [m[0], m[1], m[2]],
@@ -120,20 +136,6 @@ export function normalMatrix3(m) {
   return o;
 }
 
-/// 行主序 3x3 → 列主序 3x3，喂 gl.uniformMatrix3fv。
-///
-/// 和 toColumnMajor 是同一个坑：normalMatrix3 给的是行主序，而 GL 收的是列主序。
-/// 两者在内存里都是 9 个 float，转置错了不报错——表现是法线被按"转置后的旋转"
-/// 扭转，光照方向整体偏，但几何位置完全正常，看起来像"打光角度没调好"。
-/// 所以这里也统一提供转置函数，不让调用方自己记。
-export function toColumnMajor3(n) {
-  const o = new Float32Array(9);
-  for (let r = 0; r < 3; r++) {
-    for (let c = 0; c < 3; c++) o[c * 3 + r] = n[r * 3 + c];
-  }
-  return o;
-}
-
 /// 三个轴向缩放长度的相对离散度：(max-min)/max。0 = 等比。
 /// 给"要不要相信 normalMatrix3"提供一个可量化的判据，而不是靠感觉。
 export function shapeScaleError(m) {
@@ -151,22 +153,22 @@ export function shapeScaleError(m) {
   return e < 1e-6 ? 0 : e;
 }
 
-/// 实例总表：把 payload.instances 里各自的行主序数组收进一段连续缓冲，
-/// 同时**预先算好列主序与法线矩阵**，免得每帧再转置/归一化一遍。
+/// 实例总表：把 payload.instances 里各自的 16 个 f32 收进一段连续缓冲。
+///
+/// `.scene` 直读来的排布**已经是 GL 布局**，所以这里默认原样收，不做整阵转置。
+/// 唯一可选项是 `opts.transposeRotation`——只翻旋转块，见文件头那条 ⚠。
 ///
 /// 这里刻意不合并成一张大网格：实例只用 4x4 矩阵描述（只能是刚体/相似变换或
 /// 不支持的剪切），三个不同网格的三角面各自独立、不可能焊成一份，所以几何
 /// 必须按网格分开上传；合并只发生在"矩阵查表"这一层。
-///
-/// 出来的 modelColumnMajor / normal **都是列主序**，可以直接喂 uniformMatrix*fv。
-export function expandInstances(instances, meshCount) {
+export function expandInstances(instances, meshCount, opts) {
+  const flipRot = !!(opts && opts.transposeRotation);
   const n = instances.length;
   const out = {
     count: n,
     meshIndex: new Int32Array(n),
-    model: new Float32Array(n * 16),        // 行主序，原始形态，便于调试与再运算
-    modelColumnMajor: new Float32Array(n * 16), // 转置好，直接喂 uniformMatrix4fv
-    normal: new Float32Array(n * 9),        // 列主序 3x3，直接喂 uniformMatrix3fv
+    model: new Float32Array(n * 16), // GL 布局，直接喂 uniformMatrix4fv
+    normal: new Float32Array(n * 9), // GL 布局 3x3，直接喂 uniformMatrix3fv
   };
   for (let i = 0; i < n; i++) {
     const src = instances[i];
@@ -179,13 +181,11 @@ export function expandInstances(instances, meshCount) {
     if (!raw || raw.length !== 16) {
       throw new Error(`第 ${i} 个实例的变换矩阵不是 16 个数（实际 ${raw ? raw.length : 0}）`);
     }
-    const row = Float32Array.from(raw);
+    const row = flipRot ? transposeRotationBlock(Float32Array.from(raw)) : Float32Array.from(raw);
     out.meshIndex[i] = mi;
     out.model.set(row, i * 16);
-    out.modelColumnMajor.set(toColumnMajor(row), i * 16);
-    // 法线矩阵也在这里就转成列主序：绘制循环里每次少一次转置，
-    // 而且"GL 要列主序"这件事只在这一个文件里出现，不会散到 draw 里去。
-    out.normal.set(toColumnMajor3(normalMatrix3(row)), i * 9);
+    // 法线矩阵从最终用的那份矩阵推：开关一旦翻转，光照跟着朝向走，不会两套打架。
+    out.normal.set(normalMatrix3(row), i * 9);
   }
   return out;
 }
@@ -273,9 +273,9 @@ export function worldBounds(meshes, instances, stride) {
 /// 当初写成 "R^T * dirCam" 就错在这里——那等于把这些基当成系数去配，
 /// 方向会整体错位（表现是点左边中右边、或恒不中）。
 ///
-/// view 吃的是**列主序** 16 元矩阵（见 toColumnMajor）。列主序下平移量在
-/// **3、7、11** 这三个位置（第 4 列），不在 12..14 —— 这一条最容易搞反，
-/// 而且搞反了不报错，只是相机位置恒等于原点。所以下面单独取出来用。
+/// view 吃的是 **GL 布局** 16 元矩阵（`mul` / `mat4.*` 出来的就是这套）。GL 布局下平移
+/// 在 **12、13、14**，齐次位在 3、7、11 —— 这一条最容易搞反，而且搞反了不报错，
+/// 只是相机位置恒等于原点、点选永远从世界原点发出射线。下面按 12..14 取。
 export function pixelRay(clientX, clientY, rect, view, fov, aspect) {
   // 像素 → NDC，Y 要翻转：屏幕向下是正，NDC 向上是正。
   const ndcX = ((clientX - rect.left) / Math.max(1, rect.width)) * 2 - 1;
@@ -284,15 +284,14 @@ export function pixelRay(clientX, clientY, rect, view, fov, aspect) {
   const ax = (ndcX * aspect) / f;
   const ay = ndcY / f;
 
-  // 相机在世界的位置：列主序下 t 躺在 [3,7,11]，而 R 的三个行向量
-  // 恰好就是 [0..2]、[4..6]、[8..10]，所以 -R^T t 可以逐行直接算。
-  const origin = [
-    -(view[0] * view[3] + view[1] * view[7] + view[2] * view[11]),
-    -(view[4] * view[3] + view[5] * view[7] + view[6] * view[11]),
-    -(view[8] * view[3] + view[9] * view[7] + view[10] * view[11]),
-  ];
-  // 方向 = ax * 右 + ay * 上 + (-1) * 后。
-  const dir = [0, 1, 2].map((r) => ax * view[r] + ay * view[4 + r] - view[8 + r]);
+  // view 把世界映到相机空间，所以它的旋转块 R 是「世界 → 相机」；要回到世界得乘 Rᵀ。
+  // GL 布局下 R 的第 r 列就是 flat[r*4 .. r*4+2]，而 Rᵀ 的第 r 行正是它 —— 于是
+  // eye = -Rᵀ·t 与 dir = Rᵀ·(ax, ay, -1) 都按**列**取。按行取等于默默乘了 R 本身：
+  // 不报错，只是相机位置和视线方向双双转置，点选恒不中。
+  const col = (r, k) => view[r * 4 + k];
+  const origin = [0, 1, 2].map((r) => -(col(r, 0) * view[12] + col(r, 1) * view[13] + col(r, 2) * view[14]));
+  // 方向 = ax · 相机右 + ay · 相机上 + (-1) · 相机后（取负即前）。
+  const dir = [0, 1, 2].map((r) => ax * col(r, 0) + ay * col(r, 1) - col(r, 2));
   const len = Math.hypot(dir[0], dir[1], dir[2]) || 1;
   return { origin, dir: [dir[0] / len, dir[1] / len, dir[2] / len] };
 }

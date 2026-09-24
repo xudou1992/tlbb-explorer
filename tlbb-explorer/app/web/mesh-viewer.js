@@ -19,9 +19,9 @@ attribute vec3 aPosition;
 attribute vec3 aNormal;
 uniform mat4 uModelView;
 uniform mat4 uProjection;
-// uInstance：实例的模型矩阵（**列主序**，已由 instanceMath.toColumnMajor 转好）。
-// uNormalMat：实例法线矩阵（**列主序** 3x3，已由 expandInstances 按"旋转+均匀缩放"
-//             假设算好并转置到位）。
+// uInstance：实例的模型矩阵（**GL 布局**，scene 记录直读过来就是这个排布，不转置）。
+// uNormalMat：实例法线矩阵（**GL 布局** 3x3，由 expandInstances 按"旋转+均匀缩放"
+//             假设算好，同样直接喂 uniformMatrix3fv）。
 // uUseInst：0 = 单网格老路径，1 = 多实例路径。用 uniform 分流而不是写两个 program，
 // 是为了让"老路径没被顺手改坏"这件事只取决于一个数字，肉眼可核。
 uniform mat4 uInstance;
@@ -380,7 +380,7 @@ export class MeshViewer {
   }
 
   /// 多实例装载。payload = { meshes: [meshData...], instances: [{ meshIndex, matrix }] }，
-  /// 其中 matrix 是**行主序**的 16 个 f32。
+  /// 其中 matrix 是从 `.scene` 记录**原样直读**的 16 个 f32，已是 GL 布局（平移在 [12..14]）。
   loadInstances(payload) {
     const gl = this.gl;
     const meshes = (payload && payload.meshes) || [];
@@ -522,7 +522,7 @@ export class MeshViewer {
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, geo.buf.idx);
       for (let i = 0; i < inst.count; i++) {
         if (inst.meshIndex[i] !== p) continue;
-        gl.uniformMatrix4fv(this.un.inst, false, inst.modelColumnMajor.subarray(i * 16, i * 16 + 16));
+        gl.uniformMatrix4fv(this.un.inst, false, inst.model.subarray(i * 16, i * 16 + 16));
         gl.uniformMatrix3fv(this.un.nrm, false, inst.normal.subarray(i * 9, i * 9 + 9));
         gl.drawElements(gl.TRIANGLES, geo.ic, gl.UNSIGNED_SHORT, 0);
       }

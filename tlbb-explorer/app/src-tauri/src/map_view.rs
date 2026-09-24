@@ -43,6 +43,14 @@ pub struct MapInstance {
     pub matrix: [f32; 16],
 }
 
+/// 非网格名字按扩展名聚合的一行。
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ExtCount {
+    pub ext: String,
+    pub records: usize,
+}
+
 /// 一个格子文件为什么没交出实例——按类型聚合，不逐条铺（一张图可能上千格）。
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -68,17 +76,44 @@ pub struct MapScene {
     pub records: usize,
     /// 名字能在几何池里找到实体的条数。
     pub resolved: usize,
-    /// 对不上名字、以及名字为空的条数（这两类界面要分开说，别混成一个「缺」）。
-    pub unmatched: usize,
+    /// 叫 `某某.mesh`、但客户端里查不到这个文件：这是真缺。
+    pub missing_meshes: usize,
+    /// 名字带的扩展名不是 `.mesh`（实测大理这张图是 10 条 `.pu` 特效）。
+    /// **这类不是缺**：文件在客户端里真实存在，只是这一版只摆网格、不画特效。
+    pub not_mesh: usize,
+    /// 名字既不像文件名、也不像路径（32 位大写十六进制那种）：不猜它是什么。
+    pub odd_names: usize,
+    /// 清单说有、容器里取不出字节：读取失败，不能算「没有这个物件」。
+    pub unreadable_meshes: usize,
     pub empty_named: usize,
     /// 去重后真正要画的网格数。
     pub unique_meshes: usize,
     pub meshes: Vec<MeshData>,
     pub instances: Vec<MapInstance>,
     pub grid_reasons: Vec<GridReason>,
-    /// 对不上名字的原样列举到封顶为止，超了就只报个数——不去猜它该用哪个模型。
-    pub unmatched_sample: Vec<String>,
-    pub unmatched_truncated: bool,
+    /// 真缺的那些名字原样列举到封顶为止，超了就只报个数——不去猜它该用哪个模型。
+    pub missing_sample: Vec<String>,
+    pub missing_truncated: bool,
+    /// 不是网格的名字按扩展名聚合（`.pu` 10 条这种），因为它们各有各的说法。
+    pub other_ext: Vec<ExtCount>,
+}
+
+/// 名字属于哪一类：只看扩展名，不看它"应该"是什么。
+/// `.mesh` 才是这一版画得了的东西；带别的扩展名说明客户端里本来就有那个文件
+/// （`.pu` 特效实测就在 `data/effect/pu_scene/`），说成「没有这个文件」是谎话。
+fn kind_of(name: &str) -> (String, bool) {
+    let Some((_, ext)) = name.rsplit_once('.') else {
+        return (String::new(), false);
+    };
+    let e = ext.to_ascii_lowercase();
+    if e == "mesh" {
+        return ("mesh".to_string(), true);
+    }
+    // 扩展名是 1~6 个字母数字才算"这是个文件名"；否则算认不出来的怪名字。
+    let plausible = e.len() <= 6 && e.chars().all(|c| c.is_ascii_alphanumeric());
+    // 第二个返回值是 is_mesh，只有 `.mesh` 才是 true —— 走到这里必然不是网格，
+    // 别把 plausible 当它返回：那样会把 .pu 特效算成「客户端里没有这个文件」。
+    (if plausible { e } else { String::new() }, false)
 }
 
 fn why(e: &SceneError) -> String {
@@ -119,12 +154,20 @@ pub fn map_list(state: State<'_, AppData>, limit: usize) -> Result<Vec<MapRow>, 
 
 #[tauri::command]
 pub fn map_scene(state: State<'_, AppData>, id: String) -> Result<MapScene, String> {
-    let id = id.trim().to_string();
+    scene_of(&state, &id)
+}
+
+/// 装配一张图的全部工作。命令层只负责把 `State` 解开。
+///
+/// 之所以单独是个普通函数：`--map <ID>` 要能**无窗口跑同一条路径**做验收。
+/// 验收如果去跑另一份"给测试看的"实现，测到了也不代表用户看到的那条链是对的。
+pub fn scene_of(app: &AppData, raw_id: &str) -> Result<MapScene, String> {
+    let id = raw_id.trim().to_string();
     if id.is_empty() || id.contains('/') || id.contains('\\') || id.contains("..") {
         return Err("地图 ID 要么是客户端原文那个名字，要么不查".into());
     }
     let dir = format!("mobile_maps/{id}");
-    let grids = state.try_q(|c| c.scene_grids(&dir))?;
+    let grids = app.try_q(|c| c.scene_grids(&dir))?;
     if grids.is_empty() {
         return Err(format!(
             "资源清单里 `{dir}` 下没有任何格子文件。没有，不等于这张图是空的——\
@@ -139,14 +182,18 @@ pub fn map_scene(state: State<'_, AppData>, id: String) -> Result<MapScene, Stri
         unreadable_grids: 0,
         records: 0,
         resolved: 0,
-        unmatched: 0,
+        missing_meshes: 0,
+        not_mesh: 0,
+        odd_names: 0,
+        unreadable_meshes: 0,
         empty_named: 0,
         unique_meshes: 0,
         meshes: Vec::new(),
         instances: Vec::new(),
         grid_reasons: Vec::new(),
-        unmatched_sample: Vec::new(),
-        unmatched_truncated: false,
+        missing_sample: Vec::new(),
+        missing_truncated: false,
+        other_ext: Vec::new(),
     };
     // 网格哈希 → 池下标；同一个网格被 500 个格子引用，也只解码一次。
     let mut pool: HashMap<u64, usize> = HashMap::new();
@@ -155,7 +202,7 @@ pub fn map_scene(state: State<'_, AppData>, id: String) -> Result<MapScene, Stri
     let mut reasons: HashMap<String, (usize, Vec<String>)> = HashMap::new();
 
     for (hash, grid_name) in grids {
-        let Some(raw) = state.read(hash) else {
+        let Some(raw) = app.read(hash) else {
             note(
                 &mut reasons,
                 "读不到字节：清单说在这，容器里没取出来",
@@ -188,7 +235,7 @@ pub fn map_scene(state: State<'_, AppData>, id: String) -> Result<MapScene, Stri
             let hit = match cached {
                 Some(h) => h,
                 None => {
-                    let h = state
+                    let h = app
                         .try_q(|c| c.hash_by_name_in(SOURCE_DIR, &inst.name))
                         .unwrap_or(None);
                     named.insert(inst.name.clone(), h);
@@ -196,25 +243,31 @@ pub fn map_scene(state: State<'_, AppData>, id: String) -> Result<MapScene, Stri
                 }
             };
             let Some(key) = hit else {
-                out.unmatched += 1;
-                if out.unmatched_sample.len() < 60 {
-                    out.unmatched_sample.push(inst.name.clone());
+                let (ext, is_mesh) = kind_of(&inst.name);
+                if is_mesh {
+                    out.missing_meshes += 1;
+                    if out.missing_sample.len() < 60 {
+                        out.missing_sample.push(inst.name.clone());
+                    } else {
+                        out.missing_truncated = true;
+                    }
+                } else if ext.is_empty() {
+                    out.odd_names += 1;
                 } else {
-                    out.unmatched_truncated = true;
+                    out.not_mesh += 1;
+                    match out.other_ext.iter_mut().find(|x| x.ext == ext) {
+                        Some(x) => x.records += 1,
+                        None => out.other_ext.push(ExtCount { ext: ext.to_string(), records: 1 }),
+                    }
                 }
                 continue;
             };
             let idx = match pool.get(&key) {
                 Some(i) => *i,
                 None => {
-                    let Some(bytes) = state.read(key) else {
+                    let Some(bytes) = app.read(key) else {
                         // 清单说有、容器取不出来：这是读取失败，不能算"没有这个物件"。
-                        out.unmatched += 1;
-                        if out.unmatched_sample.len() < 60 {
-                            out.unmatched_sample.push(format!("{}（取不到字节）", inst.name));
-                        } else {
-                            out.unmatched_truncated = true;
-                        }
+                        out.unreadable_meshes += 1;
                         continue;
                     };
                     match parse_geometry(&bytes) {
@@ -225,13 +278,8 @@ pub fn map_scene(state: State<'_, AppData>, id: String) -> Result<MapScene, Stri
                             pool.insert(key, i);
                             i
                         }
-                        Err(e) => {
-                            out.unmatched += 1;
-                            if out.unmatched_sample.len() < 60 {
-                                out.unmatched_sample.push(format!("{}（{e}）", inst.name));
-                            } else {
-                                out.unmatched_truncated = true;
-                            }
+                        Err(_) => {
+                            out.unreadable_meshes += 1;
                             continue;
                         }
                     }
@@ -246,6 +294,7 @@ pub fn map_scene(state: State<'_, AppData>, id: String) -> Result<MapScene, Stri
     }
 
     out.unique_meshes = out.meshes.len();
+    out.other_ext.sort_by(|a, b| b.records.cmp(&a.records));
     let mut v: Vec<GridReason> = reasons
         .into_iter()
         .map(|(reason, (grids, sample))| GridReason {

@@ -181,6 +181,46 @@ fn fatal(msg: &str) -> ! {
 
 /// Read-only self-check: exercises the whole pipeline without a webview so the shell can
 /// be verified in a headless run. `tlbb-shell --probe [中文词]`
+/// 无窗口装配一张地图，把计数打到 stdout：`tlbb-shell --map <地图ID>`。
+///
+/// 存在的理由只有一个——验收要能对得上号。它跑的是 `scene_of`，也就是界面上
+/// 「地图」浮层点进去走的同一个函数，不是另写一份平行实现。
+pub fn map_dump(id: String) {
+    let (root, db) = roots();
+    let app = match AppData::open(&root, &db) {
+        Ok(a) => a,
+        Err(e) => fatal(&e),
+    };
+    match map_view::scene_of(&app, &id) {
+        Ok(s) => {
+            println!("地图            {}", s.id);
+            println!("格子文件        {}", s.grids);
+            println!("摆位记录        {}", s.records);
+            println!("能画出形状      {}", s.resolved);
+            println!("网格文件不存在  {}", s.missing_meshes);
+            println!("不是网格的名字  {}", s.not_mesh);
+            println!("认不出的名字    {}", s.odd_names);
+            println!("取不到字节      {}", s.unreadable_meshes);
+            println!("名字为空        {}", s.empty_named);
+            println!("空格子          {}", s.empty_grids);
+            println!("读不通的格子    {}", s.unreadable_grids);
+            println!("去重后网格      {}", s.unique_meshes);
+            println!("实例表长度      {}", s.instances.len());
+            println!("几何缓冲合计  {}", s.meshes.iter().map(|m| m.buffer.len()).sum::<usize>());
+            for r in s.grid_reasons.iter().take(6) {
+                println!("  原因 {} 个格子：{}", r.grids, r.reason);
+            }
+            for x in s.other_ext.iter() {
+                println!("  不是网格 .{} 共 {} 条", x.ext, x.records);
+            }
+            for m in s.missing_sample.iter().take(6) {
+                println!("  客户端里没有 {}", m);
+            }
+        }
+        Err(e) => fatal(&e),
+    }
+}
+
 pub fn probe(word: Option<String>) {
     let (root, db) = roots();
     let app = match AppData::open(&root, &db) {

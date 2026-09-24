@@ -28,34 +28,46 @@ function status(msg) {
   box.hidden = !msg;
 }
 
-/// 右侧那张信息表：每个数字都带自己的分母，四类"没画出来"分开说。
-/// 混成一个「缺」就等于骗人——空格子、不是物件表的文件、名字对不上，
-/// 是完全不同的三件事。
+
 function info(s) {
-  const pct = s.records ? (s.resolved / s.records) * 100 : 0;
   const line = (k, v) => `<div><dt>${esc(k)}</dt><dd>${v}</dd></div>`;
+  // 「能画出形状」的分母是**实测走通的摆位记录**，不是文件头声明的条数（声明是上界，
+  // 全库 n<declared 3,620 例）。而且这一版要把"不是网格"从"缺"里摘出去：
+  // 大理这张图 6,112 条里 10 条是 .pu 特效、1 条名字认不出来，
+  // 真正的 .mesh 一条不缺 —— 说成「99.8% 命中、11 条缺」是把好消息报成坏消息。
+  const meshMissing = s.missingMeshes + s.unreadableMeshes;
   const bits = [
     line("格子文件", `${num(s.grids)} 个`),
     line("摆位记录", `${num(s.records)} 条`),
+    line("画得出形状", `${num(s.resolved)} 条 · 分母是上面那个实测条数`),
     line(
-      "能画出形状",
-      `${num(s.resolved)} 条 · ${pctText(pct, s.resolved)}（分母是上面那个实测条数，不是文件头声明的条数）`,
+      "摆不出来的",
+      meshMissing
+        ? `<span class="miss">${num(s.missingMeshes)} 条记的是网格，但客户端里没有这个文件</span>` +
+          (s.unreadableMeshes ? `<br /><span class="miss">${num(s.unreadableMeshes)} 条清单说有、容器里取不到字节</span>` : "")
+        : `<span class="ok">0 条 —— 凡记成 .mesh 的都在客户端里找到了</span>`,
+    ),
+    line(
+      "本来就不是网格",
+      s.notMesh
+        ? `${num(s.notMesh)} 条引用的是别的类型（${s.otherExt.map((x) => `.${esc(x.ext)} ${num(x.records)} 条`).join("、")}）—— 文件在客户端里存在，这一版只摆网格、不画这些`
+        : "0 条",
     ),
     line("去重后的模型", `${num(s.uniqueMeshes)} 个 · 实例 ${num(s.instances.length)} 个`),
   ];
+  if (s.oddNames) bits.push(line("认不出的名字", `${num(s.oddNames)} 条：既不像文件名也不像路径，没猜它是什么`));
   if (s.emptyGrids) bits.push(line("空着的格子", `${num(s.emptyGrids)} 个：那一格本来就没摆东西`));
   if (s.unreadableGrids)
-    bits.push(line("读不通的格子", `${num(s.unreadableGrids)} 个：不是物件清单那类文件`));
-  if (s.unmatched)
-    bits.push(line("名字对不上", `${num(s.unmatched)} 条：记了名字但没有任何文件叫这个，没去猜该用哪个模型`));
+    bits.push(line("读不通的格子", `${num(s.unreadableGrids)} 个：不是物件清单那类文件（逐条原因在下面）`));
   if (s.emptyNamed) bits.push(line("名字为空", `${num(s.emptyNamed)} 条`));
   bits.push(
     line(
       "缺什么",
-      `<span class="miss">贴图 ✘（材质引用的贴图名在客户端里没有实体）</span><br />` +
-        `<span class="miss">地形高度 ✘（.map 存的是地表编码格、不是高低数据）</span><br />` +
-        `<span class="miss">碰撞与能不能走 ✘（没读）</span><br />` +
-        `<span class="miss">动作 ✘（没读）</span>`,
+      `<span class="miss">贴图 ✘ 材质引用的贴图名在客户端里没有实体</span><br />` +
+        `<span class="miss">地形高度 ✘ .map 存的是地表编码格、不是高低数据</span><br />` +
+        `<span class="miss">碰撞与能不能走 ✘ 没读</span><br />` +
+        `<span class="miss">动作 ✘ 没读</span><br />` +
+        `<span class="miss">朝向 ✘ R 还是 Rᵀ 未证，待与客户端比对</span>`,
     ),
   );
   const reasons = s.gridReasons
@@ -67,11 +79,9 @@ function info(s) {
     .join("");
   el("mapInfo").innerHTML = bits.join("");
   el("mapAbs").innerHTML = reasons || `<li class="a-ok"><span>这一版没有读不通的格子</span></li>`;
-  const miss = s.unmatched_sample
-    .map((n) => `<li>${esc(n)}</li>`)
-    .join("");
+  const miss = s.missingSample.map((n) => `<li>${esc(n)}</li>`).join("");
   el("mapMiss").innerHTML =
-    miss + (s.unmatchedTruncated ? `<li class="dim">…只显示前 60 个，其余按个数计在上面</li>` : "");
+    miss + (s.missingTruncated ? `<li class="dim">…只显示前 60 个，其余按个数计在上面</li>` : "");
   el("secMapMiss").hidden = !miss;
 }
 

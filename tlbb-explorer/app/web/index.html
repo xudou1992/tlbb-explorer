@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0b0e10" />
+    <meta name="theme-color" content="#100e0b" />
     <title>天龙八部·归来 · 资源浏览器</title>
     <link rel="stylesheet" href="style.css" />
   </head>
@@ -12,17 +12,17 @@
 
     <header class="topbar">
       <div class="brand">
-        <span class="logo" aria-hidden="true"><i></i></span>
+        <span class="logo" aria-hidden="true">天</span>
         <div>
-          <h1>资源浏览器</h1>
-          <p id="lead">只读打开客户端资源</p>
+          <h1>天龙八部 · 归来</h1>
+          <p id="lead">资源浏览器 · 只读打开客户端资产</p>
         </div>
       </div>
       <div class="top-status">
         <span class="pill"><i class="dot"></i>只读</span>
         <span class="reading" id="progressText" aria-live="polite">正在读取…</span>
         <i class="bar" aria-hidden="true"><b id="bar"></b></i>
-        <button type="button" id="openMap" class="ghost">地图</button>
+        <button type="button" id="openMap" class="btn-primary">地图</button>
         <button type="button" id="openHealth" class="ghost">库状态</button>
       </div>
     </header>
@@ -38,23 +38,24 @@
 
         <section class="group"><h2>类型</h2><div class="chips" id="kinds"></div></section>
         <section class="group"><h2>用途</h2><div class="chips" id="scenarios"></div></section>
-        <section class="group"><h2>证据等级</h2><div class="chips" id="grades"></div></section>
+        <section class="group"><h2>完整程度</h2><div class="chips" id="grades"></div></section>
 
         <label class="check"><input id="onlyImage" type="checkbox" /><span>只看贴图名能对上的</span></label>
-        <button type="button" id="unnamed" class="ghost wide">看未命名资源</button>
+        <button type="button" id="unnamed" class="ghost wide">看未命名资产</button>
 
         <dl class="rail-stats" id="stats"></dl>
         <p class="rail-note"><b>为什么有些地方是「缺」</b><br />客户端只保存名称，没有路径，这是客户端的设计，不是解析失败。</p>
       </aside>
 
-      <!-- 02 列表：一条资产一行 -->
+      <!-- 02 列表：一条资产一行，滚到底自动续载 -->
       <section class="pane list">
         <div class="list-head">
           <span id="count" aria-live="polite">—</span>
-          <button type="button" id="reset" class="ghost">清空</button>
+          <button type="button" id="reset" class="ghost">清空筛选</button>
         </div>
         <div id="rows" class="rows"></div>
-        <p class="empty" id="empty" hidden><strong>没有符合条件的资产</strong><span>换个关键词，或点「清空」。</span></p>
+        <div id="more" class="more-sentinel" hidden></div>
+        <p class="empty" id="empty" hidden><strong>没有符合条件的资产</strong><span>换个关键词，或点「清空筛选」。</span></p>
       </section>
 
       <!-- 03 详情：一条资产说清楚 -->
@@ -79,6 +80,12 @@
             <ul class="abs" id="abs"></ul>
           </section>
 
+          <section class="d-sec" id="secTex" hidden>
+            <h3>贴图试贴候选 <span class="dim" id="texNote"></span></h3>
+            <div id="texSlots"></div>
+            <div id="texCand"></div>
+          </section>
+
           <section class="d-sec" id="secMesh" hidden>
             <h3>立体模型</h3>
             <div class="mesh-head">
@@ -94,7 +101,7 @@
           </section>
 
           <section class="d-sec" id="secPv" hidden>
-            <h3>图片 <em id="pvCount"></em></h3>
+            <h3>贴图预览 <em id="pvCount"></em></h3>
             <div class="pvgrid" id="pvGrid"></div>
             <p class="dim" id="pvNote"></p>
           </section>
@@ -122,6 +129,14 @@
       </section>
     </main>
 
+    <!-- 图片放大：点贴图预览里的任何一张，全屏看它 -->
+    <div class="lightbox" id="lightbox" hidden>
+      <figure style="margin: 0; display: grid; justify-items: center">
+        <img id="lightboxImg" alt="" />
+        <figcaption id="lightboxCap"></figcaption>
+      </figure>
+    </div>
+
     <!-- 库状态：整屏浮层，看完退回资产页 -->
     <section class="overlay" id="health" hidden aria-label="库状态">
       <div class="overlay-head">
@@ -134,18 +149,31 @@
     <!-- 地图浏览器：与「库状态」同一形状的整屏浮层，资产链路一行不改 -->
     <section class="overlay" id="maps" hidden aria-label="地图浏览器">
       <div class="overlay-head">
-        <h2>地图 · 灰模</h2>
+        <div class="map-modes">
+          <h2>地图</h2>
+          <div class="seg" role="group" aria-label="视图切换">
+            <button type="button" id="modeGray" class="seg-b on">灰模</button>
+            <button type="button" id="modeTop" class="seg-b">俯视量测</button>
+          </div>
+        </div>
         <button type="button" id="closeMap" class="ghost">返回资产</button>
       </div>
       <p class="map-banner" id="mapBanner"></p>
       <div class="map-wrap">
         <aside class="map-list">
+          <label class="field">
+            <span>找地图</span>
+            <input id="mapFilter" type="search" autocomplete="off" spellcheck="false" placeholder="按编号过滤，如 w1351…" />
+          </label>
           <div id="mapRows" class="maprows"></div>
           <p class="dim" id="mapState" hidden></p>
         </aside>
         <div class="map-stage">
           <canvas id="mapCanvas" aria-label="地图灰模预览" hidden></canvas>
-          <p class="mesh-hint">按住拖动旋转 · 滚轮远近 · 双击回到正面</p>
+          <canvas id="mapTop" aria-label="地图俯视量测" hidden></canvas>
+          <p class="top-pick" id="topPick" hidden></p>
+          <p class="top-coords" id="topCoords" hidden></p>
+          <p class="mesh-hint" id="stageHint">按住拖动旋转 · 滚轮远近 · 双击回到正面</p>
         </div>
         <aside class="map-info">
           <h3>这张图有什么</h3>
@@ -161,8 +189,7 @@
     </section>
 
     <footer class="app-footer">
-      <span>名称一律保持客户端原文</span>
-      <span>不自动猜测资源之间的关系</span>
+      <span>名称一律保持客户端原文 · 不自动猜测资源之间的关系</span>
     </footer>
 
     <script type="module" src="app.js"></script>

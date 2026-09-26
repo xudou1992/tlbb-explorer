@@ -157,6 +157,7 @@ export function treeHtml(mdl, members) {
 
 /// 贴图预览：一张真图都没解出来时整块不出现。那些灰卡说的"为什么没图"
 /// 和下面「缺什么」是同一句话，摆一排只会让人以为预览坏了。
+/// hash 跟着 figure 走：lightbox 点开时按它找后端要大图（没有就放缩略图）。
 export function previewsOf(pv) {
   const items = (pv && pv.items) || [];
   const real = items.filter((p) => p.ok);
@@ -164,7 +165,7 @@ export function previewsOf(pv) {
   const html = real
     .map(
       (p) =>
-        `<figure class="pv"><img src="${esc(p.dataUrl)}" alt=""><figcaption>${esc(p.label)}</figcaption></figure>`,
+        `<figure class="pv" data-hash="${esc(p.hash || "")}"><img src="${esc(p.dataUrl)}" alt=""><figcaption>${esc(p.label)}</figcaption></figure>`,
     )
     .join("");
   const extra = items.length > real.length ? ` / 试了 ${items.length} 个来源` : "";
@@ -213,8 +214,11 @@ export function absencesOf(insp, card) {
   const out = [];
   const ofRole = (role) => members.filter((m) => m.role === role);
   const resolvedOf = (role) => ofRole(role).filter((m) => m.resolved || m.path).length;
-  // 「缺什么」里以「贴图 」开头的条目 = 材质/模型引用了但落不到文件的名字
-  const danglingTex = (insp.missing || []).filter((s) => s.startsWith("贴图 ")).length;
+  // 「缺什么」里以「贴图 」开头的条目 = 材质/模型引用了但落不到文件的名字。
+  // 2026-09-26 起 cfg 出过处的条目带「已找到原始出处」，汇总句按它分流。
+  const texLines = (insp.missing || []).filter((s) => s.startsWith("贴图 "));
+  const danglingTex = texLines.length;
+  const locatedTex = texLines.filter((s) => s.includes("已找到原始出处")).length;
 
   // 立体模型
   const bodies = mdl && mdl.bodies ? mdl.bodies : [];
@@ -236,6 +240,12 @@ export function absencesOf(insp, card) {
   const realPv = pv && pv.items ? pv.items.filter((p) => p.ok).length : 0;
   const texHit = resolvedOf("texture");
   if (realPv) out.push(abs("贴图", "ok", `${realPv} 张现场解出了像素`));
+  else if (danglingTex && locatedTex)
+    out.push(abs(
+      "贴图",
+      "missing",
+      `材质引用了 ${danglingTex} 张贴图：${locatedTex} 张已从 ResourcePath.cfg 定位原始出处（文件未随包发布），其余 ${danglingTex - locatedTex} 张只存名称（逐条见下面「缺什么」）`
+    ));
   else if (danglingTex)
     out.push(abs("贴图", "missing", `材质引用了 ${danglingTex} 张贴图，客户端只保存名称、没有路径（逐条见下面「缺什么」）`));
   else if (texHit) out.push(abs("贴图", "unknown", `有 ${texHit} 张贴图文件，但没有材质引用它们，不知道用在哪`));

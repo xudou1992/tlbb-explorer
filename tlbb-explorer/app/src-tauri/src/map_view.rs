@@ -9,8 +9,13 @@
 //! 矩阵排布：**`matrix` 是 `.scene` 记录里那 16 个 f32 的原样直读**，即 GL 布局
 //! （平移在 `[12..14]`）。这里不转置、前端不转置、进 GL 不转置——多转一次会把
 //! 平移搬走，整图物件叠在世界原点且不报错。理由见 `preview::scene` 模块文档。
+//!
+//! 俯视缩略图走 `map_footprint`：同一套装配、同一套计数，只是几何缓冲不打包
+//! （`buffer` 为空串）。列表 300 张图若逐个拉全量回包，光 base64 就把首屏拖死；
+//! 计数若另写一份，列表上的数和点进去的数迟早对不上。
 
 use std::collections::HashMap;
+use std::sync::Arc;
 
 use serde::Serialize;
 use tauri::State;
@@ -90,6 +95,10 @@ pub struct MapScene {
     /// 清单说有、容器里取不出字节：读取失败，不能算「没有这个物件」。
     pub unreadable_meshes: usize,
     pub empty_named: usize,
+    /// 目录查询本身失败的次数（SQL 抖动/锁被占）。这类失败绝不能混进
+    /// missing_meshes——那会把一次查询事故显示成「客户端里没有这个文件」，
+    /// 正是 `try_q` 注释里立下的红线要防的事。
+    pub catalog_errors: usize,
     /// 去重后真正要画的网格数。
     pub unique_meshes: usize,
     pub meshes: Vec<MeshData>,
@@ -161,14 +170,39 @@ pub fn list_of(app: &AppData, limit: usize) -> Result<Vec<MapRow>, String> {
         .collect())
 }
 
+// 命令一律 async + spawn_blocking：sync 命令在主线程跑，解析大图那几百毫秒会把
+// 整个窗口冻住，缩略图懒加载还会并发打进来。另外，`State<'_, AppData>` 取不到
+// 被 manage 的 `Arc<AppData>`（tauri 按 TypeId 精确匹配），真窗口里一调就
+// panic——自测台走假后端，此前从没测到这一层，改参数类型才炸出来。
 #[tauri::command]
-pub fn map_list(state: State<'_, AppData>, limit: usize) -> Result<Vec<MapRow>, String> {
-    list_of(&state, limit)
+pub async fn map_list(
+    app: State<'_, Arc<AppData>>,
+    limit: usize,
+) -> Result<Vec<MapRow>, String> {
+    let app = Arc::clone(&app);
+    tauri::async_runtime::spawn_blocking(move || list_of(&app, limit))
+        .await
+        .map_err(|e| e.to_string())?
 }
 
 #[tauri::command]
-pub fn map_scene(state: State<'_, AppData>, id: String) -> Result<MapScene, String> {
-    scene_of(&state, &id)
+pub async fn map_scene(app: State<'_, Arc<AppData>>, id: String) -> Result<MapScene, String> {
+    let app = Arc::clone(&app);
+    tauri::async_runtime::spawn_blocking(move || scene_of(&app, &id))
+        .await
+        .map_err(|e| e.to_string())?
+}
+
+/// 俯视缩略图专用：回包结构与 `map_scene` 逐字段一致，只是每个网格 `buffer` 为空。
+#[tauri::command]
+pub async fn map_footprint(
+    app: State<'_, Arc<AppData>>,
+    id: String,
+) -> Result<MapScene, String> {
+    let app = Arc::clone(&app);
+    tauri::async_runtime::spawn_blocking(move || footprint_of(&app, &id))
+        .await
+        .map_err(|e| e.to_string())?
 }
 
 /// 装配一张图的全部工作。命令层只负责把 `State` 解开。
@@ -176,6 +210,16 @@ pub fn map_scene(state: State<'_, AppData>, id: String) -> Result<MapScene, Stri
 /// 之所以单独是个普通函数：`--map <ID>` 要能**无窗口跑同一条路径**做验收。
 /// 验收如果去跑另一份"给测试看的"实现，测到了也不代表用户看到的那条链是对的。
 pub fn scene_of(app: &AppData, raw_id: &str) -> Result<MapScene, String> {
+    assemble(app, raw_id, true)
+}
+
+/// `map_footprint` 的实现：同一套装配，`with_geometry=false` 时每个网格只留
+/// 包围盒、不打包 base64。缩略图只需要「物件摆在哪、占多大」，不需要顶点流。
+pub fn footprint_of(app: &AppData, raw_id: &str) -> Result<MapScene, String> {
+    assemble(app, raw_id, false)
+}
+
+fn assemble(app: &AppData, raw_id: &str, with_geometry: bool) -> Result<MapScene, String> {
     let id = raw_id.trim().to_string();
     if id.is_empty() || id.contains('/') || id.contains('\\') || id.contains("..") {
         return Err("地图 ID 要么是客户端原文那个名字，要么不查".into());
@@ -201,6 +245,7 @@ pub fn scene_of(app: &AppData, raw_id: &str) -> Result<MapScene, String> {
         odd_names: 0,
         unreadable_meshes: 0,
         empty_named: 0,
+        catalog_errors: 0,
         unique_meshes: 0,
         meshes: Vec::new(),
         instances: Vec::new(),
@@ -251,13 +296,19 @@ pub fn scene_of(app: &AppData, raw_id: &str) -> Result<MapScene, String> {
             let cached = named.get(&inst.name).copied();
             let hit = match cached {
                 Some(h) => h,
-                None => {
-                    let h = app
-                        .try_q(|c| c.hash_by_name_in(SOURCE_DIR, &inst.name))
-                        .unwrap_or(None);
-                    named.insert(inst.name.clone(), h);
-                    h
-                }
+                None => match app.try_q(|c| c.hash_by_name_in(SOURCE_DIR, &inst.name)) {
+                    Ok(h) => {
+                        named.insert(inst.name.clone(), h);
+                        h
+                    }
+                    Err(e) => {
+                        // 查询失败 ≠ 客户端没有：如实计数并按原因聚合，
+                        // 不许把一次 SQL 事故洗成「missing_meshes」那样的数据结论。
+                        out.catalog_errors += 1;
+                        note(&mut reasons, &format!("目录查询失败：{e}"), &inst.name);
+                        continue;
+                    }
+                },
             };
             let Some(key) = hit else {
                 let (ext, is_mesh) = kind_of(&inst.name);
@@ -290,7 +341,11 @@ pub fn scene_of(app: &AppData, raw_id: &str) -> Result<MapScene, String> {
                     match parse_geometry(&bytes) {
                         Ok(g) => {
                             let path = format!("{SOURCE_DIR}/{}", inst.name);
-                            out.meshes.push(MeshData::from((path, g)));
+                            out.meshes.push(if with_geometry {
+                                MeshData::from((path, g))
+                            } else {
+                                MeshData::outline(path, &g)
+                            });
                             let i = out.meshes.len() - 1;
                             pool.insert(key, i);
                             i

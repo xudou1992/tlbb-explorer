@@ -9,6 +9,7 @@ mod mdl_view;
 mod model;
 mod mesh_view;
 mod present;
+mod texture_override;
 
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -165,8 +166,12 @@ pub fn run() {
             inspector::asset_list,
             inspector::asset_inspect,
             mesh_view::mesh_data,
+            mesh_view::group_mesh_outline,
             map_view::map_list,
-            map_view::map_scene
+            map_view::map_scene,
+            map_view::map_footprint,
+            texture_override::texture_override_set,
+            texture_override::texture_override_clear
         ])
         .run(tauri::generate_context!())
         .expect("工作台窗口未能启动");
@@ -281,6 +286,24 @@ pub fn maps_dump(ids: Vec<String>) {
                 }
             }
             Err(e) => println!("  ✗ {id} → {e}"),
+        }
+        // 俯视回包也落一份：自测台的地图缩略图回放的就是它。
+        // 同一张图两种装配各跑一遍，`map_golden.mjs` 会逐字段对计数——
+        // 计数分家了（列表说 6,101、点进去 6,098）这一步就红。
+        match map_view::footprint_of(&app, &id) {
+            Ok(fp) => match serde_json::to_string(&fp) {
+                Ok(js) => {
+                    let f = dir.join(format!("map_footprint_{}.json", fp.id));
+                    let _ = std::fs::write(&f, &js);
+                    println!(
+                        "    俯视 {}KB → {}（几何不打包）",
+                        js.len() / 1024,
+                        f.display()
+                    );
+                }
+                Err(e) => println!("    ✗ 俯视序列化失败：{e}"),
+            },
+            Err(e) => println!("    ✗ 俯视 {id} → {e}"),
         }
     }
 }
@@ -522,6 +545,31 @@ pub fn probe(word: Option<String>) {
                     if let Ok(s) = serde_json::to_string(&d) {
                         let _ = std::fs::write(dir.join(format!("detail_{gid}.json")), s);
                     }
+                }
+                // 行缩略图三态的真实回包。null 也落盘：「没图」本身就是一条真实
+                // 回包，不落它自测台就永远测不到三态里的空态。
+                if let Ok(s) = serde_json::to_string(&app.group_image(gid)) {
+                    let _ = std::fs::write(dir.join(format!("group_preview_{gid}.json")), s);
+                }
+                match app.group_outline(gid) {
+                    Ok(o) => {
+                        let n = o.as_ref().map(|m| m.cells.len()).unwrap_or(0);
+                        println!(
+                            "    行缩略图：图 {} · 几何{}",
+                            if app.group_image(gid).is_some() { "有" } else { "无" },
+                            match &o {
+                                Some(m) => format!("有（{} 格，投影 {} 面）", n, m.face),
+                                None => "无".into(),
+                            }
+                        );
+                        if let Ok(s) = serde_json::to_string(&o) {
+                            let _ = std::fs::write(
+                                dir.join(format!("group_mesh_outline_{gid}.json")),
+                                s,
+                            );
+                        }
+                    }
+                    Err(e) => println!("    ✗ 几何缩略图失败：{e}"),
                 }
             }
             Err(e) => println!("  ✗ {tag} gid {gid} inspect 失败：{e}"),

@@ -2,7 +2,7 @@
 // 这一屏只回答一个问题，数字全部来自 Rust 侧的 ref_health，前端不做任何算术。
 // 「谁提到了它」是反查：两份文件里写着同一个名字只说明它们都提到过，不代表共用同一份资源。
 
-import { el, esc, num, pct, errText } from "./ui.js";
+import { el, esc, num, errText } from "./ui.js";
 import * as api from "./api.js";
 import { state } from "./state.js";
 import { pctText, citedVerdict, CITED_NOTE } from "./lib/wording.js";
@@ -10,12 +10,14 @@ import { makeSeq } from "./lib/seq.js";
 
 const barColor = (p) => (p >= 80 ? "var(--jade)" : p >= 50 ? "var(--blue)" : "var(--amber)");
 
+/// 比例只算不排：0 而有命中时必须走 pctText 的「不足 1%」，别再说 0%。
+const pctOf = (h) => (h.assetsCiting ? Math.round((h.assetsCitingResolved / h.assetsCiting) * 100) : 0);
+
 function bar(p) {
   return `<span class="mini-bar wide"><i style="width:${p}%;background:${barColor(p)}"></i></span>`;
 }
 
 function summaryHtml(h) {
-  const citingP = pct(h.assetsCitingResolved, h.assetsCiting);
   const extRows = h.byExt
     .map(
       (e) => `<tr>
@@ -43,7 +45,7 @@ function summaryHtml(h) {
     <div class="hl-card"><dt>引用总数</dt><dd>${num(h.refsTotal)}</dd><span>客户端文件里写下的引用条目</span></div>
     <div class="hl-card"><dt>能对上文件的</dt><dd>${num(h.refsResolved)} <em>${pctText(h.resolvedPct, h.refsResolved)}</em></dd>${bar(h.resolvedPct)}<span>剩下 ${num(h.refsTotal - h.refsResolved)} 条只有名字</span></div>
     <div class="hl-card"><dt>对不上的名字</dt><dd>${num(h.danglingNames)}</dd><span>只读到名字，没有对应资源</span></div>
-    <div class="hl-card"><dt>有引用可查的文件</dt><dd>${num(h.assetsCitingResolved)} / ${num(h.assetsCiting)}</dd><span>按文件算，不是按资产组（全库 ${num(h.assetsCiting)} 个文件里至少有一条引用能对上 · ${citingP}%）</span></div>
+    <div class="hl-card"><dt>有引用可查的文件</dt><dd>${num(h.assetsCitingResolved)} / ${num(h.assetsCiting)}</dd><span>按文件算，不是按资产组（全库里至少有一条引用能对上的文件 · ${pctText(pctOf(h), h.assetsCitingResolved)}）</span></div>
   </div>
 
   <section class="hl-sec">
@@ -90,6 +92,7 @@ async function showCitations(key, title, kindWord) {
     const rows = r.citations.filter((c) => c.fromPath);
     const blank = r.citations.length - rows.length;
     box.innerHTML = `
+      <button type="button" class="ghost back-link" data-back="1">← 返回汇总</button>
       <p class="title">${esc(title || key)}</p>
       ${kindWord ? `<p class="sub">${esc(kindWord)}</p>` : ""}
       <div class="verdict vB">
@@ -103,6 +106,12 @@ async function showCitations(key, title, kindWord) {
       </section>
       ${r.truncated ? `<p class="foot">这条被提到得太多次，只列出了前 ${num(r.citations.length)} 条，实际更多。</p>` : ""}
       ${blank ? `<p class="foot">另有 ${num(blank)} 条来自资源组内部的引用，没有可显示的文件路径，未列出。</p>` : ""}`;
+    // 钻进来之前的汇总还在 state.health 里：回去不用重查，重画就行。
+    box.querySelector("[data-back]").onclick = () => {
+      if (!state.health) return;
+      box.innerHTML = summaryHtml(state.health);
+      bindDrill();
+    };
   } catch (e) {
     if (citeSeq.isStale(my)) return;
     box.innerHTML = `<p class="dim">反查失败：${esc(errText(e))}</p>`;

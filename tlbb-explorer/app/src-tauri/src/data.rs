@@ -22,6 +22,7 @@ use tlbb_core::jmt1::{self, Codec};
 use tlbb_core::payload;
 use tlbb_core::preview;
 
+use crate::mesh_view::{self, MeshOutline};
 use crate::model::{
     Card, CitedByView, CitationView, Count, Detail, DanglingView, Filter, Image, MemberItem,
     Option2, Page, RefExtView, RefView, RefItem, Stats, Tech,
@@ -42,6 +43,21 @@ pub fn shards() -> usize {
 
 pub const SCENARIOS: &[&str] = &["角色", "场景", "特效", "界面", "物品", "其他"];
 pub const GRADES: &[&str] = &["A", "B", "C", "D"];
+
+/// 三张解码缓存的顶格条数。超过就整体清空——这些全是「再算一遍就有」的
+/// 纯缓存，清空不损正确性，只多付一次冷解码；换来的是内存有顶，
+/// 不会「用一晚上越用越胀」。量级：blobs 顶格 512 张长边 512 的 PNG ≈ 百 MB。
+const BLOB_CAP: usize = 512;
+const GROUP_BLOB_CAP: usize = 1024;
+const OUTLINE_CAP: usize = 8192;
+
+/// 带顶的插入。不做真 LRU：整体清空的实现是十行，收益（内存封顶）一样。
+fn capped_insert<K: Eq + std::hash::Hash, V>(m: &mut HashMap<K, V>, k: K, v: V, cap: usize) {
+    if m.len() >= cap {
+        m.clear();
+    }
+    m.insert(k, v);
+}
 
 /// Display order of the composition chips, mirrored from the card report.
 const ROLE_RANK: &[&str] = &[
@@ -217,6 +233,7 @@ pub struct AppData {
     pub t_decode: AtomicUsize,
     blobs: Mutex<HashMap<u64, Option<Arc<Blob>>>>,
     group_blobs: Mutex<HashMap<i64, Option<Arc<Blob>>>>,
+    outlines: Mutex<HashMap<i64, Option<Arc<MeshOutline>>>>,
 }
 
 impl AppData {
@@ -282,6 +299,7 @@ impl AppData {
             t_decode: AtomicUsize::new(0),
             blobs: Mutex::new(HashMap::new()),
             group_blobs: Mutex::new(HashMap::new()),
+            outlines: Mutex::new(HashMap::new()),
         }))
     }
 
@@ -358,16 +376,25 @@ impl AppData {
                     kind: "webp",
                 }),
                 Codec::Unknown => None,
-                _ => preview::png_bytes(tex.width, tex.height, &tex.rgba, true).ok().map(|b| Blob {
-                    bytes: b,
-                    width: tex.width as u32,
-                    height: tex.height as u32,
-                    kind: "png",
-                }),
+                _ => {
+                    // 一律先降到长边 512 再编码：这张图的归宿是预览和缩略图，
+                    // 原尺寸 2048² 的 RGBA 是 16MB 位图、PNG 编码后还有几 MB，
+                    // 为一个 48px 的格子付这笔账，滚几屏内存就能上 GB。
+                    let (rgba, w, h) =
+                        preview::scale_rgba(&tex.rgba, tex.width as usize, tex.height as usize, 512);
+                    preview::png_bytes(w as u16, h as u16, &rgba, true)
+                        .ok()
+                        .map(|b| Blob {
+                            bytes: b,
+                            width: w as u32,
+                            height: h as u32,
+                            kind: "png",
+                        })
+                }
             })
             .map(Arc::new);
         if let Ok(mut c) = self.blobs.lock() {
-            c.insert(hash, blob.clone());
+            capped_insert(&mut c, hash, blob.clone(), BLOB_CAP);
         }
         blob
     }
@@ -387,9 +414,49 @@ impl AppData {
             .lite_of(gid)
             .and_then(|l| self.first_image(&l.preview_candidates));
         if let Ok(mut c) = self.group_blobs.lock() {
-            c.insert(gid, found.clone());
+            capped_insert(&mut c, gid, found.clone(), GROUP_BLOB_CAP);
         }
         found.map(|b| b.image())
+    }
+
+    /// 列表行的几何缩略图：组里第一个真能解出几何的网格成员，投影成 48×48 格子。
+    /// 与 `group_image` 同一套「负结果也缓存」的理由：没几何的行滚回视口不能再解一遍。
+    pub fn group_outline(&self, gid: i64) -> Result<Option<Arc<MeshOutline>>, String> {
+        if let Ok(c) = self.outlines.lock() {
+            if let Some(hit) = c.get(&gid) {
+                return Ok(hit.clone());
+            }
+        }
+        let found = self.first_outline(gid)?;
+        if let Ok(mut c) = self.outlines.lock() {
+            capped_insert(&mut c, gid, found.clone(), OUTLINE_CAP);
+        }
+        Ok(found)
+    }
+
+    fn first_outline(&self, gid: i64) -> Result<Option<Arc<MeshOutline>>, String> {
+        let Some(l) = self.lite_of(gid) else {
+            return Ok(None);
+        };
+        // 只试前 6 个网格成员，和 first_image 同一个数：组里成员再多，
+        // 缩略图也只是「有没有几何」的证据，不是成员普查。
+        for m in l.members.iter().filter(|m| m.role == "mesh").take(6) {
+            let Some(raw) = self.read(m.hash) else {
+                continue;
+            };
+            let Ok(g) = preview::parse_geometry(&raw) else {
+                continue;
+            };
+            if g.positions.is_empty() {
+                continue;
+            }
+            let path = m
+                .path
+                .clone()
+                .unwrap_or_else(|| hex(m.hash));
+            return Ok(Some(Arc::new(mesh_view::outline_of(&g, path))));
+        }
+        Ok(None)
     }
 
     pub fn image_of(&self, hash: u64) -> Option<Image> {

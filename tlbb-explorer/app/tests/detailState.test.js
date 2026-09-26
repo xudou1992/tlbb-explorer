@@ -254,6 +254,22 @@ test("一张图都没解出来时，贴图行必须指回「缺什么」并说�
   assert.ok(by["贴图"].why.includes("缺什么"), by["贴图"].why);
 });
 
+test("cfg 出了出处的贴图：汇总句按「已定位出处 / 只存名称」分流，不再全说成没路径", () => {
+  const insp = {
+    ...INSPECT_A,
+    previews: null,
+    missing: [
+      "贴图 a.tga：已找到原始出处 data/source/npc/quest/w1351_boss_hadaba/texture/a.tga（ResourcePath.cfg）；文件本体未打包进资源库",
+      "贴图 b.tga：客户端只保存名称，没有路径",
+    ],
+  };
+  const by = Object.fromEntries(absencesOf(insp, CARD_A).map((r) => [r.label, r]));
+  assert.equal(by["贴图"].state, "missing");
+  assert.ok(by["贴图"].why.includes("材质引用了 2 张贴图"), by["贴图"].why);
+  assert.ok(by["贴图"].why.includes("1 张已从 ResourcePath.cfg 定位原始出处"), by["贴图"].why);
+  assert.ok(by["贴图"].why.includes("其余 1 张只存名称"), by["贴图"].why);
+});
+
 test("有贴图文件但没被任何材质引用：说成不知道用在哪，不说成没有贴图", () => {
   const insp = {
     ...INSPECT_A,

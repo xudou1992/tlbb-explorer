@@ -10,6 +10,7 @@
 
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
+use std::sync::OnceLock;
 use std::time::Instant;
 
 use rusqlite::{Connection, OpenFlags};
@@ -17,6 +18,7 @@ use serde::Serialize;
 use tlbb_core::catalog::labels::{kind_zh, role_zh};
 use tlbb_core::catalog::{Catalog, Group};
 use tlbb_core::jpak::{Pak, Record};
+use tlbb_core::pathmap::PathMap;
 use tlbb_core::{jmt1, payload};
 use tlbb_core::preview::{material_slots, mdl_summary, scale_rgba, png_bytes, SlotSummary, ViewBody};
 
@@ -112,6 +114,9 @@ pub struct PreviewItem {
     /// data:image/png;base64,... 或 data:image/webp;base64,...
     pub data_url: String,
     pub reason: String,
+    /// 16 位十六进制编号。前端点开大图（lightbox）时按它再要一张高清版；
+    /// 解码失败的条目没有编号可给。
+    pub hash: Option<String>,
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -146,6 +151,12 @@ pub struct AssetInspectReply {
     /// 真实解码的贴图缩略图（data URL 内嵌，无外部文件依赖）。
     #[serde(skip_serializing_if = "Option::is_none")]
     pub previews: Option<Previews>,
+    /// uvfit 离线试贴候选（有缓存才有；没有就是空——不编造）。全部是 🟡 候选态。
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub texture_candidates: Vec<crate::texture_override::TexCandGroup>,
+    /// 本组悬空贴图槽：cfg 出处 + 覆盖表人工确认状态（🟢）。
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub tex_slots: Vec<crate::texture_override::TexSlotInfo>,
     /// 本次处理耗时（毫秒）。
     pub elapsed_ms: u64,
     /// 超过 2s 时给的说明，否则空串。
@@ -154,7 +165,7 @@ pub struct AssetInspectReply {
 
 // ----------------------------------------------------------------------- 只读定位
 
-fn roots() -> (PathBuf, PathBuf) {
+pub fn roots() -> (PathBuf, PathBuf) {
     let root = std::env::var("TLBB_ROOT")
         .map(PathBuf::from)
         .unwrap_or_else(|_| PathBuf::from("D:/TLGL"));
@@ -300,6 +311,31 @@ fn miss_msg(role: &str, name: &str, kind: &str) -> String {
         format!(
             "{role} {name}：客户端只保存名称，没有路径，这是客户端的设计，不是解析失败"
         )
+    } else {
+        format!("{role} {name}：客户端未含此文件")
+    }
+}
+
+/// ResourcePath.cfg 翻译表，进程级只解析一次；解析不出（非标准客户端布局）就是
+/// None，文案退回「只有名称」的旧口径——这层失败绝不允许挡住详情页。
+static PATHMAP: OnceLock<Option<PathMap>> = OnceLock::new();
+
+fn pathmap_of(root: &Path) -> Option<&'static PathMap> {
+    PATHMAP.get_or_init(|| PathMap::load(root)).as_ref()
+}
+
+/// refs 里悬空贴图的人话说明——2026-09-26 口径：cfg 给得出出处就说出处
+/// （不编造文件本体已找到，文件在包里确实没有），给不出才说「只保存名称」。
+fn miss_msg_ref(role: &str, name: &str, kind: &str, pm: Option<&PathMap>) -> String {
+    if is_texture_kind(kind) || role.contains("贴图") {
+        match pm.and_then(|p| p.lookup(name)) {
+            Some(path) => format!(
+                "{role} {name}：已找到原始出处 {path}（ResourcePath.cfg）；文件本体未打包进资源库"
+            ),
+            None => format!(
+                "{role} {name}：客户端只保存名称，没有路径，这是客户端的设计，不是解析失败"
+            ),
+        }
     } else {
         format!("{role} {name}：客户端未含此文件")
     }
@@ -523,7 +559,12 @@ pub fn inspect(gid: i64) -> Result<AssetInspectReply, String> {
     }
     for r in &refs {
         if r.to.is_none() {
-            missing.push(miss_msg(kind_word(&r.kind), &r.name, &r.kind));
+            missing.push(miss_msg_ref(
+                kind_word(&r.kind),
+                &r.name,
+                &r.kind,
+                pathmap_of(&root),
+            ));
         }
     }
     // 无名成员：只报"哪一类、几个"，不报编号——编号在树行的悬停提示和
@@ -620,6 +661,22 @@ pub fn inspect(gid: i64) -> Result<AssetInspectReply, String> {
             ske: group.n_ske,
             tex: group.n_tex,
         },
+        texture_candidates: crate::texture_override::load_candidate_groups(
+            &root,
+            &member_rows
+                .iter()
+                .map(|m| (m.role.clone(), m.name.clone(), m.resolved))
+                .collect::<Vec<_>>(),
+        ),
+        tex_slots: crate::texture_override::build_tex_slots(
+            &refs
+                .iter()
+                .filter(|r| r.to.is_none())
+                .map(|r| (r.kind.clone(), r.name.clone()))
+                .collect::<Vec<_>>(),
+            pathmap_of(&root),
+            &root,
+        ),
         members: member_rows,
         mdl,
         missing,
@@ -876,12 +933,14 @@ fn collect_previews(
                 ok: true,
                 data_url: format!("data:{mime};base64,{}", b64(&bytes)),
                 reason: String::new(),
+                hash: Some(format!("{hash:016x}")),
             }),
             Err(e) => items.push(PreviewItem {
                 label,
                 ok: false,
                 data_url: String::new(),
                 reason: e,
+                hash: None,
             }),
         }
     }

@@ -9,13 +9,15 @@ import * as api from "./api.js";
 import { state } from "./state.js";
 import { makeSeq } from "./lib/seq.js";
 import { empty, loading, failed, notReady, loaded } from "./lib/detailState.js";
-import { showMeshes, hideMeshes } from "./mesh.js";
+import { showMeshes, hideMeshes, applyTexture } from "./mesh.js";
+import { texBlock } from "./lib/textureState.js";
 
 const seq = makeSeq();
 
 /// 把一份状态整个铺到屏幕上。每个可写的位置都要出现在这里——
 /// 漏一个就是"上一条资产的内容留在屏上"那种事故。
 function paint(s) {
+  el("secTex").hidden = true; // 每次铺屏先收起，loaded 后 paintTex 再决定要不要出现
   el("guide").hidden = s.phase !== "empty";
   el("body").hidden = s.phase === "empty";
   el("detailPane")?.scrollTo?.({ top: 0 });
@@ -68,12 +70,54 @@ export async function showDetail(gid) {
     const [d, insp] = await Promise.all([api.cardDetail(gid), api.assetInspect(gid)]);
     if (seq.isStale(my)) return;
     if (!d || !d.card || !insp.found) paint(notReady(gid));
-    else paint(loaded(gid, d, insp));
+    else {
+      paint(loaded(gid, d, insp));
+      paintTex(insp);
+    }
   } catch (e) {
     if (seq.isStale(my)) return;
     paint(failed(gid, e && e.message ? e.message : String(e)));
   }
 }
+
+// ---- 贴图试贴候选（步骤③④⑤）：区块内容来自 lib/textureState.js（纯函数），
+// 这里只负责铺 DOM 和接按钮。确认/撤销走覆盖表，套上看看只动显存拷贝。
+let texReply = null;
+
+function paintTex(insp) {
+  const block = texBlock(insp);
+  texReply = block ? insp : null;
+  el("secTex").hidden = !block;
+  if (!block) return;
+  el("texSlots").innerHTML = block.slotsHtml;
+  el("texCand").innerHTML = block.candHtml;
+  el("texNote").textContent = block.note;
+}
+
+el("secTex").addEventListener("click", async (e) => {
+  const b = e.target.closest("button");
+  if (!b || !texReply) return;
+  const group = (texReply.textureCandidates || [])[0];
+  const slots = texReply.texSlots || [];
+  if (b.dataset.act === "try") {
+    const c = group && group.candidates[Number(b.dataset.idx)];
+    if (c && !applyTexture(c.png)) el("texNote").textContent = "先在上方立体预览里把网格调出来，才能套贴图。";
+    return;
+  }
+  if (b.dataset.act === "confirm") {
+    const pick = el("texSlotPick");
+    const slot = (pick && slots.find((s) => s.name === pick.value)) || slots.find((s) => !s.overrideHash);
+    const c = group && group.candidates[Number(b.dataset.idx)];
+    if (!slot || !c) return;
+    await api.textureOverrideSet(slot.name, slot.cfgPath, c.hash, "uvfit v1 人工确认");
+    showDetail(state.selected);
+    return;
+  }
+  if (b.dataset.act === "clear") {
+    await api.textureOverrideClear(b.dataset.slot, b.dataset.cfg);
+    showDetail(state.selected);
+  }
+});
 
 /// 列表清空/重查时把详情区收回初始态，避免"列表换了、右边还是旧资产"。
 export function clearDetail() {

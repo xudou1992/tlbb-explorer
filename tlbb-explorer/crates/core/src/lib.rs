@@ -3,6 +3,7 @@ pub mod export;
 pub mod jbcf;
 pub mod jmt1;
 pub mod jpak;
+pub mod pathmap;
 pub mod payload;
 pub mod preview;
 

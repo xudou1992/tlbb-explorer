@@ -28,7 +28,12 @@ uniform mat4 uInstance;
 uniform mat3 uNormalMat;
 uniform float uUseInst;
 varying vec3 vNormal;
+varying vec2 vUv;
+attribute vec2 aUv;
 varying vec3 vView;
+varying vec2 vUv;
+uniform sampler2D uTex;
+uniform float uUseTex;
 void main() {
   // 实例矩阵**乘在 uModelView 之后**，即 uModelView * instance * pos：
   //   * uModelView 已经含相机与"把模型挪到原点"的居中平移，是**场景级**的东西；
@@ -42,6 +47,7 @@ void main() {
   vec4 mv = uModelView * local;
   vView = mv.xyz;
   vNormal = mat3(uModelView) * nrm;
+  vUv = aUv;
   gl_Position = uProjection * mv;
 }`;
 
@@ -55,7 +61,8 @@ void main() {
   vec3 l = normalize(vec3(0.35, 0.75, 0.6));
   float d = dot(n, l) * 0.5 + 0.5;
   float rim = pow(1.0 - abs(dot(normalize(-vView), n)), 2.0) * 0.25;
-  vec3 col = vec3(0.62, 0.65, 0.69) * (0.32 + 0.68 * d) + rim;
+  vec3 base = mix(vec3(0.62, 0.65, 0.69), texture2D(uTex, vUv).rgb, uUseTex);
+  vec3 col = base * (0.32 + 0.68 * d) + rim;
   gl_FragColor = vec4(col, 1.0);
 }`;
 
@@ -133,11 +140,16 @@ function uploadMesh(gl, data) {
   const indices = view(layout.indices.at, layout.indexCount, Uint16Array);
   if (!normals) normals = faceNormals(positions, indices);
 
-  const buf = { pos: gl.createBuffer(), nrm: gl.createBuffer(), idx: gl.createBuffer() };
+  const uvs = layout.uvs ? view(layout.uvs.at, vc * 2, Float32Array) : null;
+  const buf = { pos: gl.createBuffer(), nrm: gl.createBuffer(), idx: gl.createBuffer(), uv: layout.uvs ? gl.createBuffer() : null };
   gl.bindBuffer(gl.ARRAY_BUFFER, buf.pos);
   gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
   gl.bindBuffer(gl.ARRAY_BUFFER, buf.nrm);
   gl.bufferData(gl.ARRAY_BUFFER, normals, gl.STATIC_DRAW);
+  if (uvs) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf.uv);
+    gl.bufferData(gl.ARRAY_BUFFER, uvs, gl.STATIC_DRAW);
+  }
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buf.idx);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
@@ -213,13 +225,15 @@ export class MeshViewer {
       throw new Error("着色器链接失败：" + gl.getProgramInfoLog(prog));
     }
     this.prog = prog;
-    this.at = { pos: gl.getAttribLocation(prog, "aPosition"), nrm: gl.getAttribLocation(prog, "aNormal") };
+    this.at = { pos: gl.getAttribLocation(prog, "aPosition"), nrm: gl.getAttribLocation(prog, "aNormal"), uv: gl.getAttribLocation(prog, "aUv") };
     this.un = {
       mv: gl.getUniformLocation(prog, "uModelView"),
       pj: gl.getUniformLocation(prog, "uProjection"),
       inst: gl.getUniformLocation(prog, "uInstance"),
       nrm: gl.getUniformLocation(prog, "uNormalMat"),
       use: gl.getUniformLocation(prog, "uUseInst"),
+      tex: gl.getUniformLocation(prog, "uTex"),
+      useTex: gl.getUniformLocation(prog, "uUseTex"),
     };
     // 老路径用的三个专用缓冲：单网格时不动，行为和以前一样。
     this.buf = { pos: gl.createBuffer(), nrm: gl.createBuffer(), idx: gl.createBuffer() };
@@ -229,6 +243,8 @@ export class MeshViewer {
     // 几千个 GL 对象 + 每帧几千次 bind，纯属自我惩罚。
     this.pool = [];
     this.inst = null;
+    this.tex = null;
+    this.texReady = false;
     this.pickBound = null;
 
     this.home = { dist: 3, rx: -0.25, ry: 0.6 };
@@ -320,6 +336,28 @@ export class MeshViewer {
     this.start();
   }
 
+  /// 套候选贴图（data URL）。只动显存里的这份拷贝，不碰任何原始资源。
+  setTexture(dataUrl) {
+    const gl = this.gl;
+    const img = new Image();
+    img.onload = () => {
+      if (!this.tex) this.tex = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, this.tex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      this.texReady = true;
+      this.draw();
+    };
+    img.src = dataUrl;
+  }
+
+  clearTexture() {
+    this.texReady = false;
+    this.draw();
+  }
+
   load(data) {
     const gl = this.gl;
     // 长度与偏移由 lib/meshLayout.js 统一校验（有 node --test 盯着）：
@@ -362,6 +400,7 @@ export class MeshViewer {
   /// 画面，设置 uUseInst 不会被谁挡住，渲染态也就不会在两条路径之间串。
   trackAllocation() {
     this.useInstanced(Boolean(this.inst));
+    this.texReady = false;
   }
 
   /// 相机的家 / 近远裁剪 / 缩放上下限统一按传入的**世界**包围盒来定。
@@ -491,6 +530,16 @@ export class MeshViewer {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buf.nrm);
     gl.enableVertexAttribArray(this.at.nrm);
     gl.vertexAttribPointer(this.at.nrm, 3, gl.FLOAT, false, 0, 0);
+    if (this.buf.uv && this.texReady) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.buf.uv);
+      gl.enableVertexAttribArray(this.at.uv);
+      gl.vertexAttribPointer(this.at.uv, 2, gl.FLOAT, false, 0, 0);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, this.tex);
+      gl.uniform1f(this.un.useTex, 1);
+    } else {
+      gl.uniform1f(this.un.useTex, 0);
+    }
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buf.idx);
     gl.drawElements(gl.TRIANGLES, this.mesh.ic, gl.UNSIGNED_SHORT, 0);
   }

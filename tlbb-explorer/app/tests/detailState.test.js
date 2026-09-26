@@ -227,7 +227,7 @@ test("状态分三类：拿到了 / 客户端没给 / 工具还没解出，不�
   assert.ok(by["动画"].why.includes("关键帧"), by["动画"].why);
 });
 
-test("静态物件没有骨骼动画时，说『本来就没有』而不是失败", () => {
+test("静态物件没有骨骼动画时，说「客户端没记过」而不是失败", () => {
   const insp = {
     ...INSPECT_A,
     mdl: null,
@@ -241,7 +241,7 @@ test("静态物件没有骨骼动画时，说『本来就没有』而不是失�
   };
   const by = Object.fromEntries(absencesOf(insp, CARD_A).map((r) => [r.label, r]));
   assert.equal(by["骨骼"].state, "missing");
-  assert.ok(by["骨骼"].why.includes("本来就没有"), by["骨骼"].why);
+  assert.ok(by["骨骼"].why.includes("没给它记过骨骼"), by["骨骼"].why);
   assert.ok(by["动画"].why.includes("没有动作文件"), by["动画"].why);
 });
 

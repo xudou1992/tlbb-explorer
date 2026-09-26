@@ -13,6 +13,7 @@ fn main() {
             });
             tlbb_shell_lib::map_dump(id)
         }
+        Some("--maps") => tlbb_shell_lib::maps_dump(args.collect()),
         _ => tlbb_shell_lib::run(),
     }
 }

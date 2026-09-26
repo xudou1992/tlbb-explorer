@@ -6,7 +6,7 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
-import { pctText, texPair, listCount, railStats, citedVerdict, rowMissChip } from "../web/lib/wording.js";
+import { pctText, texPair, listCount, railStats, citedVerdict, rowMissChip, mapNoObjects } from "../web/lib/wording.js";
 
 test("25/30,585 显示成「不足 1%」而不是 0%", () => {
   assert.equal(pctText(0, 25), "不足 1%");
@@ -47,4 +47,52 @@ test("列表行里的缺项计数保持中性（红色只留给详情页）", ()
   assert.equal(rowMissChip(0), "");
   assert.equal(rowMissChip(2), "贴图缺 2");
   assert.ok(!rowMissChip(5).includes("class"));
+});
+
+// 下面这几组数字全部来自 `tlbb-shell --maps` 落盘的真回包，不是编的样本。
+test("格子真的空着才说「一个都没摆东西」", () => {
+  const s = { grids: 28, records: 0, emptyGrids: 28, unreadableGrids: 0 };
+  assert.equal(
+    mapNoObjects(s),
+    "读到了，这张图 28 个格子一个都没摆东西。能转、能缩放，就是看不到物件。",
+  );
+});
+
+test("格子文件不是物件清单时，不许说成「没摆东西」", () => {
+  // w1351_fb_jiebai_001：唯一一个 .scene 是版权头容器，根本没交出记录
+  const s = { grids: 1, records: 0, emptyGrids: 0, unreadableGrids: 1 };
+  const t = mapNoObjects(s);
+  assert.ok(t.includes("1 个不是物件清单那类东西"), t);
+  assert.ok(t.includes("一条摆位记录都没交出来"), t);
+  assert.ok(!t.includes("一个都没摆东西"), "没摆东西＝这格本来空，跟读不通是两件事");
+});
+
+test("读不通与空格子并存时两个数都要出现", () => {
+  const t = mapNoObjects({ grids: 10, records: 0, emptyGrids: 7, unreadableGrids: 3 });
+  assert.ok(t.includes("3 个不是物件清单") && t.includes("7 个本来就是空格子"), t);
+});
+
+test("记录摆的不是网格时不能说成「没对上模型文件」", () => {
+  // mqts_empty_001：2 条记录都是 .pu 特效，文件在客户端里真实存在
+  const s = {
+    grids: 2, records: 2, missingMeshes: 0, unreadableMeshes: 0,
+    notMesh: 2, oddNames: 0, emptyNamed: 0, otherExt: [{ ext: "pu", records: 2 }],
+  };
+  const t = mapNoObjects(s);
+  assert.ok(t.includes("2 条摆的本来就不是网格（.pu 2 条，文件是存在的）"), t);
+  assert.ok(!t.includes("没对上"), t);
+  assert.ok(!t.includes("缺"), "这类不是缺，这一版只是不画");
+});
+
+test("真缺、非网格、认不出的名字分开各说各的", () => {
+  // w1351_fb_sixiangxiuxishi_001 的形态（这里把 resolved 压成 0 来验文案分支）
+  const s = {
+    grids: 2, records: 124, missingMeshes: 24, unreadableMeshes: 0,
+    notMesh: 1, oddNames: 1, emptyNamed: 0, otherExt: [{ ext: "pu", records: 1 }],
+  };
+  const t = mapNoObjects(s);
+  assert.ok(t.includes("24 条记的是网格，可客户端里取不出这个文件"), t);
+  assert.ok(t.includes("1 条摆的本来就不是网格"), t);
+  assert.ok(t.includes("1 条名字既不像文件名也不像路径"), t);
+  assert.ok(t.includes("读到了 124 条记录"), t);
 });

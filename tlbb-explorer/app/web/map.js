@@ -12,7 +12,7 @@ import { el, esc, num } from "./ui.js";
 import * as api from "./api.js";
 import { MeshViewer } from "./mesh-viewer.js";
 import { makeSeq } from "./lib/seq.js";
-import { pctText } from "./lib/wording.js";
+import { mapNoObjects } from "./lib/wording.js";
 
 const seq = makeSeq();
 let viewer = null;
@@ -109,11 +109,7 @@ async function openScene(id) {
   if (!s.instances.length) {
     if (viewer) viewer.stop();
     el("mapCanvas").hidden = true;
-    status(
-      s.records
-        ? `读到了 ${num(s.records)} 条记录，可是一条都没对上模型文件——所以这里没有东西可画。`
-        : `读到了，这张图 ${num(s.grids)} 个格子一个都没摆东西。能转、能缩放，就是看不到物件。`,
-    );
+    status(mapNoObjects(s));
     return;
   }
   el("mapCanvas").hidden = false;

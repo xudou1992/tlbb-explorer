@@ -129,7 +129,13 @@ cd app/src-tauri && cargo build --release
 ```bash
 # CLI 探针：全链路只读自检，末尾带 M1/M2 验收段和计时
 ./tlbb-shell --probe 曹霜
+
+# 地图金标准：重跑 6 张真图，与 contracts/map_golden.json 逐字段比（动过 scene/几何解析必跑）
+node tools/map_golden.mjs
 ```
+
+> `node --test tests/`（旧写法）在 Node 25 下报 `MODULE_NOT_FOUND`，要显式列文件名：
+> `cd tlbb-explorer/app && node --test tests/wording.test.js tests/detailState.test.js tests/meshViewerInstances.test.js tests/meshLayout.test.js tests/seq.test.js`
 
 ### 5. 环境变量（可选）
 

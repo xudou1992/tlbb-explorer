@@ -295,7 +295,12 @@ export class MeshViewer {
   /// uUseInst 的唯一写入口。让"当前画的是哪种"只有一个来源，
   /// 也就不存在 load() 之后忘了把开关掰回去这种错。
   useInstanced(on) {
-    this.gl.uniform1f(this.un.use, on ? 1 : 0);
+    // uniform 只认**当前 program** 的 location。load 阶段还没有任何绘制发生过，
+    // 不先 useProgram 这句就是 INVALID_OPERATION 静默空操作——第一次打开地图时
+    // 控制台就是这么报的。绑定一下，这条设置才真的算设置。
+    const gl = this.gl;
+    gl.useProgram(this.prog);
+    gl.uniform1f(this.un.use, on ? 1 : 0);
   }
 
   syncViewport() {

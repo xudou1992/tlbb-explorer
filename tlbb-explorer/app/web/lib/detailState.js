@@ -245,7 +245,7 @@ export function absencesOf(insp, card) {
   const skeHit = resolvedOf("skeleton");
   if (skeHit) out.push(abs("骨骼", "unknown", `找到 ${skeHit} 个骨骼文件；但顶点权重还没解出来，现在只能看形状、不能摆姿势`));
   else if (ofRole("skeleton").length) out.push(abs("骨骼", "missing", `记了 ${ofRole("skeleton").length} 个骨骼，但客户端未含这些文件`));
-  else out.push(abs("骨骼", "missing", "这组里没有骨骼文件（静态物件本来就没有）"));
+  else out.push(abs("骨骼", "missing", "这组里没有骨骼文件（清单里也没给它记过骨骼）"));
 
   // 动画
   const animNames = (insp.anims || []).length;

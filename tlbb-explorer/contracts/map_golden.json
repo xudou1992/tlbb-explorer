@@ -1,0 +1,183 @@
+{
+ "说明": "地图链的金标准数字：全部由 tlbb-shell --maps 从真客户端回包算出，不是编的。跑 tools/map_golden.mjs 重算并比对。",
+ "来源": {
+  "客户端根": "D:/TLGL",
+  "清单": ".scratch/resources.db（2026-09-22 建库，等级分布 A20/B2581/C10479/D0）",
+  "生成命令": "tlbb-shell --maps <地图ID…>",
+  "采集日": "2026-09-26"
+ },
+ "mapList": {
+  "目录数": 300,
+  "格子总数": 11933,
+  "前三行": [
+   "w1351_fb_sxzc_001 × 133",
+   "w1351_ll_dl_003 × 119",
+   "w1351_ll_loulan_001 × 115"
+  ]
+ },
+ "maps": {
+  "w1351_ll_dl_002": {
+   "grids": 103,
+   "emptyGrids": 0,
+   "unreadableGrids": 1,
+   "records": 6112,
+   "resolved": 6101,
+   "missingMeshes": 0,
+   "unreadableMeshes": 0,
+   "notMesh": 10,
+   "oddNames": 1,
+   "emptyNamed": 0,
+   "uniqueMeshes": 209,
+   "instances": 6101,
+   "vertices": 137422,
+   "faces": 88442,
+   "bufferBytes": 6182368,
+   "gridReasons": [
+    "版本号 1751607666 不在已知集合 × 1"
+   ],
+   "otherExt": [
+    ".pu × 10"
+   ],
+   "missingSample": []
+  },
+  "w1351_fb_sixiangxiuxishi_001": {
+   "grids": 2,
+   "emptyGrids": 0,
+   "unreadableGrids": 1,
+   "records": 124,
+   "resolved": 99,
+   "missingMeshes": 24,
+   "unreadableMeshes": 0,
+   "notMesh": 1,
+   "oddNames": 0,
+   "emptyNamed": 0,
+   "uniqueMeshes": 29,
+   "instances": 99,
+   "vertices": 9158,
+   "faces": 6340,
+   "bufferBytes": 414112,
+   "gridReasons": [
+    "版本号 1751607666 不在已知集合 × 1"
+   ],
+   "otherExt": [
+    ".pu × 1"
+   ],
+   "missingSample": [
+    "w1351_ly_qiang2x5tou_001.mesh",
+    "w1351_qiju_hongditan_001.mesh",
+    "w1351_qiju_hongditantou_001.mesh",
+    "w1351_qiju_hongditantou_001.mesh",
+    "w1351_qiju_muqiang_001.mesh",
+    "w1351_qiju_muqiang_001.mesh",
+    "w1351_qiju_muqiang_001.mesh",
+    "w1351_qiju_muqiang_001.mesh",
+    "w1351_qiju_muqiang_001.mesh",
+    "w1351_qiju_muqiang_001.mesh",
+    "w1351_qiju_muqiang_001.mesh",
+    "w1351_qiju_muqiang_001.mesh",
+    "w1351_qiju_muqiang_001.mesh",
+    "w1351_qiju_muqiang_001.mesh",
+    "w1351_qiju_muqiang_001.mesh",
+    "w1351_qiju_muqiang_001.mesh",
+    "w1351_qiju_muqiang_001.mesh",
+    "w1351_qiju_muqiang_001.mesh",
+    "w1351_qiju_muqiang_001.mesh",
+    "w1351_qiju_muqiangtou_001.mesh",
+    "w1351_qiju_tongedeng_001.mesh",
+    "w1351_qiju_yamenzhadao_001.mesh",
+    "w1351_qiju_yamenzhadao_001.mesh",
+    "w1351_qiju_yamenzhadao_001.mesh"
+   ]
+  },
+  "w1351_fb_mantuoluojiujiao_001": {
+   "grids": 2,
+   "emptyGrids": 0,
+   "unreadableGrids": 1,
+   "records": 45,
+   "resolved": 45,
+   "missingMeshes": 0,
+   "unreadableMeshes": 0,
+   "notMesh": 0,
+   "oddNames": 0,
+   "emptyNamed": 0,
+   "uniqueMeshes": 12,
+   "instances": 45,
+   "vertices": 3485,
+   "faces": 2360,
+   "bufferBytes": 167588,
+   "gridReasons": [
+    "版本号 1751607666 不在已知集合 × 1"
+   ],
+   "otherExt": [],
+   "missingSample": []
+  },
+  "w1351_fb_suoyaota_001": {
+   "grids": 28,
+   "emptyGrids": 28,
+   "unreadableGrids": 0,
+   "records": 0,
+   "resolved": 0,
+   "missingMeshes": 0,
+   "unreadableMeshes": 0,
+   "notMesh": 0,
+   "oddNames": 0,
+   "emptyNamed": 0,
+   "uniqueMeshes": 0,
+   "instances": 0,
+   "vertices": 0,
+   "faces": 0,
+   "bufferBytes": 0,
+   "gridReasons": [
+    "只有 4 字节：这格没摆东西 × 28"
+   ],
+   "otherExt": [],
+   "missingSample": []
+  },
+  "w1351_fb_jiebai_001": {
+   "grids": 1,
+   "emptyGrids": 0,
+   "unreadableGrids": 1,
+   "records": 0,
+   "resolved": 0,
+   "missingMeshes": 0,
+   "unreadableMeshes": 0,
+   "notMesh": 0,
+   "oddNames": 0,
+   "emptyNamed": 0,
+   "uniqueMeshes": 0,
+   "instances": 0,
+   "vertices": 0,
+   "faces": 0,
+   "bufferBytes": 0,
+   "gridReasons": [
+    "版本号 1751607666 不在已知集合 × 1"
+   ],
+   "otherExt": [],
+   "missingSample": []
+  },
+  "mqts_empty_001": {
+   "grids": 2,
+   "emptyGrids": 0,
+   "unreadableGrids": 1,
+   "records": 2,
+   "resolved": 0,
+   "missingMeshes": 0,
+   "unreadableMeshes": 0,
+   "notMesh": 2,
+   "oddNames": 0,
+   "emptyNamed": 0,
+   "uniqueMeshes": 0,
+   "instances": 0,
+   "vertices": 0,
+   "faces": 0,
+   "bufferBytes": 0,
+   "gridReasons": [
+    "版本号 1751607666 不在已知集合 × 1"
+   ],
+   "otherExt": [
+    ".mdl × 2"
+   ],
+   "missingSample": []
+  }
+ }
+}

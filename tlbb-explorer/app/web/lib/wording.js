@@ -40,3 +40,36 @@ export const CITED_NOTE =
 
 /// 列表里每行的红色「缺」曾经铺满整屏，等于没有信息量——只在详情里强调。
 export const rowMissChip = (miss) => (miss > 0 ? `贴图缺 ${miss}` : "");
+
+/// 一张图一条都摆不出来时的那句话。分三种情况，一种都不能含糊：
+/// 格子文件根本没交记录、交了记录但摆的本来不是网格、记录指的是网格却取不出文件——
+/// 这三件事在客户端里是完全不同的结论，混成一句「没对上模型文件」就是替客户端说谎。
+export function mapNoObjects(s) {
+  if (!s.records) {
+    if (!s.unreadableGrids)
+      return `读到了，这张图 ${num(s.grids)} 个格子一个都没摆东西。能转、能缩放，就是看不到物件。`;
+    const empt = s.emptyGrids ? `、${num(s.emptyGrids)} 个本来就是空格子` : "";
+    return (
+      `这 ${num(s.grids)} 个文件里 ${num(s.unreadableGrids)} 个不是物件清单那类东西${empt}` +
+      `（逐条原因在下面），一条摆位记录都没交出来——所以这里没有物件可摆。`
+    );
+  }
+  const other = (s.otherExt || [])
+    .filter((x) => x.ext)
+    .map((x) => `.${x.ext} ${num(x.records)} 条`)
+    .join("、");
+  const parts = [];
+  const miss = s.missingMeshes + s.unreadableMeshes;
+  if (miss) parts.push(`${num(miss)} 条记的是网格，可客户端里取不出这个文件`);
+  if (s.notMesh)
+    parts.push(`${num(s.notMesh)} 条摆的本来就不是网格${other ? `（${other}，文件是存在的）` : ""}`);
+  if (s.oddNames) parts.push(`${num(s.oddNames)} 条名字既不像文件名也不像路径，没猜它是什么`);
+  if (s.emptyNamed) parts.push(`${num(s.emptyNamed)} 条名字是空的`);
+  const why = parts.length ? `：${parts.join("；")}` : "";
+  // 「没对上」这个词只留给真缺：客户端里取不出文件才叫没对上，
+  // 摆的本来就不是特效/别的类型不叫没对上。
+  const lead = miss
+    ? `读到了 ${num(s.records)} 条记录，可是一条都没对上能摆出来的模型`
+    : `读到了 ${num(s.records)} 条记录，可这一版画得出的是 0 条`;
+  return `${lead}${why}。`;
+}

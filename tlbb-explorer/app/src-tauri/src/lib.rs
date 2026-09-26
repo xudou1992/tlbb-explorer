@@ -179,8 +179,6 @@ fn fatal(msg: &str) -> ! {
     std::process::exit(2);
 }
 
-/// Read-only self-check: exercises the whole pipeline without a webview so the shell can
-/// be verified in a headless run. `tlbb-shell --probe [中文词]`
 /// 无窗口装配一张地图，把计数打到 stdout：`tlbb-shell --map <地图ID>`。
 ///
 /// 存在的理由只有一个——验收要能对得上号。它跑的是 `scene_of`，也就是界面上
@@ -221,6 +219,74 @@ pub fn map_dump(id: String) {
     }
 }
 
+/// 把地图链路的真实回包落盘给自测台回放：清单一份、每张图一份。
+///
+/// 只准写 `list_of` / `scene_of` 的真返回值。自测台一旦吃手写的假回包，验到的
+/// 就不是用户点进去那条链——这份假后端以前就替客户端说过好话。
+pub fn maps_dump(ids: Vec<String>) {
+    let (root, db) = roots();
+    let app = match AppData::open(&root, &db) {
+        Ok(a) => a,
+        Err(e) => fatal(&e),
+    };
+    let dir = root.join(".scratch/ui_check");
+    let _ = std::fs::create_dir_all(&dir);
+    match map_view::list_of(&app, 500) {
+        Ok(rows) => match serde_json::to_string(&rows) {
+            Ok(js) => {
+                let f = dir.join("map_list.json");
+                let _ = std::fs::write(&f, &js);
+                println!(
+                    "地图清单 {} 张 → {}（{}KB）",
+                    rows.len(),
+                    f.display(),
+                    js.len() / 1024
+                );
+            }
+            Err(e) => fatal(&format!("清单序列化失败：{e}")),
+        },
+        Err(e) => fatal(&e),
+    }
+    if ids.is_empty() {
+        println!("用法：tlbb-shell --maps <地图ID> [<地图ID>…]  （ID 取上面清单里的原文）");
+        return;
+    }
+    for id in ids {
+        let t = std::time::Instant::now();
+        match map_view::scene_of(&app, &id) {
+            Ok(s) => {
+                let b64 = s.meshes.iter().map(|m| m.buffer.len()).sum::<usize>();
+                match serde_json::to_string(&s) {
+                    Ok(js) => {
+                        let f = dir.join(format!("map_scene_{}.json", s.id));
+                        let _ = std::fs::write(&f, &js);
+                        println!(
+                            "  {} 格子 {} · 记录 {} · 画得出 {} · 缺网格 {} · 非网格 {} \
+                             · 网格 {} 个 · 实例 {} · base64 {}KB → {}（{}KB，{:.1}s）",
+                            s.id,
+                            s.grids,
+                            s.records,
+                            s.resolved,
+                            s.missing_meshes,
+                            s.not_mesh,
+                            s.unique_meshes,
+                            s.instances.len(),
+                            b64 / 1024,
+                            f.display(),
+                            js.len() / 1024,
+                            t.elapsed().as_secs_f64()
+                        );
+                    }
+                    Err(e) => println!("  ✗ {} 序列化失败：{e}", s.id),
+                }
+            }
+            Err(e) => println!("  ✗ {id} → {e}"),
+        }
+    }
+}
+
+/// Read-only self-check: exercises the whole pipeline without a webview so the shell can
+/// be verified in a headless run. `tlbb-shell --probe [中文词]`
 pub fn probe(word: Option<String>) {
     let (root, db) = roots();
     let app = match AppData::open(&root, &db) {

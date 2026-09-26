@@ -136,9 +136,10 @@ fn note(map: &mut HashMap<String, (usize, Vec<String>)>, reason: &str, grid: &st
     }
 }
 
-#[tauri::command]
-pub fn map_list(state: State<'_, AppData>, limit: usize) -> Result<Vec<MapRow>, String> {
-    let rows = state.try_q(|c| c.map_dirs(limit.clamp(1, 500)))?;
+/// 地图清单唯一的实现。命令层和 `--maps` 无窗口验收都走这里：
+/// 清单若另写一份，测到的就不是用户点进去看到的那一份。
+pub fn list_of(app: &AppData, limit: usize) -> Result<Vec<MapRow>, String> {
+    let rows = app.try_q(|c| c.map_dirs(limit.clamp(1, 500)))?;
     Ok(rows
         .into_iter()
         .filter_map(|(dir, grids)| {
@@ -150,6 +151,11 @@ pub fn map_list(state: State<'_, AppData>, limit: usize) -> Result<Vec<MapRow>, 
             })
         })
         .collect())
+}
+
+#[tauri::command]
+pub fn map_list(state: State<'_, AppData>, limit: usize) -> Result<Vec<MapRow>, String> {
+    list_of(&state, limit)
 }
 
 #[tauri::command]

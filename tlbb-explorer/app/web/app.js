@@ -32,6 +32,10 @@ function openLightbox(src, label, hash) {
       /* 大图没拿到就继续放缩略图，不打断 */
     });
 }
+function closeLightbox() {
+  el("lightbox").hidden = true;
+  el("lightboxImg").src = "";
+}
 el("pvGrid").addEventListener("click", (e) => {
   const fig = e.target.closest("figure.pv");
   if (!fig) return;

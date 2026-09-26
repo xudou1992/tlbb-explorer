@@ -14,7 +14,8 @@
 //! （`buffer` 为空串）。列表 300 张图若逐个拉全量回包，光 base64 就把首屏拖死；
 //! 计数若另写一份，列表上的数和点进去的数迟早对不上。
 
-use std::collections::HashMap;
+use std::collections::HashMap;
+use std::sync::OnceLock;
 use std::sync::Arc;
 
 use serde::Serialize;
@@ -37,6 +38,10 @@ pub struct MapRow {
     pub id: String,
     /// 该目录下 `.scene` 格子文件的个数（分母就是这个数，不是"客户端承认的地图全集"）。
     pub grids: usize,
+    /// 中文白话别名。只收人工标注/证据来源（.scratch/map_aliases.json）；
+    /// 没有证据就是 None，前端显示「未命名地图」——原始 ID 永远另行保留。
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub alias: Option<String>,
 }
 
 #[derive(Debug, Serialize)]
@@ -74,6 +79,9 @@ pub struct GridReason {
 #[serde(rename_all = "camelCase")]
 pub struct MapScene {
     pub id: String,
+    /// 同 MapRow.alias：人工标注的白话别名，原始 ID 永远保留。
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub alias: Option<String>,
     /// 目录下的格子文件数（分母）。
     pub grids: usize,
     /// 只有 4 字节的空格子：这格本来就没摆东西，不是读失败。
@@ -153,6 +161,34 @@ fn note(map: &mut HashMap<String, (usize, Vec<String>)>, reason: &str, grid: &st
     }
 }
 
+/// 中文别名表：只从 `.scratch/map_aliases.json` 读人工/证据标注的条目。
+/// 文件不存在或条目缺 alias 字段就当没有——绝不按拼音猜一个出来。
+fn aliases() -> &'static HashMap<String, String> {
+    static ALIASES: OnceLock<HashMap<String, String>> = OnceLock::new();
+    ALIASES.get_or_init(|| {
+        let (root, _) = crate::inspector::roots();
+        let Ok(raw) = std::fs::read(root.join(".scratch/map_aliases.json")) else {
+            return HashMap::new();
+        };
+        let Ok(v) = serde_json::from_slice::<serde_json::Value>(&raw) else {
+            return HashMap::new();
+        };
+        let mut out = HashMap::new();
+        if let Some(m) = v.get("aliases").and_then(|x| x.as_object()) {
+            for (k, e) in m {
+                if let Some(a) = e.get("alias").and_then(|x| x.as_str()) {
+                    out.insert(k.clone(), a.to_string());
+                }
+            }
+        }
+        out
+    })
+}
+
+pub fn alias_of(id: &str) -> Option<&'static String> {
+    aliases().get(id)
+}
+
 /// 地图清单唯一的实现。命令层和 `--maps` 无窗口验收都走这里：
 /// 清单若另写一份，测到的就不是用户点进去看到的那一份。
 pub fn list_of(app: &AppData, limit: usize) -> Result<Vec<MapRow>, String> {
@@ -165,6 +201,7 @@ pub fn list_of(app: &AppData, limit: usize) -> Result<Vec<MapRow>, String> {
             Some(MapRow {
                 id: id.to_string(),
                 grids,
+                alias: alias_of(id).cloned(),
             })
         })
         .collect())
@@ -233,8 +270,10 @@ fn assemble(app: &AppData, raw_id: &str, with_geometry: bool) -> Result<MapScene
         ));
     }
 
+    let alias = alias_of(&id).cloned();
     let mut out = MapScene {
         id,
+        alias,
         grids: grids.len(),
         empty_grids: 0,
         unreadable_grids: 0,

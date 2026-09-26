@@ -487,3 +487,7 @@ input[type="checkbox"] { accent-color: var(--gold); width: 15px; height: 15px; }
 }
 .top-pick b { color: var(--gold-bright); font-weight: 600; }
 .top-pick span { display: block; margin-top: 2px; overflow-wrap: anywhere; }
+
+/* v0.3.1 地图别名：白话名为主行，原 ID 永远在下面一行 */
+.maprow .malias{display:block;font-weight:600;font-size:14px}
+.map-info .part{color:#3a9;}

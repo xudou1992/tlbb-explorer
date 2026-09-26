@@ -16,6 +16,7 @@ import { state, saveState } from "./state.js";
 import { MeshViewer } from "./mesh-viewer.js";
 import { TopDownView } from "./topdown.js";
 import { makeSeq } from "./lib/seq.js";
+import { rowLabel, factsHeader, unresolvedHtml } from "./lib/mapView.js";
 import { mapNoObjects } from "./lib/wording.js";
 import { drawThumb } from "./lib/mapThumb.js";
 
@@ -57,13 +58,13 @@ function paintBanner() {
     banner(
       `<b>俯视量测</b> 正对地面读坐标，格线间距 32。` +
         `<span class="warn">哪边是北未证</span><span class="warn">地形没解出</span>` +
-        `<span class="dim">地图原名 ${esc(sceneId)}</span>`,
+        `<span class="dim">${scene && scene.alias ? esc(scene.alias) + " · " : ""}地图原名 ${esc(sceneId)}</span>`,
     );
   } else {
     banner(
       `<b>灰模预览</b> 只把物件摆在该在的位置上。` +
         `<span class="warn">地形没解出</span><span class="warn">没有花纹</span><span class="warn">朝向待比对</span>` +
-        `<span class="dim">地图原名 ${esc(sceneId)}</span>`,
+        `<span class="dim">${scene && scene.alias ? esc(scene.alias) + " · " : ""}地图原名 ${esc(sceneId)}</span>`,
     );
   }
 }
@@ -75,8 +76,8 @@ function info(s) {
   // 大理这张图 6,112 条里 10 条是 .pu 特效、1 条名字认不出来，
   // 真正的 .mesh 一条不缺 —— 说成「99.8% 命中、11 条缺」是把好消息报成坏消息。
   const meshMissing = s.missingMeshes + s.unreadableMeshes;
-  const bits = [
-    line("格子文件", `${num(s.grids)} 个`),
+  const bits = factsHeader(s).map(([k, v]) => line(k, v));
+  bits.push(line("格子文件", `${num(s.grids)} 个`));
     line("摆位记录", `${num(s.records)} 条`),
     line("画得出形状", `${num(s.resolved)} 条 · 分母是上面那个实测条数`),
     line(
@@ -106,16 +107,7 @@ function info(s) {
         `${num(s.catalogErrors)} 条没查成目录（是数据库抖动，不是客户端没有这些文件）——样本按原因聚合在下面`,
       ),
     );
-  bits.push(
-    line(
-      "缺什么",
-      `<span class="miss">贴图 ✘ 材质引用的贴图名在客户端里没有实体</span><br />` +
-        `<span class="miss">地形高度 ✘ .map 存的是地表编码格、不是高低数据</span><br />` +
-        `<span class="miss">碰撞与能不能走 ✘ 没读</span><br />` +
-        `<span class="miss">动作 ✘ 没读</span><br />` +
-        `<span class="miss">朝向 ✘ R 还是 Rᵀ 未证，待与客户端比对</span>`,
-    ),
-  );
+  bits.push(line("还没解的", unresolvedHtml()));
   const reasons = s.gridReasons
     .map(
       (r) =>
@@ -322,6 +314,7 @@ async function openScene(id) {
   }
   if (seq.isStale(my)) return; // 已经切到别的图了
   scene = s;
+  paintBanner();
   info(s);
   // 一个实例都没有：画不出东西，但那不是失败，别把画布亮着假装在渲染。
   applyMode();
@@ -346,9 +339,11 @@ export async function openMap() {
       b.type = "button";
       b.className = "maprow";
       b.dataset.id = m.id;
+      b.dataset.alias = m.alias || "";
       b.innerHTML =
         '<canvas class="mthumb" aria-hidden="true"></canvas>' +
-        `<span class="mtxt"><span class="mid">${esc(m.id)}</span>` +
+        `<span class="mtxt"><span class="malias">${esc(rowLabel(m.alias))}</span>` +
+        `<span class="mid">${esc(m.id)}</span>` +
         `<span class="mg" data-g="${m.grids}">${num(m.grids)} 格</span></span>`;
       b.onclick = () => openScene(m.id);
       el("mapRows").appendChild(b);
@@ -357,7 +352,7 @@ export async function openMap() {
     // 左栏搜索：纯前端内存过滤，敲几个字符就能在几百张图里找到那张。
     el("mapFilter").oninput = () => {
       const q = el("mapFilter").value.trim().toLowerCase();
-      for (const b of rows) b.hidden = Boolean(q) && !b.dataset.id.toLowerCase().includes(q);
+      for (const b of rows) b.hidden = Boolean(q) && !(b.dataset.id.toLowerCase().includes(q) || (b.dataset.alias || "").toLowerCase().includes(q));
     };
     ensureThumbIO();
     // 首屏不等 IntersectionObserver 的下一帧回调：浮层一打开就先取第一屏，

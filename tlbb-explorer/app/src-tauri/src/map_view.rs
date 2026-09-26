@@ -41,6 +41,10 @@ pub struct MapInstance {
     pub mesh_index: usize,
     /// `.scene` 记录原样直读的 16 个 f32（GL 布局，平移在 [12..14]）。
     pub matrix: [f32; 16],
+    /// 指回 [`MapScene::grid_files`]：这条摆位记录出自哪个格子文件。
+    pub grid_index: usize,
+    /// 该格子文件里的第几条记录（从 0 起）。与 `grid_index` 一起才回得去那一条。
+    pub record_index: usize,
 }
 
 /// 非网格名字按扩展名聚合的一行。
@@ -90,6 +94,10 @@ pub struct MapScene {
     pub unique_meshes: usize,
     pub meshes: Vec<MeshData>,
     pub instances: Vec<MapInstance>,
+    /// 交出过实例的格子文件名原文（`85_3_118.scene` 那种），按 `MapInstance.grid_index` 索引。
+    /// 加它的唯一理由：点中一个物件要能回查到「哪个文件的第几条」，
+    /// 否则「带来源证据」只是句空话——朝向与坐标这一步全靠这种回查。
+    pub grid_files: Vec<String>,
     pub grid_reasons: Vec<GridReason>,
     /// 真缺的那些名字原样列举到封顶为止，超了就只报个数——不去猜它该用哪个模型。
     pub missing_sample: Vec<String>,
@@ -196,6 +204,7 @@ pub fn scene_of(app: &AppData, raw_id: &str) -> Result<MapScene, String> {
         unique_meshes: 0,
         meshes: Vec::new(),
         instances: Vec::new(),
+        grid_files: Vec::new(),
         grid_reasons: Vec::new(),
         missing_sample: Vec::new(),
         missing_truncated: false,
@@ -229,7 +238,9 @@ pub fn scene_of(app: &AppData, raw_id: &str) -> Result<MapScene, String> {
                 continue;
             }
         };
-        for inst in grid.instances {
+        // 这个格子第一次交出可画的实例时才登记文件名，grid_index 与 grid_files 才对得上。
+        let mut gi: Option<usize> = None;
+        for (record_index, inst) in grid.instances.into_iter().enumerate() {
             out.records += 1;
             if inst.name.trim().is_empty() {
                 out.empty_named += 1;
@@ -292,9 +303,20 @@ pub fn scene_of(app: &AppData, raw_id: &str) -> Result<MapScene, String> {
                 }
             };
             out.resolved += 1;
+            let grid_index = match gi {
+                Some(i) => i,
+                None => {
+                    out.grid_files.push(grid_name.clone());
+                    let i = out.grid_files.len() - 1;
+                    gi = Some(i);
+                    i
+                }
+            };
             out.instances.push(MapInstance {
                 mesh_index: idx,
                 matrix: inst.matrix,
+                grid_index,
+                record_index,
             });
         }
     }

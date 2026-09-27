@@ -1,0 +1,37 @@
+﻿cargo :    Compiling tlbb-core v0.1.0 (D:\TLGL\tlbb-explorer\crates\core)
+所在位置 行:445 字符: 73
++ ... \TLGL\tlbb-explorer; cargo run --jobs 1 --bin scene_stop 2>&1 | Out-F ...
++                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (   Compiling tl...er\crates\core):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 13.03s
+     Running `D:\TLGL\.scratch\rc3\debug\scene_stop.exe`
+tag 324: files=2 stop_oob=2 stop_M=0 stop_N=0 | leftover>0: M_ok=0 N_ok=0 nonzero=0 avg_left=0
+tag 592: files=66 stop_oob=63 stop_M=0 stop_N=3 | leftover>0: M_ok=3 N_ok=0 nonzero=3 avg_left=17
+tag 596: files=1 stop_oob=1 stop_M=0 stop_N=0 | leftover>0: M_ok=0 N_ok=0 nonzero=0 avg_left=0
+tag 601: files=1 stop_oob=1 stop_M=0 stop_N=0 | leftover>0: M_ok=0 N_ok=0 nonzero=0 avg_left=0
+tag 605: files=81 stop_oob=54 stop_M=21 stop_N=6 | leftover>0: M_ok=6 N_ok=18 nonzero=27 avg_left=503
+tag 749: files=938 stop_oob=467 stop_M=424 stop_N=47 | leftover>0: M_ok=47 N_ok=3 nonzero=470 avg_left=1387
+tag 753: files=9288 stop_oob=6445 stop_M=2341 stop_N=502 | leftover>0: M_ok=502 N_ok=15 nonzero=2851 avg_left=559
+
+=== 鍋滄鐜板満鏍锋湰 (n < declared) ===
+  753-ish tag=753 n=106 declared=112 len=83490 consumed=80678 left=2812 stop=m
+    path=mobile_maps/w1351_fb_mtld_001/1_2_-5.scene
+    hex@stop = 08 80 45 87 01 00 00 0d bb 6b 9c f7 7f 00 00 70 00 00 00 00 00 00 00 a9 7e 60 f1 fa 7f 00 00 70
+  753-ish tag=753 n=9 declared=13 len=9092 consumed=6861 left=2231 stop=m
+    path=mobile_maps/w1351_ll_nh_001/1_2_-3.scene
+    hex@stop = 00 da 4b 16 02 00 00 c1 c6 e6 65 f6 7f 00 00 10 a5 4e 1b 16 02 00 00 19 00 00 00 00 00 00 00 d0
+  753-ish tag=753 n=31 declared=35 len=25838 consumed=23603 left=2235 stop=m
+    path=mobile_maps/w1351_ll_shgz_001/1_4_-1.scene
+    hex@stop = 93 af 20 2d 00 00 00 40 52 f9 9f 5c 01 00 00 f0 93 af 20 2d 00 00 00 40 52 f9 9f 5c 01 00 00 c0
+  753-ish tag=753 n=69 declared=70 len=52952 consumed=52521 left=431 stop=m
+    path=mobile_maps/w1351_ll_shgz_001/1_3_-9.scene
+    hex@stop = 93 af 20 2d 00 00 00 40 52 f9 9f 5c 01 00 00 f0 93 af 20 2d 00 00 00 40 52 f9 9f 5c 01 00 00 c0
+  753-ish tag=753 n=16 declared=23 len=15727 consumed=12188 left=3539 stop=m
+    path=mobile_maps/w1351_gj_qhdgsanceng_001/1_3_-6.scene
+    hex@stop = 84 1e 25 b4 02 00 00 0d bb 6b 9c f7 7f 00 00 17 00 00 00 00 00 00 00 a9 7e 60 f1 fa 7f 00 00 17
+  753-ish tag=753 n=95 declared=96 len=72407 consumed=72307 left=100 stop=n
+    path=mobile_maps/w1351_ll_sz_001/1_3_-5.scene
+    hex@stop = 00 00 80 3f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00
+wrote D:/TLGL/.scratch/scene_stop.txt

@@ -1,0 +1,49 @@
+=== all .scene rows: props shape ===
+  'binary' 1110
+  'scene' 9288
+  'set' 295
+  'table' 1
+  'tiny' 1237
+  'xml' 2
+=== type=binary .scene: f[0] vs f[1] pairs ===
+  parsed=1110 malformed=0
+  tag(f[1]) distribution: [(749, 938), (605, 81), (592, 66), (957, 21), (324, 2), (601, 1), (596, 1)]
+=== type=scene props count distribution summary ===
+  n=9288 min=1 max=321
+=== ALL binary .scene with f[1]==749 ===
+  count749=938 count753=0
+    749 ('0063ede35f2eb0ed', 'mobile_maps/w1351_ll_emxm_001/1_2_-1.scene', 2146, 15901, 'data4', 20, 852080400, [21, 749, 0, 1059481190])
+    749 ('00708db5bc266812', 'mobile_maps/w1351_ll_gmdtxmp_001/1_1_-6.scene', 4278, 49495, 'data4', 21, 912602264, [66, 749, 0, 3107397632])
+    749 ('00919a629b4fea84', 'mobile_maps/w1351_fb_tjqs_001/1_9_-6.scene', 678, 3918, 'data4', 10, 444111528, [6, 749, 0, 1059676858])
+    749 ('009e27b4b49ee487', 'mobile_maps/w1351_gj_qinhuang4_001/1_6_-5.scene', 1231, 10602, 'data4', 13, 568914488, [14, 749, 0, 3110457958])
+    749 ('00d80b17be2fc09e', 'mobile_maps/w1351_fb_langhuanyudong_001/1_1_-3.scene', 2982, 20937, 'data4', 3, 129478080, [28, 749, 0, 1065353216])
+    749 ('012ba1c1504ce5eb', 'mobile_maps/w1351_ll_gbzdfb_001/1_1_-2.scene', 3526, 30570, 'data4', 20, 869465656, [41, 749, 0, 1059439247])
+    749 ('014bfc1c2b163e22', 'mobile_maps/w1351_fb_mantuoluodao_004/1_6_-8.scene', 2115, 19686, 'data4', 4, 190705448, [26, 749, 0, 3206936623])
+    749 ('015188beb923706f', 'mobile_maps/w1351_fb_cangmangshan50_001/1_1_-3.scene', 1463, 11045, 'data4', 0, 29945312, [16, 749, 0, 3211748614])
+    749 ('025e1e671de40c54', 'mobile_maps/w1351_fb_tjqs_001/1_3_-5.scene', 1134, 6817, 'data4', 10, 444007984, [9, 749, 0, 1059481190])
+    749 ('026aabb9105608fa', 'mobile_maps/w1351_gj_qinhuang4_001/1_0_-4.scene', 2669, 27099, 'data4', 13, 568823960, [36, 749, 0, 3214871101])
+    749 ('033419003abe37c7', 'mobile_maps/w1351_ll_gmdfb_001/1_0_-5.scene', 2476, 26000, 'data4', 20, 910083104, [36, 749, 0, 3107397632])
+    749 ('0345d7db20be0e1b', 'mobile_maps/w1351_fb_mantuoluodao_002/1_3_-2.scene', 4081, 37069, 'data4', 4, 171150704, [50, 749, 0, 1059648963])
+    749 ('03d558c9adb57304', 'mobile_maps/w1351_fb_piaomiao_003/1_2_-1.scene', 1605, 10417, 'data4', 6, 302636792, [15, 749, 0, 1054764956])
+    749 ('04430e877f5b2562', 'mobile_maps/w1351_fb_tianjielou_009/1_2_-2.scene', 2855, 26000, 'data4', 10, 435520536, [39, 749, 0, 1065353216])
+    749 ('04dc5b59a022e6f6', 'mobile_maps/w1351_fb_langhuanyudong_002/1_3_-8.scene', 1842, 12873, 'data4', 3, 138646536, [17, 749, 0, 3206709530])
+    749 ('057172f21760785d', 'mobile_maps/w1351_ll_gmdtxmp_001/1_2_-4.scene', 3148, 33284, 'data4', 21, 912611368, [45, 749, 0, 1065353216])
+    749 ('05924193d45c3c9d', 'mobile_maps/w1351_ll_emtxmp_001/1_4_-5.scene', 5413, 49338, 'data4', 20, 834894400, [66, 749, 0, 3206894738])
+    749 ('059f0cf146aae971', 'mobile_maps/w1351_gj_qinhuang4_001/1_7_-3.scene', 1512, 15744, 'data4', 13, 568921480, [21, 749, 0, 3107397632])
+    749 ('05a5d3264fc9bebc', 'mobile_maps/w1351_fb_sixiang_002/1_2_-3.scene', 3702, 38408, 'data4', 8, 385444080, [56, 749, 0, 1059481190])
+    749 ('05d1895c1c609828', 'mobile_maps/w1351_fb_kuangchang_001/1_0_-4.scene', 3396, 17415, 'data4', 3, 122533656, [23, 749, 0, 1059481190])
+    749 ('05d8f05453eb9738', 'mobile_maps/w1351_fb_langhuanyudong_001/1_2_-1.scene', 2665, 16995, 'data4', 3, 129489864, [23, 749, 0, 3212592200])
+    749 ('060dd0a09942998b', 'mobile_maps/w1351_fb_songliao_002/1_0_-4.scene', 1666, 13473, 'data4', 9, 393641320, [18, 749, 0, 1065353216])
+    749 ('064ce1592e453be0', 'mobile_maps/w1351_fb_mantuoluodao_004/1_7_-6.scene', 2220, 21200, 'data4', 4, 190710304, [28, 749, 0, 3209632706])
+    749 ('06526dfb06274d9e', 'mobile_maps/w1351_fb_cangmangshan50_001/1_2_-1.scene', 2993, 29970, 'data4', 0, 29946776, [40, 749, 0, 1062764958])
+    749 ('075f03a42d73f0b2', 'mobile_maps/w1351_fb_tjqs_001/1_4_-3.scene', 3982, 34669, 'data4', 10, 444023376, [46, 749, 0, 1059637986])
+  ...
+=== global tag census (type=scene => 753; type=binary => f[1]) ===
+  grid753 rows = 9288
+  tag 324 -> 2
+  tag 592 -> 66
+  tag 596 -> 1
+  tag 601 -> 1
+  tag 605 -> 81
+  tag 749 -> 938
+  tag 957 -> 21

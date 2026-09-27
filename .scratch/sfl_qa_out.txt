@@ -1,0 +1,25 @@
+===== Q4 index-shape evidence =====
+scene-count hist: [(33, 27), (1, 24), (34, 19), (6, 13), (2, 12), (32, 12), (65, 11), (14, 11), (13, 11), (5, 6), (8, 6), (15, 6)]
+files where some u32 in body == scene-file-count: 190 [('mqts_empty_001.sfl', 2), ('mqts_empty_001_high.sfl', 2), ('w1351_fb_1v1kuafujingji_001.sfl', 17), ('w1351_fb_banghuigongdi_001.sfl', 4), ('w1351_fb_banghuigongdi_002.sfl', 3), ('w1351_fb_banghuijiaochang_001.sfl', 4), ('w1351_fb_banghuijishi_001.sfl', 10), ('w1351_fb_banghuikuangchang_001.sfl', 5), ('w1351_fb_banghuishufang_001.sfl', 2), ('w1351_fb_biguaqudou001.sfl', 8)]
+u32 values in [44,size) forming monotone 4-aligned chains >=6: 0
+corr(sfl size, scene count)=0.287  mean sfl=5930 mean scenes=39.8
+corr(z40, scene count)=0.033  corr(n77, scene count)=-0.338  corr(strtab cnt, scene count)=0.215
+z40 hist: [(21, 146), (16, 83), (17, 21), (0, 14), (50, 11), (51, 9), (52, 6), (18, 5), (22, 2)]
+files where z40 == #tga strings: 10
+
+===== Q5 correlation detail (10 maps) =====
+sfl                                              size  n77  z40  str scenes  full    objs  map hdr[0..5]
+w1351_gj_moyadong_001.sfl                        2648    9   16   30     63    57    1535  (1, 17, 17, 152, 1202392, 312)
+w1351_fb_migong_xuedi_004.sfl                    3224    9   16   36      1     0       0  None
+w1351_ll_bpzd2_002.sfl                           7696    9   21   49     32    30    1042  None
+w1351_fb_difu_001.sfl                            2824    9   16   33      6     2      49  (1, 4, 4, 152, 66712, 1)
+w1351_fb_jianyu_001.sfl                          2792    9   16   32     17    10     216  (1, 7, 6, 152, 174872, 1)
+w1351_ll_sl_001.sfl                              8128    9   21   51     93    85    1196  (1, 20, 20, 152, 1664152, 154)
+w1351_fb_langhuanyudong_001.sfl                  9440   19   50   72     65    64    1340  (1, 15, 16, 152, 998552, 1)
+w1351_gj_ywgm7_001.sfl                           2744    9   16   31     14    12     492  (1, 8, 8, 152, 266392, 71)
+w1351_fb_houhuayuan_001.sfl                      5416    9   21   50     22    13     612  (1, 9, 9, 152, 337112, 57)
+w1351_ll_loulan_001.sfl                          7912    9   21   50    115    96    5965  (1, 15, 20, 152, 1248152, 24)
+corr(size) with objs=0.493 scenes=0.678
+corr(n77) with objs=0.019 scenes=0.199
+corr(z40) with objs=0.138 scenes=0.332
+corr(strcnt) with objs=0.318 scenes=0.501

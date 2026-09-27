@@ -1,0 +1,86 @@
+open: 13080 groups · 6 containers · 117257 index records in 0.1s
+资源组 13080 · 数据容器 6 个 · 索引条目 117257 条
+warm: 13080 组 / 16 路 / 总 1.1s（清单查询 17.3s · 主体回读 10.8s，均为各分片累计）
+
+全部读取耗时 1.2s
+统计：带贴图线索 25 · 主体可读回 13080 · 名称可定位 0/22605
+  等级 A（完整定位）：0
+  等级 B（主体定位）：2601
+  等级 C（仅有名称）：10479
+  等级 D（只是线索）：0
+查询「曹霜」→ 1 命中（候选拼写 ["曹霜", "caoshuang"]）
+   24 · w1351_boss_caoshuang · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/6
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_boss_caoshuang_lian_001.mtl 已找到
+      引用 材质 w1351_boss_caoshuang_shoutao_001.mtl 已找到
+      引用 材质 w1351_boss_caoshuang_yifu_001.mtl 已找到
+      技术：1cdd37acf5f2c8c8 图：无
+查询「曹霜」→ 1 命中（候选拼写 ["曹霜", "caoshuang"]）
+   24 · w1351_boss_caoshuang · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/6
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_boss_caoshuang_lian_001.mtl 已找到
+      引用 材质 w1351_boss_caoshuang_shoutao_001.mtl 已找到
+      引用 材质 w1351_boss_caoshuang_yifu_001.mtl 已找到
+      技术：1cdd37acf5f2c8c8 图：无
+查询「宠物」→ 914 命中（候选拼写 ["宠物", "chongwu"]）
+   6 · w1351_pets_shenqie_b0 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/16
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_pets_shenqie_b0_lian_01.mtl 已找到
+      引用 材质 w1351_pets_shenqie_b0_yifu_01.mtl 已找到
+      引用 网格 w1351_pets_shenqie_b0_lian_01.mesh 已找到
+      技术：0985c4cc2574b05e 图：无
+   16 · w1351_pets_longgui_b2 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/8
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_pets_longgui_b2.mtl 已找到
+      引用 骨骼 w1351_pets_longgui_b0.ske 已找到
+      引用 网格 w1351_pets_longgui_b1.mesh 只有名字
+      技术：169b98eea0cbb843 图：无
+   19 · w1351_pets_qiongqi_b2 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/8
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_pets_qiongqi_b2.mtl 已找到
+      引用 骨骼 w1351_pets_qiongqi_b0.ske 已找到
+      引用 网格 w1351_pets_qiongqi_b1.mesh 只有名字
+      技术：0715115c253a26ea 图：无
+   20 · w1351_pets_yingzhao_b0 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/8
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_pets_yingzhao_b0.mtl 已找到
+      引用 网格 w1351_pets_yingzhao_b0.mesh 已找到
+      引用 骨骼 w1351_pets_yingzhao_b0.ske 已找到
+      技术：0ced4aac7965775d 图：无
+   30 · w1351_pets_bingcan_b2 · 角色 · 等级 B · 标签 ["动作集", "NPC", "宠物"] · 引用 0/5
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_pets_bingcan_b2.mtl 已找到
+      引用 网格 w1351_pets_bingcan_b2.mesh 已找到
+      引用 骨骼 w1351_pets_bingcan_b0.ske 已找到
+      技术：0056b8cc3fae2472 图：无
+查询「boss」→ 841 命中（候选拼写 ["boss"]）
+   1 · w1351_model_zq_qszd_h001 · 角色 · 等级 B · 标签 ["特效", "技能特效"] · 引用 0/1805
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_model_zq_hd_h001.mtl 已找到
+      引用 网格 w1351_model_zq_hd_h001.mesh 已找到
+      引用 骨骼 w1351_model_zq_hd_h001.ske 已找到
+      技术：092aa2c34e6d742e 图：无
+   10 · w1351_boss_gerong · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/4
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_boss_gerong_lian_001.mtl 已找到
+      引用 材质 w1351_boss_gerong_shoutao_001.mtl 已找到
+      引用 材质 w1351_boss_gerong_toufa_001.mtl 已找到
+      技术：18126906d2332fd7 图：无
+   11 · w1351_boss_yudu · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/5
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_boss_yudu_lian_001.mtl 已找到
+      引用 材质 w1351_boss_yudu_shoutao_001.mtl 已找到
+      引用 材质 w1351_boss_yudu_toufa_001.mtl 已找到
+      技术：c426ffb8dd583491 图：无
+   14 · w1351_boss_hongjiyaowang · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/2
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_boss_hongjiyaowang_toufa_001.mtl 已找到
+      引用 材质 w1351_boss_hongjiyaowang_yifu_001.mtl 已找到
+      引用 网格 w1351_boss_hongjiyaowang_toufa_001.mesh 已找到
+      技术：9abc47acecf44982 图：无
+   15 · w1351_boss_wangyan · 角色 · 等级 B · 标签 ["动作集", "首领", "NPC"] · 引用 0/5
+      缺口 ["贴图引用只有名称，未指向具体资源"] | 名称来源 客户端文件名（原文展示，未翻译）
+      引用 材质 w1351_boss_wangyan_lian_001.mtl 已找到
+      引用 材质 w1351_boss_wangyan_shoutao_001.mtl 已找到
+      引用 材质 w1351_boss_wangyan_toufa_001.mtl 已找到
+      技术：eeff95acf26fb03d 图：无

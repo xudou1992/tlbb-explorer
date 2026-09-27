@@ -6,7 +6,7 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
-import { pctText, texPair, listCount, railStats, citedVerdict, rowMissChip, mapNoObjects } from "../web/lib/wording.js";
+import { pctText, texPair, listCount, railCount, citedVerdict, rowMissChip, mapNoObjects, progressLine, titleHtml } from "../web/lib/wording.js";
 
 test("25/30,585 显示成「不足 1%」而不是 0%", () => {
   assert.equal(pctText(0, 25), "不足 1%");
@@ -15,20 +15,17 @@ test("25/30,585 显示成「不足 1%」而不是 0%", () => {
 });
 
 test("贴图引用必须带着「贴图」两个字出现", () => {
-  assert.equal(texPair(0, 2), "贴图名对上 0/2");
-  assert.match(texPair(25, 22630), /^贴图名对上/);
+  assert.equal(texPair(0, 2), "贴图引用 0/2 对上了文件");
+  assert.match(texPair(25, 22630), /^贴图引用/);
 });
 
-test("左栏每一行的标签都写清分母", () => {
-  const rows = railStats({
-    totalGroups: 13080, decoded: 13080, imageCandidates: 25, locatedRefs: 25, totalRefs: 22630,
-  });
-  const text = rows.map(([k, v]) => `${k}=${v}`).join(" | ");
-  assert.equal(rows.length, 3);
-  assert.ok(text.includes("贴图名能对上文件的组=25"), text);
-  assert.ok(text.includes("贴图引用对上=25 / 22,630"), text);
-  // 「主体能打开的 13,080」恒等于顶栏的「已读完 13,080 组」，同一件事不说两遍
-  assert.ok(!text.includes("主体能打开"), text);
+test("左栏底部只报一条总数，不在筛选栏里堆口径不同的比值", () => {
+  // 曾经这里列三行明细，含「贴图引用对上 25 / 22,630」——分母只数贴图引用，
+  // 和旁边两行的分母不是一个东西，摆一起只会让人以为整页不可信。
+  // 现在只留总数一行，比值统一去「报告」浮层里说。
+  const rc = railCount({ totalGroups: 13080, imageCandidates: 25 });
+  assert.equal(rc.total, "13,080");
+  assert.equal(rc.withImage, "25");
 });
 
 test("没读完时条数要标注是中途值", () => {
@@ -95,4 +92,56 @@ test("真缺、非网格、认不出的名字分开各说各的", () => {
   assert.ok(t.includes("1 条摆的本来就不是网格"), t);
   assert.ok(t.includes("1 条名字既不像文件名也不像路径"), t);
   assert.ok(t.includes("读到了 124 条记录"), t);
+});
+
+// ---- 顶栏进度一行字（懒预热之后按视图分两套口径）----
+
+test("assets 口径：没读完必须带分母，读完只报总数", () => {
+  const l = progressLine("assets", false, 300, 13080);
+  assert.equal(l.text, "正在读取 2% · 300/13,080");
+  assert.ok(l.text.includes("/13,080"), l.text);
+  assert.equal(progressLine("assets", true, 13080, 13080).text, "已读完 13,080 组");
+});
+
+test("browse 口径：必须说清这只影响「资产」标签", () => {
+  const l = progressLine("browse", false, 300, 13080);
+  assert.ok(l.text.startsWith("资产库后台读取"), l.text);
+  assert.ok(l.text.includes("300/13,080"), l.text);
+  assert.ok(l.tip.includes("资产") && l.tip.includes("浏览"), l.tip);
+  assert.equal(progressLine("browse", true, 13080, 13080).text, "资产库已读完 · 13,080 组");
+});
+
+test("分母还没读到（0/0）时不摆假数字：不说「0/0」也不说「读取 0%」", () => {
+  // 刚触发预热的第一瞬 stats 回全 0：「正在读取 0% · 0/0」既不是进度也不是失败。
+  // 浏览视图下更不能挂着「读取 0%」——那是把「还没读到」说成「正在读」。
+  const a = progressLine("assets", false, 0, 0);
+  assert.ok(!a.text.includes("0/0"), a.text);
+  assert.ok(!a.text.includes("0%"), a.text);
+  const b = progressLine("browse", false, 0, 0);
+  assert.ok(!b.text.includes("0/0"), b.text);
+  assert.ok(!/读取 0%/.test(b.text), b.text);
+  assert.ok(b.tip.includes("浏览"), "浏览口径的悬停说明要继续在场");
+});
+
+// ---- 详情大标题的断行 ----
+
+test("长资产名在下划线后插断点，不再从中间硬折", () => {
+  // 真名字，来自 gid=2046（ui/icon/wardrobe）。
+  // 不处理的话浏览器会把「…shukuanganxiang_」和「001」拆成两行。
+  const h = titleHtml("w1351_nan_s_shukuanganxiang_001");
+  assert.ok(h.includes("_<wbr>"), h);
+  assert.ok(h.includes("shukuanganxiang_<wbr>001"), h);
+  // 纯文本内容不变（<wbr> 是零宽的，读出来还是原名）。
+  assert.equal(h.replace(/<wbr>/g, ""), "w1351_nan_s_shukuanganxiang_001");
+});
+
+test("短名字不插断点：本来就不会折，插了只是噪音", () => {
+  assert.equal(titleHtml("icon_mr"), "icon_mr");
+  assert.equal(titleHtml("角色甲"), "角色甲");
+  assert.ok(!titleHtml("a_b_c").includes("<wbr>"));
+});
+
+test("标题转义：名字里带尖括号也不能当标签跑掉", () => {
+  assert.equal(titleHtml("<img src=x>"), "&lt;img src=x&gt;");
+  assert.ok(!titleHtml("aaaaaaaaaaaaaaaaaaaaaaaaaaaa<b>").includes("<b>"));
 });

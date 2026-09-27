@@ -1,0 +1,24 @@
+=== crates/core/src/bin ===
+  asset_cards.rs                  31349
+  asset_report.rs                 50572
+  catalog_baseline.rs             13768
+  dump_scene_sample.rs             8392
+  entry-scan.rs                    8436
+  jpak-scan.rs                     3239
+  mesh2glb.rs                     10512
+  mesh_gate.rs                     3563
+  nameless_probe.rs               19271
+  preview-scan.rs                 11434
+  preview_probe.rs                23212
+  scene_census.rs                  7666
+  scene_pick.rs                    8172
+  scene_stop.rs                    6307
+  scene_verify.rs                  3953
+  texture_cluster.rs              26200
+  view.rs                         24183
+  wall_harvest.rs                 33228
+
+=== crates/core/tests/scene_samples ===
+  grid_749.scene                  19686  sha256=2db518f59317f28b2ab16298e1c37da73006352266b2cbb88ace388ea1d3f616
+  grid_753_overstated.scene       19994  sha256=1ed82d66599aef2d563c88c750d40d6604d21403f0007378f653d5554cbf305f
+  grid_753_with_tail.scene       163942  sha256=8883925d216cbf485faf5429e0cce3bbafab8e6b141be7629f444cc5accf31a8

@@ -1,0 +1,143 @@
+﻿cargo :    Compiling tlbb-core v0.1.0 (D:\TLGL\tlbb-explorer\crates\core)
+所在位置 行:445 字符: 73
++ ... LGL\tlbb-explorer; cargo run --jobs 1 --bin scene_census 2>&1 | Out-F ...
++                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (   Compiling tl...er\crates\core):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+warning: variable does not need to be mutable
+  --> crates\core\src\bin\scene_census.rs:46:9
+   |
+46 |     let mut say = |s: String, lines: &mut Vec<String>| {
+   |         ----^^^
+   |         |
+   |         help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: `tlbb-core` (bin "scene_census") generated 1 warning (run `cargo fix --bin "scene_census" -p tlbb-core` to app
+ly 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.06s
+     Running `D:\TLGL\.scratch\rc3\debug\scene_census.exe`
+6 paks, 116561 records
+total .scene rows = 10398; decode_err = 0; parse_err = 21
+
+=== tag 324 stride 332 ===
+  files                 = 2
+  size min/med/max      = 336 / 336 / 336
+  declared min/med/max  = 1 / 1 / 1
+  instances min/med/max = 1 / 1 / 1
+  tail min/med/max      = 0 / 0 / 0
+  understated (n>decl)  = 0
+  overstated (n<decl)   = 0
+  tail_bytes>0          = 0
+  tail==0 && n>=5       = 0
+  best understated gap  = (0, 0, 0, 0)   (gap, n, declared, size)
+  best tail             = (0, 0, 0, 0)   (tail, n, declared, size)
+  clean pick            = size=0 n=0 decl=0 
+  name sample           = ["CE8EEC244662356F54D7549561244D7A"]
+  >>> understated examples: []
+  >>> tail examples:        []
+
+=== tag 592 stride 600 ===
+  files                 = 66
+  size min/med/max      = 604 / 1204 / 6936
+  declared min/med/max  = 1 / 2 / 12
+  instances min/med/max = 1 / 1 / 12
+  tail min/med/max      = 0 / 0 / 957
+  understated (n>decl)  = 0
+  overstated (n<decl)   = 3
+  tail_bytes>0          = 3
+  tail==0 && n>=5       = 5
+  best understated gap  = (0, 0, 0, 0)   (gap, n, declared, size)
+  best tail             = (957, 1, 2, 1569)   (tail, n, declared, size)
+  clean pick            = size=3004 n=5 decl=5 mobile_maps/w1351_fb_murongshanzhuang_001/1_6_-5.scene
+  name sample           = ["w1351_scene_emeishan_pubu03.pu"]
+  >>> understated examples: []
+  >>> tail examples:        [("mobile_maps/w1351_gj_ywgm9_001/1_3_-2.scene", 2, 1, 100), ("mobile_maps/w1351_gj_ywgm9_001/1_2_-1.scene", 5, 4, 100), ("mobile_maps/w1351_ll_hlf_001/1_8_-10.scene", 2, 1, 957)]
+
+=== tag 596 stride 604 ===
+  files                 = 1
+  size min/med/max      = 1212 / 1212 / 1212
+  declared min/med/max  = 2 / 2 / 2
+  instances min/med/max = 2 / 2 / 2
+  tail min/med/max      = 0 / 0 / 0
+  understated (n>decl)  = 0
+  overstated (n<decl)   = 0
+  tail_bytes>0          = 0
+  tail==0 && n>=5       = 0
+  best understated gap  = (0, 0, 0, 0)   (gap, n, declared, size)
+  best tail             = (0, 0, 0, 0)   (tail, n, declared, size)
+  clean pick            = size=0 n=0 decl=0 
+  name sample           = ["w1351_nv_sceneeditor.mdl", "w1351_nv_s_yifu_slrmdz.mdl"]
+  >>> understated examples: []
+  >>> tail examples:        []
+
+=== tag 601 stride 609 ===
+  files                 = 1
+  size min/med/max      = 613 / 613 / 613
+  declared min/med/max  = 1 / 1 / 1
+  instances min/med/max = 1 / 1 / 1
+  tail min/med/max      = 0 / 0 / 0
+  understated (n>decl)  = 0
+  overstated (n<decl)   = 0
+  tail_bytes>0          = 0
+  tail==0 && n>=5       = 0
+  best understated gap  = (0, 0, 0, 0)   (gap, n, declared, size)
+  best tail             = (0, 0, 0, 0)   (tail, n, declared, size)
+  clean pick            = size=0 n=0 decl=0 
+  name sample           = ["w1351_bzd_dzqiangmian4_003.mesh"]
+  >>> understated examples: []
+  >>> tail examples:        []
+
+=== tag 605 stride 613 ===
+  files                 = 81
+  size min/med/max      = 617 / 4908 / 116582
+  declared min/med/max  = 1 / 8 / 191
+  instances min/med/max = 1 / 8 / 190
+  tail min/med/max      = 0 / 0 / 5252
+  understated (n>decl)  = 0
+  overstated (n<decl)   = 29
+  tail_bytes>0          = 27
+  tail==0 && n>=5       = 35
+  best understated gap  = (0, 0, 0, 0)   (gap, n, declared, size)
+  best tail             = (5252, 25, 34, 20589)   (tail, n, declared, size)
+  clean pick            = size=3069 n=5 decl=5 mobile_maps/w1351_fb_jhqx_002/1_4_-2.scene
+  name sample           = ["w1351_mrsz_shizhu_001.mesh", "w1351_yzw_zhanchuanao_001.mesh"]
+  >>> understated examples: []
+  >>> tail examples:        [("mobile_maps/w1351_fb_murongshanzhuang_001/1_0_-6.scene", 34, 25, 5252), ("mobile_maps/w1351_fb_murongshanzhuang_001/1_2_-2.scene", 133, 130, 803), ("mobile_maps/w1351_fb_murongshanzhuang_001/1_3_-6.scene", 67, 64, 1795), ("mobile_maps/w1351_fb_murongshanzhuang_001/1_5_1.scene", 3, 2, 579), ("mobile_maps/w1351_fb_murongshanzhuang_001/1_6_-6.scene", 7, 5, 1179), ("mobile_maps/w1351_fb_murongshanzhuang_001/1_0_-5.scene", 76, 70, 3817), ("mobile_maps/w1351_fb_murongshanzhuang_001/1_1_-3.scene", 181, 180, 100), ("mobile_maps/w1351_fb_murongshanzhuang_001/1_2_-1.scene", 59, 53, 3591)]
+
+=== tag 749 stride 757 ===
+  files                 = 938
+  size min/med/max      = 761 / 19686 / 123395
+  declared min/med/max  = 1 / 27 / 163
+  instances min/med/max = 1 / 25 / 163
+  tail min/med/max      = 0 / 100 / 17268
+  understated (n>decl)  = 0
+  overstated (n<decl)   = 477
+  tail_bytes>0          = 471
+  tail==0 && n>=5       = 363
+  best understated gap  = (0, 0, 0, 0)   (gap, n, declared, size)
+  best tail             = (17268, 76, 106, 74812)   (tail, n, declared, size)
+  clean pick            = size=3789 n=5 decl=5 mobile_maps/w1351_fb_tjqs_001/1_5_-7.scene
+  name sample           = ["w1351_dl_zhuzi_001.mesh", "w1351_dl_zhuzi_001.mesh"]
+  >>> understated examples: []
+  >>> tail examples:        [("mobile_maps/w1351_ll_gmdtxmp_001/1_1_-6.scene", 66, 64, 1035), ("mobile_maps/w1351_fb_tjqs_001/1_9_-6.scene", 6, 3, 1635), ("mobile_maps/w1351_fb_langhuanyudong_001/1_1_-3.scene", 28, 25, 2000), ("mobile_maps/w1351_ll_gbzdfb_001/1_1_-2.scene", 41, 39, 1035), ("mobile_maps/w1351_fb_cangmangshan50_001/1_1_-3.scene", 16, 14, 435), ("mobile_maps/w1351_ll_gmdfb_001/1_0_-5.scene", 36, 29, 4035), ("mobile_maps/w1351_fb_mantuoluodao_002/1_3_-2.scene", 50, 46, 2235), ("mobile_maps/w1351_fb_piaomiao_003/1_2_-1.scene", 15, 10, 2835)]
+
+=== tag 753 stride 761 ===
+  files                 = 9288
+  size min/med/max      = 765 / 14463 / 242326
+  declared min/med/max  = 1 / 19 / 321
+  instances min/med/max = 1 / 18 / 318
+  tail min/med/max      = 0 / 0 / 50030
+  understated (n>decl)  = 0
+  overstated (n<decl)   = 3114
+  tail_bytes>0          = 2864
+  tail==0 && n>=5       = 5400
+  best understated gap  = (0, 0, 0, 0)   (gap, n, declared, size)
+  best tail             = (50030, 6, 76, 54608)   (tail, n, declared, size)
+  clean pick            = size=3380 n=5 decl=5 mobile_maps/w1351_ll_cbs_001/1_5_-5.scene
+  name sample           = ["w1351_bpzd_muzhalanjian_001.mesh", "w1351_bpzd_muzhalanjian_001.mesh"]
+  >>> understated examples: []
+  >>> tail examples:        [("mobile_maps/w1351_fb_mtld_001/1_2_-5.scene", 112, 106, 2812), ("mobile_maps/w1351_ll_nh_001/1_2_-3.scene", 13, 9, 2231), ("mobile_maps/w1351_ll_shgz_001/1_4_-1.scene", 35, 31, 2235), ("mobile_maps/w1351_ll_shgz_001/1_3_-9.scene", 70, 69, 431), ("mobile_maps/w1351_gj_qhdgsanceng_001/1_3_-6.scene", 23, 16, 3539), ("mobile_maps/w1351_ll_sz_001/1_3_-5.scene", 96, 95, 100), ("mobile_maps/w1351_ll_yb_001/1_1_-7.scene", 75, 74, 957), ("mobile_maps/w1351_fb_jiehun_003/1_2_-4.scene", 93, 75, 10139)]
+wrote D:/TLGL/.scratch/scene_census.txt

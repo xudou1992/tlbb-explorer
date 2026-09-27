@@ -1,0 +1,689 @@
+{
+  "buckets": [
+    {
+      "avgF32Readable": 0.31,
+      "avgRepeat": 0.0,
+      "count": 793,
+      "dbTypeTop": [
+        {
+          "count": 793,
+          "magic": "JBCF/JBCF"
+        }
+      ],
+      "entropyRange": [
+        1.81,
+        4.9
+      ],
+      "magicTop": [
+        {
+          "count": 793,
+          "magic": "JBCF"
+        }
+      ],
+      "name": "JBCF",
+      "rawUndecoded": 0,
+      "refsNonzero": 0,
+      "samples": [
+        "00a9fbe2315293e7",
+        "00ad6e9dfea790dc",
+        "00b9ffd2315291fb",
+        "01a0916c4123ae46",
+        "01b0955c4123a04a",
+        "01c64f34aec29df2",
+        "01f7d05627175cf6",
+        "021976e4cd5f2390",
+        "021fe12c8ea369d5",
+        "022fe51c8ea36bc9"
+      ],
+      "sizeDist": {
+        "1-16KB": 526,
+        "<1KB": 267
+      },
+      "totalBytes": 2006384
+    },
+    {
+      "avgF32Readable": 0.2,
+      "avgRepeat": 0.0,
+      "count": 223,
+      "dbTypeTop": [
+        {
+          "count": 223,
+          "magic": "JBPU/JBPU"
+        }
+      ],
+      "entropyRange": [
+        4.09,
+        5.2
+      ],
+      "magicTop": [
+        {
+          "count": 223,
+          "magic": "JBPU"
+        }
+      ],
+      "name": "JBPU",
+      "rawUndecoded": 0,
+      "refsNonzero": 0,
+      "samples": [
+        "000ae4508f529ce9",
+        "024ae844d7306f94",
+        "0308e738e88d4aad",
+        "03e820042ca19ba4",
+        "043cb9829d0bebe7",
+        "0442bb3130265560",
+        "048da669fa8cf15c",
+        "04ad4fd0b3aa9986",
+        "053cf304049c4ba8",
+        "06fcfb748e5a84cb"
+      ],
+      "sizeDist": {
+        "1-16KB": 121,
+        "<1KB": 102
+      },
+      "totalBytes": 315112
+    },
+    {
+      "avgF32Readable": 0.11,
+      "avgRepeat": 0.1,
+      "count": 24261,
+      "dbTypeTop": [
+        {
+          "count": 24261,
+          "magic": "texture/JMT1"
+        }
+      ],
+      "entropyRange": [
+        0.05,
+        7.77
+      ],
+      "magicTop": [
+        {
+          "count": 24261,
+          "magic": "JMT1"
+        }
+      ],
+      "name": "JMT1",
+      "rawUndecoded": 0,
+      "refsNonzero": 0,
+      "samples": [
+        "0000b0286d98085c",
+        "0007acc966654c3f",
+        "00084c9d677dabc3",
+        "000ea98eb383b6c6",
+        "0015d2da5cb93397",
+        "0018e8b29735bfab",
+        "0019a18ddfc3e972",
+        "0019d3352fce16bd",
+        "001e4faa14de0b04",
+        "0023465e0a046e9e"
+      ],
+      "sizeDist": {
+        "1-16KB": 1532,
+        "16-256KB": 19090,
+        "<1KB": 9,
+        ">256KB": 3630
+      },
+      "totalBytes": 3914224470
+    },
+    {
+      "avgF32Readable": 0.02,
+      "avgRepeat": 0.0,
+      "count": 430,
+      "dbTypeTop": [
+        {
+          "count": 430,
+          "magic": "NAVF/NAVF"
+        }
+      ],
+      "entropyRange": [
+        2.14,
+        3.36
+      ],
+      "magicTop": [
+        {
+          "count": 430,
+          "magic": "NAVF"
+        }
+      ],
+      "name": "NAVF",
+      "rawUndecoded": 0,
+      "refsNonzero": 0,
+      "samples": [
+        "001b29554a8de57a",
+        "00889c4938eda8c2",
+        "00b28e6947bfcfdf",
+        "00d722abf9bf3293",
+        "00e2443314d96f56",
+        "02120f0ddbc5f46f",
+        "03904bc132cd0223",
+        "04b93d0b561f4058",
+        "0520c36bf49a6e9d",
+        "058c96ab0e33b4df"
+      ],
+      "sizeDist": {
+        "1-16KB": 300,
+        "16-256KB": 124,
+        "<1KB": 6
+      },
+      "totalBytes": 9619920
+    },
+    {
+      "avgF32Readable": 0.13,
+      "avgRepeat": 0.0,
+      "count": 5,
+      "dbTypeTop": [
+        {
+          "count": 5,
+          "magic": "binary/bin"
+        }
+      ],
+      "entropyRange": [
+        7.95,
+        7.96
+      ],
+      "magicTop": [
+        {
+          "count": 1,
+          "magic": "412a0000"
+        },
+        {
+          "count": 1,
+          "magic": "552b0000"
+        },
+        {
+          "count": 1,
+          "magic": "6e130000"
+        },
+        {
+          "count": 1,
+          "magic": "de130000"
+        },
+        {
+          "count": 1,
+          "magic": "ee3f0000"
+        }
+      ],
+      "name": "encrypted-or-compressed",
+      "rawUndecoded": 0,
+      "refsNonzero": 0,
+      "samples": [
+        "48d31b229658069d",
+        "8a214f21223feff6",
+        "e066588d74d67a3e",
+        "f788663835f47015",
+        "ffab990fce855486"
+      ],
+      "sizeDist": {
+        "16-256KB": 5
+      },
+      "totalBytes": 386708
+    },
+    {
+      "avgF32Readable": 0.55,
+      "avgRepeat": 0.01,
+      "count": 2999,
+      "dbTypeTop": [
+        {
+          "count": 2999,
+          "magic": "ani/copy"
+        }
+      ],
+      "entropyRange": [
+        3.01,
+        5.65
+      ],
+      "magicTop": [
+        {
+          "count": 2999,
+          "magic": "envelope-ani"
+        }
+      ],
+      "name": "envelope-ani",
+      "rawUndecoded": 0,
+      "refsNonzero": 0,
+      "samples": [
+        "000c0159c7a1758d",
+        "002631698e4a4878",
+        "0038b6df39665372",
+        "00605ab20d657f3f",
+        "008b863c648ff7db",
+        "0098f5954ba9637a",
+        "00bd6a4682a658b6",
+        "00d14a74d338a366",
+        "00df769d5a12f278",
+        "013b1d541404e1ea"
+      ],
+      "sizeDist": {
+        "1-16KB": 237,
+        "16-256KB": 2715,
+        ">256KB": 47
+      },
+      "totalBytes": 211318814
+    },
+    {
+      "avgF32Readable": 0.9,
+      "avgRepeat": 0.01,
+      "count": 471,
+      "dbTypeTop": [
+        {
+          "count": 471,
+          "magic": "mesh/copy"
+        }
+      ],
+      "entropyRange": [
+        3.81,
+        7.26
+      ],
+      "magicTop": [
+        {
+          "count": 471,
+          "magic": "envelope-mesh"
+        }
+      ],
+      "name": "envelope-mesh",
+      "rawUndecoded": 0,
+      "refsNonzero": 0,
+      "samples": [
+        "0051844c038d82a3",
+        "00afcc6c9fb698ae",
+        "00c83df6fdb8369b",
+        "012678649935e2c5",
+        "012e31f6bc6de904",
+        "017142b4296750e1",
+        "019e183655f05a7d",
+        "0226bad09f518e77",
+        "02a69231d071c68b",
+        "038eb43620ef76a2"
+      ],
+      "sizeDist": {
+        "1-16KB": 17,
+        "16-256KB": 416,
+        ">256KB": 38
+      },
+      "totalBytes": 45526449
+    },
+    {
+      "avgF32Readable": 0.96,
+      "avgRepeat": 0.01,
+      "count": 2651,
+      "dbTypeTop": [
+        {
+          "count": 2420,
+          "magic": "geom/raw"
+        },
+        {
+          "count": 231,
+          "magic": "binary/bin"
+        }
+      ],
+      "entropyRange": [
+        4.0,
+        6.0
+      ],
+      "magicTop": [
+        {
+          "count": 2420,
+          "magic": "00000000"
+        },
+        {
+          "count": 192,
+          "magic": "010000ff"
+        },
+        {
+          "count": 39,
+          "magic": "80000000"
+        }
+      ],
+      "name": "float-table",
+      "rawUndecoded": 0,
+      "refsNonzero": 0,
+      "samples": [
+        "001f2559773a5ccf",
+        "00208f98b3657e7e",
+        "003f96904b115f93",
+        "005b5512a2f7f307",
+        "00840862536201e1",
+        "0087ef174f3b375e",
+        "009244e12304acd0",
+        "00a13fccd831eeb8",
+        "00a499e7c4b0765c",
+        "00adccec6a55e71b"
+      ],
+      "sizeDist": {
+        "1-16KB": 8,
+        "16-256KB": 2469,
+        ">256KB": 174
+      },
+      "totalBytes": 481581053
+    },
+    {
+      "avgF32Readable": 0.72,
+      "avgRepeat": 0.01,
+      "count": 8444,
+      "dbTypeTop": [
+        {
+          "count": 4241,
+          "magic": "geom/raw"
+        },
+        {
+          "count": 1399,
+          "magic": "binary/bin"
+        },
+        {
+          "count": 1123,
+          "magic": "scene/grid753"
+        },
+        {
+          "count": 852,
+          "magic": "mapref/tab280"
+        },
+        {
+          "count": 653,
+          "magic": "tiny/bin"
+        }
+      ],
+      "entropyRange": [
+        -0.0,
+        4.0
+      ],
+      "magicTop": [
+        {
+          "count": 4914,
+          "magic": "00000000"
+        },
+        {
+          "count": 432,
+          "magic": "04000000"
+        },
+        {
+          "count": 428,
+          "magic": "05000000"
+        },
+        {
+          "count": 412,
+          "magic": "03000000"
+        },
+        {
+          "count": 203,
+          "magic": "01000000"
+        }
+      ],
+      "name": "low-entropy-table/runtime",
+      "rawUndecoded": 0,
+      "refsNonzero": 0,
+      "samples": [
+        "0005c433384a3442",
+        "000b039a2545dc42",
+        "000f18ef7b22ea4b",
+        "00158a0e517b48cd",
+        "001ba604c55197c5",
+        "001fd2407716aa76",
+        "0023d0e0810b803c",
+        "002c36a2760b35a5",
+        "00324cd1e3b4d4f5",
+        "0032fe9a0340ebf6"
+      ],
+      "sizeDist": {
+        "1-16KB": 1628,
+        "16-256KB": 4819,
+        "<1KB": 1980,
+        ">256KB": 17
+      },
+      "totalBytes": 532445273
+    },
+    {
+      "avgF32Readable": 0.2,
+      "avgRepeat": 0.01,
+      "count": 1731,
+      "dbTypeTop": [
+        {
+          "count": 589,
+          "magic": "text/text"
+        },
+        {
+          "count": 545,
+          "magic": "xml/xml"
+        },
+        {
+          "count": 454,
+          "magic": "binary/bin"
+        },
+        {
+          "count": 101,
+          "magic": "geom/raw"
+        },
+        {
+          "count": 35,
+          "magic": "mapref/tab280"
+        }
+      ],
+      "entropyRange": [
+        4.0,
+        5.99
+      ],
+      "magicTop": [
+        {
+          "count": 545,
+          "magic": "3c746563"
+        },
+        {
+          "count": 268,
+          "magic": "6d6f6269"
+        },
+        {
+          "count": 251,
+          "magic": "4e706354"
+        },
+        {
+          "count": 220,
+          "magic": "02000000"
+        },
+        {
+          "count": 171,
+          "magic": "80000000"
+        }
+      ],
+      "name": "mixed-numeric",
+      "rawUndecoded": 0,
+      "refsNonzero": 0,
+      "samples": [
+        "00588276c1433422",
+        "008b3df6bc6a7176",
+        "00abb39b8c82be6c",
+        "00ac61a3b8dbcc94",
+        "00bdc54d54ad5a06",
+        "013ce373b0ec4cab",
+        "0158348fb9387e45",
+        "016babc2333d43ed",
+        "017340c806fff71e",
+        "017a809734d71026"
+      ],
+      "sizeDist": {
+        "1-16KB": 293,
+        "16-256KB": 105,
+        "<1KB": 1154,
+        ">256KB": 179
+      },
+      "totalBytes": 295884945
+    },
+    {
+      "avgF32Readable": 0.29,
+      "avgRepeat": 0.0,
+      "count": 38,
+      "dbTypeTop": [
+        {
+          "count": 38,
+          "magic": "mp3/mp3"
+        }
+      ],
+      "entropyRange": [
+        0.32,
+        7.92
+      ],
+      "magicTop": [
+        {
+          "count": 38,
+          "magic": "mp3"
+        }
+      ],
+      "name": "mp3",
+      "rawUndecoded": 0,
+      "refsNonzero": 0,
+      "samples": [
+        "052a032bf182220d",
+        "0dbd7fd7fa3bccb1",
+        "10ec9bb07c3d40fd",
+        "19342628bc6676a2",
+        "2563d5e144ccd4d9",
+        "2bb793bad14466ed",
+        "324b3a67ae22e251",
+        "387a07fbc9d1a416",
+        "3de26a95559b0c70",
+        "41a48fdb7398cf39"
+      ],
+      "sizeDist": {
+        ">256KB": 38
+      },
+      "totalBytes": 71353751
+    },
+    {
+      "avgF32Readable": 0.14,
+      "avgRepeat": 0.0,
+      "count": 1,
+      "dbTypeTop": [
+        {
+          "count": 1,
+          "magic": "png/png"
+        }
+      ],
+      "entropyRange": [
+        7.91,
+        7.91
+      ],
+      "magicTop": [
+        {
+          "count": 1,
+          "magic": "png"
+        }
+      ],
+      "name": "png",
+      "rawUndecoded": 0,
+      "refsNonzero": 0,
+      "samples": [
+        "3e6fa05337d7bcd1"
+      ],
+      "sizeDist": {
+        "1-16KB": 1
+      },
+      "totalBytes": 8317
+    },
+    {
+      "avgF32Readable": 0.97,
+      "avgRepeat": 0.0,
+      "count": 6004,
+      "dbTypeTop": [
+        {
+          "count": 5914,
+          "magic": "geom/raw"
+        },
+        {
+          "count": 89,
+          "magic": "binary/bin"
+        },
+        {
+          "count": 1,
+          "magic": "xml/xml"
+        }
+      ],
+      "entropyRange": [
+        6.0,
+        6.78
+      ],
+      "magicTop": [
+        {
+          "count": 5914,
+          "magic": "00000000"
+        },
+        {
+          "count": 76,
+          "magic": "010000ff"
+        },
+        {
+          "count": 13,
+          "magic": "80000000"
+        },
+        {
+          "count": 1,
+          "magic": "3c546162"
+        }
+      ],
+      "name": "structured-binary",
+      "rawUndecoded": 0,
+      "refsNonzero": 0,
+      "samples": [
+        "00008fcbcbe6856f",
+        "00096fdd7ee12633",
+        "0019ad9aafe2d961",
+        "001dc159766ee405",
+        "00204a501e826b7b",
+        "002c5aa195669319",
+        "002c608bf01e7e7b",
+        "002f38cf7062ddff",
+        "0035f9dfc803cfae",
+        "00476b4adebd9261"
+      ],
+      "sizeDist": {
+        "1-16KB": 9,
+        "16-256KB": 5935,
+        ">256KB": 60
+      },
+      "totalBytes": 731889011
+    },
+    {
+      "avgF32Readable": 0.0,
+      "avgRepeat": 0.0,
+      "count": 2,
+      "dbTypeTop": [
+        {
+          "count": 1,
+          "magic": "JMDL/JMDL"
+        },
+        {
+          "count": 1,
+          "magic": "binary/bin"
+        }
+      ],
+      "entropyRange": [
+        0.0,
+        0.0
+      ],
+      "magicTop": [],
+      "name": "unresolved",
+      "rawUndecoded": 2,
+      "refsNonzero": 0,
+      "samples": [
+        "81547d2b15ebb1bb",
+        "8727529056621caf"
+      ],
+      "sizeDist": {
+        ">256KB": 2
+      },
+      "totalBytes": 10616705
+    }
+  ],
+  "db": "D:/TLGL/.scratch/resources.db",
+  "decodeStrategy": "payload::decode 整块解（无范围解口径）；失败退 stored 原始字节并标注未解封装",
+  "decodedOk": 48051,
+  "elapsedSec": 1.0,
+  "namelessTotal": 48053,
+  "root": "D:/TLGL",
+  "sampled": 48053,
+  "thresholds": {
+    "entHigh": 7.5,
+    "entLow": 4.0,
+    "entMid": 6.0,
+    "f32ReadableLine": 0.8
+  },
+  "tool": "block_census",
+  "totalResources": 105327
+}

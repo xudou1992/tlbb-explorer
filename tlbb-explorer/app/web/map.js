@@ -78,8 +78,9 @@ function info(s) {
   const meshMissing = s.missingMeshes + s.unreadableMeshes;
   const bits = factsHeader(s).map(([k, v]) => line(k, v));
   bits.push(line("格子文件", `${num(s.grids)} 个`));
-    line("摆位记录", `${num(s.records)} 条`),
-    line("画得出形状", `${num(s.resolved)} 条 · 分母是上面那个实测条数`),
+  bits.push(line("摆位记录", `${num(s.records)} 条`));
+  bits.push(line("画得出形状", `${num(s.resolved)} 条 · 分母是上面那个实测条数`));
+  bits.push(
     line(
       "摆不出来的",
       meshMissing
@@ -87,14 +88,16 @@ function info(s) {
           (s.unreadableMeshes ? `<br /><span class="miss">${num(s.unreadableMeshes)} 条清单说有、容器里取不到字节</span>` : "")
         : `<span class="ok">0 条 —— 凡记成 .mesh 的都在客户端里找到了</span>`,
     ),
+  );
+  bits.push(
     line(
       "本来就不是网格",
       s.notMesh
         ? `${num(s.notMesh)} 条引用的是别的类型（${s.otherExt.map((x) => `.${esc(x.ext)} ${num(x.records)} 条`).join("、")}）—— 文件在客户端里存在，这一版只摆网格、不画这些`
         : "0 条",
     ),
-    line("去重后的模型", `${num(s.uniqueMeshes)} 个 · 实例 ${num(s.instances.length)} 个`),
-  ];
+  );
+  bits.push(line("去重后的模型", `${num(s.uniqueMeshes)} 个 · 实例 ${num(s.instances.length)} 个`));
   if (s.oddNames) bits.push(line("认不出的名字", `${num(s.oddNames)} 条：既不像文件名也不像路径，没猜它是什么`));
   if (s.emptyGrids) bits.push(line("空着的格子", `${num(s.emptyGrids)} 个：那一格本来就没摆东西`));
   if (s.unreadableGrids)
@@ -202,7 +205,7 @@ function applyMode() {
       v = ensureViewer();
     } catch (e) {
       el("mapCanvas").hidden = true;
-      status(`这台机器开不了 3D 预览：${e instanceof Error ? e.message : String(e)}`);
+      status(`3D 预览起不来：${e instanceof Error ? e.message : String(e)}`);
       return;
     }
     if (grayLoaded !== scene.id) {
@@ -226,15 +229,18 @@ function applyMode() {
     el("mapCanvas").hidden = true;
     // 必须先显示再装载：隐藏的 canvas 量不到尺寸，取景会按 1px 画布算。
     el("mapTop").hidden = false;
+    // t 的声明必须在这个 if/else 之外——它原来声明在下面的 if 块里，同图切回
+    // 的 else 分支引用不到它，直接 ReferenceError 把模式切换整个打断
+    // （「点俯视量测没反应」的元凶）。与灰模侧 v 的写法对齐。
+    let t;
+    try {
+      t = ensureTop();
+    } catch (e) {
+      el("mapTop").hidden = true;
+      status(`2D 画布起不来：${e instanceof Error ? e.message : String(e)}`);
+      return;
+    }
     if (topLoaded !== scene.id) {
-      let t;
-      try {
-        t = ensureTop();
-      } catch (e) {
-        el("mapTop").hidden = true;
-        status(`这台机器开不了 2D 画布：${e instanceof Error ? e.message : String(e)}`);
-        return;
-      }
       try {
         t.load(scene);
         topLoaded = scene.id;

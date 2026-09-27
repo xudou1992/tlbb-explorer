@@ -227,3 +227,19 @@ desktop.ini
 # 鹈鹕页面属于另一个项目，误放在此
 /*_pelican_bike.html
 /pelican_wing_adventure.html
+
+# ---- .scratch 下的中间数据与缓存（体积大、可重算，只带源码与结论）----
+.scratch/*.pkl
+.scratch/*.npy
+.scratch/warm_cache.json
+.scratch/sfl_dump.json
+.scratch/sfl_fields.json
+.scratch/cfg_paths.txt
+.scratch/cfg_keys.txt
+.scratch/sfl_strings_all.txt
+.scratch/full_view.txt
+.scratch/canvas_view.txt
+.scratch/canvas2.txt
+.scratch/mid.txt
+# 误生成的垃圾：文件名里带 .scratch 字样（某次脚本路径拼接出错）
+/TLGL.scratchcrop_*.png

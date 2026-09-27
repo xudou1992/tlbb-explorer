@@ -1,0 +1,47 @@
+decoded+parsed = 10377
+A strict (749,n>=5,tail==0,4K..200K) hits = 354
+B strict (753, n > u32@0)              hits = 0
+C strict (753, tail>0)                 hits = 2864
+B fallback pool (753, n>=5)            hits = 8122
+
+grid_749.scene   [strict]
+  path        = mobile_maps/w1351_fb_mantuoluodao_004/1_6_-8.scene
+  pak/off     = data4 @ 190705448
+  hash        = 014bfc1c2b163e22
+  rtype/sub   = binary / bin   props={"f": [26, 749, 0, 3206936623]}
+  size        = 19686 bytes
+  tag         = 749   stride = 757
+  declared    = 26   instances = 26   understated = false
+  tail_bytes  = 0   has_tail = false
+  first3 name = ["w1351_cj_caodui_001.mesh", "w1351_cj_caodui_002.mesh", "w1351_cj_caodui_002.mesh"]
+  first3 pos  = [[200.425, 10.2625, -227.316], [223.871, 10.0, -233.182], [200.646, 10.2583, -224.971]]
+  wrote       = C:\Users\Administrator\AppData\Local\Temp\tlbb_scene_samples\grid_749.scene
+  file size on disk = 19686 bytes
+
+grid_753_overstated.scene   [fallback: 753 无 understated 个例]
+  path        = mobile_maps/w1351_ll_bpzd1_002/1_3_-2.scene
+  pak/off     = data1 @ 1034775064
+  hash        = 7abeaf9ae68abc61
+  rtype/sub   = scene / grid753   props={"count": 26}
+  size        = 19994 bytes
+  tag         = 753   stride = 761
+  declared    = 26   instances = 25   understated = false
+  tail_bytes  = 957   has_tail = true
+  first3 name = ["w1351_ly_shidiaoma_001.mesh", "w1351_bpzd_tudi_001.mesh", "w1351_bpzd_tudi_001.mesh"]
+  first3 pos  = [[112.871, 10.0, -36.4602], [114.787, 10.0062, -61.2307], [123.128, 10.0062, -61.2307]]
+  wrote       = C:\Users\Administrator\AppData\Local\Temp\tlbb_scene_samples\grid_753_overstated.scene
+  file size on disk = 19994 bytes
+
+grid_753_with_tail.scene   [strict(tail>0)]
+  path        = mobile_maps/w1351_fb_jiehun_003/1_4_-4.scene
+  pak/off     = data1 @ 547269680
+  hash        = 63406220d4bacb1c
+  rtype/sub   = scene / grid753   props={"count": 221}
+  size        = 163942 bytes
+  tag         = 753   stride = 761
+  declared    = 221   instances = 205   understated = false
+  tail_bytes  = 7925   has_tail = true
+  first3 name = ["w1351_fbgf_pingfengzheng_001.mesh", "w1351_jiehun_chuanglian_002.mesh", "w1351_jiehun_chujihongditan_001.mesh"]
+  first3 pos  = [[154.987, 4.8, -106.012], [156.183, 12.2739, -106.448], [138.671, 4.81, -106.922]]
+  wrote       = C:\Users\Administrator\AppData\Local\Temp\tlbb_scene_samples\grid_753_with_tail.scene
+  file size on disk = 163942 bytes

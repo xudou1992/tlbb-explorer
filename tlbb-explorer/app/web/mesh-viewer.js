@@ -31,9 +31,6 @@ varying vec3 vNormal;
 varying vec2 vUv;
 attribute vec2 aUv;
 varying vec3 vView;
-varying vec2 vUv;
-uniform sampler2D uTex;
-uniform float uUseTex;
 void main() {
   // 实例矩阵**乘在 uModelView 之后**，即 uModelView * instance * pos：
   //   * uModelView 已经含相机与"把模型挪到原点"的居中平移，是**场景级**的东西；
@@ -56,6 +53,9 @@ const FS = `
 precision mediump float;
 varying vec3 vNormal;
 varying vec3 vView;
+varying vec2 vUv;
+uniform sampler2D uTex;
+uniform float uUseTex;
 void main() {
   vec3 n = normalize(vNormal);
   vec3 l = normalize(vec3(0.35, 0.75, 0.6));
@@ -75,7 +75,7 @@ function compile(gl, type, src) {
   gl.shaderSource(sh, src);
   gl.compileShader(sh);
   if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
-    throw new Error("着色器编译失败：" + gl.getShaderInfoLog(sh));
+    throw new Error("着色器编译失败（这是我们代码的 bug，不是你机器的问题）：" + gl.getShaderInfoLog(sh));
   }
   return sh;
 }
@@ -153,7 +153,7 @@ function uploadMesh(gl, data) {
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buf.idx);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
-  return { buf, positions, normals, indices, ic: layout.indexCount, vertexCount: vc };
+  return { buf, positions, normals, indices, uvs, ic: layout.indexCount, vertexCount: vc };
 }
 
 /// 从上传结果推出一份"可画的网格"记录。单网格和多实例共用，保证两边的
@@ -235,8 +235,10 @@ export class MeshViewer {
       tex: gl.getUniformLocation(prog, "uTex"),
       useTex: gl.getUniformLocation(prog, "uUseTex"),
     };
-    // 老路径用的三个专用缓冲：单网格时不动，行为和以前一样。
-    this.buf = { pos: gl.createBuffer(), nrm: gl.createBuffer(), idx: gl.createBuffer() };
+    // 老路径用的四个专用缓冲：单网格时不动，行为和以前一样。
+    // uv 必须也在专用缓冲里：load() 换数据时若只换三个，UV 就永远进不了
+    // 绘制路径（drawSingle 的 texReady 分支拿不到 buf.uv，套贴图永远无效）。
+    this.buf = { pos: gl.createBuffer(), nrm: gl.createBuffer(), idx: gl.createBuffer(), uv: gl.createBuffer() };
 
     // 多实例路径的几何池：每个**不同网格**一份缓冲，在 loadInstances 里上传一次。
     // 绝不每帧 bufferData，也绝不为每个实例建一个 buffer——后者在几千实例下是
@@ -271,7 +273,9 @@ export class MeshViewer {
     });
     const release = () => {
       this.drag = null;
-      c.parentElement.classList.remove("dragging");
+      // 画布可能在拖拽途中被换内容摘出文档（浏览树里换文件），
+      // parentElement 已为 null，别在这里抛错。
+      if (c.isConnected) c.parentElement.classList.remove("dragging");
       this.start(); // 松手后还要把惯性补完
     };
     c.addEventListener("pointerup", release);
@@ -364,17 +368,23 @@ export class MeshViewer {
     // 声明和实际字节数不符时必须拒绝，绝不能把错数据画得像个模型。
     // 解包只走 uploadMesh 一处：单网格和多实例各写一份解包，迟早有一边跑偏。
     const geo = uploadMesh(gl, data);
-    // uploadMesh 用的是临时缓冲，这里把它换到老路径那三个专用缓冲上，
-    // 然后立刻回收临时的那一份——不然每 load 一次就漏三个 buffer。
+    // uploadMesh 用的是临时缓冲，这里把它换到老路径那组专用缓冲上，
+    // 然后立刻回收临时的那一份——不然每 load 一次就漏四个 buffer。
     const tmp = geo.buf;
     geo.buf = this.buf;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buf.pos);
     gl.bufferData(gl.ARRAY_BUFFER, geo.positions, gl.STATIC_DRAW);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buf.nrm);
     gl.bufferData(gl.ARRAY_BUFFER, geo.normals, gl.STATIC_DRAW);
+    // UV 段必须跟着进专用缓冲：套贴图能不能生效，取决于 drawSingle 时
+    // buf.uv 里有没有数据（没有就永远退化成灰模，候选卡上的图成了摆设）。
+    if (geo.uvs) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.buf.uv);
+      gl.bufferData(gl.ARRAY_BUFFER, geo.uvs, gl.STATIC_DRAW);
+    }
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buf.idx);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, geo.indices, gl.STATIC_DRAW);
-    for (const b of [tmp.pos, tmp.nrm, tmp.idx]) gl.deleteBuffer(b);
+    gl.bufferData(gl.ARRAY_BUFFER, geo.indices, gl.STATIC_DRAW);
+    for (const b of [tmp.pos, tmp.nrm, tmp.idx, tmp.uv]) if (b) gl.deleteBuffer(b);
 
     this.unloadPool(); // 从多实例切回单网格：地图的几何池该收掉了
     this.mesh = viewOf(geo, data);

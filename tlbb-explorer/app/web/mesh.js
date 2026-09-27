@@ -91,7 +91,7 @@ async function pick(k) {
     v = ensure();
   } catch (e) {
     foldStage();
-    status(`这台机器开不了 3D 预览：${errText(e)}`);
+    status(`3D 预览起不来：${errText(e)}`);
     return;
   }
   v.onlost = () => {

@@ -330,7 +330,7 @@ fn miss_msg_ref(role: &str, name: &str, kind: &str, pm: Option<&PathMap>) -> Str
     if is_texture_kind(kind) || role.contains("贴图") {
         match pm.and_then(|p| p.lookup(name)) {
             Some(path) => format!(
-                "{role} {name}：已找到原始出处 {path}（ResourcePath.cfg）；文件本体未打包进资源库"
+                "{role} {name}：ResourcePath.cfg 里登记过它放在 {path}，但解包出来的文件里没有这张图"
             ),
             None => format!(
                 "{role} {name}：客户端只保存名称，没有路径，这是客户端的设计，不是解析失败"
@@ -909,7 +909,13 @@ fn collect_previews(
             for s in slots {
                 if let Some(h) = s.resolved {
                     if seen_cand.insert(h) {
-                        cands.push((format!("{}（材质槽）", s.name), h));
+                        // cfg 翻译表按名字全局匹配,服装贴图名常和衣柜图标同名——
+                        // 对上的是图标就把这话写在图上,不然读者以为看到了衣服本体。
+                        let icon = asset_path(con, h)
+                            .map(|p| p.replace('\\', "/").contains("ui/icon/"))
+                            .unwrap_or(false);
+                        let tag = if icon { "材质槽，对上的是衣柜图标" } else { "材质槽" };
+                        cands.push((format!("{}（{}）", s.name, tag), h));
                     }
                 }
             }

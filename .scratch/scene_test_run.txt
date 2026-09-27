@@ -1,0 +1,76 @@
+﻿cargo : warning: function `鍒ゆ嵁M_杩濆弽鍒欐嫆缁漙 should have a snake case name
+所在位置 行:445 字符: 73
++ ... b-explorer; cargo test --jobs 1 -p tlbb-core --lib preview::scene 2>& ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning: functi...snake case name:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+   --> crates\core\src\preview\scene.rs:494:8
+    |
+494 |     fn 鍒ゆ嵁M_杩濆弽鍒欐嫆缁?) {
+    |        ^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `鍒ゆ嵁_m_杩濆弽鍒欐嫆缁漙
+    |
+    = note: `#[warn(non_snake_case)]` (part of `#[warn(nonstandard_style)]`) on by default
+
+warning: function `鍒ゆ嵁N_杩濆弽鍒欐嫆缁漙 should have a snake case name
+   --> crates\core\src\preview\scene.rs:522:8
+    |
+522 |     fn 鍒ゆ嵁N_杩濆弽鍒欐嫆缁?) {
+    |        ^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `鍒ゆ嵁_n_杩濆弽鍒欐嫆缁漙
+
+warning: function `灏鹃儴璁板綍涔熸弧瓒冲垽鎹甅N璇存槑涓嶈兘闈犲畠鍙嶆帹灏鹃儴` should have a snake case name
+   --> crates\core\src\preview\scene.rs:635:8
+    |
+635 |     fn 灏鹃儴璁板綍涔熸弧瓒冲垽鎹甅N璇存槑涓嶈兘闈犲畠鍙嶆帹灏鹃儴() {
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `灏鹃儴璁板綍涔熸弧瓒冲垽鎹甠mn璇存槑涓
+嶈兘闈犲畠鍙嶆帹灏鹃儴`
+
+warning: function `鍚嶅瓧鍦ㄥ亸绉?4涓斾互NUL缁撳熬` should have a snake case name
+   --> crates\core\src\preview\scene.rs:656:8
+    |
+656 |     fn 鍚嶅瓧鍦ㄥ亸绉?4涓斾互NUL缁撳熬() {
+    |        ^^^^^^^^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `鍚嶅瓧鍦ㄥ亸绉?4涓斾互_nul缁撳熬`
+
+warning: function `鎮┖妲戒綅淇濇寔涓篲None_涓嶇紪閫燺hash` should have a snake case name
+   --> crates\core\src\preview\summary.rs:564:8
+    |
+564 |     fn 鎮┖妲戒綅淇濇寔涓篲None_涓嶇紪閫燺hash() {
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `鎮┖妲戒綅淇濇寔涓篲none_涓嶇紪閫燺hash`
+
+warning: `tlbb-core` (lib test) generated 5 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.39s
+     Running unittests src\lib.rs (D:\TLGL\.scratch\rc3\debug\deps\tlbb_core-100a60a7905d7e96.exe)
+
+running 14 tests
+test preview::scene::tests::鍚嶅瓧鍦ㄥ亸绉?4涓斾互NUL缁撳熬 ... ok
+test preview::scene::tests::鍒ゆ嵁N_杩濆弽鍒欐嫆缁?... ok
+test preview::scene::tests::鍚堟垚涓ゆ潯璁板綍鑳借В鍑烘潵 ... ok
+test preview::scene::tests::鍒ゆ嵁M_杩濆弽鍒欐嫆缁?... ok
+test preview::scene::tests::澹版槑琚綆浼版椂浠嶈蛋鍑哄叏閮ㄥご閮ㄨ褰?... ok
+test preview::scene::tests::灏鹃儴璁板綍涔熸弧瓒冲垽鎹甅N璇存槑涓嶈兘闈犲畠鍙嶆帹灏鹃儴 ... ok
+test preview::scene::tests::灏鹃儴闄勫姞娈靛彧鎶ュ瓧鑺傛暟涓嶇紪閫犲疄渚?... ok
+test preview::scene::tests::宸茬煡鐗堟湰闆嗗悎涓巁stride_琛ㄤ竴鑷?... ok
+test preview::scene::tests::甯冨眬璧颁笉閫氬湪涓棿鏃舵姤_failed_at ... ok
+test preview::scene::tests::鏈煡_tag_鎶unknown_version ... ok
+test preview::scene::tests::绌烘牸瀛愬垽瀹?... ok
+test preview::scene::tests::闀垮害涓嶈冻12瀛楄妭鎶too_short ... ok
+test preview::scene::tests::鐪熷疄鏍锋湰 ... FAILED
+test preview::scene::tests::浠绘剰鎴柇涓庡瀮鍦捐緭鍏ラ兘涓峱anic ... ok
+
+failures:
+
+---- preview::scene::tests::鐪熷疄鏍锋湰 stdout ----
+
+thread 'preview::scene::tests::鐪熷疄鏍锋湰' (31648) panicked at crates\core\src\preview\scene.rs:729:13:
+assertion `left == right` failed: grid_749.scene 鏉℃暟
+  left: 26
+ right: 3
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    preview::scene::tests::鐪熷疄鏍锋湰
+
+test result: FAILED. 13 passed; 1 failed; 0 ignored; 0 measured; 27 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p tlbb-core --lib`

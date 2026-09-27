@@ -1,0 +1,3 @@
+open: 13080 groups · 6 containers · 117257 index records in 0.1s
+地图清单 300 张 → D:/TLGL\.scratch/ui_check\map_list.json（12KB）
+用法：tlbb-shell --maps <地图ID> [<地图ID>…]  （ID 取上面清单里的原文）

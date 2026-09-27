@@ -1,0 +1,229 @@
+=== type='scene' rows sample ===
+  cols: hash,path,dir,name,ext,type,subtype,codec,ver,flags,method,stored,occupied,original,filecrc,pak,gen,offset,named,props,src,self_path
+      hash='000e124a5c235113'
+      path='mobile_maps/w1351_fb_zlzc_001/1_0_-8.scene'
+      dir='mobile_maps/w1351_fb_zlzc_001'
+      name='1_0_-8.scene'
+      ext='.scene'
+      type='scene'
+      subtype='grid753'
+      codec=None
+      ver=1
+      flags=12
+      method=51
+      stored=2140
+      occupied=2144
+      original=14463
+      filecrc=2141845799
+      pak='data4'
+      gen=12
+      offset=519707696
+      named=1
+      props='{"count": 19}'
+      src='resourcepath'
+      self_path=''
+      ---
+      hash='000ecb1beb9cb2ee'
+      path='mobile_maps/w1351_ll_dh_001/1_3_-1.scene'
+      dir='mobile_maps/w1351_ll_dh_001'
+      name='1_3_-1.scene'
+      ext='.scene'
+      type='scene'
+      subtype='grid753'
+      codec=None
+      ver=1
+      flags=12
+      method=51
+      stored=998
+      occupied=1000
+      original=6092
+      filecrc=66056157
+      pak='data2'
+      gen=1
+      offset=88164824
+      named=1
+      props='{"count": 8}'
+      src='resourcepath'
+      self_path=''
+      ---
+      hash='000f7ce4dac3b487'
+      path='mobile_maps/w1351_ll_dh_001/1_2_-9.scene'
+      dir='mobile_maps/w1351_ll_dh_001'
+      name='1_2_-9.scene'
+      ext='.scene'
+      type='scene'
+      subtype='grid753'
+      codec=None
+      ver=1
+      flags=12
+      method=51
+      stored=2868
+      occupied=2872
+      original=18868
+      filecrc=4088247934
+      pak='data2'
+      gen=1
+      offset=88165824
+      named=1
+      props='{"count": 25}'
+      src='resourcepath'
+      self_path=''
+      ---
+      hash='001173153372aa37'
+      path='mobile_maps/w1351_ll_cs_001/1_0_-4.scene'
+      dir='mobile_maps/w1351_ll_cs_001'
+      name='1_0_-4.scene'
+      ext='.scene'
+      type='scene'
+      subtype='grid753'
+      codec=None
+      ver=1
+      flags=12
+      method=51
+      stored=727
+      occupied=728
+      original=4570
+      filecrc=3934528150
+      pak='data2'
+      gen=0
+      offset=44856000
+      named=1
+      props='{"count": 6}'
+      src='resourcepath'
+      self_path=''
+      ---
+      hash='00285f3711aaebb0'
+      path='mobile_maps/w1351_gj_hxl_001/1_2_-3.scene'
+      dir='mobile_maps/w1351_gj_hxl_001'
+      name='1_2_-3.scene'
+      ext='.scene'
+      type='scene'
+      subtype='grid753'
+      codec=None
+      ver=1
+      flags=12
+      method=51
+      stored=1561
+      occupied=1568
+      original=11419
+      filecrc=282928624
+      pak='data4'
+      gen=12
+      offset=542658640
+      named=1
+      props='{"count": 15}'
+      src='resourcepath'
+      self_path=''
+      ---
+      hash='0030542e7f695d21'
+      path='mobile_maps/w1351_gj_qysd_001/1_3_-6.scene'
+      dir='mobile_maps/w1351_gj_qysd_001'
+      name='1_3_-6.scene'
+      ext='.scene'
+      type='scene'
+      subtype='grid753'
+      codec=None
+      ver=1
+      flags=12
+      method=51
+      stored=2743
+      occupied=2744
+      original=17454
+      filecrc=267497982
+      pak='data4'
+      gen=13
+      offset=575994064
+      named=1
+      props='{"count": 24}'
+      src='resourcepath'
+      self_path=''
+      ---
+=== type='scene' path samples ===
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+  None
+=== type='scene' dir distribution ===
+  dir='' n=1126
+  dir='mobile_maps/w1351_fb_sxzc_001' n=113
+  dir='mobile_maps/w1351_ll_dl_003' n=102
+  dir='mobile_maps/w1351_ll_dl_002' n=102
+  dir='mobile_maps/w1351_ll_ml_001' n=96
+  dir='mobile_maps/w1351_ll_loulan_001' n=96
+  dir='mobile_maps/w1351_ll_yxh_001' n=95
+  dir='mobile_maps/w1351_ll_yn_001' n=95
+  dir='mobile_maps/w1351_ll_wy_001' n=95
+  dir='mobile_maps/w1351_ll_shgz_001' n=95
+  dir='mobile_maps/w1351_ll_qingyuan_001' n=95
+  dir='mobile_maps/w1351_ll_lyxj_002' n=95
+  dir='mobile_maps/w1351_ll_ly_001' n=95
+  dir='mobile_maps/w1351_ll_jh_001' n=95
+  dir='mobile_maps/w1351_fb_chiji_001' n=95
+  dir='mobile_maps/w1351_ll_yb_001' n=94
+  dir='mobile_maps/w1351_ll_wls_001' n=94
+  dir='mobile_maps/w1351_ll_th_001' n=94
+  dir='mobile_maps/w1351_ll_nz_001' n=94
+  dir='mobile_maps/w1351_ll_lq_001' n=94
+  dir='mobile_maps/w1351_hd_lyfhc_002' n=94
+  dir='mobile_maps/w1351_ll_wls_002' n=93
+  dir='mobile_maps/w1351_ll_ss_001' n=93
+  dir='mobile_maps/w1351_ll_hlf_001' n=93
+  dir='mobile_maps/w1351_ll_dh_001' n=93
+  dir='mobile_maps/w1351_hd_lyfhc_001' n=93
+  dir='mobile_maps/w1351_fb_fhgucheng_001' n=93
+  dir='mobile_maps/w1351_ll_mj_001' n=91
+  dir='mobile_maps/w1351_ll_nh_001' n=90
+  dir='mobile_maps/w1351_ll_eh_001' n=90
+=== type='scene' subtype distribution ===
+  subtype='grid753' n=10414
+=== type='scene' pak distribution ===
+  pak='data4' n=4018
+  pak='data2' n=3724
+  pak='data1' n=2194
+  pak='data_1' n=355
+  pak='data' n=123
+=== size stats type='scene' (stored/original) ===
+  (254, 21421, 765, 242326, 10414)
+=== all ext='.scene' rows grouped by type ===
+  'binary' 1110
+  'scene' 9288
+  'set' 295
+  'table' 1
+  'tiny' 1237
+  'xml' 2

@@ -11,12 +11,17 @@ pub mod geometry;
 pub mod image;
 pub mod scene;
 pub mod summary;
+pub mod uvfit;
 
 pub use geometry::{parse_geometry, parse_mesh, MeshGeometry, MeshLayout};
 pub use image::{png_bytes, scale_rgba, write_png};
 pub use scene::{is_empty_grid, known_version, parse_scene, SceneError, SceneGrid, SceneInstance};
 pub use summary::{
     anim_summary, dedup_names, material_slots, mdl_summary, mesh_summary, parse_envelope,
-    printable_strings, texture_summary, AnimSummary, Envelope, FileKind, MdlBody, MdlSummary,
+    printable_strings, texture_summary, AnimSummary, Envelope, FileKind, MdlSummary,
     MeshSummary, ResourceView, SlotSummary, TexSummary, ViewBody,
+};
+pub use uvfit::{
+    build_mask, covered, decode_pool, island_variance, mdl_mesh_names, mesh_hash, open_paks,
+    query_pool, rasterize, score_pool, Cand, PakSet, PoolRow, PoolTex, GRID,
 };

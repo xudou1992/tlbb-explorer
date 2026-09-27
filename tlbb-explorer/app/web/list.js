@@ -4,11 +4,12 @@
 // 不放类型轮廓那种装饰图：约 83% 的资产没有可解析的像素，占位图形只会让人
 // 以为那是内容物。默认也不列未命名组：它们连路径都没记录，标题只能是 16 位编号。
 
-import { el, esc, num, chips, line, errText } from "./ui.js";
+import { el, esc, num, chips, errText } from "./ui.js";
 import * as api from "./api.js";
 import { state, saveState } from "./state.js";
 import { showDetail } from "./detail.js";
-import { listCount, railStats, rowMissChip } from "./lib/wording.js";
+import { listCount, railCount, rowMissChip, progressLine } from "./lib/wording.js";
+import { isNotReadyMsg } from "./lib/detailState.js";
 import { makeSeq } from "./lib/seq.js";
 
 const ALL = { value: "全部", label: "全部" };
@@ -19,6 +20,26 @@ let offset = 0;
 let loadingMore = false;
 /// 当前列表里行的顺序（gid），键盘 ↑↓ 沿它走。
 let visibleGids = [];
+
+const GRADE_COLOR = { A: "gA", B: "gB", C: "gC", D: "gD" };
+
+/// 一组筹码：整行、带色点徽章。与 ui.js::chips 同形，但完整程度这四档
+/// 需要一眼看出等级，色点是唯一在这里值得多花的一个像素。
+function gradeChips(node, options, current, pick) {
+  node.innerHTML = "";
+  for (const opt of options) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip" + (opt.value === current ? " on" : "");
+    const cls = GRADE_COLOR[String(opt.value)] || "gC";
+    const head = String(opt.label).split(" ")[0];
+    b.innerHTML =
+      `<span class="gdot ${cls}">${esc(head)}</span><span>${esc(String(opt.label).replace(/^\S+\s*/, ""))}</span>` +
+      (opt.count === undefined ? "" : `<em>${num(opt.count)}</em>`);
+    b.onclick = () => pick(opt.value);
+    node.appendChild(b);
+  }
+}
 
 export function paintRail() {
   const s = state.stats;
@@ -38,16 +59,20 @@ export function paintRail() {
       saveState();
       refresh({ top: true });
     });
-    chips(el("grades"), [ALL, ...s.grades.map((g) => ({ value: g.value, label: `${g.value} ${g.label}`, count: g.count }))], state.grade, (v) => {
-      state.grade = v;
-      saveState();
-      refresh({ top: true });
-    });
+    gradeChips(
+      el("grades"),
+      [ALL, ...s.grades.map((g) => ({ value: g.value, label: `${g.value} ${g.label}`, count: g.count }))],
+      state.grade,
+      (v) => {
+        state.grade = v;
+        saveState();
+        refresh({ top: true });
+      },
+    );
   }
-  // 分母写在标签里，措辞集中在 lib/wording.js（有测试盯着）。
-  // 实算纠正过两处：「主体能打开的」恒等于顶栏那句「已读完 N 组」，是同一件事说两遍；
-  // 「有贴图线索的」曾经写 25，其实真有线索的是 9,589 组，25 是**能对上**的组数。
-  el("stats").innerHTML = railStats(s).map(([k, v]) => line(k, v)).join("");
+  // 底部的总数一行：截图里左栏最下面那块「共有资源」。
+  const rc = railCount(s);
+  el("railCount").innerHTML = `<b>${rc.total}</b> 条资产 · 其中 <b>${rc.withImage}</b> 组贴图名能对上文件`;
 
   const btn = el("unnamed");
   btn.textContent = state.named ? `看未命名资产 ${num(s.unnamed)}` : "回到有名字的资产";
@@ -62,14 +87,16 @@ function rowHtml(c) {
   const miss = c.refTotal - c.locatedTotal;
   const title = c.named ? c.name : "未命名资产";
   const sub = c.named ? c.subtitle : `${c.kind} · 客户端没留下名字和路径`;
+  // 质量徽章：截图里带前缀词（A 主体定位），比光秃秃一个字母好扫。
+  const qword = { A: "完整定位", B: "主体定位", C: "仅有名称", D: "只有线索" }[c.grade] || "";
   return `<button type="button" class="row-item${state.selected === c.gid ? " on" : ""}" data-gid="${c.gid}">
     <span class="thumb" data-gid="${c.gid}"></span>
     <span class="body">
-    <span class="t"><strong title="${esc(title)}">${esc(title)}</strong><em class="grade g${esc(c.grade)}" title="${esc(c.gradeNote)}">${esc(c.grade)}</em></span>
+    <span class="t"><strong title="${esc(title)}">${esc(title)}</strong><em class="grade g${esc(c.grade)}" title="${esc(c.gradeNote)}">${esc(c.grade)}${qword ? ` ${esc(qword)}` : ""}</em></span>
     <span class="s">${esc(sub)}</span>
-    <span class="c">${parts || `<i class="dim">没读到部件</i>`}<i>${num(c.memberTotal)} 文件</i>${
-      rowMissChip(miss) ? `<i>${esc(rowMissChip(miss))}</i>` : ""
-    }</span>
+    <span class="c">${
+      miss > 0 && rowMissChip(miss) ? `<i>${esc(rowMissChip(miss))}</i>` : ""
+    }${parts || `<i class="dim">没读到部件</i>`}<i>${num(c.memberTotal)} 文件</i></span>
     </span>
   </button>`;
 }
@@ -163,6 +190,7 @@ function drawOutline(canvas, o) {
 /// （命令报错）。字面必须分开——把失败写成「没图」就是在替后端撒谎。
 function applyThumbState(box, thumb, image, outline) {
   box.textContent = "";
+  box.classList.remove("thumb-none");
   if (thumb === "img" && image) {
     const img = document.createElement("img");
     img.className = "thumb-img";
@@ -186,6 +214,8 @@ function applyThumbState(box, thumb, image, outline) {
     box.title = `几何投影（${outline.face} 面 · ${num(outline.vertexCount)} 顶点）——不是像素图`;
     return;
   }
+  // 占位字给底纹 + 居中，白底上一行浅灰小字容易看成「没渲染出来」。
+  box.classList.add("thumb-none");
   box.textContent = thumb === "fail" ? "没读到" : "没图";
   box.title =
     thumb === "fail"
@@ -304,6 +334,22 @@ export async function refresh(opts = {}) {
     // 首屏 14 个直接取（不等观察者的下一帧），滚动到的行再由观察者补。
     for (const n of Array.from(box.querySelectorAll(".thumb")).slice(0, 14)) loadThumb(n);
     el("empty").hidden = page.items.length > 0;
+    // 0 条时把「是谁把列表筛空的」说明白：有搜索词说搜索词，别让用户对着
+    // 一句干巴巴的「没有符合条件的资产」猜自己点了什么。
+    if (page.items.length === 0) {
+      const strong = el("empty").querySelector("strong");
+      const span = el("empty").querySelector("span");
+      if (state.query) {
+        strong.textContent = `没有命中「${state.query}」`;
+        span.textContent = "换个关键词，或点上方「清空筛选」清掉全部条件。";
+      } else if (!page.ready) {
+        strong.textContent = "后台还在准备资产清单";
+        span.textContent = "已就绪的会陆续出现，顶栏有进度。";
+      } else {
+        strong.textContent = "没有符合条件的资产";
+        span.textContent = "换个关键词，或点「清空筛选」。";
+      }
+    }
     el("count").textContent = listCount(page.total, page.items.length, page.ready);
     el("words").textContent =
       page.queryWords.length > 1 ? `按这几种拼法都找了：${page.queryWords.join("、")}` : "";
@@ -312,8 +358,21 @@ export async function refresh(opts = {}) {
     if (opts.top) el("rows").closest(".pane")?.scrollTo?.({ top: 0 });
   } catch (e) {
     if (seq.isStale(my)) return;
+    const msg = errText(e);
+    // 「还没读到」不是「读取失败」，别吓人（list_groups 现在多半回中途页而不是
+    // 报错，这个分支是给偶发排队失败留的保险）。钉子统一走 isNotReadyMsg，
+    // 跟后端文案逐字对齐——见 lib/detailState.js 顶上的说明。
+    if (isNotReadyMsg(msg)) {
+      el("count").textContent = "后台准备中…";
+      el("rows").innerHTML =
+        '<p class="dim">资产清单正在后台准备（顶栏有进度），几秒后自动出现。</p>';
+      setTimeout(() => {
+        if (!seq.isStale(my)) refresh();
+      }, 3000);
+      return;
+    }
     el("count").textContent = "读取失败";
-    el("rows").innerHTML = `<p class="dim">${esc(errText(e))}</p>`;
+    el("rows").innerHTML = `<p class="dim">${esc(msg)}</p>`;
   }
 }
 
@@ -323,14 +382,22 @@ export async function refreshStats() {
     state.scanned = state.stats.scanned;
     state.total = state.stats.totalGroups;
     state.ready = state.stats.ready;
-    const p = state.total ? Math.round((state.scanned / state.total) * 100) : 0;
-    el("bar").style.width = `${p}%`;
-    el("progressText").textContent = state.ready
-      ? `已读完 ${num(state.total)} 组`
-      : `正在读取 ${p}% · ${num(state.scanned)}/${num(state.total)}`;
+    // 顶栏进度说的是「资产」标签那套检索库的预热。浏览第一屏靠的是 pak 容器
+    // 本身，不等它——两套口径的分寸全在 lib/wording.js 的 progressLine（有测试盯着）。
+    const line = progressLine(state.view, state.ready, state.scanned, state.total);
+    el("bar").style.width = `${line.pct}%`;
+    el("progressText").textContent = line.text;
+    el("progressText").title = line.tip;
     paintRail();
-  } catch {
-    /* 启动早期状态还没就绪，这一轮先跳过 */
+  } catch (e) {
+    /* stats() 在没预热时也会如实回（全 0 + ready:false），会走到这里的只剩
+       外壳/IPC 层的问题（网页外壳、旧后端缺命令）。曾经这里静默吞掉，顶栏就
+       永远停在上一句话——网页外壳下甚至是启动时的「正在读取…」——用户以为
+       还在读，其实什么都没发生。失败必须可见：说「读不到」，不吓人也不装没事。
+       列表自身的失败由 refresh() 的错误文案兜底，详情由 detail.js 兜底。 */
+    el("bar").style.width = "0%";
+    el("progressText").textContent = `资产库状态读不到：${errText(e)}`;
+    el("progressText").title = "";
   }
 }
 

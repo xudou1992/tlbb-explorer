@@ -1,0 +1,1 @@
+open: 13080 groups · 6 containers · 117257 index records in 0.1s

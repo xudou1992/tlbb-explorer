@@ -2,6 +2,7 @@
 //! hand back a view model, and never let the frontend ask for a path or a byte range —
 //! the shell decides what to read, and only ever read-only.
 
+mod browse;
 mod data;
 mod inspector;
 mod map_view;
@@ -31,9 +32,19 @@ fn roots() -> (PathBuf, PathBuf) {
     (root, db)
 }
 
+/// 资产侧的预热开关：只有真正用到资产功能（列清单/搜索/统计）才触发。
+/// 浏览第一屏（打开 data → 树 → 预览 → 导出）完全不依赖它，不该让它陪跑。
+/// 有缓存时 warm() 内部秒回，重复调用无副作用。
+#[tauri::command]
+async fn start_warm(app: State<'_, Arc<AppData>>) -> Result<(), String> {
+    app.warm();
+    Ok(())
+}
+
 /// 左栏筛选后的卡片列表。
 #[tauri::command]
 async fn list_groups(app: State<'_, Arc<AppData>>, filter: Option<Filter>) -> Result<Page, String> {
+    app.warm();
     let app = Arc::clone(&app);
     let filter = filter.unwrap_or_default();
     tauri::async_runtime::spawn_blocking(move || app.page(&filter))
@@ -48,6 +59,7 @@ async fn search(
     query: String,
     limit: Option<usize>,
 ) -> Result<Page, String> {
+    app.warm();
     let app = Arc::clone(&app);
     let filter = Filter {
         query: Some(query),
@@ -59,13 +71,15 @@ async fn search(
         .map_err(|e| e.to_string())
 }
 
-/// 右栏证据链。
+/// 右栏证据链。点谁现读谁：预热没跑到这里也不挡详情——ensure 对已就绪的组零开销，
+/// 预热中途点列表/搜索出来的任何一条都应该秒回，而不是吃一句「还在读取中」。
 #[tauri::command]
 async fn card_detail(app: State<'_, Arc<AppData>>, gid: i64) -> Result<Detail, String> {
     let app = Arc::clone(&app);
     tauri::async_runtime::spawn_blocking(move || {
+        app.ensure(&[gid]);
         app.detail(gid)
-            .ok_or_else(|| "这条记录还在读取中，稍等一下".to_string())
+            .ok_or_else(|| "这条资产现在读不出来（预热还在跑或数据本身有问题），稍后再试一次".to_string())
     })
     .await
     .map_err(|e| e.to_string())?
@@ -92,6 +106,7 @@ async fn group_preview(app: State<'_, Arc<AppData>>, gid: i64) -> Result<Option<
 
 #[tauri::command]
 async fn stats(app: State<'_, Arc<AppData>>) -> Result<Stats, String> {
+    app.warm();
     let app = Arc::clone(&app);
     tauri::async_runtime::spawn_blocking(move || app.stats())
         .await
@@ -132,7 +147,8 @@ pub fn run() {
         Ok(a) => a,
         Err(e) => fatal(&e),
     };
-    app.warm();
+    // 懒预热：这里不再启动。资产侧的预热由「资产」标签的命令触发（带缓存的
+    // 情况下秒级载入）；浏览第一屏完全不付这份成本。
 
     tauri::Builder::default()
         .manage(Arc::clone(&app))
@@ -162,6 +178,7 @@ pub fn run() {
             stats,
             ref_health,
             cited_by,
+            start_warm,
             mdl_view::mdl_compose,
             inspector::asset_list,
             inspector::asset_inspect,
@@ -171,7 +188,12 @@ pub fn run() {
             map_view::map_scene,
             map_view::map_footprint,
             texture_override::texture_override_set,
-            texture_override::texture_override_clear
+            texture_override::texture_override_clear,
+            texture_override::candidate_png,
+            browse::browse_paks,
+            browse::browse_tree,
+            browse::browse_preview,
+            browse::browse_export
         ])
         .run(tauri::generate_context!())
         .expect("工作台窗口未能启动");

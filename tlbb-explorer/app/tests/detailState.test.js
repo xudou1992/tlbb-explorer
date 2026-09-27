@@ -5,7 +5,10 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
-import { empty, loading, failed, notReady, loaded, absencesOf } from "../web/lib/detailState.js";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+import { empty, loading, failed, notReady, loaded, absencesOf, isNotReadyMsg } from "../web/lib/detailState.js";
 
 // 两个真实形状的回包（从 --probe 落盘的 inspect_245 / detail_245 缩编而来）。
 const CARD_A = {
@@ -102,7 +105,7 @@ test("加载成功后每个区块都被填上", () => {
   assert.equal(s.previews.visible, true);
   assert.ok(s.tree.html.includes("这个材质用到的"), "材质槽必须出现在树里");
   assert.ok(s.tree.html.includes("模型定义"), "树必须标明属于哪个 .mdl");
-  assert.ok(s.sum.includes("贴图名对上 0/2"), "贴图口径要写进摘要");
+  assert.ok(s.sum.includes("贴图引用 0/2 对上了文件"), "贴图口径要写进摘要");
 });
 
 test("A 加载中 → 切到 B 且 B 失败：A 的数据一个字段都不许残留", () => {
@@ -250,24 +253,24 @@ test("一张图都没解出来时，贴图行必须指回「缺什么」并说�
   const by = Object.fromEntries(absencesOf(insp, CARD_A).map((r) => [r.label, r]));
   assert.equal(by["贴图"].state, "missing");
   assert.ok(by["贴图"].why.includes("材质引用了 2 张贴图"), by["贴图"].why);
-  assert.ok(by["贴图"].why.includes("客户端只保存名称"), by["贴图"].why);
+  assert.ok(by["贴图"].why.includes("只存了名字"), by["贴图"].why);
   assert.ok(by["贴图"].why.includes("缺什么"), by["贴图"].why);
 });
 
-test("cfg 出了出处的贴图：汇总句按「已定位出处 / 只存名称」分流，不再全说成没路径", () => {
+test("cfg 出了出处的贴图：汇总句按「登记过位置 / 连位置都没记」分流，不再全说成没路径", () => {
   const insp = {
     ...INSPECT_A,
     previews: null,
     missing: [
-      "贴图 a.tga：已找到原始出处 data/source/npc/quest/w1351_boss_hadaba/texture/a.tga（ResourcePath.cfg）；文件本体未打包进资源库",
+      "贴图 a.tga：ResourcePath.cfg 里登记过它放在 data/source/npc/quest/w1351_boss_hadaba/texture/a.tga，但解包出来的文件里没有这张图",
       "贴图 b.tga：客户端只保存名称，没有路径",
     ],
   };
   const by = Object.fromEntries(absencesOf(insp, CARD_A).map((r) => [r.label, r]));
   assert.equal(by["贴图"].state, "missing");
   assert.ok(by["贴图"].why.includes("材质引用了 2 张贴图"), by["贴图"].why);
-  assert.ok(by["贴图"].why.includes("1 张已从 ResourcePath.cfg 定位原始出处"), by["贴图"].why);
-  assert.ok(by["贴图"].why.includes("其余 1 张只存名称"), by["贴图"].why);
+  assert.ok(by["贴图"].why.includes("1 张在 ResourcePath.cfg 里登记过存放位置"), by["贴图"].why);
+  assert.ok(by["贴图"].why.includes("其余 1 张连存放位置都没记"), by["贴图"].why);
 });
 
 test("有贴图文件但没被任何材质引用：说成不知道用在哪，不说成没有贴图", () => {
@@ -351,4 +354,29 @@ test("画不出立体时面板还在，且理由是「缺什么」里那一句",
     assert.equal(s.mesh.why, row.why, `${名}：立体区与「缺什么」必须是同一句判断`);
     assert.ok(!/[0-9a-f]{16}/.test(s.mesh.why), `${名}：原因里不许出现编号`);
   }
+});
+
+// ---- 钉子：前端判定与后端原话逐字对齐（只读源码防呆，不改后端）----
+// isNotReadyMsg 靠两个短语认「还没读到」；后端原话在 src-tauri/src/lib.rs
+// （card_detail）和 src-tauri/src/inspector.rs（asset_inspect）。曾经的 bug：
+// 前端拿「还在读取」当钉子，两句原话里都没有这四个连字，判定从未生效过，
+// 预热中途点详情看到的是红线「读取失败」——把没读到说成了失败。
+const here = dirname(fileURLToPath(import.meta.url));
+const detailJs = readFileSync(join(here, "..", "web", "detail.js"), "utf8");
+const libRs = readFileSync(join(here, "..", "src-tauri", "src", "lib.rs"), "utf8");
+const inspectorRs = readFileSync(join(here, "..", "src-tauri", "src", "inspector.rs"), "utf8");
+
+test("isNotReadyMsg 的两个钉子都还在后端原话里（card_detail / asset_inspect）", () => {
+  assert.ok(libRs.includes("预热还在跑"), "lib.rs 的「还没读到」措辞被改了，前端判定会失明");
+  assert.ok(inspectorRs.includes("还在后台读取"), "inspector.rs 的「还没读到」措辞被改了，前端判定会失明");
+  assert.equal(isNotReadyMsg("这条资产现在读不出来（预热还在跑或数据本身有问题），稍后再试一次"), true);
+  assert.equal(isNotReadyMsg("没有找到 id=245 的资源组（它还在后台读取中，或编号不存在）"), true);
+  assert.equal(isNotReadyMsg("自测台没有回放这条"), false);
+});
+
+test("detail.js：「还没读到」要自动重试且设上限，判定走同一把钉子", () => {
+  assert.match(detailJs, /isNotReadyMsg\(msg\)/, "不许另立一套字符串判定");
+  assert.match(detailJs, /retried < 3/, "重试要设上限：无限轮询是后台一直在小声敲门");
+  assert.match(detailJs, /2500/, "重试间隔 2.5 秒");
+  assert.match(detailJs, /paint\(notReady\(gid\)\)/, "措辞必须是 notReady，不是 failed");
 });

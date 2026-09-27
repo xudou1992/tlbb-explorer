@@ -1,0 +1,117 @@
+=== resources type/subtype counts where ext has scene ===
+  type='scene' subtype='grid753' ext='.scene' n=9288
+  type='tiny' subtype='bin' ext='.scene' n=1237
+  type='binary' subtype='bin' ext='.scene' n=1110
+  type='set' subtype='copy' ext='.scene' n=295
+  type='xml' subtype='xml' ext='.scene' n=2
+  type='table' subtype='u32head' ext='.scene' n=1
+=== distinct ext values ===
+  ext='' n=48053
+  ext='.scene' n=11933
+  ext='.ani' n=11234
+  ext='.mtl' n=8536
+  ext='.mesh' n=7996
+  ext='.pu' n=7806
+  ext='.tani' n=2560
+  ext='.tga' n=2259
+  ext='.mdl' n=2146
+  ext='.ske' n=1630
+  ext='.sfl' n=297
+  ext='.map' n=274
+  ext='.wav' n=220
+  ext='.ogg' n=166
+  ext='.pak' n=58
+  ext='.webp' n=48
+  ext='.nav' n=25
+  ext='.anis' n=20
+  ext='.cur' n=15
+  ext='.dll' n=14
+  ext='.jpg' n=10
+  ext='.txt' n=4
+  ext='.xml' n=4
+  ext='.exe' n=3
+  ext='.ttf' n=3
+  ext='.bin' n=2
+  ext='.png' n=2
+  ext='.tab' n=2
+  ext='.area' n=1
+  ext='.cfg' n=1
+  ext='.dat' n=1
+  ext='.ini' n=1
+  ext='.json' n=1
+  ext='.jstr' n=1
+  ext='.mp3' n=1
+=== total resources ===
+  105327
+=== scene rows sample ===
+  cols: hash,path,dir,name,ext,type,subtype,codec,width,height,mips,ver,flags,method,stored,occupied,original,filecrc,pak,gen,offset,named,props,src,self_path
+=== scene path samples ===
+=== scene count with pak empty / offset weird ===
+  total scene: 0
+=== meta ===
+  type:texture = 26520
+  type:ani = 14233
+  type:JBCF = 13403
+  type:geom = 12676
+  type:scene = 10414
+  type:mesh = 8467
+  type:JBPU = 8029
+  type:binary = 3657
+  type:GATA = 2560
+  type:tiny = 1890
+  type:mapref = 887
+  type:text = 593
+  type:xml = 549
+  type:NAVF = 455
+  type:set = 316
+  type:wav = 218
+  type:ogg = 168
+  type:table = 154
+  type:webp = 48
+  type:mp3 = 39
+  type:missing = 27
+  type:jpeg = 10
+  type:pe = 8
+  type:png = 3
+  type:JLUA = 1
+  type:JSTR = 1
+  type:JMDL = 1
+  records = 114975
+  resources = 105327
+  named = 57274
+  jmt1:codecs = COLW=WebP(WEBP), COLR=padded RGBA32 (w+2)x(h+2)
+  asset:texnames = 13205
+  jbcf:dangling:.ani = 4328
+  jbcf:dangling:.dds = 14
+  jbcf:dangling:.mesh = 767
+  jbcf:dangling:.mtl = 915
+  jbcf:dangling:.png = 36
+  jbcf:dangling:.ske = 476
+  jbcf:dangling:.tga = 30560
+  jbcf:edge:.ani = 11294
+  jbcf:edge:.anis = 20
+  jbcf:edge:.mesh = 8549
+  jbcf:edge:.mtl = 37779
+  jbcf:edge:.pu = 7
+  jbcf:edge:.ske = 2139
+  jbcf:edge:.tga = 25
+  jbcf:ref:.ani = 15622
+  jbcf:ref:.anis = 20
+  jbcf:ref:.dds = 14
+  jbcf:ref:.mesh = 9316
+  jbcf:ref:.mtl = 38694
+  jbcf:ref:.png = 36
+  jbcf:ref:.pu = 7
+  jbcf:ref:.ske = 4210
+  jbcf:ref:.tga = 30585
+  asset:groups = 13080
+  asset:members = 48122
+  asset:shared-cut = 34961
+  asset:dangling-names = 14377
+  asset:names-attached = 37096
+  asset:named-orphans = 18837
+=== records sample ===
+  cols: pak,gen,hash,offset,stored,occupied,original,ver,flags,method,filecrc
+  ('data', 0, '81547d2b15ebb1bb', 36032, 6681714, 6681720, 6681714, 38, 12, 0, 322970352)
+  ('data', 0, '3a6d0bae1ae3e6d1', 6717752, 474226, 474232, 474178, 1, 13, 0, 4184674160)
+  ('data', 0, '93441a9e13abb963', 7191984, 414175, 414176, 414127, 1, 13, 0, 3793478209)

@@ -1,0 +1,40 @@
+=== item2: flags/manifest for grid753 ===
+  named=0 manifest=0 n=1126
+  named=1 manifest=0 n=9288
+  src: [<sqlite3.Row object at 0x0000023E38109210>, <sqlite3.Row object at 0x0000023E38109300>]
+
+=== dup-content test (filecrc + sha) computed in python ===
+  unnamed=1126, unnamed filecrc also seen in named=0
+  sha rows named=9245 unnamed=1126 ; unnamed sha in named set=0 ; distinct unnamed sha=1118
+  distinct filecrc all grid753: [<sqlite3.Row object at 0x0000023E38C2E560>]
+
+=== geom dup test (no self-join) ===
+  geom rows=12676 distinct filecrc=12676 duplicated rows=0
+  geom blobs rows=12676 distinct sha=11642
+  geom flags/method: [<sqlite3.Row object at 0x0000023E381085B0>, <sqlite3.Row object at 0x0000023E38C2E620>]
+
+=== geom referenced anywhere? ===
+  refs.to_hash hits: 0
+  relations.to hits: 0
+  assets hits: 0
+
+=== map dirs coverage ===
+  per-ext: [<sqlite3.Row object at 0x0000023E38C2E9B0>, <sqlite3.Row object at 0x0000023E38C2EA10>, <sqlite3.Row object at 0x0000023E38C2EA70>]
+  grids/dir: [<sqlite3.Row object at 0x0000023E38C2E9B0>]
+  naming: ['1_0_-8.scene', '1_3_-1.scene', '1_2_-9.scene', '1_0_-4.scene', '1_2_-3.scene', '1_3_-6.scene', '1_2_-5.scene', '1_2_-3.scene', '1_3_-8.scene', '1_5_-5.scene']
+  .map dirs with NO named grid753: [<sqlite3.Row object at 0x0000023E38C2E9B0>]
+  all named dirs: [<sqlite3.Row object at 0x0000023E38C2E9B0>]
+
+=== decisive: geom windows vs mesh payload windows ===
+  mesh files decoded=200, windows=630476
+  geom blobs sharing a 16B window with sampled mesh payloads: 2/20
+
+=== mesh layout dump ===
+  data/effect/effectmodel/w1351_model_shubennv_c02.mesh 8636
+   hex@0   43 6f 70 79 72 69 67 68 74 20 32 30 31 33 2d 32 32 30 30 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 6d 65 73 68 00 00 00 00 00 00 00 00 6d 65 73 68 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 c6 00 00 00 40 01 00 00 01 00 00 00 01 00 00 00 00 00 00 00
+   u32 101412 at -1  | "mesh" token at 64 76
+   strs  ['Copyright 2013-2200 ', 'mesh', 'mesh', '=\\f6', "='t=D", 'R o<', '+G=f', 'Y.h=', '`=G3', '=G~"=', '-=8$']
+  data/effect/effectmodel/w1351_model_xianglong_b7_lf001_E.mesh 18532
+   hex@0   43 6f 70 79 72 69 67 68 74 20 32 30 31 33 2d 32 32 30 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 6d 65 73 68 00 00 00 00 01 00 00 00 6d 65 73 68 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 9a 01 00 00 80 02 00 00 01 00 00 00 00 00 00 00 00 00 00 00
+   u32 101412 at -1  | "mesh" token at 64 76
+   strs  ['Copyright 2013-2200', 'mesh', 'mesh', '<a^2', 'q.>)', ',+>fZ', '/>y 8', '=O>a3', 'p>X>8IV', '>ugt', '>=-S']

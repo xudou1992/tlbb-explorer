@@ -1,0 +1,21 @@
+fn w() {
+        .invoke_handler(tauri::generate_handler![
+            list_groups,
+            search,
+            card_detail,
+            preview,
+            group_preview,
+            stats,
+            ref_health,
+            cited_by,
+            mdl_view::mdl_compose,
+            inspector::asset_list,
+            inspector::asset_inspect,
+            mesh_view::mesh_data,
+            mesh_view::group_mesh_outline,
+            map_view::map_list,
+            map_view::map_scene,
+            map_view::map_footprint
+        )]
+}
+}

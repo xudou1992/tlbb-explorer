@@ -1,0 +1,27 @@
+=== record field -> property-name evidence (color/vec3 matches) ===
+76/cls7/fld21  -> {'Sky top color': 97, 'Fog color': 19}
+76/cls7/fld22  -> {'Sky top color': 96, 'Fog color': 19, 'Sky mid color': 1}
+77/cls7/fld34  -> {'Fog color': 124, 'Sky top color': 5}
+77/cls7/fld48  -> {'Ambient color': 27}
+77/cls7/fld49  -> {'Specular color': 40, 'Sub light color': 2, 'Main light color': 2}
+77/cls7/fld54  -> {'Sub light color': 17}
+77/cls7/fld69  -> {'Main light color': 127}
+
+=== scalar record field -> candidate property names (multi=ambiguous) ===
+76/cls1/fld23  -> {'Fog global min opacity': 266, 'Moon0 Alpha': 172, 'SphereGroup2 Alpha': 151, 'SphereGroup1 Alpha': 151, 'SphereGroup0 Alpha': 151, 'Fog two density': 15}
+76/cls1/fld24  -> {'Fog global min opacity': 266, 'Moon0 Alpha': 172, 'SphereGroup2 Alpha': 151, 'SphereGroup1 Alpha': 151, 'SphereGroup0 Alpha': 151, 'Fog two density': 15}
+76/cls1/fld25  -> {'Fog global min opacity': 266, 'Moon0 Alpha': 172, 'SphereGroup2 Alpha': 151, 'SphereGroup1 Alpha': 151, 'SphereGroup0 Alpha': 151, 'Fog two density': 15}
+76/cls1/fld26  -> {'Fog global min opacity': 266, 'Moon0 Alpha': 172, 'SphereGroup2 Alpha': 151, 'SphereGroup1 Alpha': 151, 'SphereGroup0 Alpha': 151, 'Fog two density': 15}
+76/cls1/fld27  -> {'Fog global min opacity': 266, 'Moon0 Alpha': 172, 'SphereGroup2 Alpha': 151, 'SphereGroup1 Alpha': 151, 'SphereGroup0 Alpha': 151, 'Fog two density': 15}
+76/cls3/fld28  -> {'Fog global min opacity': 266, 'Moon0 Alpha': 172, 'SphereGroup2 Alpha': 151, 'SphereGroup1 Alpha': 151, 'SphereGroup0 Alpha': 151, 'Fog two density': 15}
+76/cls3/fld58  -> {'SphereGroup0 Alpha': 180, 'Moon0 Alpha': 172, 'SphereGroup1 Alpha': 161, 'SphereGroup2 Alpha': 151, 'Fog one density': 70, 'Main light power': 52}
+76/cls3/fld59  -> {'Fog global start': 77, 'Fog one density': 13, 'Fog global min opacity': 8, 'Fog one height': 7, 'Fog two height': 2, 'Fog two density': 2}
+76/cls3/fld62  -> {'Sun Angle': 26, 'Main light power': 1}
+76/cls3/fld65  -> {'Fog global start': 137, 'Fog one height': 8, 'Main light power': 1}
+76/cls3/fld66  -> {'Fog global min opacity': 81, 'Scene amb intensity': 7, 'Main light color': 6, 'Fog two density': 6, 'Fog two height': 4, 'Fog one height falloff': 2}
+76/cls3/fld67  -> {'Fog global min opacity': 81, 'Main light power': 8, 'Fog two density': 6, 'Main light color': 4, 'Fog two height': 4, 'Fog one height falloff': 2}
+77/cls3/fld168 -> {'Main light power': 148, 'Fog one density': 69, 'SphereGroup0 Alpha': 17, 'Moon0 Alpha': 16, 'SphereGroup1 Alpha': 15, 'SphereGroup2 Alpha': 13}
+77/cls3/fld169 -> {'Fog color': 21, 'Fog one density': 2, 'Sky top color': 1, 'Moon0 Alpha': 1, 'SphereGroup2 Alpha': 1, 'SphereGroup0 Alpha': 1}
+77/cls3/fld170 -> {'Fog global min opacity': 67, 'Moon0 Alpha': 35, 'SphereGroup2 Alpha': 18, 'SphereGroup1 Alpha': 18, 'SphereGroup0 Alpha': 18, 'Fog two density': 3}
+77/cls3/fld171 -> {'SphereGroup0 Alpha': 42, 'Moon0 Alpha': 35, 'SphereGroup1 Alpha': 24, 'SphereGroup2 Alpha': 18, 'Main light color': 7, 'Fog one density': 6}
+77/cls3/fld173 -> {'Scene amb intensity': 199, 'Moon0 Alpha': 29, 'SphereGroup0 Alpha': 29, 'SphereGroup2 Alpha': 28, 'Fog one density': 3, 'Main light power': 3}

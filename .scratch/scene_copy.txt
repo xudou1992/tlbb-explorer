@@ -1,0 +1,26 @@
+grid_749.scene
+  src=C:\Users\Administrator\AppData\Local\Temp\tlbb_scene_samples\grid_749.scene
+  dst=D:\TLGL\tlbb-explorer\crates\core\tests\scene_samples\grid_749.scene
+  bytes=19686
+  sha256=2db518f59317f28b2ab16298e1c37da73006352266b2cbb88ace388ea1d3f616
+  src_sha256=2db518f59317f28b2ab16298e1c37da73006352266b2cbb88ace388ea1d3f616
+  identical=True
+grid_753_overstated.scene
+  src=C:\Users\Administrator\AppData\Local\Temp\tlbb_scene_samples\grid_753_overstated.scene
+  dst=D:\TLGL\tlbb-explorer\crates\core\tests\scene_samples\grid_753_overstated.scene
+  bytes=19994
+  sha256=1ed82d66599aef2d563c88c750d40d6604d21403f0007378f653d5554cbf305f
+  src_sha256=1ed82d66599aef2d563c88c750d40d6604d21403f0007378f653d5554cbf305f
+  identical=True
+grid_753_with_tail.scene
+  src=C:\Users\Administrator\AppData\Local\Temp\tlbb_scene_samples\grid_753_with_tail.scene
+  dst=D:\TLGL\tlbb-explorer\crates\core\tests\scene_samples\grid_753_with_tail.scene
+  bytes=163942
+  sha256=8883925d216cbf485faf5429e0cce3bbafab8e6b141be7629f444cc5accf31a8
+  src_sha256=8883925d216cbf485faf5429e0cce3bbafab8e6b141be7629f444cc5accf31a8
+  identical=True
+
+=== dir listing ===
+  grid_749.scene  19686
+  grid_753_overstated.scene  19994
+  grid_753_with_tail.scene  163942

@@ -1,0 +1,226 @@
+[
+ {
+  "name": "资产: 清空筛选",
+  "click": "CLICKED",
+  "changed": {
+   "count": [
+    "1 条",
+    "12,159 条（先列 300 条）"
+   ],
+   "assetRows": [
+    1,
+    300
+   ],
+   "dName": [
+    "w1351_monster_xiyuqiezei",
+    ""
+   ]
+  },
+  "newErrs": null
+ },
+ {
+  "name": "资产: 看未命名资产",
+  "click": "CLICKED",
+  "changed": {
+   "count": [
+    "12,159 条（先列 300 条）",
+    "921 条（先列 300 条）"
+   ]
+  },
+  "newErrs": null
+ },
+ {
+  "name": "资产: 看未命名资产(再点回来)",
+  "click": "CLICKED",
+  "changed": {
+   "count": [
+    "921 条（先列 300 条）",
+    "12,159 条（先列 300 条）"
+   ]
+  },
+  "newErrs": null
+ },
+ {
+  "name": "资产: 类型chip 全部",
+  "click": "CLICKED",
+  "changed": {},
+  "newErrs": null
+ },
+ {
+  "name": "资产: 类型chip 第2个",
+  "click": "CLICKED",
+  "changed": {
+   "count": [
+    "12,159 条（先列 300 条）",
+    "6,473 条（先列 300 条）"
+   ]
+  },
+  "newErrs": null
+ },
+ {
+  "name": "资产: 完整程度chip 全部",
+  "click": "CLICKED",
+  "changed": {},
+  "newErrs": null
+ },
+ {
+  "name": "资产: 列表第1行",
+  "click": "CLICKED",
+  "changed": {
+   "dName": [
+    "",
+    "w1351_fire_z010"
+   ]
+  },
+  "newErrs": null
+ },
+ {
+  "name": "资产: 列表第2行",
+  "click": "CLICKED",
+  "changed": {
+   "dName": [
+    "w1351_fire_z010",
+    "w1351_model_h016"
+   ]
+  },
+  "newErrs": null
+ },
+ {
+  "name": "资产: 套上看看(第1个候选)",
+  "click": "NOT_FOUND",
+  "changed": {},
+  "newErrs": null
+ },
+ {
+  "name": "顶栏: 地图",
+  "click": "CLICKED",
+  "changed": {
+   "mapsHidden": [
+    true,
+    false
+   ]
+  },
+  "newErrs": null
+ },
+ {
+  "name": "地图: 灰模",
+  "click": "CLICKED",
+  "changed": {},
+  "newErrs": null
+ },
+ {
+  "name": "地图: 俯视量测",
+  "click": "CLICKED",
+  "changed": {},
+  "newErrs": null
+ },
+ {
+  "name": "地图: 返回",
+  "click": "CLICKED",
+  "changed": {
+   "mapsHidden": [
+    false,
+    true
+   ]
+  },
+  "newErrs": null
+ },
+ {
+  "name": "顶栏: 库状态",
+  "click": "CLICKED",
+  "changed": {
+   "healthHidden": [
+    true,
+    false
+   ]
+  },
+  "newErrs": null
+ },
+ {
+  "name": "库状态: 返回",
+  "click": "CLICKED",
+  "changed": {
+   "healthHidden": [
+    false,
+    true
+   ]
+  },
+  "newErrs": null
+ },
+ {
+  "name": "顶栏: 切到浏览",
+  "click": "CLICKED",
+  "changed": {
+   "treeTitle": [
+    "还没打开 data",
+    "data1.pak · 7,713 个有名字 / 共 14,576 条"
+   ],
+   "treeRows": [
+    0,
+    12
+   ],
+   "browseHidden": [
+    true,
+    false
+   ],
+   "assetsHidden": [
+    false,
+    true
+   ]
+  },
+  "newErrs": null
+ },
+ {
+  "name": "浏览: pak卡片第1个",
+  "click": "CLICKED",
+  "changed": {
+   "treeTitle": [
+    "data1.pak · 7,713 个有名字 / 共 14,576 条",
+    "data.pak · 12,236 个有名字 / 共 15,644 条"
+   ],
+   "treeRows": [
+    12,
+    28
+   ]
+  },
+  "newErrs": null
+ },
+ {
+  "name": "浏览: 树第1行(目录)",
+  "click": "CLICKED",
+  "changed": {
+   "treeRows": [
+    28,
+    33
+   ]
+  },
+  "newErrs": null
+ },
+ {
+  "name": "浏览: 树第2行",
+  "click": "CLICKED",
+  "changed": {},
+  "newErrs": null
+ },
+ {
+  "name": "浏览: 导出按钮(整包)",
+  "click": "CLICKED",
+  "changed": {},
+  "newErrs": null
+ },
+ {
+  "name": "顶栏: 切回资产",
+  "click": "CLICKED",
+  "changed": {
+   "browseHidden": [
+    false,
+    true
+   ],
+   "assetsHidden": [
+    true,
+    false
+   ]
+  },
+  "newErrs": null
+ }
+]

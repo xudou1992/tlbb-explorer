@@ -1,0 +1,79 @@
+sample dir = D:/TLGL/tlbb-explorer/crates/core/tests/scene_samples
+
+=== grid_749.scene ===
+  abs path   = D:/TLGL/tlbb-explorer/crates/core/tests/scene_samples\grid_749.scene
+  bytes      = 19686
+  is_empty_grid = false
+  header u32 = [n_records=26, tag=749, zero=0]
+  parse_scene => Ok
+    tag          = 749
+    stride       = 757
+    u32@0 (declared) = 26
+    instances.len()  = 26
+    tail_bytes       = 0
+    has_tail         = false
+    understated      = false
+    consumed     = 12 + 757*26 = 19694
+    len - consumed   = -8
+    [0] name = w1351_cj_caodui_001.mesh
+         position = [200.425, 10.2625, -227.316]
+         m[12..15] = [200.425, 10.2625, -227.316]  m[3],m[7],m[11],m[15] = [0.0, 0.0, 0.0, 1.0]
+    [1] name = w1351_cj_caodui_002.mesh
+         position = [223.871, 10.0, -233.182]
+         m[12..15] = [223.871, 10.0, -233.182]  m[3],m[7],m[11],m[15] = [0.0, 0.0, 0.0, 1.0]
+    [2] name = w1351_cj_caodui_002.mesh
+         position = [200.646, 10.2583, -224.971]
+         m[12..15] = [200.646, 10.2583, -224.971]  m[3],m[7],m[11],m[15] = [0.0, 0.0, 0.0, 1.0]
+    判据M 全条成立 = true
+
+=== grid_753_overstated.scene ===
+  abs path   = D:/TLGL/tlbb-explorer/crates/core/tests/scene_samples\grid_753_overstated.scene
+  bytes      = 19994
+  is_empty_grid = false
+  header u32 = [n_records=26, tag=753, zero=0]
+  parse_scene => Ok
+    tag          = 753
+    stride       = 761
+    u32@0 (declared) = 26
+    instances.len()  = 25
+    tail_bytes       = 957
+    has_tail         = true
+    understated      = false
+    consumed     = 12 + 761*25 = 19037
+    len - consumed   = 957
+    [0] name = w1351_ly_shidiaoma_001.mesh
+         position = [112.871, 10.0, -36.4602]
+         m[12..15] = [112.871, 10.0, -36.4602]  m[3],m[7],m[11],m[15] = [0.0, 0.0, 0.0, 1.0]
+    [1] name = w1351_bpzd_tudi_001.mesh
+         position = [114.787, 10.0062, -61.2307]
+         m[12..15] = [114.787, 10.0062, -61.2307]  m[3],m[7],m[11],m[15] = [0.0, 0.0, 0.0, 1.0]
+    [2] name = w1351_bpzd_tudi_001.mesh
+         position = [123.128, 10.0062, -61.2307]
+         m[12..15] = [123.128, 10.0062, -61.2307]  m[3],m[7],m[11],m[15] = [0.0, 0.0, 0.0, 1.0]
+    判据M 全条成立 = true
+
+=== grid_753_with_tail.scene ===
+  abs path   = D:/TLGL/tlbb-explorer/crates/core/tests/scene_samples\grid_753_with_tail.scene
+  bytes      = 163942
+  is_empty_grid = false
+  header u32 = [n_records=221, tag=753, zero=0]
+  parse_scene => Ok
+    tag          = 753
+    stride       = 761
+    u32@0 (declared) = 221
+    instances.len()  = 205
+    tail_bytes       = 7925
+    has_tail         = true
+    understated      = false
+    consumed     = 12 + 761*205 = 156017
+    len - consumed   = 7925
+    [0] name = w1351_fbgf_pingfengzheng_001.mesh
+         position = [154.987, 4.8, -106.012]
+         m[12..15] = [154.987, 4.8, -106.012]  m[3],m[7],m[11],m[15] = [0.0, 0.0, 0.0, 1.0]
+    [1] name = w1351_jiehun_chuanglian_002.mesh
+         position = [156.183, 12.2739, -106.448]
+         m[12..15] = [156.183, 12.2739, -106.448]  m[3],m[7],m[11],m[15] = [0.0, 0.0, 0.0, 1.0]
+    [2] name = w1351_jiehun_chujihongditan_001.mesh
+         position = [138.671, 4.81, -106.922]
+         m[12..15] = [138.671, 4.81, -106.922]  m[3],m[7],m[11],m[15] = [0.0, 0.0, 0.0, 1.0]
+    判据M 全条成立 = true

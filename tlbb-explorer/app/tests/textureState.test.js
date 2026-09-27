@@ -1,4 +1,5 @@
-// textureState 的口径测试：候选必须标「未确认」，覆盖表确认才给 🟢，没缓存就整个不出现。
+// textureState 的口径测试：候选必须标「未确认」，覆盖表确认才给 🟢；
+// 没跑过试贴时槽位只能是 ⬜ 名字清单——🟡 是候选专用，名字清单不许冒用。
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { texBlock, texSlotsHtml, texCandidatesHtml } from "../web/lib/textureState.js";
@@ -23,12 +24,21 @@ test("有候选缓存：出卡、两颗按钮齐全，分数必须带「未确�
   assert.equal((b.candHtml.match(/<figure/g) || []).length, 2);
 });
 
-test("确认过的槽位标 🟢 并给撤销按钮；未确认的是 🟡", () => {
-  const html = texSlotsHtml([{ ...SLOT_A, overrideHash: "abcd1234ef567890" }, SLOT_B]);
+test("确认过的槽位标 🟢 并给撤销按钮；跑过试贴的未确认槽位是 🟡", () => {
+  const html = texSlotsHtml([{ ...SLOT_A, overrideHash: "abcd1234ef567890" }, SLOT_B], true);
   assert.ok(html.includes("已人工确认"));
   assert.ok(html.includes("撤销"));
   assert.ok(html.includes("🟢"));
   assert.ok(html.includes("🟡"));
+});
+
+test("没跑过试贴的槽位不是候选：标 ⬜ 并说清是名字清单，不许冒用 🟡", () => {
+  const html = texSlotsHtml([SLOT_A], false);
+  assert.ok(!html.includes("🟡"));
+  assert.ok(html.includes("⬜"));
+  assert.ok(html.includes("引用未确认"));
+  assert.ok(html.includes("离线试贴还没跑"));
+  assert.ok(html.includes(SLOT_A.cfgPath));
 });
 
 test("确认下拉只列未确认的槽位；全确认了就提示可撤销重选", () => {

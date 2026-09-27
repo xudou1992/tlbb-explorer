@@ -15,6 +15,7 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 
 import {
   identity, translate, rotateY, scaleMat, mul, transformPoint, transposeRotationBlock,
@@ -623,6 +624,29 @@ test("独立壳：被压扁的物件的外接盒不塌成 0（半棱长有下限
   const pool = [{ bboxMin: [-1, 0, -1], bboxMax: [1, 0, 1] }];
   const boxes = instancedPickBounds(pool, fakeInst([{ meshIndex: 0, matrix: [...identity()] }]));
   assert.equal(boxes[0].bound.max[1] - boxes[0].bound.min[1], 2);
+});
+
+// --------------------------------------------------------------------------
+// 契约 6：着色器源码自身的一致性。WebGL 在 node 里开不了，编译期错误没有任何
+// 运行时信号——2026-09-26 vUv 在顶点着色器里定义了两次、片元着色器用了却没声明，
+// 所有 3D 预览当场全炸，错误文案还把锅甩给了「这台机器」。按文本钉死声明契约。
+// --------------------------------------------------------------------------
+
+test("着色器声明契约：varying/uniform 不许重复定义、不许未声明先用", () => {
+  const src = readFileSync(new URL("../web/mesh-viewer.js", import.meta.url), "utf8");
+  const grab = (name) => {
+    const m = src.match(new RegExp(`const ${name} = \`([\\s\\S]*?)\`;`));
+    assert.ok(m, `找不到着色器 ${name}`);
+    return m[1];
+  };
+  const vs = grab("VS");
+  const fsSrc = grab("FS");
+  const count = (hay, needle) => hay.split(needle).length - 1;
+
+  assert.equal(count(vs, "varying vec2 vUv;"), 1, "vUv 在顶点着色器里只许声明一次");
+  for (const decl of ["varying vec2 vUv;", "uniform sampler2D uTex;", "uniform float uUseTex;"]) {
+    assert.ok(fsSrc.includes(decl), `片元着色器缺声明：${decl}`);
+  }
 });
 
 // --------------------------------------------------------------------------

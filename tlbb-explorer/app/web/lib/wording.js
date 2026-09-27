@@ -13,8 +13,8 @@ export function pctText(pct, resolved) {
   return `${p}%`;
 }
 
-/// 贴图引用：分母只有贴图，必须写"贴图"两个字。
-export const texPair = (located, total) => `贴图名对上 ${num(located)}/${num(total)}`;
+/// 贴图引用：分母只有贴图，必须写"贴图"两个字；「对上」说的是对到了文件。
+export const texPair = (located, total) => `贴图引用 ${num(located)}/${num(total)} 对上了文件`;
 
 /// 列表条数。没读完时必须让人知道这是中途值。
 export function listCount(total, shown, ready) {
@@ -22,13 +22,61 @@ export function listCount(total, shown, ready) {
   return `${num(total)} 条${more}` + (ready ? "" : " · 还在读取");
 }
 
-/// 左栏库状态三行。每行的分母都写在标签里，不靠用户猜。
-export function railStats(s) {
-  return [
-    ["资产组", num(s.totalGroups)],
-    ["贴图名能对上文件的组", num(s.imageCandidates)],
-    ["贴图引用对上", `${num(s.locatedRefs)} / ${num(s.totalRefs)}`],
-  ];
+/// 顶栏进度一行字（文字 + 悬停说明 + 条宽比例）。懒预热之后这是两套口径：
+///   assets —— 「正在读取」就是当前页面的读取进度，数字带分母就够；
+///   browse —— 必须说清「这只影响资产标签」，不然 35% 摆在那儿，用户会以为
+///             开个 data 也要等读完。第一屏不付预热成本，这句话就是凭据。
+/// 比例在这里算死（分母 0 时是 0% 不是 NaN），条宽和文字永不打架。
+export function progressLine(view, ready, scanned, total) {
+  const pct = total ? Math.round((scanned / total) * 100) : 0;
+  if (view === "assets") {
+    if (ready) return { pct, text: `已读完 ${num(total)} 组`, tip: "" };
+    // 分母还没读到（刚触发预热的第一瞬）就不摆「0/0」：那既不是进度也不是
+    // 失败，只是还没有话可说。
+    if (!total) return { pct: 0, text: "正在读取…", tip: "" };
+    return {
+      pct,
+      text: `正在读取 ${pct}% · ${num(scanned)}/${num(total)}`,
+      tip: "",
+    };
+  }
+  if (ready) return { pct, text: `资产库已读完 · ${num(total)} 组`, tip: "" };
+  // 分母还没出来时别挂「后台读取 0%」——把「还没读到数字」说成「正在读 0%」，
+  // 和把「没读到」说成「失败」是同一种谎。
+  if (!total)
+    return {
+      pct: 0,
+      text: "资产库后台读取准备中…",
+      tip: "这只影响「资产」标签；浏览、预览、导出现在就能用。",
+    };
+  return {
+    pct,
+    text: `资产库后台读取 ${pct}% · ${num(scanned)}/${num(total)}`,
+    tip: "这只影响「资产」标签；浏览、预览、导出现在就能用。",
+  };
+}
+
+/// 左栏底部的一行总数。分母写在文案里，不靠用户猜。
+/// 曾经这里列过三行明细（含「贴图引用对上 N/M」）；那三行的分母口径不一，
+/// 摆在一起只会让人以为整页不可信——口径该在证据页说清，不在筛选栏里堆数字。
+export function railCount(s) {
+  return {
+    total: num(s.totalGroups),
+    withImage: num(s.imageCandidates),
+  };
+}
+
+/// 详情大标题的断行处理。
+///
+/// 资产名是 `w1351_nan_s_shukuanganxiang_001` 这种长无空格串，浏览器找不到
+/// 断点就只能硬折，读者看到的是「…shukuanganxiang_」+「001」两截。下划线是
+/// 名字里天然的分节符，在它后面插零宽断点（<wbr>），让换行优先发生在分节处。
+/// 只在真的长（>24 字符）时才插：短名字本来就不会折，插了反而多此一举。
+export function titleHtml(name) {
+  const s = String(name == null ? "" : name);
+  const safe = s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  if (safe.length <= 24) return safe;
+  return safe.replace(/_/g, "_<wbr>");
 }
 
 /// 一行「N 个文件提到它」。数的是去重后的文件路径，不是引用边数。

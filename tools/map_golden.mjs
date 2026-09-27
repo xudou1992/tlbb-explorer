@@ -58,6 +58,26 @@ for (const id of ids) {
   console.log(
     `  ${id} 格子 ${got.grids} · 记录 ${got.records} · 画得出 ${got.resolved} · 网格 ${got.uniqueMeshes}`
   );
+
+  // 俯视装配（--maps 另落的 map_footprint_<id>.json）与全量装配必须同一套计数：
+  // 列表缩略图上的数就是点进去的数，分家了这里就红。
+  const ff = `${DIR}/map_footprint_${id}.json`;
+  if (!existsSync(ff)) {
+    bad.push(`${id} · 俯视回包\n    没落盘（--maps 没跑到这张？）`);
+    continue;
+  }
+  const fp = JSON.parse(readFileSync(ff, "utf8"));
+  const counts = (d) => ({
+    grids: d.grids, emptyGrids: d.emptyGrids, unreadableGrids: d.unreadableGrids,
+    records: d.records, resolved: d.resolved, missingMeshes: d.missingMeshes,
+    unreadableMeshes: d.unreadableMeshes, notMesh: d.notMesh, oddNames: d.oddNames,
+    emptyNamed: d.emptyNamed, uniqueMeshes: d.uniqueMeshes, instances: d.instances.length,
+    vertices: d.meshes.reduce((s, m) => s + m.vertexCount, 0),
+    faces: d.meshes.reduce((s, m) => s + m.faceCount, 0),
+  });
+  cmp(`${id} · 俯视与全量计数一致`, counts(fp), counts(d));
+  const fpBytes = fp.meshes.reduce((s, m) => s + m.buffer.length, 0);
+  if (fpBytes !== 0) bad.push(`${id} · 俯视回包仍打包了几何（buffer 合计 ${fpBytes} 字符）`);
 }
 
 if (bad.length) {

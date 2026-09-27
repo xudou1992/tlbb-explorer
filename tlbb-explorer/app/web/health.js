@@ -120,18 +120,47 @@ async function showCitations(key, title, kindWord) {
 
 export async function openHealth() {
   el("health").hidden = false;
+  // 从哪个视图进来的就退回哪儿：写死「返回资产」，浏览首屏进来的人会被说糊涂。
+  el("closeHealth").textContent = state.view === "browse" ? "返回浏览" : "返回资产";
   const box = el("healthBody");
   if (state.health) {
     box.innerHTML = summaryHtml(state.health);
     bindDrill();
     return;
   }
+  // 懒预热之后「还没开始读取」是浏览首屏的常态，不是故障。ref_health 不触发
+  // 预热，硬查只会拿回一整页 0——把「还没读」摆成「引用总数 0」是在替库里
+  // 编造事实。给指路文案和一个直接的入口，别让人对着空表猜哪里坏了。
+  if (!state.ready && !(state.stats && state.stats.totalGroups > 0)) {
+    const started = Boolean(state.stats); // stats 回过但还没有数字：预热刚起步
+    box.innerHTML = `
+      <p class="plain">资产库还没有可统计的内容——${
+        started ? "它刚开始读取，还没有读出数字。" : "它还没开始读取。"
+      }浏览、预览、导出不依赖这份统计，现在就能用。</p>
+      <p class="plain">要看整库的引用能对上多少，进「资产」标签让它开始读取，过一会儿再来这里。</p>
+      <p><button type="button" class="ghost" data-warm>去「资产」标签开始读取</button></p>`;
+    box.querySelector("[data-warm]").addEventListener("click", () => {
+      closeHealth();
+      // 走顶栏标签自己的切换流程：视图持久化、懒预热、界面显示都归它管。
+      el("tabAssets").click();
+    });
+    return;
+  }
   if (state.healthBusy) return;
   state.healthBusy = true;
-  box.innerHTML = `<p class="dim">正在统计整库的引用…</p>`;
+  box.innerHTML = `<p class="dim">正在统计整库的引用…${
+    state.ready ? "" : "（资产库还在后台读取，先出的是已读部分的数字）"
+  }</p>`;
   try {
     state.health = await api.refHealth(40);
     box.innerHTML = summaryHtml(state.health);
+    if (!state.ready) {
+      // 中途看的统计只是部分真相，必须说出来，不然「对上 62%」会被当成终稿。
+      box.insertAdjacentHTML(
+        "afterbegin",
+        `<p class="plain">资产库还在后台读取（顶栏有进度），下面是已读部分的统计，读完后数字会变。</p>`,
+      );
+    }
     bindDrill();
   } catch (e) {
     box.innerHTML = `<p class="dim">读取失败：${esc(errText(e))}</p>`;

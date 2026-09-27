@@ -1,0 +1,6 @@
+列出 type = mesh（前 5 条）：
+  aae95125993c65d5  _w1351_boss_sysz_langying_shoutao_001.mesh         0x0        54656B  data3
+  f0f25867e89ce90e  _w1351_boss_sysz_langying_yifu_001.mesh            0x0        85192B  data3
+  599ac9f6e6c68e0e  chuansong001.mesh                                  0x0         1132B  data
+  6fc72b35867fa5a8  chuansong002.mesh                                  0x0         1132B  data3
+  9a35f9e2af00c957  cj_byjt.mesh                                       0x0         2196B  data3

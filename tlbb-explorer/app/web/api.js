@@ -39,3 +39,15 @@ export const textureOverrideSet = (slotName, cfgPath, hash, note) =>
   call("texture_override_set", { slotName, cfgPath: cfgPath || null, hash, note: note || "" });
 export const textureOverrideClear = (slotName, cfgPath) =>
   call("texture_override_clear", { slotName, cfgPath: cfgPath || null });
+/// 批量候选的按需缩略图：全库批量缓存只存元数据，卡片先摆占位，再按（网格, 名次）
+/// 现解一张 256px 图。读不到如实回 null / 报错，前端保持占位。
+export const candidatePng = (mesh, idx) => call("candidate_png", { mesh, idx });
+// ---- 浏览视图（第一屏）：打开一个 data → 文件夹树 → 预览 → 导出 ----
+export const browsePaks = () => call("browse_paks");
+export const browseTree = (pakName) => call("browse_tree", { pakName });
+export const browsePreview = (pakName, hash) => call("browse_preview", { pakName, hash });
+/// hashes 传空数组表示整包导出。
+export const browseExport = (pakName, hashes, dest) =>
+  call("browse_export", { pakName, hashes, dest });
+/// 资产侧懒预热开关：只有进「资产」标签才触发后台预热（有缓存时秒级载入）。
+export const startWarm = () => call("start_warm");

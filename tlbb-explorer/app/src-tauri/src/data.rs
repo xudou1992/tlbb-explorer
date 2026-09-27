@@ -8,9 +8,9 @@
 //! of a real decode, not a heuristic.
 
 use std::collections::HashMap;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, OnceLock};
 use std::time::Instant;
 
 use base64::Engine;
@@ -282,7 +282,7 @@ impl AppData {
             t0.elapsed().as_secs_f64()
         );
 
-        Ok(Arc::new(Self {
+        let app = Arc::new(Self {
             root,
             catalog_file,
             cat: Mutex::new(cat),
@@ -300,7 +300,10 @@ impl AppData {
             blobs: Mutex::new(HashMap::new()),
             group_blobs: Mutex::new(HashMap::new()),
             outlines: Mutex::new(HashMap::new()),
-        }))
+        });
+        // 上次预热的成果还在就直取：资产侧秒级就绪，浏览侧照旧零等待。
+        app.try_load_warm_cache();
+        Ok(app)
     }
 
     pub fn triage(&self) -> (usize, usize, usize) {
@@ -517,6 +520,11 @@ impl AppData {
     /// `resources.db` from here, so the extra handles cost nothing and let the queries
     /// and the decodes run side by side.
     pub fn warm(self: &Arc<Self>) -> Arc<Self> {
+        // 已就绪就别再跑一遍：懒预热后 stats/list/search 都会顺手调 warm()，
+        // 这里必须便宜到可以无脑调。
+        if self.ready.load(Ordering::SeqCst) {
+            return Arc::clone(self);
+        }
         if self
             .warming
             .compare_exchange(false, true, Ordering::SeqCst, Ordering::SeqCst)
@@ -558,6 +566,8 @@ impl AppData {
                     });
                 }
             });
+            // 预热成果落盘：下次启动直接载入，不再重付这两三分钟。
+            me.save_warm_cache();
             me.ready.store(true, Ordering::SeqCst);
             eprintln!(
                 "warm: {} 组 / {} 路 / 总 {:.1}s（清单查询 {:.1}s · 主体回读 {:.1}s，均为各分片累计）",
@@ -565,7 +575,7 @@ impl AppData {
                 lanes,
                 t0.elapsed().as_secs_f64(),
                 me.t_collect.load(Ordering::Relaxed) as f64 / 1e6,
-                me.t_decode.load(Ordering::Relaxed) as f64 / 1e6
+                me.t_decode.load(Ordering::Relaxed) as f64 / 1e6,
             );
         });
         Arc::clone(self)
@@ -1123,3 +1133,536 @@ fn is_none_or(opt: &Option<String>, ok: impl Fn(&str) -> bool) -> bool {
     }
 }
 
+
+// ----------------------------------------------------------------------- 预热缓存
+//
+// 预热（warm）每次启动把 13,080 组逐个做 SQLite 查询 + pak 回读，两三分钟且
+// 不持久——纯内存的缓存每次重付。这里把成品 Lite 落盘成 JSON：下次启动直接
+// 载入，秒级就绪。失效策略从宽：magic/版本/库指纹/组数对不上就整个弃用重跑
+// 预热，绝不部分采信。
+
+/// 缓存结构版本。DTO 或词表（场景/占位/缺口这些 &'static str 的取值集合）变动
+/// 时必须 +1，旧缓存会整体作废重预热——宁可慢一次，不能摆错数据。
+const WARM_CACHE_REV: u32 = 1;
+const WARM_CACHE_MAGIC: &str = "TLBWARM";
+
+#[derive(serde::Serialize, serde::Deserialize)]
+struct WarmCache {
+    magic: String,
+    rev: u32,
+    app: String,
+    /// resources.db 的长度 + 修改时间：库重建过，缓存就没意义了。
+    db_len: u64,
+    db_mtime: i64,
+    lites: Vec<LiteDto>,
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+struct LiteDto {
+    group: GroupDto,
+    name: String,
+    subtitle: String,
+    scenario: String,
+    kind_zh: String,
+    tags: Vec<String>,
+    parts: Vec<CountDto>,
+    placeholder: String,
+    grade: String,
+    gaps: Vec<String>,
+    refs: Vec<RefDto>,
+    located: usize,
+    ref_total: usize,
+    preview_candidates: Vec<u64>,
+    hub_decoded: bool,
+    rules: Vec<String>,
+    members: Vec<MemberDto>,
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+struct GroupDto {
+    id: i64,
+    hub: String,
+    hub_path: String,
+    dir: String,
+    stem: String,
+    kind: String,
+    n: i64,
+    n_mesh: i64,
+    n_mtl: i64,
+    n_ani: i64,
+    n_ske: i64,
+    n_tex: i64,
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+struct CountDto {
+    label: String,
+    count: usize,
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+struct RefDto {
+    name: String,
+    kind: String,
+    status: String,
+    located: bool,
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+struct MemberDto {
+    hash: String,
+    role: String,
+    path: Option<String>,
+    rtype: String,
+    pak: String,
+    offset: i64,
+    original: i64,
+    ver: i64,
+}
+
+/// 把 String 固定成 &'static str（进程内泄漏，量级是词表那几十个词）。
+/// Lite 的 scenario/placeholder/gaps 是 &'static str，来自代码里的固定词表；
+/// 缓存里只有 String，回流时在这里重新扎根。
+fn intern(s: &str) -> &'static str {
+    use std::collections::HashMap;
+    use std::sync::Mutex;
+    static INTERN: OnceLock<Mutex<HashMap<Box<str>, &'static str>>> = OnceLock::new();
+    let map = INTERN.get_or_init(|| Mutex::new(HashMap::new()));
+    if let Ok(mut m) = map.lock() {
+        if let Some(v) = m.get(s) {
+            return v;
+        }
+        let leaked: &'static str = Box::leak(s.to_string().into_boxed_str());
+        // 借用到此为止：leaked 指向泄漏的 Box，不依赖这份锁或这张表。
+        m.insert(s.into(), leaked);
+        return leaked;
+    }
+    Box::leak(s.to_string().into_boxed_str())
+}
+
+fn grade_to_letter(g: Grade) -> String {
+    g.label().chars().next().unwrap_or('D').to_string()
+}
+
+fn grade_from_letter(s: &str) -> Option<Grade> {
+    match s.trim().to_ascii_uppercase().as_str() {
+        "A" => Some(Grade::A),
+        "B" => Some(Grade::B),
+        "C" => Some(Grade::C),
+        "D" => Some(Grade::D),
+        _ => None,
+    }
+}
+
+fn lite_to_dto(l: &Lite) -> LiteDto {
+    LiteDto {
+        group: GroupDto {
+            id: l.group.id,
+            hub: format!("{:016x}", l.group.hub),
+            hub_path: l.group.hub_path.clone(),
+            dir: l.group.dir.clone(),
+            stem: l.group.stem.clone(),
+            kind: l.group.kind.clone(),
+            n: l.group.n,
+            n_mesh: l.group.n_mesh,
+            n_mtl: l.group.n_mtl,
+            n_ani: l.group.n_ani,
+            n_ske: l.group.n_ske,
+            n_tex: l.group.n_tex,
+        },
+        name: l.name.clone(),
+        subtitle: l.subtitle.clone(),
+        scenario: l.scenario.to_string(),
+        kind_zh: l.kind_zh.clone(),
+        tags: l.tags.clone(),
+        parts: l
+            .parts
+            .iter()
+            .map(|p| CountDto {
+                label: p.label.clone(),
+                count: p.count,
+            })
+            .collect(),
+        placeholder: l.placeholder.to_string(),
+        grade: grade_to_letter(l.grade),
+        gaps: l.gaps.iter().map(|g| g.to_string()).collect(),
+        refs: l
+            .refs
+            .iter()
+            .map(|r| RefDto {
+                name: r.name.clone(),
+                kind: r.kind.clone(),
+                status: r.status.clone(),
+                located: r.located,
+            })
+            .collect(),
+        located: l.located,
+        ref_total: l.ref_total,
+        preview_candidates: l.preview_candidates.clone(),
+        hub_decoded: l.hub_decoded,
+        rules: l.rules.clone(),
+        members: l
+            .members
+            .iter()
+            .map(|m| MemberDto {
+                hash: format!("{:016x}", m.hash),
+                role: m.role.clone(),
+                path: m.path.clone(),
+                rtype: m.rtype.clone(),
+                pak: m.pak.clone(),
+                offset: m.offset,
+                original: m.original,
+                ver: m.ver,
+            })
+            .collect(),
+    }
+}
+
+/// 回流。任何对不上的字段（等级字母、编号格式）都返回 Err——整个缓存弃用，
+/// 绝不半信半疑地摆数据。
+fn lite_from_dto(d: LiteDto) -> Result<Lite, String> {
+    let hub = u64::from_str_radix(&d.group.hub, 16).map_err(|_| "hub 编号坏".to_string())?;
+    let grade = grade_from_letter(&d.grade).ok_or_else(|| "等级字母坏".to_string())?;
+    let members = d
+        .members
+        .iter()
+        .map(|m| {
+            Ok(Member {
+                hash: u64::from_str_radix(&m.hash, 16).map_err(|_| "成员编号坏".to_string())?,
+                role: m.role.clone(),
+                path: m.path.clone(),
+                rtype: m.rtype.clone(),
+                pak: m.pak.clone(),
+                offset: m.offset,
+                original: m.original,
+                ver: m.ver,
+            })
+        })
+        .collect::<Result<Vec<_>, String>>()?;
+    Ok(Lite {
+        group: Group {
+            id: d.group.id,
+            hub,
+            hub_path: d.group.hub_path,
+            dir: d.group.dir,
+            stem: d.group.stem,
+            kind: d.group.kind,
+            n: d.group.n,
+            n_mesh: d.group.n_mesh,
+            n_mtl: d.group.n_mtl,
+            n_ani: d.group.n_ani,
+            n_ske: d.group.n_ske,
+            n_tex: d.group.n_tex,
+        },
+        name: d.name,
+        subtitle: d.subtitle,
+        scenario: intern(&d.scenario),
+        kind_zh: d.kind_zh,
+        tags: d.tags,
+        parts: d
+            .parts
+            .into_iter()
+            .map(|p| Count {
+                label: p.label,
+                count: p.count,
+            })
+            .collect(),
+        placeholder: intern(&d.placeholder),
+        grade,
+        gaps: d.gaps.iter().map(|g| intern(g)).collect(),
+        refs: d
+            .refs
+            .into_iter()
+            .map(|r| RefItem {
+                name: r.name,
+                kind: r.kind,
+                status: r.status,
+                located: r.located,
+            })
+            .collect(),
+        located: d.located,
+        ref_total: d.ref_total,
+        preview_candidates: d.preview_candidates,
+        hub_decoded: d.hub_decoded,
+        rules: d.rules,
+        members,
+    })
+}
+
+impl AppData {
+    fn warm_cache_path(&self) -> PathBuf {
+        self.catalog_file
+            .parent()
+            .unwrap_or_else(|| Path::new("."))
+            .join("warm_cache.json")
+    }
+
+    fn db_fingerprint(&self) -> (u64, i64) {
+        match std::fs::metadata(&self.catalog_file) {
+            Ok(m) => (
+                m.len(),
+                m.modified()
+                    .ok()
+                    .and_then(|t| {
+                        t.duration_since(std::time::UNIX_EPOCH)
+                            .ok()
+                            .map(|d| d.as_secs() as i64)
+                    })
+                    .unwrap_or(0),
+            ),
+            Err(_) => (0, 0),
+        }
+    }
+
+    /// 预热完成后把全部 Lite 写盘。失败只记日志——缓存是加速，不是数据源，
+    /// 下次启动大不了重新预热。
+    fn save_warm_cache(&self) {
+        // 锁内只做浅拷贝：13,080 次 Arc clone 是微秒级。DTO 转换 + 22MB JSON
+        // 序列化必须放在锁外——预热完成的一瞬间正是用户开始浏览资产的时候，
+        // page/detail/stats 都要拿 lite 这把锁，握着锁序列化会把它们全部卡住
+        // 几百毫秒到数秒。快照元素是 Arc<Lite>，发布之后不可变，锁外读没有竞态；
+        // 此刻 warm 的全部分片已 join，lite 条数恒等于 total（ensure 只补已有
+        // 组），不存在「快照漏条目」的窗口。
+        let snapshot: Vec<Arc<Lite>> = match self.lite.lock() {
+            Ok(lite) => lite.values().cloned().collect(),
+            Err(_) => return,
+        };
+        let lites: Vec<LiteDto> = snapshot.iter().map(|l| lite_to_dto(l)).collect();
+        let (db_len, db_mtime) = self.db_fingerprint();
+        let cache = WarmCache {
+            magic: WARM_CACHE_MAGIC.to_string(),
+            rev: WARM_CACHE_REV,
+            app: env!("CARGO_PKG_VERSION").to_string(),
+            db_len,
+            db_mtime,
+            lites,
+        };
+        let path = self.warm_cache_path();
+        let tmp = path.with_extension("json.tmp");
+        match serde_json::to_string(&cache) {
+            Ok(text) => {
+                if std::fs::write(&tmp, &text).is_ok() && std::fs::rename(&tmp, &path).is_ok() {
+                    eprintln!(
+                        "warm-cache: saved {} lites -> {}",
+                        cache.lites.len(),
+                        path.display()
+                    );
+                }
+            }
+            Err(e) => eprintln!("warm-cache: 序列化失败：{e}"),
+        }
+    }
+
+    /// 启动时尝试载入缓存。成功返回 true（lite 已满、ready=true，预热不再跑）。
+    /// 任何一步不对就整体弃用，返回 false 走正常预热。
+    ///
+    /// 并发面（已核实）：全进程只有 `open()` 末尾这一个调用点，而 open 只发生
+    /// 在进程启动的单一入口（run / map_dump / maps_dump / probe / 测试），全部
+    /// 先于任何 IPC 命令——warm() 由命令触发，两者不可能并发；warm() 自己也
+    /// 绝不调这里。所以「载入失败后另一线程正在预热、两边抢 lite 锁」的窗口
+    /// 不存在。就算将来多出第二入口，最坏结果也只是载入方与预热线程往同一把
+    /// 锁里各放一份等价条目（谁后到谁覆盖），不会撕裂出半条数据。
+    pub fn try_load_warm_cache(self: &Arc<Self>) -> bool {
+        let path = self.warm_cache_path();
+        let Ok(text) = std::fs::read_to_string(&path) else {
+            return false;
+        };
+        let cache: WarmCache = match serde_json::from_str(&text) {
+            Ok(c) => c,
+            Err(e) => {
+                eprintln!("warm-cache: 读不出来（{e}），重新预热");
+                return false;
+            }
+        };
+        let (db_len, db_mtime) = self.db_fingerprint();
+        if cache.magic != WARM_CACHE_MAGIC
+            || cache.rev != WARM_CACHE_REV
+            || cache.db_len != db_len
+            || cache.db_mtime != db_mtime
+            || cache.lites.len() != self.total
+        {
+            eprintln!("warm-cache: 指纹不匹配（库变过或结构升级），重新预热");
+            return false;
+        }
+        let mut pairs = Vec::with_capacity(cache.lites.len());
+        for d in cache.lites {
+            match lite_from_dto(d) {
+                Ok(l) => pairs.push((l.group.id, std::sync::Arc::new(l))),
+                Err(e) => {
+                    eprintln!("warm-cache: 条目回流失败（{e}），重新预热");
+                    return false;
+                }
+            }
+        }
+        let n = pairs.len();
+        if let Ok(mut lite) = self.lite.lock() {
+            for (gid, l) in pairs {
+                lite.insert(gid, l);
+            }
+            self.scanned.store(n, Ordering::SeqCst);
+            self.ready.store(true, Ordering::SeqCst);
+            eprintln!("warm-cache: 载入 {n} 组，预热跳过");
+            true
+        } else {
+            false
+        }
+    }
+}
+
+#[cfg(test)]
+mod warm_cache_tests {
+    use super::*;
+
+    /// 序列化→回流的字段保真。这是「缓存不许摆错数据」的底线测试。
+    #[test]
+    fn lite_dto_roundtrip() {
+        let lite = Lite {
+            group: Group {
+                id: 42,
+                hub: 0xaabbccdd11223344,
+                hub_path: "data/source/npc/test.mdl".into(),
+                dir: "data/source/npc".into(),
+                stem: "test".into(),
+                kind: "model".into(),
+                n: 6,
+                n_mesh: 1,
+                n_mtl: 1,
+                n_ani: 2,
+                n_ske: 1,
+                n_tex: 1,
+            },
+            name: "测试件".into(),
+            subtitle: "test.mdl".into(),
+            scenario: "角色",
+            kind_zh: "模型".into(),
+            tags: vec!["npc".into()],
+            parts: vec![Count {
+                label: "网格".into(),
+                count: 1,
+            }],
+            placeholder: "角色",
+            grade: Grade::B,
+            gaps: vec!["贴图名对不上文件"],
+            refs: vec![RefItem {
+                name: "test_tex".into(),
+                kind: "texture".into(),
+                status: "只有名字".into(),
+                located: false,
+            }],
+            located: 0,
+            ref_total: 1,
+            preview_candidates: vec![0x1234],
+            hub_decoded: true,
+            rules: vec!["规则一".into()],
+            members: vec![Member {
+                hash: 0xef01,
+                role: "mesh".into(),
+                path: Some("data/a.mesh".into()),
+                rtype: "mesh".into(),
+                pak: "data.pak".into(),
+                offset: 7,
+                original: 9,
+                ver: 1,
+            }],
+        };
+        let dto = lite_to_dto(&lite);
+        let text = serde_json::to_string(&dto).unwrap();
+        let back = lite_from_dto(serde_json::from_str(&text).unwrap()).unwrap();
+        assert_eq!(back.group.id, 42);
+        assert_eq!(back.group.hub, 0xaabbccdd11223344);
+        assert_eq!(back.name, "测试件");
+        assert_eq!(back.scenario, "角色");
+        assert_eq!(back.placeholder, "角色");
+        assert_eq!(back.gaps, vec!["贴图名对不上文件"]);
+        assert!(matches!(back.grade, Grade::B));
+        assert_eq!(back.members[0].hash, 0xef01);
+        assert_eq!(back.preview_candidates, vec![0x1234]);
+        assert!(back.hub_decoded);
+        // &'static str 必须真的扎了根（能安全持有到进程结束）。
+        let leaked: &'static str = back.scenario;
+        assert_eq!(leaked, "角色");
+    }
+
+    #[test]
+    fn grade_letter_rejects_garbage() {
+        assert!(grade_from_letter("Q").is_none());
+        assert!(grade_from_letter("A").is_some());
+    }
+}
+
+#[cfg(test)]
+mod warm_cache_e2e {
+    use super::*;
+
+    /// 端到端走一遍「全量预热 → 落盘 → 二次启动秒载」。预热要几分钟，标
+    /// ignore：换机或重建 resources.db 后手动跑一次——
+    ///   cargo test --release full_warm_cache_cycle -- --ignored
+    #[test]
+    #[ignore = "全量预热 2-4 分钟，手动验证缓存闭环时跑"]
+    fn full_warm_cache_cycle() {
+        let (root, db) = crate::inspector::roots();
+        // 先拿到缓存路径、删掉缓存再正式 open：open 会把还在的缓存直接载成
+        // ready=true，先 open 后删就永远过不了「从未就绪开始」这道闸（机器上
+        // 留着上次跑出来的 warm_cache.json 时必炸）。第一次 open 只为取路径。
+        let cache_path = {
+            let probe = AppData::open(&root, &db).expect("open");
+            probe.warm_cache_path()
+        };
+        let _ = std::fs::remove_file(&cache_path);
+        let app = AppData::open(&root, &db).expect("open");
+        assert!(!app.ready(), "删缓存后必须从未就绪开始");
+        app.warm();
+        let t0 = Instant::now();
+        while !app.ready() {
+            assert!(
+                t0.elapsed() < std::time::Duration::from_secs(600),
+                "预热超过 10 分钟，先查 warm 日志"
+            );
+            std::thread::sleep(std::time::Duration::from_millis(500));
+        }
+        assert!(
+            app.warm_cache_path().exists(),
+            "预热完成后缓存必须落盘"
+        );
+        let app2 = AppData::open(&root, &db).expect("reopen");
+        assert!(app2.ready(), "第二次 open 必须经缓存直接就绪");
+        assert_eq!(app2.scanned(), app2.total);
+    }
+}
+
+#[cfg(test)]
+mod page_regression {
+    use super::*;
+    use crate::model::Filter;
+
+    /// 用户实测「列表 0 条、详情正常」的二分:默认筛选与 named:true 各应返回
+    /// 大几千条。这个测试钉住「缓存回流的 Lite 必须能被正常列出」。
+    #[test]
+    fn page_default_and_named_filters_return_data() {
+        let (root, db) = crate::inspector::roots();
+        let app = AppData::open(&root, &db).expect("open");
+        assert!(app.ready(), "本机应有 warm_cache.json(没有就先跑 full_warm_cache_cycle)");
+        let all = app.page(&Filter::default());
+        let named = app.page(&Filter {
+            named: Some(true),
+            ..Default::default()
+        });
+        assert!(
+            all.total > 10_000,
+            "默认筛选应列出绝大多数组,实际 {}",
+            all.total
+        );
+        assert!(
+            named.total > 5_000,
+            "named:true 应列出有名字的几万组里的大多数,实际 {}",
+            named.total
+        );
+        // 左栏等级之和(A+B+C+D)应等于资产组总数:等级来自 lite,总数来自 groups,
+        // 两个口径对不上就是 lite 里混进了脏条目(用户实测截图出现过 13,086 > 13,080)。
+        let stats = app.stats();
+        let grade_sum: usize = stats.grades.iter().map(|g| {
+            g.count
+        }).sum();
+        assert_eq!(grade_sum, app.total, "等级之和 {} 应等于资产组总数 {}", grade_sum, app.total);
+    }
+}

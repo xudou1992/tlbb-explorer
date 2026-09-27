@@ -1,0 +1,620 @@
+{
+ "page": "天龙八部·归来 · 资源浏览器",
+ "buttons": [
+  {
+   "i": 0,
+   "id": "tabBrowse",
+   "text": "浏览",
+   "disabled": false,
+   "hidden": false,
+   "view": "common",
+   "own_click": true,
+   "events": [
+    "click",
+    "click"
+   ],
+   "path": "#tabBrowse>.seg>.top-status>.topbar>BODY"
+  },
+  {
+   "i": 1,
+   "id": "tabAssets",
+   "text": "资产",
+   "disabled": false,
+   "hidden": false,
+   "view": "common",
+   "own_click": true,
+   "events": [
+    "click",
+    "click",
+    "click"
+   ],
+   "path": "#tabAssets>.seg>.top-status>.topbar>BODY"
+  },
+  {
+   "i": 2,
+   "id": "openMap",
+   "text": "地图",
+   "disabled": false,
+   "hidden": false,
+   "view": "common",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": "#openMap>.top-status>.topbar>BODY"
+  },
+  {
+   "i": 3,
+   "id": "openHealth",
+   "text": "库状态",
+   "disabled": false,
+   "hidden": false,
+   "view": "common",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": "#openHealth>.top-status>.topbar>BODY"
+  },
+  {
+   "i": 4,
+   "id": "exportGo",
+   "text": "导出",
+   "disabled": false,
+   "hidden": false,
+   "view": "browse",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": "#exportGo>.export-row>#exportBox>#browseDetailPane>#browseView>BODY"
+  },
+  {
+   "i": 5,
+   "id": "",
+   "text": "全部",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#kinds>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 6,
+   "id": "",
+   "text": "特效6,473",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#kinds>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 7,
+   "id": "",
+   "text": "场景物件3,463",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#kinds>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 8,
+   "id": "",
+   "text": "NPC / 怪物1,961",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#kinds>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 9,
+   "id": "",
+   "text": "其他资源921",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#kinds>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 10,
+   "id": "",
+   "text": "玩家角色204",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#kinds>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 11,
+   "id": "",
+   "text": "共享材质36",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#kinds>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 12,
+   "id": "",
+   "text": "界面资源22",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#kinds>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 13,
+   "id": "",
+   "text": "全部",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#scenarios>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 14,
+   "id": "",
+   "text": "角色2,165",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#scenarios>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 15,
+   "id": "",
+   "text": "场景3,463",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#scenarios>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 16,
+   "id": "",
+   "text": "特效6,473",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#scenarios>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 17,
+   "id": "",
+   "text": "界面22",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#scenarios>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 18,
+   "id": "",
+   "text": "物品36",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#scenarios>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 19,
+   "id": "",
+   "text": "其他921",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#scenarios>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 20,
+   "id": "",
+   "text": "全部",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#grades>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 21,
+   "id": "",
+   "text": "A 完整定位20",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#grades>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 22,
+   "id": "",
+   "text": "B 主体定位2,581",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#grades>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 23,
+   "id": "",
+   "text": "C 仅有名称10,479",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#grades>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 24,
+   "id": "",
+   "text": "D 只是线索0",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#grades>.group>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 25,
+   "id": "unnamed",
+   "text": "看未命名资产 921",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": "#unnamed>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 26,
+   "id": "reset",
+   "text": "清空筛选",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": "#reset>.list-head>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 27,
+   "id": "",
+   "text": "w1351_monster_",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": false,
+   "events": [],
+   "path": ".row-item>#rows>.pane>#assetsView>BODY"
+  },
+  {
+   "i": 28,
+   "id": "",
+   "text": "套上看看",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": false,
+   "events": [],
+   "path": "BUTTON>.tex-cand>.tex-grid>#texCand>#secTex>#body>#detailPane>#assetsView>BODY"
+  },
+  {
+   "i": 29,
+   "id": "",
+   "text": "确认这张",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": false,
+   "events": [],
+   "path": "BUTTON>.tex-cand>.tex-grid>#texCand>#secTex>#body>#detailPane>#assetsView>BODY"
+  },
+  {
+   "i": 30,
+   "id": "",
+   "text": "套上看看",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": false,
+   "events": [],
+   "path": "BUTTON>.tex-cand>.tex-grid>#texCand>#secTex>#body>#detailPane>#assetsView>BODY"
+  },
+  {
+   "i": 31,
+   "id": "",
+   "text": "确认这张",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": false,
+   "events": [],
+   "path": "BUTTON>.tex-cand>.tex-grid>#texCand>#secTex>#body>#detailPane>#assetsView>BODY"
+  },
+  {
+   "i": 32,
+   "id": "",
+   "text": "套上看看",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": false,
+   "events": [],
+   "path": "BUTTON>.tex-cand>.tex-grid>#texCand>#secTex>#body>#detailPane>#assetsView>BODY"
+  },
+  {
+   "i": 33,
+   "id": "",
+   "text": "确认这张",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": false,
+   "events": [],
+   "path": "BUTTON>.tex-cand>.tex-grid>#texCand>#secTex>#body>#detailPane>#assetsView>BODY"
+  },
+  {
+   "i": 34,
+   "id": "",
+   "text": "套上看看",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": false,
+   "events": [],
+   "path": "BUTTON>.tex-cand>.tex-grid>#texCand>#secTex>#body>#detailPane>#assetsView>BODY"
+  },
+  {
+   "i": 35,
+   "id": "",
+   "text": "确认这张",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": false,
+   "events": [],
+   "path": "BUTTON>.tex-cand>.tex-grid>#texCand>#secTex>#body>#detailPane>#assetsView>BODY"
+  },
+  {
+   "i": 36,
+   "id": "",
+   "text": "套上看看",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": false,
+   "events": [],
+   "path": "BUTTON>.tex-cand>.tex-grid>#texCand>#secTex>#body>#detailPane>#assetsView>BODY"
+  },
+  {
+   "i": 37,
+   "id": "",
+   "text": "确认这张",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": false,
+   "events": [],
+   "path": "BUTTON>.tex-cand>.tex-grid>#texCand>#secTex>#body>#detailPane>#assetsView>BODY"
+  },
+  {
+   "i": 38,
+   "id": "",
+   "text": "套上看看",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": false,
+   "events": [],
+   "path": "BUTTON>.tex-cand>.tex-grid>#texCand>#secTex>#body>#detailPane>#assetsView>BODY"
+  },
+  {
+   "i": 39,
+   "id": "",
+   "text": "确认这张",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": false,
+   "events": [],
+   "path": "BUTTON>.tex-cand>.tex-grid>#texCand>#secTex>#body>#detailPane>#assetsView>BODY"
+  },
+  {
+   "i": 40,
+   "id": "",
+   "text": "套上看看",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": false,
+   "events": [],
+   "path": "BUTTON>.tex-cand>.tex-grid>#texCand>#secTex>#body>#detailPane>#assetsView>BODY"
+  },
+  {
+   "i": 41,
+   "id": "",
+   "text": "确认这张",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": false,
+   "events": [],
+   "path": "BUTTON>.tex-cand>.tex-grid>#texCand>#secTex>#body>#detailPane>#assetsView>BODY"
+  },
+  {
+   "i": 42,
+   "id": "",
+   "text": "套上看看",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": false,
+   "events": [],
+   "path": "BUTTON>.tex-cand>.tex-grid>#texCand>#secTex>#body>#detailPane>#assetsView>BODY"
+  },
+  {
+   "i": 43,
+   "id": "",
+   "text": "确认这张",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": false,
+   "events": [],
+   "path": "BUTTON>.tex-cand>.tex-grid>#texCand>#secTex>#body>#detailPane>#assetsView>BODY"
+  },
+  {
+   "i": 44,
+   "id": "",
+   "text": "w1351_monster_",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#meshPick>.mesh-head>#secMesh>#body>#detailPane>#assetsView>BODY"
+  },
+  {
+   "i": 45,
+   "id": "",
+   "text": "w1351_monster_",
+   "disabled": false,
+   "hidden": false,
+   "view": "assets",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": ".chip>#meshPick>.mesh-head>#secMesh>#body>#detailPane>#assetsView>BODY"
+  },
+  {
+   "i": 46,
+   "id": "closeHealth",
+   "text": "返回资产",
+   "disabled": false,
+   "hidden": false,
+   "view": "common",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": "#closeHealth>.overlay-head>#health>BODY"
+  },
+  {
+   "i": 47,
+   "id": "modeGray",
+   "text": "灰模",
+   "disabled": false,
+   "hidden": false,
+   "view": "common",
+   "own_click": false,
+   "events": [],
+   "path": "#modeGray>.seg>.map-modes>.overlay-head>#maps>BODY"
+  },
+  {
+   "i": 48,
+   "id": "modeTop",
+   "text": "俯视量测",
+   "disabled": false,
+   "hidden": false,
+   "view": "common",
+   "own_click": false,
+   "events": [],
+   "path": "#modeTop>.seg>.map-modes>.overlay-head>#maps>BODY"
+  },
+  {
+   "i": 49,
+   "id": "closeMap",
+   "text": "返回资产",
+   "disabled": false,
+   "hidden": false,
+   "view": "common",
+   "own_click": true,
+   "events": [
+    "click"
+   ],
+   "path": "#closeMap>.overlay-head>#maps>BODY"
+  }
+ ]
+}

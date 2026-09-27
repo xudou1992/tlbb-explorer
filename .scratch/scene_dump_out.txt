@@ -1,0 +1,39 @@
+﻿cargo :    Compiling tlbb-core v0.1.0 (D:\TLGL\tlbb-explorer\crates\core)
+所在位置 行:445 字符: 73
++ ... lbb-explorer; cargo run --jobs 1 --bin dump_scene_sample 2>&1 | Out-F ...
++                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (   Compiling tl...er\crates\core):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.46s
+     Running `D:\TLGL\.scratch\rc3\debug\dump_scene_sample.exe`
+6 paks, 116561 indexed records
+tried=10398 decoded_ok=10398
+=== scene sample dump ===
+grid_749.scene
+  src      = mobile_maps/w1351_ll_gbzdtxmp_001/1_2_-4.scene (data4, off=889833880, stored=10488, original=123395)
+  hash     = 3b6052777b0505dd
+  subtype  = bin props={"f": [163, 749, 0, 1034335273]}
+  bytes    = 123395
+  declared = 163 tag = 749 stride = 757
+  instances= 163
+  tail     = 0
+  understated = false
+  first3   = ["w1351_dl_huacu_011.mesh", "w1351_dl_huacu_011.mesh", "w1351_dl_huacu_011.mesh"]
+  pos3     = [[72.7331, 14.0, -114.234], [65.6877, 18.0, -121.077], [65.6877, 18.0, -122.284]]
+  wrote    = C:\Users\Administrator\AppData\Local\Temp\tlbb_scene_samples\grid_749.scene
+grid_753_overstated.scene: NOT FOUND
+grid_753_with_tail.scene
+  src      = mobile_maps/w1351_fb_houhuayuan_001/1_2_-2.scene (data1, off=524965976, stored=6017, original=54608)
+  hash     = 3315af2ed47c1ffd
+  subtype  = grid753 props={"count": 76}
+  bytes    = 54608
+  declared = 76 tag = 753 stride = 761
+  instances= 6
+  tail     = 50030
+  understated = false
+  first3   = ["w1351_dl_bajiao_001.mesh", "w1351_dl_bajiao_002.mesh", "w1351_dl_bajiao_003.mesh"]
+  pos3     = [[75.13, 4.46883, -58.7307], [92.4612, 5.89141, -36.1687], [77.06, 5.98706, -54.9139]]
+  wrote    = C:\Users\Administrator\AppData\Local\Temp\tlbb_scene_samples\grid_753_with_tail.scene
+
+temp dir = C:\Users\Administrator\AppData\Local\Temp\tlbb_scene_samples

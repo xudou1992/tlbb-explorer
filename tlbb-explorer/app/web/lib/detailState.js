@@ -65,6 +65,18 @@ export function notReady(gid) {
   return s;
 }
 
+/// 判定一条后端报错是不是「还没读到」（不是失败）。后端的原话有两处，钉子必须
+/// 逐字对得上，tests/detailState.test.js 里有源码断言盯着两边别走散：
+///   card_detail（src-tauri/src/lib.rs）  ——「这条资产现在读不出来（预热还在跑…）」
+///   asset_inspect（src-tauri/src/inspector.rs）——「…（它还在后台读取中，或编号不存在）」
+/// 曾经的 bug：前端拿 msg.includes("还在读取") 当钉子，而这两句原话里都没有这四个
+/// 连字——「还没读到」的措辞和自动重试因此从未生效过，预热中途点详情会看到红线
+/// 「读取失败」，把没读到说成了失败。
+export function isNotReadyMsg(msg) {
+  const s = String(msg || "");
+  return s.includes("预热还在跑") || s.includes("还在后台读取");
+}
+
 /// 编号只留在悬停提示里给排查的人看；既没名字又没路径的文件写「未命名文件」。
 const HEX16 = /^[0-9a-f]{16}$/;
 export function nameCell(name) {
@@ -77,12 +89,25 @@ export function nameCell(name) {
 /// 一行「角色 + 名称 → 落点」。判定必须和后端一样看 `resolved`：
 /// 定位到实体但清单里没有路径是合法状态，只按 path 判会显示「缺」，
 /// 而「缺什么」里又没有它——两块自相矛盾。
+///
+/// 「缺」只留给真该有而没有的资源文件。两类引用标了也不算损失：
+///   着色器        —— 程序里的名字，不是文件；
+///   template_* 父材质 —— 引擎拼装用的模板，客户端本来就不带。
 export function slotRow(name, role, dest, resolved) {
   const hit = Boolean(dest) || resolved === true;
   const at = dest ? esc(dest) : "已定位，但客户端没给路径";
-  return `<li class="${hit ? "hit" : "miss"}">
+  if (!hit) {
+    const n = String(name || "");
+    if (String(role).includes("着色器"))
+      return `<li><span class="kd">${esc(role)}</span>${nameCell(n)} → <em class="na">程序里的着色器名，不是文件</em></li>`;
+    if (String(role).includes("父材质") && /^template_/i.test(n))
+      return `<li><span class="kd">${esc(role)}</span>${nameCell(n)} → <em class="na">模板材质，资源包里没有</em></li>`;
+    return `<li class="miss"><span class="kd">${esc(role)}</span>${nameCell(n)}
+      → <em class="miss">缺</em></li>`;
+  }
+  return `<li class="hit">
     <span class="kd">${esc(role)}</span>${nameCell(name)}
-    ${hit ? `→ <span class="at">${at}</span>` : `→ <em class="miss">缺</em>`}
+    → <span class="at">${at}</span>
   </li>`;
 }
 
@@ -168,7 +193,7 @@ export function previewsOf(pv) {
         `<figure class="pv" data-hash="${esc(p.hash || "")}"><img src="${esc(p.dataUrl)}" alt=""><figcaption>${esc(p.label)}</figcaption></figure>`,
     )
     .join("");
-  const extra = items.length > real.length ? ` / 试了 ${items.length} 个来源` : "";
+  const extra = items.length > real.length ? `（试过 ${items.length} 个来源）` : "";
   return { visible: true, html, count: `${real.length}${extra}` };
 }
 
@@ -215,10 +240,13 @@ export function absencesOf(insp, card) {
   const ofRole = (role) => members.filter((m) => m.role === role);
   const resolvedOf = (role) => ofRole(role).filter((m) => m.resolved || m.path).length;
   // 「缺什么」里以「贴图 」开头的条目 = 材质/模型引用了但落不到文件的名字。
-  // 2026-09-26 起 cfg 出过处的条目带「已找到原始出处」，汇总句按它分流。
+  // 2026-09-26 起 cfg 出过处的条目带「已找到原始出处」；后句白话化为
+  // 「登记过它放在」后，识别串两个都认——旧回放数据不至于整批掉进错分支。
   const texLines = (insp.missing || []).filter((s) => s.startsWith("贴图 "));
   const danglingTex = texLines.length;
-  const locatedTex = texLines.filter((s) => s.includes("已找到原始出处")).length;
+  const locatedTex = texLines.filter(
+    (s) => s.includes("登记过它放在") || s.includes("已找到原始出处"),
+  ).length;
 
   // 立体模型
   const bodies = mdl && mdl.bodies ? mdl.bodies : [];
@@ -239,21 +267,37 @@ export function absencesOf(insp, card) {
   const pv = insp.previews;
   const realPv = pv && pv.items ? pv.items.filter((p) => p.ok).length : 0;
   const texHit = resolvedOf("texture");
-  if (realPv) out.push(abs("贴图", "ok", `${realPv} 张现场解出了像素`));
-  else if (danglingTex && locatedTex)
+  if (realPv) {
+    const tail = danglingTex
+      ? `；引用的贴图里还有 ${danglingTex} 张没对上文件（下面「缺什么」逐条说）`
+      : "";
+    out.push(abs("贴图", "ok", `解出了 ${realPv} 张能看的图${tail}`));
+  } else if (danglingTex && locatedTex)
     out.push(abs(
       "贴图",
       "missing",
-      `材质引用了 ${danglingTex} 张贴图：${locatedTex} 张已从 ResourcePath.cfg 定位原始出处（文件未随包发布），其余 ${danglingTex - locatedTex} 张只存名称（逐条见下面「缺什么」）`
+      `材质引用了 ${danglingTex} 张贴图：${locatedTex} 张在 ResourcePath.cfg 里登记过存放位置，但包里没有那文件；其余 ${danglingTex - locatedTex} 张连存放位置都没记（逐条见下面「缺什么」）`
     ));
   else if (danglingTex)
-    out.push(abs("贴图", "missing", `材质引用了 ${danglingTex} 张贴图，客户端只保存名称、没有路径（逐条见下面「缺什么」）`));
+    out.push(abs("贴图", "missing", `材质引用了 ${danglingTex} 张贴图：客户端只存了名字，没存路径（逐条见下面「缺什么」）`));
   else if (texHit) out.push(abs("贴图", "unknown", `有 ${texHit} 张贴图文件，但没有材质引用它们，不知道用在哪`));
   else out.push(abs("贴图", "missing", "这组里没有贴图文件，也没被谁引用"));
 
-  // 骨骼：文件在不在 + 权重能不能读，是两件事
-  const skeHit = resolvedOf("skeleton");
-  if (skeHit) out.push(abs("骨骼", "unknown", `找到 ${skeHit} 个骨骼文件；但顶点权重还没解出来，现在只能看形状、不能摆姿势`));
+  // 骨骼：文件在不在 + 权重能不能读，是两件事。骨骼文件可能只挂在模型定义上
+  // （mdl.skeletons），成员清单没把它归成骨骼——只看清单，就会出现上面说「缺」、
+  // 下面组成树里摆着同一个文件的自相矛盾。两边按名字并起来数。
+  const skeNames = new Set(
+    ofRole("skeleton")
+      .filter((m) => m.resolved || m.path)
+      .map((m) => m.name)
+      .concat(
+        ((mdl && mdl.skeletons) || [])
+          .filter((s) => s.resolved || s.path)
+          .map((s) => s.name),
+      ),
+  );
+  if (skeNames.size)
+    out.push(abs("骨骼", "unknown", `找到 ${skeNames.size} 个骨骼文件；但顶点权重还没解出来，现在只能看形状、不能摆姿势`));
   else if (ofRole("skeleton").length) out.push(abs("骨骼", "missing", `记了 ${ofRole("skeleton").length} 个骨骼，但客户端未含这些文件`));
   else out.push(abs("骨骼", "missing", "这组里没有骨骼文件（清单里也没给它记过骨骼）"));
 

@@ -1,0 +1,69 @@
+=== type=scene AND dir='' sample ===
+  cols: hash,name,ext,type,subtype,stored,original,pak,gen,offset,named,props,src,self_path
+  ('b5a0e1db04e078ec', '', '', 'scene', 'grid753', 9836, 109600, 'data4', 7, 337780336, 0, '{"count": 148}', '', '')
+  ('da750e1dcce9ff08', '', '', 'scene', 'grid753', 9281, 101120, 'data4', 7, 337771032, 0, '{"count": 135}', '', '')
+  ('044a1f9cf66222e4', '', '', 'scene', 'grid753', 8376, 94701, 'data4', 7, 337762656, 0, '{"count": 127}', '', '')
+  ('ab8ecb9f3c21f125', '', '', 'scene', 'grid753', 14204, 94207, 'data4', 6, 234168048, 0, '{"count": 124}', '', '')
+  ('b305c05ef4264330', '', '', 'scene', 'grid753', 10452, 93636, 'data4', 0, 26255400, 0, '{"count": 128}', '', '')
+  ('0c63c4dc4d20be9e', '', '', 'scene', 'grid753', 10107, 92282, 'data1', 6, 484932768, 0, '{"count": 122}', '', '')
+  ('dd8ca898d46ea071', '', '', 'scene', 'grid753', 8567, 88236, 'data2', 7, 363922064, 0, '{"count": 117}', '', '')
+  ('8930aedf0d6e679c', '', '', 'scene', 'grid753', 10036, 87035, 'data4', 0, 26265856, 0, '{"count": 118}', '', '')
+  ('d8e75d42fdf6cbe7', '', '', 'scene', 'grid753', 7699, 85236, 'data4', 1, 50884888, 0, '{"count": 112}', '', '')
+  ('2c35e6594998f3b9', '', '', 'scene', 'grid753', 7967, 81226, 'data2', 7, 363914096, 0, '{"count": 108}', '', '')
+  ('af124bc385641612', '', '', 'scene', 'grid753', 7271, 80670, 'data4', 1, 50899800, 0, '{"count": 106}', '', '')
+  ('ff7655e5bd5e93a4', '', '', 'scene', 'grid753', 8585, 79909, 'data_1', 8, 699624280, 0, '{"count": 105}', '', '')
+=== type=scene AND dir='' src distribution ===
+  src='' n=1126
+=== type=scene src distribution (all) ===
+  src='' n=1126
+  src='resourcepath' n=9288
+=== type=scene named distribution ===
+  named=0 n=1126
+  named=1 n=9288
+=== props sample ===
+  '{"count": 1}' n=370
+  '{"count": 3}' n=349
+  '{"count": 4}' n=301
+  '{"count": 11}' n=297
+  '{"count": 16}' n=293
+  '{"count": 15}' n=291
+  '{"count": 7}' n=289
+  '{"count": 10}' n=288
+  '{"count": 5}' n=286
+  '{"count": 6}' n=280
+  '{"count": 8}' n=278
+  '{"count": 2}' n=276
+  '{"count": 14}' n=272
+  '{"count": 9}' n=270
+  '{"count": 13}' n=258
+  '{"count": 12}' n=255
+  '{"count": 17}' n=246
+  '{"count": 18}' n=244
+  '{"count": 20}' n=226
+  '{"count": 19}' n=219
+  '{"count": 22}' n=217
+  '{"count": 21}' n=212
+  '{"count": 23}' n=192
+  '{"count": 25}' n=166
+  '{"count": 26}' n=158
+  '{"count": 24}' n=158
+  '{"count": 27}' n=155
+  '{"count": 32}' n=136
+  '{"count": 31}' n=133
+  '{"count": 30}' n=127
+=== distinct subtype where type like scene-ish ===
+  'scene' 'grid753' 9288
+  'tiny' 'bin' 1237
+  'binary' 'bin' 1110
+  'set' 'copy' 295
+  'xml' 'xml' 2
+  'table' 'u32head' 1
+=== type=binary ext=.scene sample ===
+  ('003b21ebd2267b8b', 'mobile_maps/w1351_fb_hsljchusai_001/1_5_0.scene', 'mobile_maps/w1351_fb_hsljchusai_001', '1_5_0.scene', 'bin', 1, 12, 51, 262, 604, 'data4', 1, 73444472, 1, '{"f": [1, 592, 80, 3212836864]}', 'resourcepath')
+  ('0063ede35f2eb0ed', 'mobile_maps/w1351_ll_emxm_001/1_2_-1.scene', 'mobile_maps/w1351_ll_emxm_001', '1_2_-1.scene', 'bin', 1, 12, 51, 2146, 15901, 'data4', 20, 852080400, 1, '{"f": [21, 749, 0, 1059481190]}', 'resourcepath')
+  ('00708db5bc266812', 'mobile_maps/w1351_ll_gmdtxmp_001/1_1_-6.scene', 'mobile_maps/w1351_ll_gmdtxmp_001', '1_1_-6.scene', 'bin', 1, 12, 51, 4278, 49495, 'data4', 21, 912602264, 1, '{"f": [66, 749, 0, 3107397632]}', 'resourcepath')
+  ('00919a629b4fea84', 'mobile_maps/w1351_fb_tjqs_001/1_9_-6.scene', 'mobile_maps/w1351_fb_tjqs_001', '1_9_-6.scene', 'bin', 1, 12, 51, 678, 3918, 'data4', 10, 444111528, 1, '{"f": [6, 749, 0, 1059676858]}', 'resourcepath')
+  ('009e27b4b49ee487', 'mobile_maps/w1351_gj_qinhuang4_001/1_6_-5.scene', 'mobile_maps/w1351_gj_qinhuang4_001', '1_6_-5.scene', 'bin', 1, 12, 51, 1231, 10602, 'data4', 13, 568914488, 1, '{"f": [14, 749, 0, 3110457958]}', 'resourcepath')
+  ('00d80b17be2fc09e', 'mobile_maps/w1351_fb_langhuanyudong_001/1_1_-3.scene', 'mobile_maps/w1351_fb_langhuanyudong_001', '1_1_-3.scene', 'bin', 1, 12, 51, 2982, 20937, 'data4', 3, 129478080, 1, '{"f": [28, 749, 0, 1065353216]}', 'resourcepath')
+  ('012ba1c1504ce5eb', 'mobile_maps/w1351_ll_gbzdfb_001/1_1_-2.scene', 'mobile_maps/w1351_ll_gbzdfb_001', '1_1_-2.scene', 'bin', 1, 12, 51, 3526, 30570, 'data4', 20, 869465656, 1, '{"f": [41, 749, 0, 1059439247]}', 'resourcepath')
+  ('014bfc1c2b163e22', 'mobile_maps/w1351_fb_mantuoluodao_004/1_6_-8.scene', 'mobile_maps/w1351_fb_mantuoluodao_004', '1_6_-8.scene', 'bin', 1, 12, 51, 2115, 19686, 'data4', 4, 190705448, 1, '{"f": [26, 749, 0, 3206936623]}', 'resourcepath')

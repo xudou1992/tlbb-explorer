@@ -455,10 +455,23 @@ mod tests {
     }
 
     /// 真实样本：两个多材质槽网格。旧实现在这两个文件上直接失败。
+    ///
+    /// **夹具不入库**（客户端原始字节，见 README「测试夹具」）。缺样本就跳过；
+    /// 想真跑这条，先用工作台「浏览」视图把同名 `.mesh` 导出到本目录：
+    ///
+    /// ```text
+    /// cargo run --bin tlbb-shell          # 打开工作台 → 浏览 → 找到该 .mesh → 导出
+    /// ```
     #[test]
     fn real_multi_submesh_samples() {
+        let dir = env!("CARGO_MANIFEST_DIR");
+        let pa = format!("{dir}/tests/w1351_model_emiter_lf002.mesh");
+        let pb = format!("{dir}/tests/w1351_model_emiter_lf004.mesh");
+        let (Ok(a), Ok(b)) = (std::fs::read(&pa), std::fs::read(&pb)) else {
+            eprintln!("缺样本 {pa} / {pb}，跳过（夹具不入库，见 README「测试夹具」）");
+            return;
+        };
         // vc=434 fc=528 sm=2，计数数组在 0x3B78 = (264,264)
-        let a = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/w1351_model_emiter_lf002.mesh")).unwrap();
         let la = parse_mesh(&a).expect("lf002 应能解析");
         assert_eq!(la.face_counts, vec![264, 264]);
         assert_eq!(la.geometry.vertex_count, 434);
@@ -471,7 +484,6 @@ mod tests {
         assert_eq!(*second.iter().min().unwrap(), 212);
 
         // vc=436 fc=442 sm=3，计数在 0x3B0C = (402,8,32)
-        let b = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/w1351_model_emiter_lf004.mesh")).unwrap();
         let lb = parse_mesh(&b).expect("lf004 应能解析");
         assert_eq!(lb.face_counts, vec![402, 8, 32]);
         assert_eq!(lb.geometry.face_count, 442);

@@ -1,9 +1,27 @@
 # TLBB Explorer
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![Rust](https://img.shields.io/badge/Rust-stable-orange?logo=rust)
+![Tauri](https://img.shields.io/badge/Tauri-2-24C8DB?logo=tauri)
+
 天龙八部（TLBB）客户端资源浏览器 —— 让人能看懂客户端里有什么。
 
-> **本仓库只带源码与结论，不带客户端二进制。** 客户端 `data*.pak`（6GB）与 Rust
+> **本仓库只带源码与结论，不带客户端二进制，也不带任何游戏素材。** 客户端 `data*.pak`（6GB）与 Rust
 > 构建目录合计 40GB+，全部排除在版本控制之外。换机后按「首次运行」重建即可。
+
+---
+
+## 免责声明
+
+- 本项目是**非官方、未授权**的第三方互操作性研究工具，与游戏开发商、发行商及任何运营方
+  **均无关联、均未获其认可**。
+- 仓库**不包含**游戏客户端、`data*.pak`、模型 / 贴图 / 音频等任何游戏素材，也**不提供**
+  获取途径。使用者需自行准备合法取得的客户端，并自行承担相应责任。
+- 唯一随仓库分发的客户端派生数据是 `crates/core/assets/cipher_table.bin`（16 KB，4096 个
+  `u32` 常量）：它是解析容器所必需的解密表，属于**功能性互操作性常量**，不含任何美术作品。
+- 格式知识来自对本地客户端的合法研究，仅用于**理解与互操作性**目的。**请勿**用本项目
+  分发游戏素材，也请勿用于商业运营服务端。
+- 游戏名称、资源名与商标归其各自权利人所有。
 
 ---
 
@@ -112,7 +130,7 @@
 │   ├── *.md                          # 阶段结论报告
 │   ├── agent_*.txt                   # 探索过程记录（含地图/scene 逆向）
 │   └── M3-0_地图灰模_分派规格.md      # 当前阶段的分派规格
-└── .workbuddy/memory/                # 项目长期记忆与工作日志
+└── LICENSE                           # MIT
 ```
 
 ---
@@ -173,12 +191,32 @@ node tools/map_golden.mjs
 > `node --test tests/`（旧写法）在 Node 25 下报 `MODULE_NOT_FOUND`，要显式列文件名：
 > `cd tlbb-explorer/app && node --test tests/wording.test.js tests/detailState.test.js tests/meshViewerInstances.test.js tests/meshLayout.test.js tests/seq.test.js`
 
-### 5. 环境变量（可选）
+### 5. 测试夹具（不入库，按需自取）
+
+`crates/core/tests/` 下有几条用例吃**客户端原始字节**当夹具（2 个 `.mesh` + 3 个
+`.scene`）。它们**不入库**——避免随仓库分发游戏素材——缺样本时用例自己跳过并在
+stderr 说明，**不算失败**。想让它们真跑，从你自己的客户端导出：
+
+```bash
+# scene 夹具：产物先落 %TEMP%\tlbb_scene_samples
+cargo run --release --bin dump_scene_sample
+# 再把 grid_749 / grid_753_full / grid_753_with_tail 三个 .scene
+# 拷到 tlbb-explorer/crates/core/tests/scene_samples/
+
+# mesh 夹具：用工作台「浏览」视图导出这两个同名文件到 crates/core/tests/
+#   w1351_model_emiter_lf002.mesh
+#   w1351_model_emiter_lf004.mesh
+```
+
+### 6. 环境变量（可选）
 
 ```
 TLBB_ROOT=<客户端根>        # 默认 D:/TLGL
 TLBB_DB=<resources.db 路径> # 默认 <root>/.scratch/resources.db
 ```
+
+> 部分 `bin/` 下的开发期工具把 `D:/TLGL` 写成了默认值（历史原因），用 `--root` /
+> `--db` / `--out` 覆盖即可，不影响正常使用。
 
 ---
 
@@ -236,3 +274,19 @@ stride = tag + 8   753→761、749→757、605→613、592→600
 4. **构建必须** `CARGO_TARGET_DIR=D:\TLGL\.scratch\rc3` + `--jobs 1`。
 5. **同文件多处编辑禁止放同一条消息**（读旧写回会互相覆盖）。
 6. `crates/core` 无 `anyhow` / `image` 依赖（离线环境），新代码只用 `std`。
+
+---
+
+## 许可证
+
+[MIT](LICENSE) —— 可自由使用、修改、分发、商用，保留版权声明即可。
+
+## 贡献
+
+欢迎 issue 与 PR。提交前请先读上面那五条项目纪律，尤其：
+
+- **没解出像素不显图** —— 绝不拿同目录的图顶替
+- **悬空引用显示「缺」，不编造** —— 宁缺勿假
+
+新增解析器请自带用例，并保证**夹具缺席时降级跳过**而不是 panic（夹具不入库，
+见「测试夹具」）。数据层返回英文键，中文只在展示层映射。

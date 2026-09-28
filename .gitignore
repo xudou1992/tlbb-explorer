@@ -243,3 +243,28 @@ desktop.ini
 .scratch/mid.txt
 # 误生成的垃圾：文件名里带 .scratch 字样（某次脚本路径拼接出错）
 /TLGL.scratchcrop_*.png
+
+# ===========================================================================
+# 开源清理（2026-09-28）：以下内容**永久不得入库**。
+# 已用 git filter-repo 从全部历史中移除，此处加锁防止再次误提交。
+# ===========================================================================
+
+# ---- 客户端原始字节（侵权风险）----
+# 解包产物、解出的贴图像素、客户端 .mesh/.scene 样本。
+# 需要样本请从**自己的**客户端导出，见 README「测试夹具」。
+.scratch/unpacked/
+.scratch/uvfit_out/*.png
+tlbb-explorer/crates/core/tests/*.mesh
+tlbb-explorer/crates/core/tests/scene_samples/
+
+# ---- 私人内容（不属于项目）----
+# agent 工作记忆与本地笔记：留在本机，不进公开仓库。
+.workbuddy/
+
+# ---- 构建缓存误跟踪 ----
+TLGL.scratchrc3/
+**/TLGL.scratchrc3/
+**/.rustc_info.json
+**/CACHEDIR.TAG
+**/.cargo-*-lock
+**/*.timestamp

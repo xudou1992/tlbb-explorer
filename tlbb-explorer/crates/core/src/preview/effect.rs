@@ -124,7 +124,6 @@ pub fn parse_pu(raw: &[u8]) -> Option<Effect> {
         p += len;
     }
     let blob = &raw[p..];
-    let n = blob.len() / 4;
     let param_floats = blob
         .chunks_exact(4)
         .map(|c| f32::from_le_bytes([c[0], c[1], c[2], c[3]]))

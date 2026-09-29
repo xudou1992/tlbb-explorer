@@ -343,6 +343,50 @@ fn main() {
                 Err(e) => println!("  几何段     ✗ {e}"),
             }
         }
+        summary::FileKind::Param => {
+            // .pu（JBPU）：驻留字符串里写着这个特效用哪些材质、什么混合模式、
+            // 什么渲染器与发射器。参数块的字段语法还没解，所以只报数量，
+            // 不拿「有多少个像浮点的数」冒充参数值。
+            match tlbb_core::preview::parse_pu(&dec.bytes) {
+                Some(e) => {
+                    let n = &e.names;
+                    println!(
+                        "特效（JBPU 容器，{} 条驻留字符串）",
+                        e.strings.len()
+                    );
+                    println!("  名字     {}", if n.name.is_empty() { "未读到" } else { &n.name });
+                    if !n.group.is_empty() || !n.label.is_empty() {
+                        println!("  分组/层  {} / {}", or_dim(&n.group), or_dim(&n.label));
+                    }
+                    // 中文标签按字符数补不齐（一个汉字占两格），自己按字数算空格。
+                    let list = |label: &str, v: &[String]| {
+                        if v.is_empty() {
+                            return;
+                        }
+                        let pad = " ".repeat(2usize.saturating_mul(4 - label.chars().count()));
+                        let shown: Vec<&str> = v.iter().map(|x| x.as_str()).take(6).collect();
+                        let more = if v.len() > 6 { format!(" …共 {} 条", v.len()) } else { String::new() };
+                        println!("  {label}{pad} {}{more}", shown.join("、"));
+                    };
+                    list("材质", &n.materials);
+                    list("贴图", &n.textures);
+                    list("网格", &n.meshes);
+                    list("混合", &n.blends);
+                    list("渲染器", &n.renderers);
+                    list("发射器", &n.emitters);
+                    list("更新器", &n.updaters);
+                    list("动态参数", &n.dynamics);
+                    println!(
+                        "  参数块   {} 字节 · {} 个像浮点的数（字段名未解，只报数量）",
+                        e.param_bytes, e.param_floats
+                    );
+                    if !n.other.is_empty() {
+                        println!("  其余     {} 条未归类字符串（不猜用途）", n.other.len());
+                    }
+                }
+                None => println!("  不是已知的 JBPU 布局（不硬猜字段）"),
+            }
+        }
         summary::FileKind::Animation => {
             let body = summary::anim_summary(&dec.bytes);
             print_view(&body, &con);
@@ -402,6 +446,10 @@ fn print_slot(tag: &str, s: &SlotSummary, con: &Connection) {
         }
         None => println!("  [{tag:>6}] {:<46} → 缺", s.name),
     }
+}
+
+fn or_dim(s: &str) -> String {
+    if s.is_empty() { "未读到".into() } else { s.to_string() }
 }
 
 fn role_zh(r: jbcf::Role) -> &'static str {

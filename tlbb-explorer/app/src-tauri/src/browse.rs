@@ -357,6 +357,51 @@ pub fn browse_preview(pak_name: String, hash: String) -> Result<BrowsePreview, S
             reason: String::new(),
             info,
         }),
+        "ani" => {
+            // 动作文件出不了画面，但不是「没内容可看」：关键帧已能数出来。
+            // 照实报账，并报清为什么还不能播。
+            match tlbb_core::preview::parse_ani(&dec.bytes) {
+                Some(a) => {
+                    let moving = a
+                        .tracks
+                        .iter()
+                        .filter(|t| t.rotations.windows(2).any(|w| w[0] != w[1]))
+                        .count();
+                    let named = a.tracks.iter().filter(|t| !t.bone.is_empty()).count();
+                    info.push(format!(
+                        "骨骼 {} 条 · 关键帧 {} 帧 · 帧率刻度 {}",
+                        a.bones,
+                        a.frames,
+                        a.tick
+                    ));
+                    info.push(format!(
+                        "会动的骨 {moving} 根（其余各帧旋转相同）· 骨名读到 {named} 条"
+                    ));
+                    info.push(
+                        "还不能播放：父骨链与蒙皮权重不在这份文件里（.ske 是动作登记表，\
+                         也没有骨架矩阵）"
+                            .into(),
+                    );
+                    Ok(BrowsePreview {
+                        ok: false,
+                        kind,
+                        mime: String::new(),
+                        data_url: String::new(),
+                        reason: String::new(),
+                        info,
+                    })
+                }
+                None => {
+                    info.push("关键帧布局不认（不硬猜）".into());
+                    Ok(BrowsePreview {
+                        ok: false,
+                        kind,
+                        info,
+                        ..empty
+                    })
+                }
+            }
+        }
         other => {
             let head: Vec<String> = dec
                 .bytes
@@ -970,6 +1015,33 @@ mod tests {
         // .scratch 内正常路径仍放行（别把产物区一起拦死）。
         assert!(guard2.check(&scratch_dest.join("a/x.png")).is_ok());
         std::fs::remove_dir_all(&base).ok();
+    }
+
+    /// 动作文件的预览回包：出不了画面，但关键帧的账要报得出、不能播的原因要写明。
+    /// 吃本机真数据（`.ani` 在 data*.pak 里）；找不到动作条目就跳过。
+    #[test]
+    fn preview_reports_ani_keys_and_says_why_it_cannot_play() {
+        let list = browse_paks().expect("browse_paks");
+        let mut found = None;
+        for card in list.paks.iter().take(2) {
+            let tree = browse_tree(card.name.clone()).expect("browse_tree");
+            if let Some(e) = tree.entries.iter().find(|e| e.kind == "ani") {
+                found = Some((card.name.clone(), e.hash.clone()));
+                break;
+            }
+        }
+        let Some((pak, hash)) = found else {
+            eprintln!("跳过：这两只容器里没有 kind=ani 的条目");
+            return;
+        };
+        let pv = browse_preview(pak, hash).expect("browse_preview");
+        assert!(!pv.ok, "动作文件没有画面可出，ok 必须是 false");
+        let joined = pv.info.join(" | ");
+        assert!(joined.contains("骨骼"), "应报骨骼数：{joined}");
+        assert!(joined.contains("关键帧"), "应报帧数：{joined}");
+        assert!(joined.contains("会动的骨"), "应报哪几根在动：{joined}");
+        assert!(joined.contains("还不能播放"), "必须说清为什么点不出动画：{joined}");
+        assert!(joined.contains("蒙皮权重"), "原因要落到权重/骨链这一层：{joined}");
     }
 
     #[test]

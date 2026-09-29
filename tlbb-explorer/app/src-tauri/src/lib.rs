@@ -198,7 +198,8 @@ pub fn run() {
             browse::browse_paks,
             browse::browse_tree,
             browse::browse_preview,
-            browse::browse_export
+            browse::browse_export,
+            browse::browse_export_group,
         ])
         .run(tauri::generate_context!())
         .expect("工作台窗口未能启动");

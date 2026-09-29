@@ -277,9 +277,30 @@ function initTools() {
   };
   el("btnFav").addEventListener("click", () => note("收藏需要本地策展表，这一版还没接上——先不假装能存。"));
   el("btnLocate").addEventListener("click", () => note("定位到目录树需要浏览视图里先打开对应的 data 包，这一版还没打通这两条链路。"));
-  el("btnExportOne").addEventListener("click", () =>
-    note("单条导出：切到「浏览」标签打开对应的 data 包，在里面搜这条资源的名字即可导出。"),
-  );
+  // 「导出」是真动作：一次把这一组的文件导到默认目录，不用人切去「浏览」标签搜名字。
+  el("btnExportOne").addEventListener("click", async () => {
+    const gid = state.selected;
+    if (!gid) {
+      note("还没选中资产：先在左边列表里点一条。");
+      return;
+    }
+    if (state.exportBusy) return;
+    state.exportBusy = true;
+    note("正在导出这一组的文件…");
+    try {
+      const rep = await api.browseExportGroup(gid, "");
+      let text = `已导出 ${rep.written.toLocaleString()} 个文件到 ${rep.dest}`;
+      const bad = (rep.failed?.length ?? 0) + (rep.failed_more ?? 0);
+      if (bad) {
+        text += `；另有 ${bad} 项没导出来（${rep.failed[0]}）`;
+      }
+      note(text);
+    } catch (e) {
+      note(`导出没成：${String(e?.message ?? e)}`);
+    } finally {
+      state.exportBusy = false;
+    }
+  });
 }
 
 /// 列表清空/重查时把详情区收回初始态，避免"列表换了、右边还是旧资产"。

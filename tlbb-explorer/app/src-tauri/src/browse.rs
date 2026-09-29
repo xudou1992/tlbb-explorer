@@ -590,6 +590,83 @@ fn safe_join(dest: &Path, raw: &str) -> Option<PathBuf> {
 /// 导出。`hashes` 为空表示整包。目标目录必须在客户端根之外，或客户端根下的
 /// `.scratch/` 产物区——客户端目录其余部分只读。
 ///
+/// 详情面板的「导出」：把一个资产组的文件一次导到目录里。
+///
+/// 为什么要有它：以前这个按钮只回一句话，让人自己切到「浏览」标签、打开对应的
+/// data 包、再搜名字导出——一个动作绕三个地方。组成员 `inspector::inspect`
+/// 已经算过一遍，这里只把 path 对上 (容器, hash)，再逐容器走 `export_run`
+/// 那条落盘闸门（junction 保护、只读容器都不另开一套）。
+/// `dest` 给空串就落在 `<客户端根>/.scratch/exports/<组名>`，不必先选目录。
+#[tauri::command]
+pub async fn browse_export_group(gid: i64, dest: String) -> Result<ExportReport, String> {
+    tauri::async_runtime::spawn_blocking(move || export_group_run(gid, &dest))
+        .await
+        .map_err(|e| format!("导出线程没起来：{e}"))?
+}
+
+fn export_group_run(gid: i64, dest: &str) -> Result<ExportReport, String> {
+    let (root, db) = roots();
+    if !db.exists() {
+        return Err(format!("找不到资源清单文件：{}", db.display()));
+    }
+    let con = Connection::open_with_flags(
+        &db,
+        OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+    )
+    .map_err(|e| format!("资源清单打不开：{e}"))?;
+    let rep = crate::inspector::inspect(gid)?;
+    let dn = if dest.trim().is_empty() {
+        // 组目录的最后一段就是组名（`data/source/npc/quest/w1351_...` → 那只怪）
+        let stem = rep.dir.trim_end_matches('/').rsplit('/').next().unwrap_or("").to_string();
+        let stem = if stem.is_empty() { format!("gid{gid}") } else { stem };
+        root.join(".scratch").join("exports").join(stem)
+    } else {
+        PathBuf::from(dest.trim())
+    };
+    let dn = dn.to_string_lossy().to_string();
+    let mut by_pak: std::collections::BTreeMap<String, Vec<String>> = Default::default();
+    let mut no_body: Vec<String> = Vec::new();
+    for m in rep.members.iter().filter(|m| m.resolved) {
+        let Some(p) = m.path.as_deref() else { continue };
+        let hit: Option<(String, String)> = con
+            .query_row(
+                "SELECT hash, coalesce(pak,'') FROM resources WHERE path = ?1 AND stored > 0 LIMIT 1",
+                [p],
+                |r| Ok((r.get(0)?, r.get(1)?)),
+            )
+            .ok();
+        match hit {
+            Some((hash, pak)) if !pak.is_empty() => {
+                // 清单里 `pak` 存的是裸名（`data`），`export_run` 要的是卡片名
+                // （`data.pak`）——两边口径不同，这里对一次，别把「打不开」当导出失败
+                let card = if pak.ends_with(".pak") { pak } else { format!("{pak}.pak") };
+                by_pak.entry(card).or_default().push(hash);
+            }
+            _ => no_body.push(m.name.clone()),
+        }
+    }
+    if by_pak.is_empty() {
+        return Err("这一组的成员都不在容器里（清单里对不上实体），没有可导出的文件".into());
+    }
+    let mut out = ExportReport { dest: dn.clone(), written: 0, failed: Vec::new(), failed_more: 0 };
+    let sink = |_v: serde_json::Value| {};
+    for (pak, hashes) in &by_pak {
+        let r = export_run(pak, hashes, &dn, &sink)?;
+        out.written += r.written;
+        out.failed_more += r.failed_more;
+        for f in r.failed {
+            if out.failed.len() < 8 {
+                out.failed.push(f);
+            } else {
+                out.failed_more += 1;
+            }
+        }
+    }
+    // 名字对上了但容器里没有实体：这是「缺」，不是失败，单独说清楚别混进 failed
+    out.failed.extend(no_body.into_iter().take(4).map(|n| format!("清单里没有实体：{n}")));
+    Ok(out)
+}
+
 /// 整包可能十几万个文件、跑好几分钟：真正的活儿在 `export_run` 里，用
 /// spawn_blocking 丢进阻塞线程池，别占着 IPC 线程；进度经 `exporting` 事件
 /// 边跑边广播（载荷 `{pak, done, total, written, failed}`，收尾多发一条
@@ -1347,6 +1424,53 @@ mod tests {
         assert!(joined.contains("声明 46 根骨"), "该说出头部声明与认出的差额：{joined}");
         assert!(joined.contains("还不能驱动模型") && joined.contains("父指针"), "仍未解的父骨链必须同屏：{joined}");
         eprintln!("网格预览：{joined}");
+    }
+
+    /// 详情面板那条「导出」路：给一个组号，文件要真的落到盘上。
+    /// 走的是 `export_run` 同一套闸门（容器只读、目标目录校验），这里验的是
+    /// 「组成员 → (容器, hash) → 落盘」这条链没断。
+    #[test]
+    fn group_export_writes_members_to_disk() {
+        let (root, db) = roots();
+        if !root.join("data.pak").is_file() || !db.is_file() {
+            eprintln!("跳过：本机没有客户端或资源清单");
+            return;
+        }
+        let con = Connection::open_with_flags(
+            &db,
+            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+        )
+        .expect("清单");
+        let gid: i64 = con
+            .query_row("SELECT id FROM agroups WHERE stem = 'w1351_monster_xiyuqiezei'", [], |r| r.get(0))
+            .expect("这只怪应在清单里");
+        let dest = std::env::temp_dir().join(format!("tlbb_group_export_{gid}"));
+        let _ = std::fs::remove_dir_all(&dest);
+        let rep = match export_group_run(gid, &dest.to_string_lossy()) {
+            Ok(r) => r,
+            Err(e) => panic!("导出失败：{e}"),
+        };
+        assert!(rep.written >= 1, "一个文件都没写出来：{:?}", rep.failed);
+        assert_eq!(rep.dest, dest.to_string_lossy().to_string());
+        let n = std::fs::read_dir(&dest).map_or(0, |it| it.count());
+        assert!(n >= 1, "目录里没东西：{}", dest.display());
+        let _ = std::fs::remove_dir_all(&dest);
+        eprintln!("组导出：写出 {} 个文件 → {}", rep.written, rep.dest);
+    }
+
+    /// 组成员全在容器外（比如只登记了名字）时必须说清楚，不许报「导出 0 个」当成功。
+    #[test]
+    fn group_export_refuses_a_group_with_no_bodies() {
+        let (root, db) = roots();
+        if !db.is_file() {
+            eprintln!("跳过：本机没有资源清单");
+            return;
+        }
+        let _ = root;
+        match export_group_run(-1, &std::env::temp_dir().to_string_lossy()) {
+            Ok(r) => panic!("不存在的组号不该算成功：写出 {} 个", r.written),
+            Err(e) => assert!(!e.is_empty(), "报错不能是空串"),
+        }
     }
 
     /// 96 字节节点记录（名字 + 行主序 4×4 绑定矩阵）在两份真样本上逐字节成立。

@@ -278,3 +278,36 @@ test("容器与清单的缺口必须自己说出来（不能让用户以为客�
   // 两条渲染路径（缓存回显 / 现查）都得填这一节，漏一条就是「有时不说」。
   assert.equal((src.match(/paintGap\(\);/g) || []).length, 2, "两条渲染路径都要调 paintGap");
 });
+
+test("详情「导出」：点一下要把整组交出去，并把写了几个文件、写到哪儿说清", async () => {
+  const calls = [];
+  const reply = {
+    written: 21,
+    dest: "D:/TLGL/.scratch/exports/w1351_monster_xiyuqiezei",
+    failed: [],
+    failed_more: 0,
+  };
+  const detail = await sandbox("detail.js", {
+    "mesh.js": meshMock,
+    "api.js": {
+      cardDetail: async () => fixtures.DETAIL_A,
+      assetInspect: async () => fixtures.INSPECT_A,
+      browseExportGroup: async (gid) => {
+        calls.push(gid);
+        return reply;
+      },
+    },
+  });
+  await detail.module.showDetail(245);
+  const btn = detail.el("btnExportOne");
+  assert.ok(btn.events?.click?.length, "导出按钮没接上监听");
+  await btn.events.click[0]();
+  assert.deepEqual(calls, [245], "点导出应把当前组号交给后端，且只调一次");
+  const sum = detail.el("dSum").textContent;
+  assert.ok(sum.includes("已导出 21"), `回包要说清写了几个文件：${sum}`);
+  assert.ok(sum.includes("exports"), `要报出落点目录，不能只说「已导出」：${sum}`);
+  // 没选中资产时不该打后端
+  detail.get("state.js").state.selected = 0;
+  await btn.events.click[0]();
+  assert.equal(calls.length, 1, "没选资产也去调后端，是多余的一次请求");
+});

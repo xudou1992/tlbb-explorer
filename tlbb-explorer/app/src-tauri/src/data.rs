@@ -1391,10 +1391,21 @@ fn lite_from_dto(d: LiteDto) -> Result<Lite, String> {
 
 impl AppData {
     fn warm_cache_path(&self) -> PathBuf {
-        self.catalog_file
-            .parent()
-            .unwrap_or_else(|| Path::new("."))
-            .join("warm_cache.json")
+        // 默认那份库沿用历史名 `warm_cache.json`：换名等于让所有人白预热一次。
+        // 但同一个目录里放第二份库（比对重建结果、灰度验证）时缓存必须分开——
+        // 以前不分，结果是「换个 TLBB_DB 跑一次自检」就把本机库的预热成果盖掉，
+        // 界面立刻退化成重新预热几分钟，而且看不出来是谁干的。
+        let dir = self.catalog_file.parent().unwrap_or_else(|| Path::new("."));
+        let stem = self
+            .catalog_file
+            .file_stem()
+            .and_then(|s| s.to_str())
+            .unwrap_or("resources");
+        if stem == "resources" {
+            dir.join("warm_cache.json")
+        } else {
+            dir.join(format!("{stem}_warm_cache.json"))
+        }
     }
 
     fn db_fingerprint(&self) -> (u64, i64) {

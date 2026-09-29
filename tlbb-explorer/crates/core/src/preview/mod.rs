@@ -15,7 +15,7 @@ pub mod summary;
 pub mod uvfit;
 pub mod uvfit_batch;
 
-pub use anim::{parse_ani, Anim, Track};
+pub use anim::{parse_ani, rest_poses, Anim, Rest, Track};
 
 pub use geometry::{parse_geometry, parse_mesh, MeshGeometry, MeshLayout};
 pub use image::{png_bytes, scale_rgba, write_png};

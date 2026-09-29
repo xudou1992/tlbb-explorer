@@ -137,6 +137,135 @@ pub fn is_unit_quat(q: &[f32; 4]) -> bool {
     n < 1e-6 || (0.98..=1.02).contains(&n)
 }
 
+// ------------------------------------------------------------------- 骨架静态区
+//
+// 骨名表之后、轨道数据之前那段（样本里 1590..4718，共 3128 字节 = 46 × 68）
+// 是**骨架静态数据**，不随动作变：同一只怪的 behit/walk/run/idle 四个动作，
+// 头部到 4718 逐字节一致，只有 1722..1724 那 3 字节不同。
+//
+// 已证的部分（四条真样本 × 46 条记录，全部成立）：
+// ```text
+// 记录起点 = 名字表末尾 + 16（样本 1606），一条 60B，共骨骼数条
+//   +0   f32×3  缩放：恒为 0.00992（≈1/100，单位换算的样子，用途未证）
+//   +12  f32×4  绑定旋转：184/184 条都是单位四元数
+//   +28  f32×3  恒为 0 —— 所以「绑定位移」不在这里
+//   +40  f32    恒为 1.0
+//   +44  f32    恒为 0
+//   +48  f32×3  逐骨不同（样本范围 -1.09..0.55）——是什么未证
+// 记录之后 352 字节：两段 u32，一段 42 个递增（4,5,…,45）、一段 46 个恒为 3，
+//                    用途未证（看着像索引表，但不猜它是父骨链）。
+// ```
+//
+// 父骨链与绑定位移不在 `.ani` 里，所以要找 `.ske`。在找到之前，
+// 「播放」做不出来——只有旋转没有骨架，骨头的相对位置无从摆出来。
+
+/// 一条骨的静态数据（骨架区里的记录）。
+#[derive(Debug, Clone, PartialEq)]
+pub struct Rest {
+    /// 骨名（客户端原文）；名字表比轨道少一条时，多出来的那条为空串。
+    pub bone: String,
+    /// +0 那三个浮点（样本恒 0.00992，用途未证，原样带着不解释）。
+    pub unit: [f32; 3],
+    /// +12 绑定旋转（单位四元数）。
+    pub rotation: [f32; 4],
+}
+
+/// 读骨架静态区的绑定旋转。布局不合（记录区越界、旋转不是单位长）→ `None`。
+///
+/// 记录区起点是「名字表末尾 + 16」，而名字表**可能比轨道少一条**（样本 45 名 /
+/// 46 轨），所以起点有两个候选：按名字条数、按轨道数。这里不硬挑一个——
+/// 两个候选都试，取「每条旋转都是单位长且整区落在轨道数据之前」的那个；
+/// 两个都不成立就回 `None`。这样布局靠证据选，不靠写死的偏移。
+pub fn rest_poses(raw: &[u8]) -> Option<Vec<Rest>> {
+    let a = parse_ani(raw)?;
+    let track_start = raw.len().checked_sub(a.bones * a.frames * 32)?;
+    let named = a.tracks.iter().filter(|t| !t.bone.is_empty()).count();
+    for n in [named, a.bones] {
+        let Some(base) = 0xf0usize.checked_add(n * 30)?.checked_add(16) else {
+            continue;
+        };
+        if base.checked_add(a.bones * 60)? > track_start {
+            continue;
+        }
+        let mut out = Vec::with_capacity(a.bones);
+        let mut ok = true;
+        for i in 0..a.bones {
+            let o = base + i * 60;
+            let unit = struct_of::<3>(raw, o)?;
+            let rotation = struct_of::<4>(raw, o + 12)?;
+            if !is_unit_quat(&rotation) {
+                ok = false;
+                break;
+            }
+            out.push(Rest { bone: a.tracks[i].bone.clone(), unit, rotation });
+        }
+        if ok {
+            return Some(out);
+        }
+    }
+    None
+}
+
+fn struct_of<const N: usize>(raw: &[u8], off: usize) -> Option<[f32; N]> {
+    let mut a = [0f32; N];
+    for (i, slot) in a.iter_mut().enumerate() {
+        let b: [u8; 4] = raw.get(off + i * 4..off + i * 4 + 4)?.try_into().ok()?;
+        *slot = f32::from_le_bytes(b);
+    }
+    Some(a)
+}
+
+#[cfg(test)]
+mod rest_tests {
+    use super::*;
+
+    /// 骨架区的绑定旋转：四份真样本 × 46 条全部单位长，且同模型不同动作
+    /// 读出来的静态区逐字节一致（动作不该改骨架）。
+    #[test]
+    fn 绑定旋转每条都是单位长() {
+        let Ok(dir) = std::env::var("TLBB_ANI_DIR") else {
+            eprintln!("跳过：没有 TLBB_ANI_DIR 指向的 .ani 样本");
+            return;
+        };
+        let read = |n: &str| std::fs::read(std::path::Path::new(&dir).join(n)).ok();
+        let a = match read("w1351_monster_xiyuqiezei_behit01.ani") {
+            Some(v) => v,
+            None => {
+                eprintln!("跳过：样本不在");
+                return;
+            }
+        };
+        let rest = rest_poses(&a).expect("骨架区应能解出");
+        assert_eq!(rest.len(), 46);
+        assert_eq!(rest[0].bone, "bip01");
+        assert!(rest.iter().all(|r| is_unit_quat(&r.rotation)));
+        // 静态单位值：四份样本都是 0.00992 三元组（不解释它，只钉住「恒等」）
+        for r in &rest {
+            assert!(r.unit.iter().all(|v| (v - 0.00992).abs() < 5e-4), "单位值恒等破了：{:?}", r.unit);
+        }
+        // 同一骨架的另一个动作，读出来的骨架区应与这一个完全一致。
+        let b = read("w1351_monster_xiyuqiezei_walk.ani").expect("walk 样本应在");
+        let rest_b = rest_poses(&b).expect("walk 骨架区应能解出");
+        assert_eq!(rest, rest_b, "同模型不同动作的骨架静态数据必须一致");
+    }
+
+    /// 布局不合（记录区越界 / 旋转不是单位长）就整份不认。
+    #[test]
+    fn 骨架区不合就不硬给() {
+        assert_eq!(rest_poses(&[]), None);
+        let mut raw = vec![0u8; 4096];
+        raw[0..10].copy_from_slice(b"Copyright\x00");
+        raw[0x40..0x44].copy_from_slice(b"ani\x00");
+        raw[0xba..0xbc].copy_from_slice(&2u16.to_le_bytes());
+        raw[0xbe..0xc0].copy_from_slice(&2u16.to_le_bytes());
+        raw[0xc2..0xc4].copy_from_slice(&2u16.to_le_bytes());
+        // 轨道区按 2 骨 × 2 帧摆到文件尾，骨架区记录全零 → 旋转零四元数：
+        // 零四元数按「静止骨」是合法的，所以这里应该解得出 2 条，而不是报错。
+        let got = rest_poses(&raw).expect("全零旋转按静止骨处理，应能解出");
+        assert_eq!(got.len(), 2);
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

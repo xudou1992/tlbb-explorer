@@ -208,6 +208,7 @@ fn build(root: &Path, con: &Connection, mesh: Option<&str>, anis: &[String]) -> 
             "restRecord": ".ani 骨架区 60B/骨 = +12 绑定旋转（每条单位长）；+48 那三个浮点用途未证，没往这份导出里放",
             "trackRecord": "每骨每帧 = f32×4 旋转 + f32×3 位移 + f32 缩放",
             "boneCountField": ".mesh 头部 0x110 处的 u32 = 骨骼根数，与该模型 .ani 的轨道数一致",
+            "animationsMatched": "动作按「同目录的 ani/ 子目录」整批配给网格：一只怪的部件网格共用一组动作是对的，但一个目录里放多只互不相关的模型时，每份网格都会拿到该目录的全部动作——批量导出时若 nodes 为 0（静态网格没有骨架节点），这批动作多半不属于它",
             "generator": "skel_dump (tlbb-core preview::{parse_nodes, parse_ani, bone_count})"
         }
     })

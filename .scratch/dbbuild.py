@@ -557,6 +557,11 @@ def build_asset_groups(con):
         if ra != rb:
             parent[ra] = rb
 
+    # 并团失控（一组 3,405 个成员）留作已知缺陷，两条备选都测过、都不采纳：
+    #   按规模上限切（200）→ 连通块被按遍历顺序切成一堆任意的 200，假装有原则；
+    #   只并同目录（SUBDIRS 折叠后）→ 最大组降到 135，但 1,175 个资源掉出分组（看不见更糟）。
+    # 详见 .scratch/建库分组_三套口径实测_20260929.md。要治得先定「资产组」的语义，属口径决策。
+
     cut = structural = 0
     for f, t, rel in c.execute('SELECT from_hash, to_hash, rel FROM relations').fetchall():
         if not rel.startswith('use-'):

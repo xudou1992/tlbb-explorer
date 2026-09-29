@@ -587,6 +587,9 @@ def build_asset_groups(con):
     # 跳过解包那一步时 226 个 .pu 会被标成 'missing'，它们的单文件组件就被下面
     # 「成员<2 且不属于 owner/fxsrc 就丢」那条规则整批扔掉，清单凭空少 209 组。
     # 组该不该存在不该取决于本机当时解没解包，所以这里认 ext='.pu'。
+    # 实测（同一份重建库上只跑分组阶段）：12,871 → 13,097 组。
+    # 残余差额没被本条解释：随包库有 47 个 stem 在重建后没有自己的组（同时新出 65 个），
+    # 两边 relations 差 582 条边，union-find 对那一步敏感——另账待查，别当成已对齐。
     fxsrc = {h for (h,) in c.execute(
         "select hash from resources where type='JBPU' or ext='.pu'")}
     for s in list(owner) + list(fxsrc):

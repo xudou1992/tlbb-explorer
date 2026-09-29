@@ -135,26 +135,26 @@
 .
 ├── tlbb-explorer/                    # 主项目
 │   ├── crates/core/                  # 解析 + catalog（Rust）
-│   │   └── src/
-│   │       ├── preview/              # 语义层：字节 → 人能看懂的摘要
-│   │       │   ├── geometry.rs       # .mesh 几何解析
-│   │       │   ├── summary.rs        # 类型化摘要（FileKind 路由）
-│   │       │   └── scene.rs          # .scene 地图格子解析（M3-0）
-│   │       ├── catalog/              # resources.db 只读访问
-│   │       ├── jbcf/ jpak/ jmt1/     # 容器与解码
-│   │       └── bin/                  # view.rs（CLI 预览器）等
+│   │   ├── src/preview/              # 语义层：字节 → 人能看懂的摘要
+│   │   │   ├── geometry.rs           # .mesh 几何 + 骨架节点表（名字 + 绑定 4×4）
+│   │   │   ├── anim.rs               # .ani 关键帧（每骨每帧 旋转/位移/缩放）+ 绑定旋转
+│   │   │   ├── effect.rs             # .pu（JBPU）特效定义：材质链 / 发射器 / 更新器
+│   │   │   ├── uvfit.rs              # UV 试贴评分（因子 + 综合分）
+│   │   │   ├── uvfit_batch.rs        # 全库批量评分引擎（命令行与工作台共用）
+│   │   │   ├── scene.rs              # .scene 地图格子解析
+│   │   │   └── summary.rs            # 类型化摘要（FileKind 路由）
+│   │   ├── src/catalog/              # resources.db 只读访问
+│   │   ├── src/jbcf/ jpak/ jmt1/     # 容器与解码
+│   │   ├── src/bin/ + src/examples/  # view.rs（CLI 预览器）、fetch/dump_raw（取字节）
+│   │   └── tests/                    # Rust 集成测试（金标准、等级普查、容器…）
 │   ├── app/                          # Tauri 2 工作台
-│   │   ├── src-tauri/src/            # IPC（inspector.rs / mdl_view.rs / mesh_view.rs）
+│   │   ├── src-tauri/src/            # IPC：browse / data / inspector / mdl_view / mesh_view /
+│   │   │                             #   map_view / texture_override / texture_warm / gap / present
 │   │   ├── web/                      # 原生 JS 前端（零依赖）
-│   │   │   ├── lib/                  # 状态机（detailState.js / mapState.js）
+│   │   │   ├── lib/                  # 状态机（detailState / mapState / textureState / wording…）
 │   │   │   └── mesh-viewer.js        # 原生 WebGL 灰模渲染
-│   │   └── tests/                    # node --test
-│   ├── contracts/                    # 跨语言契约
-│   └── tests/                        # Rust 集成测试
-├── .scratch/                         # 探索产物与结论（**换机必须带走**）
-│   ├── *.md                          # 阶段结论报告
-│   ├── agent_*.txt                   # 探索过程记录（含地图/scene 逆向）
-│   └── 动画骨架_线索_*.md              # 未结案线索与已证伪的假设
+│   │   └── tests/                    # node --test（behavior.test.js 在沙箱里跑真前端）
+│   └── contracts/                    # 跨语言契约与地图金标准
 └── LICENSE                           # MIT
 ```
 

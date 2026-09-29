@@ -381,9 +381,17 @@ pub fn browse_preview(pak_name: String, hash: String) -> Result<BrowsePreview, S
                             .collect::<Vec<_>>()
                             .join("、");
                         info.push(format!(
-                            "骨架节点 {} 个：{head} 等（名字与动作文件的骨名表对得上，每个都带绑定矩阵）",
+                            "骨架节点 {} 个：{head} 等，每个带绑定矩阵（平移是模型坐标，左右同名骨只差一根轴的符号）",
                             nodes.len()
                         ));
+                        if let Some(n) = tlbb_core::preview::bone_count(&dec.bytes) {
+                            if n != nodes.len() {
+                                info.push(format!(
+                                    "文件头声明 {n} 根骨，这里认出 {} 个节点——剩下的骨名字后面不跟矩阵，为什么没跟还没查出来",
+                                    nodes.len()
+                                ));
+                            }
+                        }
                         info.push(
                             "还不能驱动模型：节点记录里没有父指针（父子关系未解），蒙皮权重也不在这份文件里"
                                 .into(),

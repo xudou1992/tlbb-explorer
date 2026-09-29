@@ -367,24 +367,41 @@ pub fn node_names(raw: &[u8]) -> Vec<String> {
 #[derive(Debug, Clone, PartialEq)]
 pub struct Node {
     pub name: String,
-    /// 行主序 4×4。末行恒为 (0,0,0,1)——那是识别一条记录的判据之一。
+    /// 行主序 4×4，引擎的 D3DX 行向量约定：前三行是基向量，第四行 (m[12],m[13],m[14],1)
+    /// 是绑定位移 + 齐次 1。识别一条记录的判据是「基向量两两垂直且等比、m[15]=1」。
     pub bind: [f32; 16],
 }
 
-/// 尾部节点记录的形状（两份真样本算出来一致）：
+/// 尾部节点记录的形状：
 /// ```text
 /// 一条记录 96 字节 = 名字 char[32]（NUL 结尾，剩余填 0）
-///                  + 绑定矩阵 f32[16]（行主序，末行 0,0,0,1）
+///                  + 绑定矩阵 f32[16]
 /// ```
-/// 样本一：只有 `bone001` 一根骨的小模型；样本二：`origin`@0x34bc → `top`@0x351c，
-/// 间隔正好 96。父指针**不在记录里**（两份样本都是 96B 紧挨着，中间没有整数槽），
-/// 所以这里只报名字与矩阵，不猜父子关系。
+/// 矩阵是引擎那套 D3DX 行向量约定（引擎是 DX11）：**前三行是基向量，
+/// 第四行是 (tx, ty, tz, 1)**——平移在最后一行，不是 (0,0,0,1)。
+/// 一开始按「末行恒 0,0,0,1」认记录，只有单位矩阵的骨（origin、top）能过，
+/// 真骨骼全被否掉了：46 根骨的怪只认出 2 根。改成允许平移后，同一文件认出 32 根。
+/// 父指针**不在记录里**，所以这里只报名字与矩阵，不猜父子关系。
+///
+/// 另有两种记录混在同一段里，认出来但不当骨架节点：
+/// 128 字节的挂点表 = `tx_*` 挂点名 char[32] + 骨名 char[32] + 矩阵 f32[16]
+/// （骨名大写，如 `Bip01_Head`），以及只出现名字、后面不带矩阵的子骨名单。
 const NODE_RECORD: usize = 96;
+/// 头部声明的骨骼根数（46 根骨的怪在这里正好是 46，与它 `.ani` 的轨道数一致）。
+const BONE_COUNT_AT: usize = 0x110;
 
-/// 认一条记录：名字段必须可打印且 NUL 填充，矩阵必须行主序仿射（末行 0,0,0,1、
-/// 三轴两两垂直、等比缩放）。任何一条不满足就跳过这个位置——不硬凑。
+/// 认一条记录：名字段必须可打印且 NUL 填充，基向量必须两两垂直、等比缩放，
+/// 末位是齐次 1。任何一条不满足就跳过这个位置——不硬凑。
 fn read_node(raw: &[u8], at: usize) -> Option<Node> {
     let name_bytes = raw.get(at..at + 32)?;
+    // 名字必须从字段头开始：往前一个字节要是还是名字字符，那就是从长名字中间
+    // 切出来的假记录（`bip01_l_finger0` 被读成 `1_l_finger0`，本机真撞到过）
+    if at > 0 {
+        let prev = raw[at - 1];
+        if prev.is_ascii_alphanumeric() || matches!(prev, b'_' | b'-' | b'.') {
+            return None;
+        }
+    }
     let end = name_bytes.iter().position(|&c| c == 0)?;
     if end < 3 || end > 40 {
         return None;
@@ -405,11 +422,11 @@ fn read_node(raw: &[u8], at: usize) -> Option<Node> {
     for (i, chunk) in mb.chunks_exact(4).enumerate() {
         m[i] = f32::from_le_bytes(chunk.try_into().ok()?);
     }
-    if !m.iter().all(|v| v.is_finite() && v.abs() < 1e6) {
+    if !m.iter().all(|v| v.is_finite() && v.abs() < 1e7) {
         return None;
     }
-    // 行主序：末行 (0,0,0,1)
-    if !(m[12].abs() < 1e-5 && m[13].abs() < 1e-5 && m[14].abs() < 1e-5 && (m[15] - 1.0).abs() < 1e-4) {
+    // 行向量约定：m[15] 是齐次 1，m[12..15] 是平移（可以有值），前三行是基向量
+    if (m[15] - 1.0).abs() > 1e-3 {
         return None;
     }
     let rows: [&[f32]; 3] = [&m[0..3], &m[4..7], &m[8..11]];
@@ -428,6 +445,16 @@ fn read_node(raw: &[u8], at: usize) -> Option<Node> {
         }
     }
     Some(Node { name: String::from_utf8_lossy(nm).into_owned(), bind: m })
+}
+
+/// 头部声明的骨骼根数；文件太短或读不出就不报（不猜）。
+pub fn bone_count(raw: &[u8]) -> Option<usize> {
+    let b = raw.get(BONE_COUNT_AT..BONE_COUNT_AT + 4)?;
+    let n = u32::from_le_bytes(b.try_into().ok()?);
+    if n == 0 || n > 4096 {
+        return None;
+    }
+    Some(n as usize)
 }
 
 /// 扫出尾部的骨架节点（含绑定矩阵）。按 4 字节步长滑过去，只收「认得出是记录」
@@ -651,5 +678,121 @@ mod tests {
     fn truncated_file_is_rejected() {
         let v = &synth_plane()[..0x120];
         assert!(parse_geometry(v).is_err());
+    }
+}
+
+/// 骨架节点闸门。
+///
+/// 为什么要这两条：「96 字节 = 名字 + 矩阵」是在一堆浮点里认形状，很容易认错。
+/// 判据不能只有自己顺眼——要外部对账：
+/// 1. 左右对称。角色骨名有 `bip01_l_*` / `bip01_r_*` 成对，真实骨架必然镜像：
+///    两条骨的绑定平移只有**一根轴差个符号**。这条只有世界坐标系的绑定位移才满足，
+///    读歪一个字段就断。
+/// 2. 头部声明的骨骼数与同组 `.ani` 的轨道数相等——两份不同容器里的数。
+#[cfg(test)]
+mod node_tests {
+    use super::{bone_count, parse_nodes};
+    use crate::jpak::Pak;
+    use crate::payload;
+    use crate::preview::parse_ani;
+    use std::path::PathBuf;
+
+    fn raw_of(root: &PathBuf, pak: &str, hash: u64) -> Option<Vec<u8>> {
+        let p = Pak::open(root.join(format!("{pak}.pak"))).ok()?;
+        let rec = p.records().find(|r| r.hash == hash && r.stored > 0)?;
+        payload::decode(&p, &rec).ok().map(|d| d.bytes)
+    }
+
+    /// w1351_monster_xiyuqiezei：yifu_001.mesh 与 walk.ani
+    const MESH: u64 = 0xbcd65050a62986b7;
+    const ANI: u64 = 0x361180fe30a07e32;
+
+    /// 绑定平移是浮点，建模时左右不完全对等；5e-3 在这批样本上够用（骨长量级 1.0）。
+    fn near(a: f32, b: f32) -> bool {
+        (a - b).abs() < 5e-3
+    }
+
+    /// 找到名字在原文里的位置（名字段固定 32 字节，NUL 补零）。
+    fn name_at(raw: &[u8], name: &str) -> usize {
+        let mut needle = [0u8; 32];
+        needle[..name.len()].copy_from_slice(name.as_bytes());
+        raw.windows(32).position(|w| w == needle).expect("名字在原文里")
+    }
+
+    /// 把 `bip01_l_xxx` 换成 `bip01_r_xxx`。
+    fn mirror(name: &str) -> Option<String> {
+        if let Some(rest) = name.strip_prefix("_l_") {
+            return Some(format!("_r_{rest}"));
+        }
+        name.find("_l_").map(|i| format!("{}{}", &name[..i], &name[i..].replace("_l_", "_r_")))
+    }
+
+    /// 绑定平移是不是世界坐标里的骨架位姿：靠左右镜像对来判。
+    #[test]
+    fn bind_translations_mirror_left_and_right() {
+        let root = std::env::var("TLBB_ROOT").map(PathBuf::from).unwrap_or_else(|_| PathBuf::from("D:/TLGL"));
+        let Some(mesh) = raw_of(&root, "data", MESH) else {
+            eprintln!("跳过：本机没有 data.pak 或这份资源不在里面");
+            return;
+        };
+        let nodes = parse_nodes(&mesh);
+        let declared = bone_count(&mesh).expect("头部该有骨骼数");
+        assert!(nodes.len() >= 30, "只认出 {} 条节点记录（声明 {declared} 根骨）", nodes.len());
+        let mut pairs = 0;
+        for nd in &nodes {
+            let Some(m) = mirror(&nd.name) else { continue };
+            if !nd.name.contains("_l_") {
+                continue;
+            }
+            let Some(other) = nodes.iter().find(|x| x.name == m) else { continue };
+            let mut flipped = 0;
+            let mut same = 0;
+            for k in 0..3 {
+                if near(nd.bind[12 + k], other.bind[12 + k]) {
+                    same += 1;
+                } else if near(nd.bind[12 + k] + other.bind[12 + k], 0.0) {
+                    flipped += 1;
+                }
+            }
+            assert_eq!(flipped, 1, "{} 与 {m} 的绑定平移不是镜像：{:?} vs {:?}", nd.name, &nd.bind[12..15], &other.bind[12..15]);
+            assert_eq!(same, 2, "{} 与 {m} 只剩一根轴差符号才对", nd.name);
+            pairs += 1;
+        }
+        assert!(pairs >= 4, "镜像对太少（{pairs}），这条闸门没内容");
+        eprintln!("节点记录 {} 条（声明 {declared} 根骨），左右镜像对 {pairs} 对", nodes.len());
+    }
+
+    /// 头部 0x110 声明的骨骼数 = 同组动作的轨道数（两份不同容器对账）。
+    #[test]
+    fn declared_bone_count_equals_the_animation_track_count() {
+        let root = std::env::var("TLBB_ROOT").map(PathBuf::from).unwrap_or_else(|_| PathBuf::from("D:/TLGL"));
+        let (Some(mesh), Some(ani)) = (raw_of(&root, "data", MESH), raw_of(&root, "data", ANI)) else {
+            eprintln!("跳过：本机没有 data.pak 或这两份资源不在里面");
+            return;
+        };
+        let declared = bone_count(&mesh).expect("头部该有骨骼数");
+        let a = parse_ani(&ani).expect("动作应能解出");
+        assert_eq!(declared, a.bones, "mesh 头部声明 {declared} 根骨，动作里 {} 条轨道", a.bones);
+    }
+
+    /// 反证：把某条记录的平移改 1 个单位，镜像对就该断——说明闸门真的在看数。
+    #[test]
+    fn tampering_a_bind_row_breaks_the_mirror() {
+        let root = std::env::var("TLBB_ROOT").map(PathBuf::from).unwrap_or_else(|_| PathBuf::from("D:/TLGL"));
+        let Some(mut mesh) = raw_of(&root, "data", MESH) else {
+            eprintln!("跳过：本机没有 data.pak");
+            return;
+        };
+        let nodes = parse_nodes(&mesh);
+        let nd = nodes.iter().find(|x| x.name.contains("_l_") && mirror(&x.name).map_or(false, |m| nodes.iter().any(|y| y.name == m))).cloned().expect("该有镜像对");
+        let m = mirror(&nd.name).unwrap();
+        let at = name_at(&mesh, &nd.name);
+        let bumped = nd.bind[12] + 1.0;
+        mesh[at + 32 + 12 * 4..at + 32 + 12 * 4 + 4].copy_from_slice(&bumped.to_le_bytes());
+        let after = parse_nodes(&mesh);
+        let hit = after.iter().find(|x| x.name == nd.name).expect("改动后记录应仍被认出");
+        let other = after.iter().find(|x| x.name == m).expect("对侧仍在");
+        let still_mirror = (0..3).filter(|k| near(hit.bind[12 + k], other.bind[12 + k])).count();
+        assert!(still_mirror < 2, "改了平移却仍然对称，闸门是假的");
     }
 }

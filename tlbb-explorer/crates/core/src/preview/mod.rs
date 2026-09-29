@@ -7,12 +7,15 @@
 //! 语义层服务**浏览器**目标：回答「这是什么、里面有什么」。它不回答
 //! 「它属于谁、为什么没名字」——那是分析模式的事。
 
+pub mod anim;
 pub mod geometry;
 pub mod image;
 pub mod scene;
 pub mod summary;
 pub mod uvfit;
 pub mod uvfit_batch;
+
+pub use anim::{parse_ani, Anim, Track};
 
 pub use geometry::{parse_geometry, parse_mesh, MeshGeometry, MeshLayout};
 pub use image::{png_bytes, scale_rgba, write_png};

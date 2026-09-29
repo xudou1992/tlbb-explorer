@@ -363,7 +363,7 @@ pub fn browse_preview(pak_name: String, hash: String) -> Result<BrowsePreview, S
             // 父子关系与蒙皮权重仍未解——照实写在同一行里。
             match tlbb_core::preview::parse_geometry(&dec.bytes) {
                 Ok(g) => {
-                    let nodes = tlbb_core::preview::node_names(&dec.bytes);
+                    let nodes = tlbb_core::preview::parse_nodes(&dec.bytes);
                     info.push(format!(
                         "顶点 {} · 面 {} · 法线 {} · UV {}",
                         g.vertex_count,
@@ -374,13 +374,18 @@ pub fn browse_preview(pak_name: String, hash: String) -> Result<BrowsePreview, S
                     if nodes.is_empty() {
                         info.push("这份文件里没有骨架节点表（静态网格）".into());
                     } else {
-                        let head = nodes.iter().take(4).cloned().collect::<Vec<_>>().join("、");
+                        let head = nodes
+                            .iter()
+                            .take(4)
+                            .map(|n| n.name.clone())
+                            .collect::<Vec<_>>()
+                            .join("、");
                         info.push(format!(
-                            "骨架节点 {} 个：{head} 等（名字与动作文件的骨名表对得上）",
+                            "骨架节点 {} 个：{head} 等（名字与动作文件的骨名表对得上，每个都带绑定矩阵）",
                             nodes.len()
                         ));
                         info.push(
-                            "还不能驱动模型：父子骨链与蒙皮权重未解（矩阵阵列的相位没定死）"
+                            "还不能驱动模型：节点记录里没有父指针（父子关系未解），蒙皮权重也不在这份文件里"
                                 .into(),
                         );
                     }
@@ -1218,6 +1223,51 @@ mod tests {
             missing
         );
         eprintln!("骨架节点：mesh 尾部 {} 个，覆盖 .ani 的 {} 根骨", names.len(), a.bones);
+    }
+
+    /// 96 字节节点记录（名字 + 行主序 4×4 绑定矩阵）在两份真样本上逐字节成立。
+    /// 一份只有 `bone001` 一根骨，一份只有 `origin` + `top`——最小骨架最容易看清结构。
+    #[test]
+    fn node_records_parse_on_minimal_skeletons() {
+        use tlbb_core::preview::parse_nodes;
+        let (root, _db) = roots();
+        let pak = match open_pak(&root, "data") {
+            Ok(p) => p,
+            Err(_) => {
+                eprintln!("跳过：本机没有 data.pak");
+                return;
+            }
+        };
+        let bytes_of = |hash: u64| -> Option<Vec<u8>> {
+            let rec = pak.records().find(|r| r.hash == hash && r.stored > 0)?;
+            payload::decode(&pak, &rec).ok().map(|d| d.bytes)
+        };
+        let cases = [
+            (0x04c6552e00b465bdu64, vec!["bone001"]),
+            (0x04349dc783c71228u64, vec!["origin", "top"]),
+        ];
+        for (hash, want) in cases {
+            let Some(raw) = bytes_of(hash) else {
+                eprintln!("跳过：{hash:016x} 不在这台机器的容器里");
+                return;
+            };
+            let nodes = parse_nodes(&raw);
+            let got: Vec<&str> = nodes.iter().map(|n| n.name.as_str()).collect();
+            assert_eq!(got, want, "{hash:016x} 节点表读错");
+            for n in &nodes {
+                assert!(
+                    n.bind[12].abs() < 1e-5 && n.bind[15] - 1.0 < 1e-3,
+                    "{} 的矩阵末行不是 (0,0,0,1)：{:?}",
+                    n.name,
+                    &n.bind[12..]
+                );
+            }
+        }
+        // 大骨架那只怪：节点数不该少于动作文件的 45 根骨
+        let yifu = bytes_of(0xbcd65050a62986b7).expect("yifu mesh 应在");
+        let nodes = parse_nodes(&yifu);
+        assert!(nodes.len() >= 45, "yifu 尾部只读出 {} 个节点，少于动作文件的 45 根骨", nodes.len());
+        eprintln!("yifu 节点 {} 个，前 4：{:?}", nodes.len(), nodes.iter().take(4).map(|n| n.name.clone()).collect::<Vec<_>>());
     }
 
     #[test]

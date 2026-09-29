@@ -17,7 +17,7 @@ pub mod uvfit_batch;
 
 pub use anim::{parse_ani, rest_poses, Anim, Rest, Track};
 
-pub use geometry::{node_names, parse_geometry, parse_mesh, MeshGeometry, MeshLayout};
+pub use geometry::{node_names, parse_geometry, parse_mesh, parse_nodes, MeshGeometry, MeshLayout, Node};
 pub use image::{png_bytes, scale_rgba, write_png};
 pub use scene::{is_empty_grid, known_version, parse_scene, SceneError, SceneGrid, SceneInstance};
 pub use summary::{

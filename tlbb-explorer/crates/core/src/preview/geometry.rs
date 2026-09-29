@@ -363,6 +363,91 @@ pub fn node_names(raw: &[u8]) -> Vec<String> {
     out
 }
 
+/// 一个骨架节点：名字 + 绑定矩阵（bind pose）。
+#[derive(Debug, Clone, PartialEq)]
+pub struct Node {
+    pub name: String,
+    /// 行主序 4×4。末行恒为 (0,0,0,1)——那是识别一条记录的判据之一。
+    pub bind: [f32; 16],
+}
+
+/// 尾部节点记录的形状（两份真样本算出来一致）：
+/// ```text
+/// 一条记录 96 字节 = 名字 char[32]（NUL 结尾，剩余填 0）
+///                  + 绑定矩阵 f32[16]（行主序，末行 0,0,0,1）
+/// ```
+/// 样本一：只有 `bone001` 一根骨的小模型；样本二：`origin`@0x34bc → `top`@0x351c，
+/// 间隔正好 96。父指针**不在记录里**（两份样本都是 96B 紧挨着，中间没有整数槽），
+/// 所以这里只报名字与矩阵，不猜父子关系。
+const NODE_RECORD: usize = 96;
+
+/// 认一条记录：名字段必须可打印且 NUL 填充，矩阵必须行主序仿射（末行 0,0,0,1、
+/// 三轴两两垂直、等比缩放）。任何一条不满足就跳过这个位置——不硬凑。
+fn read_node(raw: &[u8], at: usize) -> Option<Node> {
+    let name_bytes = raw.get(at..at + 32)?;
+    let end = name_bytes.iter().position(|&c| c == 0)?;
+    if end < 3 || end > 40 {
+        return None;
+    }
+    let nm = &name_bytes[..end];
+    if !nm
+        .iter()
+        .all(|c| c.is_ascii_alphanumeric() || matches!(c, b'_' | b'-' | b'.'))
+    {
+        return None;
+    }
+    // 名字段剩余必须真是填充 0（浮点流里撞出一段可打印 ASCII 后面跟着的不会是 0）
+    if name_bytes[end..].iter().any(|&c| c != 0) {
+        return None;
+    }
+    let mb = raw.get(at + 32..at + NODE_RECORD)?;
+    let mut m = [0f32; 16];
+    for (i, chunk) in mb.chunks_exact(4).enumerate() {
+        m[i] = f32::from_le_bytes(chunk.try_into().ok()?);
+    }
+    if !m.iter().all(|v| v.is_finite() && v.abs() < 1e6) {
+        return None;
+    }
+    // 行主序：末行 (0,0,0,1)
+    if !(m[12].abs() < 1e-5 && m[13].abs() < 1e-5 && m[14].abs() < 1e-5 && (m[15] - 1.0).abs() < 1e-4) {
+        return None;
+    }
+    let rows: [&[f32]; 3] = [&m[0..3], &m[4..7], &m[8..11]];
+    let lens: [f32; 3] = [0, 1, 2].map(|k| rows[k].iter().map(|v| v * v).sum::<f32>().sqrt());
+    let mn = lens.iter().fold(f32::INFINITY, |a, &b| a.min(b));
+    let mx = lens.iter().fold(0f32, |a, &b| a.max(b));
+    if mn <= 1e-6 || mx / mn > 1.05 {
+        return None;
+    }
+    for i in 0..3 {
+        for k in i + 1..3 {
+            let d: f32 = (0..3).map(|t| rows[i][t] * rows[k][t]).sum();
+            if d.abs() / (lens[i] * lens[k]) > 0.03 {
+                return None;
+            }
+        }
+    }
+    Some(Node { name: String::from_utf8_lossy(nm).into_owned(), bind: m })
+}
+
+/// 扫出尾部的骨架节点（含绑定矩阵）。按 4 字节步长滑过去，只收「认得出是记录」
+/// 的位置，并保证相邻两条至少隔一条记录的长度（不重叠计数）。
+pub fn parse_nodes(raw: &[u8]) -> Vec<Node> {
+    let mut out = Vec::new();
+    let mut i = 0usize;
+    while i + NODE_RECORD <= raw.len() {
+        if let Some(n) = read_node(raw, i) {
+            if !out.iter().any(|x: &Node| x.name == n.name && x.bind == n.bind) {
+                out.push(n);
+            }
+            i += NODE_RECORD;
+            continue;
+        }
+        i += 4;
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

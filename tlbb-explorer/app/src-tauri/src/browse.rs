@@ -1315,6 +1315,40 @@ mod tests {
         eprintln!("骨架节点：mesh 尾部 {} 个，覆盖 .ani 的 {} 根骨", names.len(), a.bones);
     }
 
+    /// 网格预览必须把「头部声明几根骨 / 认出几条节点」的差额说出来。
+    /// 差额是真的（46 声明、36 认出），瞒着报「骨架 36 个」会让人以为读全了。
+    #[test]
+    fn preview_says_declared_versus_parsed_bones() {
+        let (root, _db) = roots();
+        if !root.join("data.pak").is_file() {
+            eprintln!("跳过：本机没有 data.pak");
+            return;
+        }
+        // w1351_monster_xiyuqiezei_yifu_001.mesh：从容器清单里拿到它的 (pak, hash)
+        let mut found = None;
+        for card in browse_paks().expect("browse_paks").paks.into_iter().take(2) {
+            let tree = match browse_tree(card.name.clone()) {
+                Ok(t) => t,
+                Err(_) => continue,
+            };
+            if let Some(e) = tree.entries.iter().find(|e| e.hash == "bcd65050a62986b7") {
+                found = Some((card.name.clone(), e.hash.clone()));
+                break;
+            }
+        }
+        let Some((pak, hash)) = found else {
+            eprintln!("跳过：这几只容器里没有那只怪的网格");
+            return;
+        };
+        let pv = browse_preview(pak, hash).expect("browse_preview");
+        let joined = pv.info.join(" | ");
+        assert!(joined.contains("骨架节点 36 个"), "该报出节点条数：{joined}");
+        assert!(joined.contains("绑定矩阵"), "该说明每条记录带矩阵：{joined}");
+        assert!(joined.contains("声明 46 根骨"), "该说出头部声明与认出的差额：{joined}");
+        assert!(joined.contains("还不能驱动模型") && joined.contains("父指针"), "仍未解的父骨链必须同屏：{joined}");
+        eprintln!("网格预览：{joined}");
+    }
+
     /// 96 字节节点记录（名字 + 行主序 4×4 绑定矩阵）在两份真样本上逐字节成立。
     /// 一份只有 `bone001` 一根骨，一份只有 `origin` + `top`——最小骨架最容易看清结构。
     #[test]

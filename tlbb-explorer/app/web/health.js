@@ -66,7 +66,41 @@ function summaryHtml(h) {
       <h3>被提到最多、但对不上 <em>包里没有</em></h3>
       <ul class="lines">${h.topDangling.map((d) => nameRow(d, "dangling")).join("") || `<li class="dim">没有对不上的名字。</li>`}</ul>
     </section>
-  </div>`;
+
+  <section class="hl-sec" id="gapSec">
+    <h3>容器与清单 <em>pak 索引里有多少、清单登记了多少</em></h3>
+    <p class="dim">正在数容器索引…</p>
+  </section>`;
+}
+
+/// 清单是某一刻扫容器落下来的快照。客户端打了补丁（`data_1.pak` 又长几代索引）
+/// 或者换机后没重建库，容器里就有文件是清单不认识的：「浏览」按容器列文件看得见，
+/// 「资产检索 / 反查」按清单查看不见。这个不一致必须由工具自己说出来——
+/// 不然用户只会以为「客户端里没这个文件」。
+async function paintGap() {
+  const sec = el("gapSec");
+  if (!sec) return;
+  try {
+    const g = await api.catalogGap();
+    const miss = g.uncovered;
+    sec.innerHTML = `<div class="hl-cards">
+      <div class="hl-card"><dt>容器索引条目</dt><dd>${num(g.containerUnique)}</dd><span>${g.paks} 个容器去重后的文件数</span></div>
+      <div class="hl-card"><dt>清单已登记</dt><dd>${num(g.dbResources)}</dd><span>resources.db 里的条数</span></div>
+      <div class="hl-card"><dt>清单没登记</dt><dd class="${miss ? "bad" : ""}">${num(miss)}</dd><span>${
+        miss
+          ? "这些文件「浏览」里能翻到，资产检索与反查查不到"
+          : "容器里的每一条都在清单里"
+      }</span></div>
+    </div>
+    ${
+      miss
+        ? `<p class="foot">清单比容器少 ${num(miss)} 条：客户端打过补丁，或这台机器还没重建过清单。重建方法见 README「首次运行」第 2 步（一趟几分钟）。</p>`
+        : ""
+    }
+    ${(g.unreadable || []).length ? `<p class="foot">有容器打不开：${esc(g.unreadable.join("；"))}</p>` : ""}`;
+  } catch (e) {
+    sec.innerHTML = `<p class="dim">数不出容器与清单的缺口：${esc(errText(e))}</p>`;
+  }
 }
 
 function bindDrill() {
@@ -126,6 +160,7 @@ export async function openHealth() {
   if (state.health) {
     box.innerHTML = summaryHtml(state.health);
     bindDrill();
+    paintGap();
     return;
   }
   // 懒预热之后「还没开始读取」是浏览首屏的常态，不是故障。ref_health 不触发
@@ -162,6 +197,7 @@ export async function openHealth() {
       );
     }
     bindDrill();
+    paintGap();
   } catch (e) {
     box.innerHTML = `<p class="dim">读取失败：${esc(errText(e))}</p>`;
   } finally {

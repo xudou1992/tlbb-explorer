@@ -23,6 +23,8 @@ export const assetInspect = (gid) => call("asset_inspect", { gid });
 export const preview = (hash) => call("preview", { hash });
 export const meshData = (name, hash) => call("mesh_data", { name, hash: hash || null });
 export const refHealth = (danglingLimit) => call("ref_health", { danglingLimit });
+/// 容器与清单的缺口：pak 索引里有多少条、清单登记了多少条、差多少条没进清单。
+export const catalogGap = () => call("catalog_gap");
 /// key 是 16 位编号或客户端原文名：悬空的名字没有编号，只能按名字反查。
 export const citedBy = (key, limit) => call("cited_by", { key, limit });
 /// 地图侧两个命令：清单 + 一张图的全部格子（一次回包，不逐个物件问）。

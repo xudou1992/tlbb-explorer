@@ -265,3 +265,12 @@ test("后台批量试贴的接线不能被拆：没有候选榜时那颗按钮�
   assert.match(src, /texBlock\(insp, warmStatus\)/, "状态要真传进纯函数那一层");
   assert.match(src, /api\s*\.\s*textureWarmStatus|\.textureWarmStatus\(\)/, "打开详情时要问一次还差多少只");
 });
+
+test("容器与清单的缺口必须自己说出来（不能让用户以为客户端里没这个文件）", async () => {
+  const src = fs.readFileSync(path.join(web, "health.js"), "utf8");
+  assert.match(src, /id="gapSec"/, "摘要里要有那一节的位置");
+  assert.match(src, /await api\.catalogGap\(\)/, "数字只能来自后端，前端不算术");
+  assert.match(src, /清单比容器少/, "有缺口时必须说清差多少、去哪重建");
+  // 两条渲染路径（缓存回显 / 现查）都得填这一节，漏一条就是「有时不说」。
+  assert.equal((src.match(/paintGap\(\);/g) || []).length, 2, "两条渲染路径都要调 paintGap");
+});

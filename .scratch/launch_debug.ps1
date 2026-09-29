@@ -1,4 +1,6 @@
-# 带 WebView2 远程调试端口启动 tlbb-shell,用于自动化审计界面交互。
-$env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS = '--remote-debugging-port=9222'
-Start-Process -FilePath 'D:\TLGL\tlbb-explorer\app\src-tauri\target\release\tlbb-shell.exe'
-Write-Host 'LAUNCHED'
+Stop-Process -Name tlbb-shell -Force -ErrorAction SilentlyContinue
+Start-Sleep -Seconds 1
+$env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS = "--remote-debugging-port=9222"
+$p = Start-Process -FilePath "D:\TLGL\.scratch\rc3\release\tlbb-shell.exe" -PassThru
+Start-Sleep -Seconds 12
+Write-Output "PID $($p.Id)"

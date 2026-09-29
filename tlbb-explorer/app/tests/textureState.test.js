@@ -55,3 +55,61 @@ test("候选区转义：名字里的尖括号不能变成标签", () => {
   assert.ok(!html.includes("<script>"));
   assert.ok(html.includes("&lt;script&gt;"));
 });
+
+// ---- v0.4.2：因子证据行 + 按编号取图 ----
+const F = { uvFit: 0.12, alphaFit: 1, sizeFit: 0.8, blackBias: true, whiteBias: false, meanColor: [48, 34, 19] };
+const CAND_V2 = (i, adjusted, factors) => ({
+  hash: `ee0000000000000${i}`, w: 512, h: 512, codec: "BC3", mips: 10,
+  score: 70, adjustedScore: adjusted, factors, png: "",
+});
+const GROUP_V2 = { mesh: "a.mesh", pool: 1650, state: "candidates", source: "batch", ranked: true,
+  candidates: [CAND_V2(1, 1.09, F), CAND_V2(2, 2.5, { ...F, meanColor: [200, 200, 200] })] };
+
+test("有因子就摆证据行：三个百分比 + 平均色点，一个都不省", () => {
+  const html = texCandidatesHtml(GROUP_V2, []);
+  assert.ok(html.includes("UV 贴合 12%"), html);
+  assert.ok(html.includes("透明边界 100%"), html);
+  assert.ok(html.includes("尺寸先验 80%"), html);
+  assert.ok(html.includes("整体偏黑"), html);
+  assert.ok(!html.includes("整体偏白"), "whiteBias=false 不该冒出「偏白」");
+  assert.ok(html.includes("rgb(48, 34, 19)"), html);
+});
+
+test("没有因子（旧离线缓存）：整行不摆，绝不拿 0% 冒充「量过」", () => {
+  const html = texCandidatesHtml({ ...GROUP_V2, ranked: false,
+    candidates: [{ hash: "ff00000000000001", w: 256, h: 256, codec: "RGBA32", mips: 8, score: 4.2, png: "data:x" }] }, []);
+  assert.ok(!html.includes("UV 贴合"), html);
+  assert.ok(!html.includes("0%"), `不该出现假 0%：${html}`);
+  assert.ok(html.includes("系统评分 4.2"), "方差分仍要说清");
+  assert.ok(!html.includes("综合分"), "没有综合分别摆这一项");
+});
+
+test("有综合分就写明它是排序分，与方差分并列（两个数说的是两件事）", () => {
+  const html = texCandidatesHtml(GROUP_V2, []);
+  assert.ok(html.includes("综合分 2.50"), html);
+  assert.ok(html.includes("系统评分 70.0"), html);
+  assert.ok(html.includes("未确认"), "分数再高也只是候选态");
+});
+
+test("批量缓存的占位图按编号取，不再按名次（榜单会被重排）", () => {
+  const html = texCandidatesHtml(GROUP_V2, []);
+  assert.ok(html.includes('data-hash="ee00000000000001"'), html);
+  assert.ok(!/<img[^>]*data-idx/.test(html), "取图的 img 不该再带名次（按钮的 data-idx 是另一回事）");
+  assert.ok(!html.includes("data-mesh"), "按编号就不需要再带网格名");
+});
+
+test("排序依据这句话跟着后端口径走：ranked 说综合分，否则说方差比", () => {
+  const ranked = texBlock({ texSlots: [], textureCandidates: [GROUP_V2] });
+  assert.ok(ranked.note.includes("综合分"), ranked.note);
+  const legacy = texBlock({ texSlots: [], textureCandidates: [{ ...GROUP_V2, ranked: false }] });
+  assert.ok(legacy.note.includes("UV 岛内外方差比"), legacy.note);
+  assert.ok(!legacy.note.includes("综合分"), legacy.note);
+});
+
+test("平均色只有三段才景色点：残缺就不画，不猜一个颜色出来", () => {
+  const html = texCandidatesHtml({ ...GROUP_V2, candidates: [
+    CAND_V2(1, 1.0, { ...F, meanColor: [1, 2] }),
+    CAND_V2(2, 1.0, { ...F, meanColor: null }),
+  ] }, []);
+  assert.equal((html.match(/tex-mean/g) || []).length, 0, html);
+});

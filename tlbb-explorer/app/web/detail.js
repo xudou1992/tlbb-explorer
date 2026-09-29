@@ -161,24 +161,31 @@ function paintTex(insp) {
   loadCandidatePngs();
 }
 
-/// 批量缓存候选卡（img[data-need-png]）不带内嵌图：按（网格, 名次）逐张现解
-/// 256px 缩略图。串行不并发——每次调用后端要开一次 pak，10 张齐发就是 10 次开盘。
+/// 批量缓存（source=batch）的候选卡不带内嵌图：按候选编号 hash 逐张现解 256px
+/// 缩略图。串行不并发——每次调用后端要开一次 pak，10 张齐发就是 10 次开盘。
 /// 旧缓存自带 data URL，卡片上没有这个标记，不会走到这里，老链路零改动。
-/// 取到的图顺手回填 texReply，这样「套上看看」和旧缓存一样直接用现成的 png；
+/// 取到的图顺手回填进回包，这样「套上看看」和旧缓存一样直接用现成的 png；
 /// 回包 null / 报错都让占位框留着，title 说明原因——没有图就是没有图。
+/// 认卡只认编号：榜单在 Rust 侧按综合分重排过，名次不再对应缓存里的下标。
 async function loadCandidatePngs() {
   if (el("secTex").hidden) return; // 区块没露脸就不花这份解码钱
   const reply = texReply; // 换资产后 texReply 会换人：旧回包的图不许写进新榜
+  const byHash = (hash) => {
+    for (const g of reply.textureCandidates || []) {
+      const c = (g.candidates || []).find((x) => x.hash === hash);
+      if (c) return c;
+    }
+    return null;
+  };
   const imgs = Array.from(el("texCand").querySelectorAll("img[data-need-png]"));
   for (const img of imgs) {
     if (!img.isConnected || texReply !== reply) return; // 已被下一轮 paint 换掉
     try {
-      const png = await api.candidatePng(img.dataset.mesh, Number(img.dataset.idx));
+      const png = await api.candidatePng(img.dataset.hash);
       if (!img.isConnected || texReply !== reply) return;
       if (png) {
         img.src = png;
-        const g = (reply.textureCandidates || [])[0];
-        const c = g && g.mesh === img.dataset.mesh && g.candidates[Number(img.dataset.idx)];
+        const c = byHash(img.dataset.hash);
         if (c && !c.png) c.png = png;
       } else {
         img.title = "缩略图没读出来";

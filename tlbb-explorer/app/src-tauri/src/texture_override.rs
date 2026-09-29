@@ -37,6 +37,9 @@ pub struct TexCandGroup {
     /// Some("batch") = 全库批量缓存（无 PNG，缩略图由 candidate_png 按需现解）。
     #[serde(skip_serializing_if = "Option::is_none")]
     pub source: Option<String>,
+    /// 这张榜是否按 v2 综合分（adjustedScore）重排过。前端据此说明排序依据——
+    /// 由后端出这一句，免得排序规则改了而说明还写着「按 UV 排」。
+    pub ranked: bool,
     pub candidates: Vec<TexCand>,
 }
 
@@ -50,8 +53,52 @@ pub struct TexCand {
     pub mips: u32,
     /// uvfit 岛内外方差比。特征指标，不是归属概率——前端必须写明「未确认」。
     pub score: f64,
+    /// v2 排序分（评分 × 尺寸/alpha 因子）。批量缓存没写这个字段就是 None——
+    /// 「没读到」和「0 分」是两件事，前端据此决定摆不摆证据行。
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub adjusted_score: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub factors: Option<TexFactors>,
     /// 256² PNG data URL，给「套上看看」直接包到模型上。
     pub png: String,
+}
+
+/// uvfit v2 的特征因子（v0.4.2）：UV 贴合、alpha 边界、尺寸先验、黑白偏置、平均色。
+/// 这些是「为什么这张排在前面」的可查看证据，不是归属结论。
+/// `colorSemantics` / `formatFit` 在核心里还是 None（未实现），这里就不给字段——
+/// 前端拿不到就不摆，不给「0」这种看着像结论的假值。
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct TexFactors {
+    pub uv_fit: f64,
+    pub alpha_fit: f64,
+    pub size_fit: f64,
+    pub black_bias: bool,
+    pub white_bias: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub mean_color: Option<[u8; 3]>,
+}
+
+fn f_of(v: &serde_json::Value, k: &str) -> Option<f64> {
+    v.get(k).and_then(|x| x.as_f64())
+}
+
+fn factors_of(c: &serde_json::Value) -> Option<TexFactors> {
+    let f = c.get("factors")?;
+    Some(TexFactors {
+        uv_fit: f_of(f, "uvFit")?,
+        alpha_fit: f_of(f, "alphaFit")?,
+        size_fit: f_of(f, "sizeFit")?,
+        black_bias: f.get("blackBias").and_then(|x| x.as_bool()).unwrap_or(false),
+        white_bias: f.get("whiteBias").and_then(|x| x.as_bool()).unwrap_or(false),
+        mean_color: f.get("meanColor").and_then(|x| x.as_array()).and_then(|a| {
+            if a.len() == 3 {
+                Some([a[0].as_u64()? as u8, a[1].as_u64()? as u8, a[2].as_u64()? as u8])
+            } else {
+                None
+            }
+        }),
+    })
 }
 
 fn is_texture_name(s: &str) -> bool {
@@ -119,11 +166,38 @@ fn parse_candidates(v: &serde_json::Value) -> Vec<TexCand> {
                 codec: c.get("codec").and_then(|x| x.as_str()).unwrap_or_default().into(),
                 mips: c.get("mips").and_then(|x| x.as_u64()).unwrap_or(0) as u32,
                 score: c.get("score").and_then(|x| x.as_f64()).unwrap_or(0.0),
+                adjusted_score: f_of(c, "adjustedScore"),
+                factors: factors_of(c),
                 png: c.get("png").and_then(|x| x.as_str()).unwrap_or_default().into(),
             });
         }
     }
     candidates
+}
+
+/// 排序口径（v0.4.2）：缓存里每条都带 adjustedScore 时按它降序——那已经是
+/// 「UV 贴合 × 尺寸先验 × alpha 边界」的综合分，比只看方差比更接近人能接受的
+/// 顺序。只要有一条缺分（旧离线缓存）就整榜保持缓存原序：一半有分一半没分
+/// 时重排，等于把没有证据的那些塞到中间冒充有证据。
+///
+/// 排序发生在这里（数据出栈之前），不在前端——前端的「第几张」必须和后端
+/// 榜单是同一个顺序。
+fn rank(mut cands: Vec<TexCand>) -> Vec<TexCand> {
+    if cands.is_empty() || !cands.iter().all(|c| c.adjusted_score.is_some()) {
+        return cands;
+    }
+    cands.sort_by(|a, b| {
+        b.adjusted_score
+            .unwrap()
+            .partial_cmp(&a.adjusted_score.unwrap())
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
+    cands
+}
+
+/// 这张榜是否按 v2 综合分重排过（前端据此说明排序依据，不含糊成「按 UV 排」）。
+pub fn ranked_by_adjusted(cands: &[TexCand]) -> bool {
+    cands.len() > 1 && cands.iter().all(|c| c.adjusted_score.is_some())
 }
 
 /// 读 uvfit 候选缓存：每组网格一份，找不到就是没有（🔴，不编造）。
@@ -156,7 +230,8 @@ pub fn load_candidate_groups(root: &Path, members: &[(String, String, bool)]) ->
         let Ok(v) = serde_json::from_slice::<serde_json::Value>(&raw) else {
             continue;
         };
-        let candidates = parse_candidates(&v);
+        let candidates = rank(parse_candidates(&v));
+        let ranked = ranked_by_adjusted(&candidates);
         if candidates.is_empty() {
             continue;
         }
@@ -165,6 +240,7 @@ pub fn load_candidate_groups(root: &Path, members: &[(String, String, bool)]) ->
             pool: v.get("pool").and_then(|x| x.as_u64()).unwrap_or(0) as usize,
             state: "candidates".into(),
             source,
+            ranked,
             candidates,
         });
         if out.len() >= 2 {
@@ -182,24 +258,6 @@ fn now_ts() -> u64 {
 }
 
 // ----------------------------------------------------------------------- 批量候选缩略图
-
-/// 批量榜单第 idx 名的候选 hash。文件不存在、解析失败、越界、空号都如实回
-/// None——没有这张缩略图是事实，不是错误，前端保持占位就好。
-fn batch_candidate_hash(root: &Path, mesh: &str, idx: usize) -> Option<String> {
-    let stem = mesh.strip_suffix(".mesh").unwrap_or(mesh);
-    let file = root
-        .join(".scratch/uvfit_batch/results")
-        .join(format!("{stem}.json"));
-    let raw = std::fs::read(&file).ok()?;
-    let v = serde_json::from_slice::<serde_json::Value>(&raw).ok()?;
-    let h = v.get("candidates")?.as_array()?.get(idx)?;
-    let h = h.get("hash")?.as_str()?.trim();
-    if h.is_empty() {
-        None
-    } else {
-        Some(h.to_string())
-    }
-}
 
 /// 按 hash 现解一张 256px 缩略图，返回 (mime, 图像字节)。
 ///
@@ -301,21 +359,202 @@ pub fn texture_override_clear(slot_name: String, cfg_path: Option<String>) -> Re
 }
 
 /// 批量候选的按需缩略图：全库批量缓存只存元数据不存图，前端候选卡先摆占位框，
-/// 再按 (网格, 名次) 来要这一张——现解、缩到长边 256、PNG base64 data URL 回去。
-/// 榜单读不到 / 名次越界回 Ok(None)，解码失败回 Err：两种都让前端保持占位，
-/// 没有图就是没有图，不编造。
+/// 再按候选自带的编号（hash）来要这一张——现解、缩到长边 256、PNG base64
+/// data URL 回去。
+///
+/// 为什么按编号而不是按「第几名」：榜单出栈前会按 v2 综合分重排，名次从此
+/// 不再等于缓存里的下标。按名次取图，迟早把 A 的纹样摆到 B 的卡上——那是
+/// 编造证据，比没有图严重得多。编号解不开回 Err（前端保持占位并写明原因）。
 #[tauri::command]
-pub async fn candidate_png(mesh: String, idx: usize) -> Result<Option<String>, String> {
+pub async fn candidate_png(hash: String) -> Result<Option<String>, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let (root, db) = crate::inspector::roots();
-        let Some(hash_hex) = batch_candidate_hash(&root, &mesh, idx) else {
-            return Ok(None);
-        };
-        let hash = u64::from_str_radix(&hash_hex, 16)
-            .map_err(|e| format!("候选编号 {hash_hex} 不是合法的 16 位编号：{e}"))?;
+        let hex = hash.trim().trim_start_matches("0x");
+        let hash = u64::from_str_radix(hex, 16)
+            .map_err(|_| format!("贴图编号 {hex} 不是合法的 16 位十六进制"))?;
         decode_candidate_png(&root, &db, hash)
             .map(|(mime, bytes)| Some(format!("data:{mime};base64,{}", crate::inspector::b64(&bytes))))
     })
     .await
     .map_err(|e| e.to_string())?
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn value(json: &str) -> serde_json::Value {
+        serde_json::from_str(json).expect("测试里的 JSON 应能解析")
+    }
+
+    /// v2 批量缓存：因子与综合分要一路带到前端——那是「凭什么排前面」的唯一凭据。
+    #[test]
+    fn parses_v2_factors_and_adjusted_score() {
+        let v = value(
+            r#"{"candidates":[
+              {"hash":"aa00000000000001","w":512,"h":512,"codec":"BC3","mips":10,"score":70.0,
+               "adjustedScore":1.09,
+               "factors":{"uvFit":0.12,"alphaFit":1.0,"sizeFit":1.0,"blackBias":true,"whiteBias":false,"meanColor":[48,34,19]}},
+              {"hash":"aa00000000000002","w":256,"h":256,"codec":"RGBA32","mips":8,"score":300.0,
+               "adjustedScore":2.5,
+               "factors":{"uvFit":0.3,"alphaFit":0.0,"sizeFit":0.8,"blackBias":false,"whiteBias":true,"meanColor":[200,200,200]}}
+            ]}"#,
+        );
+        let got = rank(parse_candidates(&v));
+        assert_eq!(got.len(), 2);
+        // 综合分降序：分数高（2.5）的那张在前，哪怕它的方差比更低。
+        assert_eq!(got[0].hash, "aa00000000000002", "应按综合分排序，不按方差比");
+        assert!(ranked_by_adjusted(&got), "全榜都有综合分时应报告已重排");
+        let f = got[0].factors.as_ref().expect("因子应带出来");
+        assert_eq!((f.uv_fit, f.alpha_fit, f.size_fit), (0.3, 0.0, 0.8));
+        assert_eq!(f.black_bias, false);
+        assert_eq!(f.white_bias, true);
+        assert_eq!(f.mean_color, Some([200, 200, 200]));
+    }
+
+    /// 旧离线缓存没有综合分：整榜保持缓存原序，也不谎报「已重排」。
+    #[test]
+    fn legacy_cache_without_scores_keeps_order_and_says_so() {
+        let v = value(
+            r#"{"candidates":[
+              {"hash":"bb00000000000001","w":512,"h":512,"codec":"BC3","mips":10,"score":900.0,"png":"data:1"},
+              {"hash":"bb00000000000002","w":512,"h":512,"codec":"BC3","mips":10,"score":100.0,"png":"data:2"}
+            ]}"#,
+        );
+        let got = rank(parse_candidates(&v));
+        assert_eq!(got[0].hash, "bb00000000000001", "没有综合分就保持原序");
+        assert!(got.iter().all(|c| c.adjusted_score.is_none()), "缺分应是 None，不是 0");
+        assert!(!ranked_by_adjusted(&got));
+    }
+
+    /// 一半有分一半没分：不重排。把没证据的那些插进有证据的榜中间，
+    /// 等于替它们编了一份不存在的证据。
+    #[test]
+    fn mixed_cache_is_not_resorted() {
+        let v = value(
+            r#"{"candidates":[
+              {"hash":"cc00000000000001","score":1.0,"adjustedScore":9.0},
+              {"hash":"cc00000000000002","score":2.0}
+            ]}"#,
+        );
+        let got = rank(parse_candidates(&v));
+        assert_eq!(got[0].hash, "cc00000000000001", "有缺分时保持原序");
+        assert!(!ranked_by_adjusted(&got), "半榜有分不能报已重排");
+    }
+
+    /// 因子残缺的分两种：三项主因子缺一个就整份作废（主因子是这份榜的排序
+    /// 原料，残缺了就不该摆「证据」）；平均色坏掉只丢平均色——UV/透明/尺寸
+    /// 那三个数仍然是量出来的事实，不该被一个坏色值连坐。
+    #[test]
+    fn partial_factors_are_dropped_not_zero_filled() {
+        let v = value(
+            r#"{"candidates":[
+              {"hash":"dd00000000000001","score":1.0,"factors":{"alphaFit":1.0,"sizeFit":1.0}},
+              {"hash":"dd00000000000002","score":1.0,"factors":{"uvFit":0.1,"alphaFit":1.0,"sizeFit":1.0,"meanColor":[1,2]}},
+              {"hash":"dd00000000000003","score":1.0,"factors":{"uvFit":0.1,"alphaFit":1.0,"sizeFit":1.0,"meanColor":[1,2,3]}}
+            ]}"#,
+        );
+        let got = parse_candidates(&v);
+        assert!(got[0].factors.is_none(), "缺 uvFit 的因子应整份作废");
+        let bad_color = got[1].factors.as_ref().expect("主因子齐全，平均色坏不该连坐");
+        assert_eq!(bad_color.mean_color, None, "meanColor 不是三段时不猜一个颜色");
+        assert_eq!(bad_color.uv_fit, 0.1, "其余因子照实带出来");
+        let ok = got[2].factors.as_ref().expect("齐全的那份应保留");
+        assert_eq!(ok.mean_color, Some([1, 2, 3]));
+        assert_eq!(ok.black_bias, false, "黑白偏置缺省是「没有这个偏置」，不是「未知」");
+    }
+
+    /// 吃本机批量缓存（随仓库分发的派生元数据，不含像素）：真榜上有因子、
+    /// 且出栈顺序确实按综合分。缓存不在这台机器上就自己跳过并说明——
+    /// 项目纪律：夹具缺席降级跳过，不算失败。
+    #[test]
+    fn batch_cache_on_disk_carries_factors_and_ranks() {
+        let (root, _db) = crate::inspector::roots();
+        let file = std::fs::read_dir(root.join(".scratch/uvfit_batch/results"))
+            .map(|mut it| {
+                it.flatten()
+                    .find_map(|e| {
+                        let p = e.path();
+                        p.is_file().then_some(p)
+                    })
+            })
+            .unwrap_or(None);
+        let Some(file) = file else {
+            eprintln!("跳过：本机没有 .scratch/uvfit_batch/results 批量缓存（离线试贴还没跑）");
+            return;
+        };
+        let stem = file
+            .file_stem()
+            .unwrap_or_default()
+            .to_string_lossy()
+            .to_string();
+        let groups = load_candidate_groups(
+            &root,
+            &[("mesh".to_string(), format!("{stem}.mesh"), true)],
+        );
+        let Some(g) = groups.first() else {
+            eprintln!("跳过：{stem} 这份缓存没有可用候选");
+            return;
+        };
+        assert_eq!(g.source.as_deref(), Some("batch"), "批量缓存应标明来源");
+        let first = &g.candidates[0];
+        assert!(
+            first.adjusted_score.is_some() && first.factors.is_some(),
+            "v2 缓存的因子必须一路带到前端，实际：{first:?}",
+        );
+        if g.ranked {
+            for w in g.candidates.windows(2) {
+                assert!(
+                    w[0].adjusted_score.unwrap() >= w[1].adjusted_score.unwrap(),
+                    "报「已重排」时榜单应真的按综合分降序：{:?}",
+                    g.candidates.iter().filter_map(|c| c.adjusted_score).collect::<Vec<_>>(),
+                );
+            }
+        }
+    }
+
+    /// 前端按编号取图：编号进、图出，与名次无关。吃本机真 pak + 清单，
+    /// 没有客户端的机器上跳过（和 browse 那几个用例同样的降级口径）。
+    #[test]
+    fn candidate_png_resolves_by_hash() {
+        let (root, db) = crate::inspector::roots();
+        if !root.join("data.pak").is_file() || !db.is_file() {
+            eprintln!("跳过：本机没有客户端 pak 或资源清单");
+            return;
+        }
+        let (root2, _db2) = (root.clone(), db.clone());
+        let first_hash = std::fs::read_dir(root2.join(".scratch/uvfit_batch/results"))
+            .ok()
+            .and_then(|mut it| {
+                it.flatten().find_map(|e| {
+                    let p = e.path();
+                    if !p.is_file() {
+                        return None;
+                    }
+                    let v: serde_json::Value = serde_json::from_slice(&std::fs::read(&p).ok()?).ok()?;
+                    v.get("candidates")?
+                        .as_array()?
+                        .first()?
+                        .get("hash")?
+                        .as_str()
+                        .map(|s| s.to_string())
+                })
+            });
+        let Some(hex) = first_hash else {
+            eprintln!("跳过：本机批量缓存里没有可用候选编号");
+            return;
+        };
+        let hash = u64::from_str_radix(&hex, 16).expect("缓存里的编号应是 16 位十六进制");
+        match decode_candidate_png(&root, &db, hash) {
+            Ok((mime, bytes)) => {
+                assert!(mime.starts_with("image/"), "mime 应是图片：{mime}");
+                assert!(bytes.len() > 100, "{hex} 解出来的图小得不像话：{}", bytes.len());
+            }
+            // 解不出图是允许的事实（这一张可能就不是可解码贴图），但必须说得出原因。
+            Err(e) => {
+                assert!(!e.is_empty(), "{hex} 解图失败却给不出原因");
+                eprintln!("{hex} 解图失败（如实记录，不算失败）：{e}");
+            }
+        }
+    }
 }

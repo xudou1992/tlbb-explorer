@@ -518,6 +518,18 @@ em.na { color: var(--muted); font-style: normal; }
 }
 .tex-cand figcaption { color: var(--muted); font-size: 11.5px; line-height: 1.5; }
 .tex-cand figcaption b { color: var(--teal-deep); }
+/* v2 因子证据行：一行小字 + 平均色色点。色点只是「这张整体什么色调」的凭据，
+   不给它加边框以外的任何强调，免得看着像结论标记。 */
+.tex-cand .tex-facts { overflow-wrap: anywhere; }
+.tex-mean {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: 4px;
+  border: 1px solid #cfe4df;
+  border-radius: 2px;
+  vertical-align: middle;
+}
 .tex-cand button { justify-self: start; }
 
 /* ---- 地图浏览器浮层 ---- */

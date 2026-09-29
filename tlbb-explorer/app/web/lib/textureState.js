@@ -33,10 +33,37 @@ export function texSlotsHtml(slots = [], tried = true) {
   }).join("") + `</ul>`;
 }
 
+/// v2 因子 → 一张卡上的证据行。
+///
+/// 缺因子（旧离线缓存没有这一份）就整行不摆：那三个百分比是「系统量出来的
+/// 特征」，编不出来也不能拿 0 顶——0 看着像「完全不贴合」，实际是「没量过」。
+const pct = (x) => `${Math.round(Number(x) * 100)}%`;
+function factorLine(c) {
+  const f = c.factors;
+  if (!f) return "";
+  const bits = [`UV 贴合 ${pct(f.uvFit)}`, `透明边界 ${pct(f.alphaFit)}`, `尺寸先验 ${pct(f.sizeFit)}`];
+  if (f.blackBias) bits.push("整体偏黑");
+  if (f.whiteBias) bits.push("整体偏白");
+  // 平均色只有三个 0..255 的数，够标一个色点；它说明的是「这张整体什么色调」，
+  // 不是「和模型该是什么颜色」——所以不写「颜色匹配」。
+  const swatch = Array.isArray(f.meanColor) && f.meanColor.length === 3
+    ? `<span class="tex-mean" title="平均色 rgb(${f.meanColor.map((n) => Number(n) || 0).join(", ")})" ` +
+      `style="background:rgb(${f.meanColor.map((n) => Number(n) || 0).join(", ")})"></span>`
+    : "";
+  return `<span class="tex-facts dim">${esc(bits.join(" · "))}</span>${swatch}`;
+}
+
+/// 一行分数：有综合分就两个都写（综合分是排序依据，方差比是它的原料）；
+/// 只有方差分（旧缓存）就只写方差分——不拿缺的那项凑数。
+function scoreLine(c) {
+  const adj = Number.isFinite(c.adjustedScore) ? `综合分 ${Number(c.adjustedScore).toFixed(2)} · ` : "";
+  return `${adj}系统评分 ${Number(c.score).toFixed(1)}（<b>未确认</b>）`;
+}
+
 /// 候选卡：图 + 特征证据 + 两颗按钮。分数只作排序参考，必须写「未确认」。
 /// 措辞原则（用户裁定）：这是系统排出来的指标分，不许写成「UV 对齐分」暗示正确率。
 /// 全库批量缓存（source=batch）候选不带内嵌 PNG：img 不给 src，只摆占位框并标记
-/// data-need-png，由 detail.js 按（网格, 名次）现解——数据里没有的图不编造，
+/// data-need-png + data-hash，由 detail.js 按编号现解——数据里没有的图不编造，
 /// 现解失败也保持占位。旧缓存自带 data URL，照旧直接嵌。
 export function texCandidatesHtml(group, slots = []) {
   if (!group || !Array.isArray(group.candidates) || !group.candidates.length) return "";
@@ -49,12 +76,12 @@ export function texCandidatesHtml(group, slots = []) {
   const cards = group.candidates.map((c, i) => {
     const img = c.png
       ? `<img src="${esc(c.png)}" alt="候选贴图 ${i + 1}">`
-      : `<img alt="候选贴图 ${i + 1}" data-need-png="1" data-idx="${i}" data-mesh="${esc(group.mesh)}">`;
+      : `<img alt="候选贴图 ${i + 1}" data-need-png="1" data-hash="${esc(c.hash)}">`;
     return `
     <figure class="tex-cand">
       ${img}
       <figcaption>候选 ${i + 1} · ${esc(c.w)}×${esc(c.h)} ${esc(c.codec)} · ${esc(c.mips)} 级 mip<br>
-      系统评分 ${Number(c.score).toFixed(1)}（<b>未确认</b>）</figcaption>
+      ${scoreLine(c)}<br>${factorLine(c)}</figcaption>
       <button type="button" data-act="try" data-idx="${i}">套上看看</button>
       <button type="button" data-act="confirm" data-idx="${i}">确认这张</button>
     </figure>`;
@@ -69,8 +96,11 @@ export function texBlock(reply) {
   if (!slots.length && !groups.length) return null;
   const group = groups[0] || null;
   const confirmed = slots.filter((s) => s.overrideHash).length;
+  // 排序依据由后端点名（group.ranked）：综合分怎么算、什么时候才重排，规则在
+  // Rust 那边，前端照着它写的说，免得改了公式而这句话还在说「按 UV 排」。
+  const basis = group && group.ranked ? "UV 贴合 × 尺寸 × 透明边界的综合分" : "UV 岛内外方差比";
   const note = group
-    ? `按网格 ${esc(group.mesh)} 的 UV 离线试贴排序 · 从 ${group.pool} 张匿名贴图中选出 · 全部未确认`
+    ? `按网格 ${esc(group.mesh)} 的离线试贴排序（${basis}） · 从 ${group.pool} 张匿名贴图中选出 · 全部未确认`
     : `引用了 ${slots.length} 张贴图，包里都没对上文件；离线试贴还没跑，下面只是名字清单，不是候选榜`;
   return {
     slotsHtml: texSlotsHtml(slots, Boolean(group)),

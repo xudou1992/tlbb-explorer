@@ -39,9 +39,11 @@ export const textureOverrideSet = (slotName, cfgPath, hash, note) =>
   call("texture_override_set", { slotName, cfgPath: cfgPath || null, hash, note: note || "" });
 export const textureOverrideClear = (slotName, cfgPath) =>
   call("texture_override_clear", { slotName, cfgPath: cfgPath || null });
-/// 批量候选的按需缩略图：全库批量缓存只存元数据，卡片先摆占位，再按（网格, 名次）
-/// 现解一张 256px 图。读不到如实回 null / 报错，前端保持占位。
-export const candidatePng = (mesh, idx) => call("candidate_png", { mesh, idx });
+/// 批量候选的按需缩略图：全库批量缓存只存元数据，卡片先摆占位，再按候选自带的
+/// 编号现解一张 256px 图。读不到如实回 null / 报错，前端保持占位。
+/// 按编号、不按「第几名」：榜单出栈前会按综合分重排，名次从此不等于缓存里的
+/// 下标——按名次取图就是拿 A 的纹样去摆 B 的卡，那是编造证据。
+export const candidatePng = (hash) => call("candidate_png", { hash });
 // ---- 浏览视图（第一屏）：打开一个 data → 文件夹树 → 预览 → 导出 ----
 export const browsePaks = () => call("browse_paks");
 export const browseTree = (pakName) => call("browse_tree", { pakName });

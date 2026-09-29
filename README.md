@@ -158,7 +158,7 @@
 ### 2. 重建资源清单
 
 `resources.db`（145MB）不入库，需要重新索引客户端。建库脚本随仓库分发在
-`.scratch/dbbuild.py`（Python + 标准库 sqlite3，无第三方依赖）。一趟跑全三阶段：
+`.scratch/dbbuild.py`（Python + 标准库 sqlite3，无第三方依赖）。三步有先后顺序，不能并成一步：
 
 ```bash
 # 第 1 步：扫 6 个 pak 的索引 → resources / records（顺带落 .scratch/index_off.tsv）
@@ -190,8 +190,11 @@ python .scratch/dbbuild.py --root E:/Games/TLBB --db E:/Games/TLBB/.scratch/reso
 
 ```bash
 cargo run --release --bin catalog_baseline
-# 期望：A20 / B2581 / C10479 / D0
+# 期望（对应随仓库分发那份库）：A20 / B2581 / C10479 / D0
 # 组 13080 / 成员 48122 / 资源 105327
+# 用修好走链的脚本重建会得到 资源 107126（多 1,799 条）——那 1,799 条是
+# data_1.pak 第 12、13 两代索引里的真文件，老库没跟到链。基线常量尚未重钉
+# （重钉要连库一起换，属于口径变更），在此之前对不上是已知状态，见下一段。
 ```
 
 对不上就说明索引方式和当初不同，**先查清楚再继续**，不要改冻结值。

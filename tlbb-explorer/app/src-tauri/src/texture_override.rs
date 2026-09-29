@@ -471,7 +471,7 @@ mod tests {
     fn batch_cache_on_disk_carries_factors_and_ranks() {
         let (root, _db) = crate::inspector::roots();
         let file = std::fs::read_dir(root.join(".scratch/uvfit_batch/results"))
-            .map(|mut it| {
+            .map(|it| {
                 it.flatten()
                     .find_map(|e| {
                         let p = e.path();
@@ -525,7 +525,7 @@ mod tests {
         let (root2, _db2) = (root.clone(), db.clone());
         let first_hash = std::fs::read_dir(root2.join(".scratch/uvfit_batch/results"))
             .ok()
-            .and_then(|mut it| {
+            .and_then(|it| {
                 it.flatten().find_map(|e| {
                     let p = e.path();
                     if !p.is_file() {

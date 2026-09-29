@@ -12,6 +12,7 @@ pub mod image;
 pub mod scene;
 pub mod summary;
 pub mod uvfit;
+pub mod uvfit_batch;
 
 pub use geometry::{parse_geometry, parse_mesh, MeshGeometry, MeshLayout};
 pub use image::{png_bytes, scale_rgba, write_png};

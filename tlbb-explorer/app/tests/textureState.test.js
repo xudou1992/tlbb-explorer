@@ -113,3 +113,37 @@ test("平均色只有三段才景色点：残缺就不画，不猜一个颜色�
   ] }, []);
   assert.equal((html.match(/tex-mean/g) || []).length, 0, html);
 });
+
+// ---- v0.4.1：没有候选榜时，把「后台批量试贴」这件事说清楚并给一颗按钮 ----
+const NO_GROUP = { texSlots: [SLOT_A], textureCandidates: [] };
+
+test("榜里没有这只网格：说清还差多少只，并给「后台跑完它们」", () => {
+  const b = texBlock(NO_GROUP, { pending: 1234, running: false });
+  assert.ok(b.slotsHtml.includes("还差 <b>1234</b> 只"), b.slotsHtml);
+  assert.ok(b.slotsHtml.includes('data-act="warm"'), "要有一颗真能点的按钮");
+});
+
+test("已经在跑就只说在跑，不许再摆一颗按钮让人重复发起", () => {
+  const b = texBlock(NO_GROUP, { pending: 1234, running: true });
+  assert.ok(b.slotsHtml.includes("已经在跑"), b.slotsHtml);
+  assert.ok(!b.slotsHtml.includes('data-act="warm"'), b.slotsHtml);
+});
+
+test("数不出来（没有资源清单）：不许写成「都跑完了」", () => {
+  for (const warm of [{ pending: null }, {}]) {
+    const b = texBlock(NO_GROUP, warm);
+    assert.ok(b.slotsHtml.includes("数不出来"), JSON.stringify(warm) + " → " + b.slotsHtml);
+    assert.ok(!b.slotsHtml.includes("都已进"), b.slotsHtml);
+  }
+});
+
+test("全库都进过榜、这只仍没候选：说的是榜里没有可用候选，不是「还没跑」", () => {
+  const b = texBlock(NO_GROUP, { pending: 0, running: false });
+  assert.ok(b.slotsHtml.includes("都已进批量试贴榜"), b.slotsHtml);
+  assert.ok(!b.slotsHtml.includes('data-act="warm"'), "没得跑就别摆按钮");
+});
+
+test("有候选榜时不提批量试贴这件事（榜都出来了，那句话是噪音）", () => {
+  const b = texBlock({ texSlots: [SLOT_A], textureCandidates: [GROUP] }, { pending: 500 });
+  assert.ok(!b.slotsHtml.includes("批量试贴"), b.slotsHtml);
+});

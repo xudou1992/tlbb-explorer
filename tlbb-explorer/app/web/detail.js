@@ -149,9 +149,15 @@ export async function showDetail(gid, retried = 0) {
 // ---- 贴图试贴候选（步骤③④⑤）：区块内容来自 lib/textureState.js（纯函数），
 // 这里只负责铺 DOM 和接按钮。确认/撤销走覆盖表，套上看看只动显存拷贝。
 let texReply = null;
+// 这一栏最近一次铺的是什么回包 + 后台批量试贴的状态。
+// texSource 与 texReply 分开是有原因的：texReply 只在「有候选榜」时非空，
+// 而「没有榜」恰恰是要提示「后台还没跑完」的那一路——那时也得能重画这一栏。
+let texSource = null;
+let warmStatus = null;
 
 function paintTex(insp) {
-  const block = texBlock(insp);
+  texSource = insp;
+  const block = texBlock(insp, warmStatus);
   texReply = block ? insp : null;
   el("secTex").hidden = !block;
   if (!block) return;
@@ -160,6 +166,37 @@ function paintTex(insp) {
   el("texNote").textContent = block.note;
   loadCandidatePngs();
 }
+
+/// 问一次后台批量试贴的状态。数不出来（没有桌面端 / 后端没这条命令）就保持
+/// null：那一栏的话术会退回「离线试贴还没跑」，而不是编一句「都跑完了」。
+function refreshWarm() {
+  if (!api.textureWarmStatus) return;
+  api
+    .textureWarmStatus()
+    .then((v) => {
+      warmStatus = v || null;
+      if (texSource && !el("secTex").hidden) paintTex(texSource);
+    })
+    .catch(() => {});
+}
+refreshWarm();
+
+/// 进度广播只往「说明行」写字：批量跑一次要几分钟，用户此刻最想知道的就是
+/// 还要等多久、这一栏为什么还空着。跑完立刻重问状态（榜可能刚补上）。
+api.onTextureWarming?.((ev) => {
+  const p = (ev && ev.payload) || ev || {};
+  if (p.phase === "scored") {
+    el("texNote").textContent = `后台批量试贴：已评 ${p.done} / ${p.total} 只模型`;
+  } else if (p.phase === "pool") {
+    el("texNote").textContent = `后台批量试贴：正在准备候选池，已解码 ${p.done} / ${p.total} 张贴图`;
+  } else if (p.phase === "finished") {
+    el("texNote").textContent = `后台批量试贴跑完：新评 ${p.scored} 只 / 全库 ${p.total} 只`;
+    refreshWarm();
+  } else if (p.phase === "error") {
+    el("texNote").textContent = `后台批量试贴失败：${p.error}`;
+    refreshWarm();
+  }
+});
 
 /// 批量缓存（source=batch）的候选卡不带内嵌图：按候选编号 hash 逐张现解 256px
 /// 缩略图。串行不并发——每次调用后端要开一次 pak，10 张齐发就是 10 次开盘。
@@ -198,7 +235,15 @@ async function loadCandidatePngs() {
 
 el("secTex").addEventListener("click", async (e) => {
   const b = e.target.closest("button");
-  if (!b || !texReply) return;
+  if (!b) return;
+  if (b.dataset.act === "warm") {
+    // 「后台跑完它们」要能在没有候选榜时点得动：那一路 texReply 恰恰是空的。
+    const msg = await api.textureWarmStart();
+    el("texNote").textContent = String(msg || "已开始后台批量试贴");
+    refreshWarm();
+    return;
+  }
+  if (!texReply) return;
   const group = (texReply.textureCandidates || [])[0];
   const slots = texReply.texSlots || [];
   if (b.dataset.act === "try") {

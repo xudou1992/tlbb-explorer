@@ -89,21 +89,39 @@ export function texCandidatesHtml(group, slots = []) {
   return `${pick}<div class="tex-grid">${cards.join("")}</div>`;
 }
 
+/// 后台批量试贴的入口状态（texture_warm_status 回包）。只在「这只网格还没有
+/// 候选榜」时说话——有榜就不用提这事。
+///
+/// 三种口径必须分开：pending 是数字（还差 N 只）、0（全库都进榜了）、
+/// null/缺字段（数不出来，本机没有资源清单库）。最后一种绝不许写成
+/// 「都跑完了」——那是把「不知道」说成结论。
+function warmControl(warm) {
+  if (!warm) return "";
+  if (warm.running) return `<p class="dim">后台批量试贴已经在跑了，跑完这一栏会自己更新。</p>`;
+  if (warm.pending === null || warm.pending === undefined) {
+    return `<p class="dim">还差多少只模型没进榜：数不出来（读不到资源清单）。</p>`;
+  }
+  if (!warm.pending) return `<p class="dim">全库模型都已进批量试贴榜，这只网格是榜里没有可用候选。</p>`;
+  return `<p class="dim">这只网格还没进榜：全库还差 <b>${Number(warm.pending)}</b> 只模型没跑批量试贴。
+    <button type="button" data-act="warm">后台跑完它们</button></p>`;
+}
+
 /// 回包 → 区块内容。没有候选也没有槽位就回 null（区块整个不出现）。
-export function texBlock(reply) {
+/// `warm` 是后台批量试贴的状态，只影响「没有榜」时的那句话。
+export function texBlock(reply, warm = null) {
   const slots = (reply && reply.texSlots) || [];
   const groups = (reply && reply.textureCandidates) || [];
   if (!slots.length && !groups.length) return null;
   const group = groups[0] || null;
   const confirmed = slots.filter((s) => s.overrideHash).length;
-  // 排序依据由后端点名（group.ranked）：综合分怎么算、什么时候才重排，规则在
-  // Rust 那边，前端照着它写的说，免得改了公式而这句话还在说「按 UV 排」。
+  // 排序依据这句话跟着后端口径走（group.ranked）：综合分怎么算、什么时候才重排，
+  // 规则在 Rust 那边，前端照着它写的说，免得改了公式而这句话还在说「按 UV 排」。
   const basis = group && group.ranked ? "UV 贴合 × 尺寸 × 透明边界的综合分" : "UV 岛内外方差比";
   const note = group
     ? `按网格 ${esc(group.mesh)} 的离线试贴排序（${basis}） · 从 ${group.pool} 张匿名贴图中选出 · 全部未确认`
     : `引用了 ${slots.length} 张贴图，包里都没对上文件；离线试贴还没跑，下面只是名字清单，不是候选榜`;
   return {
-    slotsHtml: texSlotsHtml(slots, Boolean(group)),
+    slotsHtml: texSlotsHtml(slots, Boolean(group)) + (group ? "" : warmControl(warm)),
     candHtml: texCandidatesHtml(group, slots),
     note,
     confirmed,

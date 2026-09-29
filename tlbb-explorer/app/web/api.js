@@ -53,3 +53,11 @@ export const browseExport = (pakName, hashes, dest) =>
   call("browse_export", { pakName, hashes, dest });
 /// 资产侧懒预热开关：只有进「资产」标签才触发后台预热（有缓存时秒级载入）。
 export const startWarm = () => call("start_warm");
+/// 全库批量试贴（贴图候选榜的原料）：问还差多少只模型、发起后台跑、听进度。
+export const textureWarmStatus = () => call("texture_warm_status");
+export const textureWarmStart = () => call("texture_warm_start", {});
+/// 批量试贴的进度广播。没桌面端就当没有这回事（与 onReading 同一口径）。
+export function onTextureWarming(fn) {
+  if (!hasShell || !tauri.event) return;
+  tauri.event.listen("textureWarming", fn).catch(() => {});
+}

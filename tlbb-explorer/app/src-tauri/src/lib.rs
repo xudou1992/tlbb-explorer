@@ -11,6 +11,7 @@ mod model;
 mod mesh_view;
 mod present;
 mod texture_override;
+mod texture_warm;
 
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -190,6 +191,8 @@ pub fn run() {
             texture_override::texture_override_set,
             texture_override::texture_override_clear,
             texture_override::candidate_png,
+            texture_warm::texture_warm_status,
+            texture_warm::texture_warm_start,
             browse::browse_paks,
             browse::browse_tree,
             browse::browse_preview,

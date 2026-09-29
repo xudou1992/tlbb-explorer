@@ -254,3 +254,14 @@ test("灯箱：迟到的大图回包不得顶掉当前那张", async () => {
   assert.equal(app.el("lightboxImg").src, "fullB", "画面应还是当前这张 B");
   assert.equal(app.el("lightboxCap").textContent, "B", "标题说的是 B");
 });
+
+test("后台批量试贴的接线不能被拆：没有候选榜时那颗按钮也得点得动", async () => {
+  const src = fs.readFileSync(path.join(web, "detail.js"), "utf8");
+  const warm = src.indexOf('b.dataset.act === "warm"');
+  const guard = src.indexOf("if (!texReply) return;");
+  assert.ok(warm >= 0, "那颗按钮的分支还在");
+  assert.ok(guard >= 0, "texReply 守卫还在");
+  assert.ok(warm < guard, "warm 分支必须在 texReply 守卫之前——没有榜时 texReply 正是空的");
+  assert.match(src, /texBlock\(insp, warmStatus\)/, "状态要真传进纯函数那一层");
+  assert.match(src, /api\s*\.\s*textureWarmStatus|\.textureWarmStatus\(\)/, "打开详情时要问一次还差多少只");
+});

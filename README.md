@@ -49,9 +49,9 @@
 | v0.3.2 | 地图坐标证据闭环（R/Rᵀ、原点、32格） | 排队 |
 | **v0.4.0** | **工作台 UI 全面改版（亮色青绿 · 三栏 · 六标签页 · 环形图/关系网/贴图候选）** | ✅ 已封板 |
 | v0.4.0.1 | 缺陷修复轮：导出 junction 闸门 + 前端五处接线（常驻行为用例钉住） | ✅ 已封板 |
-| v0.4.1 | 贴图批量 Resolver（后台预热全部模型） | ← **当前** |
+| v0.4.1 | 贴图批量 Resolver 进工作台（引擎移进 core · 后台跑 · 进度事件 · 界面可发起） | ✅ 已封板 |
 | v0.4.2 | UV 评分升级（颜色/alpha 维度进界面：因子/综合分排序 + 取图按编号） | ✅ 已封板 |
-| v0.5.0 | 动画解析/播放（先走跑攻待四动作） | 排队 |
+| **v0.5.0** | **动画解析/播放（先走跑攻待四动作）** | ← **当前**（阻塞在关键帧格式未解，见下） |
 | v0.6.0 | 特效解析/播放（单独立项） | 排队 |
 | v0.7.0 | 地形解析/真实地图 | 排队 |
 | v0.8.0 | 1.2 万未知数据块分类/解析 | 排队 |
@@ -208,10 +208,14 @@ cargo run --release --bin dump_scene_sample
 # 再把 grid_749 / grid_753_full / grid_753_with_tail 三个 .scene
 # 拷到 tlbb-explorer/crates/core/tests/scene_samples/
 
-# mesh 夹具：用工作台「浏览」视图导出这两个同名文件到 crates/core/tests/
-#   w1351_model_emiter_lf002.mesh
-#   w1351_model_emiter_lf004.mesh
+# mesh 夹具：从 pak 直接落原始字节（走工作台「浏览」视图导出也行）
+cd tlbb-explorer/crates/core
+cargo run --offline --example dump_raw     # 写回 tests/ 那两个 .mesh
 ```
+
+> `dump_raw` 只写 `payload::decode` 出来的字节。曾经本机这两个夹具是
+> **UTF-8 有损转码后的副本**（真 18,408B → 存成 29,445B），用例读到的是
+> 「子网格数字段 131072」那种假头——夹具必须是字节，不能是文本。
 
 ### 6. 环境变量（可选）
 

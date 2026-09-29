@@ -8,6 +8,7 @@
 //! 「它属于谁、为什么没名字」——那是分析模式的事。
 
 pub mod anim;
+pub mod effect;
 pub mod geometry;
 pub mod image;
 pub mod scene;
@@ -16,6 +17,7 @@ pub mod uvfit;
 pub mod uvfit_batch;
 
 pub use anim::{parse_ani, rest_poses, Anim, Rest, Track};
+pub use effect::{parse_pu, Effect, EffectNames};
 
 pub use geometry::{node_names, parse_geometry, parse_mesh, parse_nodes, MeshGeometry, MeshLayout, Node};
 pub use image::{png_bytes, scale_rgba, write_png};

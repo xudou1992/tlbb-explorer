@@ -407,6 +407,60 @@ pub fn browse_preview(pak_name: String, hash: String) -> Result<BrowsePreview, S
                 }
             }
         }
+        "JBPU" => {
+            // 特效定义：驻留字符串里写着它用哪个材质、什么混合模式、什么发射器。
+            // 这条链是从文件内容里读的，不是按文件名猜的——建库算 refs 用的就是
+            // 同一套分类，界面上以前反而看不到。
+            match tlbb_core::preview::parse_pu(&dec.bytes) {
+                Some(e) => {
+                    let n = &e.names;
+                    let head = if n.name.is_empty() { "（没读到名字）" } else { &n.name };
+                    info.push(format!("特效 {head} · 驻留字符串 {} 条", e.strings.len()));
+                    let mut bits: Vec<String> = Vec::new();
+                    if !n.materials.is_empty() {
+                        bits.push(format!("材质 {}", n.materials.join("、")));
+                    }
+                    if !n.blends.is_empty() {
+                        bits.push(format!("混合 {}", n.blends.join("、")));
+                    }
+                    if !n.renderers.is_empty() {
+                        bits.push(format!("渲染器 {}", n.renderers.join("、")));
+                    }
+                    if !n.emitters.is_empty() {
+                        bits.push(format!("发射器 {}", n.emitters.join("、")));
+                    }
+                    if !n.updaters.is_empty() {
+                        bits.push(format!("更新器 {}", n.updaters.join("、")));
+                    }
+                    if !n.dynamics.is_empty() {
+                        bits.push(format!("动态参数 {}", n.dynamics.len()));
+                    }
+                    if !bits.is_empty() {
+                        info.push(bits.join(" · "));
+                    }
+                    let refs = n.materials.len() + n.textures.len() + n.meshes.len();
+                    info.push(format!(
+                        "参数块 {} 字节（{} 个像浮点的数）——字段名未解，只报数量；引用到资源 {} 个",
+                        e.param_bytes, e.param_floats, refs
+                    ));
+                    Ok(BrowsePreview {
+                        ok: false,
+                        kind,
+                        info,
+                        ..empty
+                    })
+                }
+                None => {
+                    info.push("不是已知的 JBPU 布局（不硬猜字段）".into());
+                    Ok(BrowsePreview {
+                        ok: false,
+                        kind,
+                        info,
+                        ..empty
+                    })
+                }
+            }
+        }
         "ani" => {
             // 动作文件出不了画面，但不是「没内容可看」：关键帧已能数出来。
             // 照实报账，并报清为什么还不能播。
@@ -1176,6 +1230,34 @@ mod tests {
         eprintln!(
             "ani 抽样：{parsed}/{total} 解开，旋转 {quat_ok}/{quat_total} 单位长，骨骼数分布 {counts:?}"
         );
+    }
+
+    /// 特效文件的预览回包：材质链与发射器/混合模式要报得出来，
+    /// 参数块必须说「字段名未解、只报数量」，不许把浮点个数当成参数值。
+    #[test]
+    fn preview_reports_effect_definition() {
+        let list = browse_paks().expect("browse_paks");
+        let mut found = None;
+        for card in list.paks.iter().take(3) {
+            let tree = match browse_tree(card.name.clone()) {
+                Ok(t) => t,
+                Err(_) => continue,
+            };
+            if let Some(e) = tree.entries.iter().find(|e| e.kind == "JBPU") {
+                found = Some((card.name.clone(), e.hash.clone()));
+                break;
+            }
+        }
+        let Some((pak, hash)) = found else {
+            eprintln!("跳过：这几只容器里没有 kind=JBPU 的条目");
+            return;
+        };
+        let pv = browse_preview(pak, hash).expect("browse_preview");
+        let joined = pv.info.join(" | ");
+        assert!(joined.contains("特效"), "应报特效名：{joined}");
+        assert!(joined.contains("驻留字符串"), "应报字符串条数：{joined}");
+        assert!(joined.contains("参数块"), "应报参数块与「字段名未解」：{joined}");
+        assert!(joined.contains("字段名未解"), "参数含义没解就必须这么说：{joined}");
     }
 
     /// 骨架节点名交叉核对：同一只怪的 `.mesh` 尾部节点名，必须盖住它 `.ani`

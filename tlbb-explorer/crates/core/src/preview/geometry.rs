@@ -322,6 +322,47 @@ pub fn parse_geometry(raw: &[u8]) -> Result<MeshGeometry, String> {
     parse_mesh(raw).map(|l| l.geometry)
 }
 
+/// 从 mesh 尾部把**骨架节点名**捞出来（去重保序）。
+///
+/// 尾部是「命名节点表」：每个节点一份 96B 记录，里面有名字、一份 4×4 仿射矩阵，
+/// 以及看着像父索引的整数。矩阵阵列的相位与父指针的字段位置还没定死（见
+/// `.scratch/动画骨架_线索_20260929.md`），所以这里**只报名字**——名字是 NUL 结尾
+/// 的 ASCII，读得准；父子关系不猜、不画骨架线，也不报「第 i 个的爸爸是 j」。
+///
+/// 用途：让人一眼看出「这只模型的骨架在文件里」（`origin` / `top` / `bip01_*`），
+/// 以及它和 `.ani` 的骨名表对不对得上。蒙皮权重不在这里，也不在这份文件别处。
+pub fn node_names(raw: &[u8]) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    // 名字段是 NUL 结尾 ASCII；从任何位置扫都行，尾部之外不会有这种串
+    //（顶点流是浮点，索引是 u16，撞出连续 3..40 个可打印 ASCII 的概率极低，
+    //  而且真撞上了也只是多列一个假节点——不拿它推任何结论）。
+    let mut i = 0usize;
+    while i < raw.len() {
+        let c = raw[i];
+        if c.is_ascii_alphabetic() || c == b'_' {
+            let mut j = i;
+            while j < raw.len() && (raw[j] as char).is_ascii_alphanumeric() || (j < raw.len() && matches!(raw[j], b'_' | b'-' | b'.')) {
+                j += 1;
+            }
+            // 必须以 NUL 收尾才算一个名字段（浮点流里的 ASCII 片段后面跟着的是数据）
+            if j > i && j - i >= 3 && j < raw.len() && raw[j] == 0 && j - i <= 40 {
+                let s = &raw[i..j];
+                let name = String::from_utf8_lossy(s).into_owned();
+                if !out.iter().any(|x| x == &name) {
+                    out.push(name);
+                    if out.len() >= 1024 {
+                        return out;
+                    }
+                }
+                i = j + 1;
+                continue;
+            }
+        }
+        i += 1;
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

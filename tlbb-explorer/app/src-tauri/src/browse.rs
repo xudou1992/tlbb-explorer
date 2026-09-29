@@ -357,6 +357,51 @@ pub fn browse_preview(pak_name: String, hash: String) -> Result<BrowsePreview, S
             reason: String::new(),
             info,
         }),
+        "mesh" => {
+            // 网格出不了「一张图」，但文件里有什么是可以说的：几何、骨架节点，
+            // 以及还缺什么。骨架名字与 .ani 的骨名表能一一对上（有用例钉着），
+            // 父子关系与蒙皮权重仍未解——照实写在同一行里。
+            match tlbb_core::preview::parse_geometry(&dec.bytes) {
+                Ok(g) => {
+                    let nodes = tlbb_core::preview::node_names(&dec.bytes);
+                    info.push(format!(
+                        "顶点 {} · 面 {} · 法线 {} · UV {}",
+                        g.vertex_count,
+                        g.face_count,
+                        if g.normals.is_empty() { "无（前端自算）" } else { "有" },
+                        if g.uvs.is_empty() { "无" } else { "有" }
+                    ));
+                    if nodes.is_empty() {
+                        info.push("这份文件里没有骨架节点表（静态网格）".into());
+                    } else {
+                        let head = nodes.iter().take(4).cloned().collect::<Vec<_>>().join("、");
+                        info.push(format!(
+                            "骨架节点 {} 个：{head} 等（名字与动作文件的骨名表对得上）",
+                            nodes.len()
+                        ));
+                        info.push(
+                            "还不能驱动模型：父子骨链与蒙皮权重未解（矩阵阵列的相位没定死）"
+                                .into(),
+                        );
+                    }
+                    Ok(BrowsePreview {
+                        ok: false,
+                        kind,
+                        info,
+                        ..empty
+                    })
+                }
+                Err(e) => {
+                    info.push(format!("几何解不出来：{e}"));
+                    Ok(BrowsePreview {
+                        ok: false,
+                        kind,
+                        info,
+                        ..empty
+                    })
+                }
+            }
+        }
         "ani" => {
             // 动作文件出不了画面，但不是「没内容可看」：关键帧已能数出来。
             // 照实报账，并报清为什么还不能播。
@@ -1126,6 +1171,53 @@ mod tests {
         eprintln!(
             "ani 抽样：{parsed}/{total} 解开，旋转 {quat_ok}/{quat_total} 单位长，骨骼数分布 {counts:?}"
         );
+    }
+
+    /// 骨架节点名交叉核对：同一只怪的 `.mesh` 尾部节点名，必须盖住它 `.ani`
+    /// 骨名表里的每一根骨。两边来自不同容器、不同解析路径，能对上就说明
+    /// 「骨架在 mesh 尾部」不是猜的。父子关系仍未解，这里不验也不猜。
+    #[test]
+    fn mesh_tail_node_names_cover_the_ani_bones() {
+        use tlbb_core::preview::{node_names, parse_ani};
+        let (root, _db) = roots();
+        let pak = match open_pak(&root, "data") {
+            Ok(p) => p,
+            Err(_) => {
+                eprintln!("跳过：本机没有 data.pak");
+                return;
+            }
+        };
+        let bytes_of = |hash: u64| -> Option<Vec<u8>> {
+            let rec = pak.records().find(|r| r.hash == hash && r.stored > 0)?;
+            payload::decode(&pak, &rec).ok().map(|d| d.bytes)
+        };
+        // w1351_monster_xiyuqiezei_yifu_001.mesh / _behit01.ani
+        let (mesh, ani) = match (bytes_of(0xbcd65050a62986b7), bytes_of(0x361180fe30a07e32)) {
+            (Some(m), Some(a)) => (m, a),
+            _ => {
+                eprintln!("跳过：这只怪的 mesh 或动作不在这台机器的容器里");
+                return;
+            }
+        };
+        let names = node_names(&mesh);
+        assert!(names.len() >= 40, "尾部节点太少（{} 个），不像骨架表", names.len());
+        for want in ["origin", "top", "bip01", "bip01_pelvis", "bip01_head"] {
+            assert!(names.iter().any(|n| n == want), "节点名里该有 {want}，实际前 12：{:?}", &names[..12.min(names.len())]);
+        }
+        let a = parse_ani(&ani).expect("动作应能解出");
+        let missing: Vec<&String> = a
+            .tracks
+            .iter()
+            .map(|t| &t.bone)
+            .filter(|b| !b.is_empty() && !names.iter().any(|n| n == *b))
+            .collect();
+        assert!(
+            missing.is_empty(),
+            ".ani 里有 {} 根骨在 mesh 尾部找不到：{:?}",
+            missing.len(),
+            missing
+        );
+        eprintln!("骨架节点：mesh 尾部 {} 个，覆盖 .ani 的 {} 根骨", names.len(), a.bones);
     }
 
     #[test]

@@ -241,19 +241,29 @@ cd app/src-tauri && cargo build --release
 ### 4. 验证
 
 ```bash
+# 前端 243 条（含 behavior 那 7 条：node:vm 沙箱里跑真前端，开关已写进 npm script）
+cd tlbb-explorer/app && npm test
+
+# Rust：core 67 通过 / 3 忽略、骨架导出器 2 条；app 33 通过 / 1 忽略
+# （带真数据的用例要 TLBB_ROOT 指向客户端根，没有就打印「跳过」并算过）
+cd tlbb-explorer && CARGO_TARGET_DIR=.scratch/rc3 cargo test --jobs 1 --lib --bin skel_dump
+cd tlbb-explorer/app/src-tauri && CARGO_TARGET_DIR=../../../.scratch/rc3 cargo test --jobs 1
+
 # CLI 探针：全链路只读自检，末尾带 M1/M2 验收段和计时
 ./tlbb-shell --probe 曹霜
 
 # 地图金标准：重跑 6 张真图，与 contracts/map_golden.json 逐字段比（动过 scene/几何解析必跑）
+# 在仓库根目录跑（tools/ 就在根下）
 node tools/map_golden.mjs
 ```
 
-> `node --test tests/`（旧写法）在 Node 25 下报 `MODULE_NOT_FOUND`，要显式列文件名：
-> `cd tlbb-explorer/app && node --test tests/wording.test.js tests/detailState.test.js tests/meshViewerInstances.test.js tests/meshLayout.test.js tests/seq.test.js`
->
-> `tests/behavior.test.js` 用 `node:vm` 的 ESM 沙箱跑真前端（只替掉 IPC 和 WebGL），
-> VM Modules 仍是实验特性，必须带开关：
-> `node --experimental-vm-modules --test tests/behavior.test.js`
+> `node --test tests/`（旧写法）在 Node 25 下报 `MODULE_NOT_FOUND`，别再用；
+> 直接 `npm test`。手写命令时要带 `--experimental-vm-modules`，不带的话
+> `behavior.test.js` 会直接抛一句中文说明（红得有信息，不会静默少跑 7 条）。
+
+> 把骨架和全部动作关键帧导出成一份可交接的 JSON：
+> `cd tlbb-explorer/crates/core && cargo run --offline --bin skel_dump -- --name <模型或组干名>`
+> 父骨链与蒙皮权重仍未解，导出文件里用 `missing` 字段写明了少了什么。
 
 ### 5. 测试夹具（不入库，按需自取）
 

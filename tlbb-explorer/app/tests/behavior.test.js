@@ -15,6 +15,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+if (typeof vm.SourceTextModule !== "function") {
+  throw new Error("这套测试要在沙箱里加载真前端，跑它得带开关：node --experimental-vm-modules --test tests/*.test.js（npm test 已经写进去了）");
+}
+
 const here = path.dirname(fileURLToPath(import.meta.url));
 const web = path.join(here, "..", "web");
 

@@ -616,9 +616,15 @@ fn export_group_run(gid: i64, dest: &str) -> Result<ExportReport, String> {
     .map_err(|e| format!("资源清单打不开：{e}"))?;
     let rep = crate::inspector::inspect(gid)?;
     let dn = if dest.trim().is_empty() {
-        // 组目录的最后一段就是组名（`data/source/npc/quest/w1351_...` → 那只怪）
-        let stem = rep.dir.trim_end_matches('/').rsplit('/').next().unwrap_or("").to_string();
-        let stem = if stem.is_empty() { format!("gid{gid}") } else { stem };
+        // 默认落点用「组内第一个文件的名字」，不用组目录名：一个目录里可以住几十组
+        // （`ui/icon/wardrobe` 下每件装备一组），按目录命名会让它们全挤进同一个文件夹。
+        let stem = rep
+            .members
+            .iter()
+            .filter_map(|m| m.name.rsplit_once('.'))
+            .map(|(s, _)| s.to_string())
+            .find(|s| !s.is_empty())
+            .unwrap_or_else(|| format!("gid{gid}"));
         root.join(".scratch").join("exports").join(stem)
     } else {
         PathBuf::from(dest.trim())
@@ -1456,6 +1462,20 @@ mod tests {
         assert!(n >= 1, "目录里没东西：{}", dest.display());
         let _ = std::fs::remove_dir_all(&dest);
         eprintln!("组导出：写出 {} 个文件 → {}", rep.written, rep.dest);
+
+        // 空 dest 走默认落点：目录名必须是「组内文件名」，不是组目录名——
+        // 一个目录可以住几十组，按目录命名会把它们全挤进同一个文件夹。
+        let dflt = match export_group_run(gid, "") {
+            Ok(r) => r,
+            Err(e) => panic!("默认落点导出失败：{e}"),
+        };
+        assert!(
+            dflt.dest.replace('\\', "/").contains("/exports/w1351_monster_xiyuqiezei"),
+            "默认落点该按文件名分组，实际：{}",
+            dflt.dest
+        );
+        assert!(dflt.written >= 1, "默认落点也没写文件");
+        let _ = std::fs::remove_dir_all(PathBuf::from(&dflt.dest));
     }
 
     /// 组成员全在容器外（比如只登记了名字）时必须说清楚，不许报「导出 0 个」当成功。

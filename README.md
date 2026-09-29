@@ -190,6 +190,10 @@ node tools/map_golden.mjs
 
 > `node --test tests/`（旧写法）在 Node 25 下报 `MODULE_NOT_FOUND`，要显式列文件名：
 > `cd tlbb-explorer/app && node --test tests/wording.test.js tests/detailState.test.js tests/meshViewerInstances.test.js tests/meshLayout.test.js tests/seq.test.js`
+>
+> `tests/behavior.test.js` 用 `node:vm` 的 ESM 沙箱跑真前端（只替掉 IPC 和 WebGL），
+> VM Modules 仍是实验特性，必须带开关：
+> `node --experimental-vm-modules --test tests/behavior.test.js`
 
 ### 5. 测试夹具（不入库，按需自取）
 

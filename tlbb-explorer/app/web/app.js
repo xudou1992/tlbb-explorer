@@ -20,7 +20,12 @@ import { initRelations, openRelations, closeRelations } from "./relations.js";
 // （老回包 / 解码失败条目）就直接放大现有图，两档都比格子里的强。
 // 放在入口层而不是 detail.js：pvGrid 的内容每次重画都会被换掉，
 // 监听器只能挂在容器上，而容器事件归全局 UI 管。
+// 一次灯箱一个令牌：只有当前这次打开的回包才准写画面。
+// 曾经 A 的大图还在路上、用户已经关掉又开了 B，A 迟到的回包会把 B 的画面
+// 顶掉，而标题还写着 B——图和名字说的不是同一个东西，比不放大图更误导人。
+let lightboxSeq = 0;
 function openLightbox(src, label, hash) {
+  const my = ++lightboxSeq;
   el("lightboxImg").src = src;
   el("lightboxCap").textContent = label || "";
   el("lightbox").hidden = false;
@@ -28,14 +33,16 @@ function openLightbox(src, label, hash) {
   api
     .preview(hash)
     .then((img) => {
+      if (my !== lightboxSeq) return; // 已经不是这一张了
       if (el("lightbox").hidden || !img || !img.url) return;
       el("lightboxImg").src = img.url;
     })
     .catch(() => {
-      /* 大图没拿到就继续放缩略图，不打断 */
+      /* 大图没拿到就继续放缩略图，不打断；换张了同样不动 */
     });
 }
 function closeLightbox() {
+  lightboxSeq++; // 作废在途回包：关灯之后迟到的大图不该把画面又点亮
   el("lightbox").hidden = true;
   el("lightboxImg").src = "";
 }
@@ -203,6 +210,11 @@ const touched = () => {
   document.addEventListener(t, touched, { capture: true, passive: true }),
 );
 api.onReading(async () => {
+  // 资产侧还没被点开（懒预热没启动）：用户看到的是浏览首屏，顶栏那句话是
+  // 「浏览不依赖资产库 · 「资产」标签用时才读取」。这时广播不该来改动它——
+  // 动了就等于替用户启动了资产链路，还把详情画进藏着的视图里。
+  // 点开「资产」标签由 initAssets() 自己拉一遍 stats/list，不缺这一发。
+  if (!assetsInited) return;
   await refreshStats();
   restoreDetail();
   const idle = Date.now() - lastAction > 1600;

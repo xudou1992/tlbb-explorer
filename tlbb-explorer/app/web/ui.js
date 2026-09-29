@@ -16,16 +16,25 @@ export const errText = (e) => String(e && e.message ? e.message : e).replace(/^E
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /// 一排可点选的筹码。`count` 有值就带上数字。
+/// data-value 是给 markChips 用的：选中态要能单独改，不必重建 DOM。
 export function chips(node, options, current, pick) {
   node.innerHTML = "";
   for (const opt of options) {
     const b = document.createElement("button");
     b.type = "button";
-    b.className = "chip" + (opt.value === current ? " on" : "");
+    b.className = "chip";
+    b.dataset.value = String(opt.value);
     b.innerHTML = `<span>${esc(opt.label)}</span>` + (opt.count === undefined ? "" : `<em>${num(opt.count)}</em>`);
     b.onclick = () => pick(opt.value);
     node.appendChild(b);
   }
+  markChips(node, current);
+}
+
+/// 只把「哪一颗是选中的」同步到 DOM，一个节点都不重建。
+/// 筹码区整块重建会把手指正下方那颗 chip 抽走——点了却像没反应。
+export function markChips(node, current) {
+  for (const b of node.children) b.classList.toggle("on", b.dataset.value === String(current));
 }
 
 /// 一行「标签 → 值」。值已经排好版，标签给排查的人看。

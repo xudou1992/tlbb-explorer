@@ -4,7 +4,7 @@
 // 不放类型轮廓那种装饰图：约 83% 的资产没有可解析的像素，占位图形只会让人
 // 以为那是内容物。默认也不列未命名组：它们连路径都没记录，标题只能是 16 位编号。
 
-import { el, esc, num, chips, errText } from "./ui.js";
+import { el, esc, num, chips, markChips, errText } from "./ui.js";
 import * as api from "./api.js";
 import { state, saveState } from "./state.js";
 import { showDetail } from "./detail.js";
@@ -30,7 +30,8 @@ function gradeChips(node, options, current, pick) {
   for (const opt of options) {
     const b = document.createElement("button");
     b.type = "button";
-    b.className = "chip" + (opt.value === current ? " on" : "");
+    b.className = "chip";
+    b.dataset.value = String(opt.value);
     const cls = GRADE_COLOR[String(opt.value)] || "gC";
     const head = String(opt.label).split(" ")[0];
     b.innerHTML =
@@ -39,6 +40,16 @@ function gradeChips(node, options, current, pick) {
     b.onclick = () => pick(opt.value);
     node.appendChild(b);
   }
+  markChips(node, current);
+}
+
+/// 三排筹码的选中态与 state 对齐。筹码区不重建（重建会把指下的 chip 抽走），
+/// 所以点了筛选之后必须由这里把高亮挪过去——曾经只有重建那一路会写高亮，
+/// 于是「筛选已经生效、高亮还留在全部」，用户以为点没生效。
+function syncChips() {
+  markChips(el("kinds"), state.kind);
+  markChips(el("scenarios"), state.scenario);
+  markChips(el("grades"), state.grade);
 }
 
 export function paintRail() {
@@ -69,6 +80,8 @@ export function paintRail() {
         refresh({ top: true });
       },
     );
+  } else {
+    syncChips();
   }
   // 底部的总数一行：截图里左栏最下面那块「共有资源」。
   const rc = railCount(s);
@@ -292,6 +305,9 @@ async function loadMore() {
     const page = await api.listGroups({ ...currentFilter(), offset });
     if (seq.isStale(my)) return;
     offset += page.items.length;
+    // 追加的行要进「可见行序列」：键盘 ↑↓ 沿 visibleGids 走，漏加的话触底续载
+    // 之后方向键就走不出下一页——行明明列在屏幕上，按下去毫无反应。
+    visibleGids = visibleGids.concat(page.items.map((c) => c.gid));
     const box = el("rows");
     box.insertAdjacentHTML("beforeend", page.items.map(rowHtml).join(""));
     observeThumbs(box.querySelectorAll(".row-item:not(.seen) .thumb"));

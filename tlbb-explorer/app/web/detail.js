@@ -22,7 +22,6 @@ import {
   paintRaw,
   paintFixBar,
 } from "./panels.js";
-
 const seq = makeSeq();
 
 /// 把一份状态整个铺到屏幕上。每个可写的位置都要出现在这里——
@@ -74,6 +73,24 @@ function paint(s) {
   else hideMeshes();
 }
 
+/// 清空「只有 loaded 分支才会铺」的那几块：文件清单、原始数据、环形图、标签计数。
+///
+/// paint() 覆盖不到它们（数据来自 asset_inspect 回包，失败时根本没有回包），
+/// 于是上一条资产的清单会留在屏上、标签还亮着——看着就像这条资产真有这些文件。
+/// 每个「没铺成」的出口（未读到 / 读取失败 / 收回初始态）都必须走这里收干净。
+function clearTabPanes() {
+  el("fileList").innerHTML = "";
+  el("fileCount").textContent = "";
+  el("rawJson").textContent = "";
+  el("ringBox").innerHTML = "";
+  el("tabRelCount").textContent = "";
+  el("tabMissCount").textContent = "";
+  el("texSlots").innerHTML = "";
+  el("texCand").innerHTML = "";
+  texReply = null;
+  showTabPane("preview"); // 停在有话说的那一页，别停在一页残留
+}
+
 export async function showDetail(gid, retried = 0) {
   if (!gid) return;
   state.selected = gid;
@@ -88,6 +105,7 @@ export async function showDetail(gid, retried = 0) {
       state.lastInspect = null;
       paintSide(null);
       paintFixBar({ missing: [] });
+      clearTabPanes();
     } else {
       state.lastInspect = insp; // 关系网浮层要按同一份回包铺图，不再重查
       const st = loaded(gid, d, insp);
@@ -110,6 +128,7 @@ export async function showDetail(gid, retried = 0) {
     // 真查不到才走 failed() 的红线措辞。
     if (isNotReadyMsg(msg)) {
       paint(notReady(gid));
+      clearTabPanes();
       // 重试设上限：预热要跑几分钟，无限轮询就是后台一直在小声敲门；三次
       // （约 7.5 秒）后停在「还没读到」的措辞上，用户再点一次就是新一轮。
       if (retried < 3) {
@@ -123,6 +142,7 @@ export async function showDetail(gid, retried = 0) {
     state.lastInspect = null;
     paintSide(null);
     paintFixBar({ missing: [] });
+    clearTabPanes();
   }
 }
 
@@ -218,6 +238,7 @@ export function clearDetail() {
   paint(empty());
   paintSide(null);
   paintFixBar({ missing: [] });
+  clearTabPanes();
 }
 
 initTabs();

@@ -456,15 +456,95 @@ pub async fn browse_export(
 }
 
 /// 解包一个条目并写盘。建目录、写盘哪步失败都算这个文件失败，照实记下。
-fn decode_and_write(pak: &Pak, rec: &Record, target: &Path) -> Result<(), String> {
+///
+/// 落盘前先过 `WriteGuard`：目录已经建出来才校验，是因为 junction 只存在于
+/// 真实文件系统里，不建目录就解析不出它指向哪儿。校验不过 → 这个文件不写，
+/// 计一条 failed（客户端目录里因此多出的空目录壳由 guard 自己收走）。
+fn decode_and_write(
+    pak: &Pak,
+    rec: &Record,
+    target: &Path,
+    guard: &WriteGuard,
+) -> Result<(), String> {
     payload::decode(pak, rec)
         .map_err(|e| format!("解包失败：{e}"))
         .and_then(|dec| {
             if let Some(dir) = target.parent() {
                 std::fs::create_dir_all(dir).map_err(|e| format!("建目录失败：{e}"))?;
             }
-            std::fs::write(target, &dec.bytes).map_err(|e| format!("写盘失败：{e}"))
+            let real = guard.check(target)?;
+            std::fs::write(&real, &dec.bytes).map_err(|e| format!("写盘失败：{e}"))
         })
+}
+
+/// 逐文件落盘闸门。`export_run` 开头那道校验只看得出「用户指的目录」在不在
+/// 客户端根里，看不出那个目录下面藏着指向根内的 junction / 符号链接：
+/// `dest/data` 是一条指向 `<客户端根>/protected` 的 junction 时，名字表里的
+/// `data/protected/.../x.mesh` 会一路跟着链接写进客户端目录——客户端目录是
+/// 只读的，这条纪律不能靠路径写法来保证。
+///
+/// 办法是不信拼接结果，信解析结果：每个目标写之前解析成真实路径（canonicalize
+/// 跟着链接走到底），要求它仍落在导出目录之内、且不在客户端根之内（`.scratch`
+/// 例外）。链接指向根外别处也一样拦——那已经不是用户指定的导出目录了。
+struct WriteGuard {
+    dest: PathBuf,
+    root: PathBuf,
+    scratch: PathBuf,
+}
+
+/// 按路径组件逐个比、不区分大小写（Windows 本来就不区分）。`starts_with` 走
+/// OsStr 逐字节比对，名字表里的大小写和磁盘上落盘的大小写不一致时会误判成
+/// 「跑出去了」；字符串前缀比又有 `.scratch2` 冒充 `.scratch` 的那种坑，
+/// 所以按组件切开来一段一段比。
+fn under_ci(p: &Path, base: &Path) -> bool {
+    let segs = |x: &Path| -> Vec<String> {
+        x.components()
+            .map(|c| c.as_os_str().to_string_lossy().to_ascii_lowercase())
+            .collect()
+    };
+    let (a, b) = (segs(p), segs(base));
+    a.len() >= b.len() && a[..b.len()] == b[..]
+}
+
+/// 解析到「最近一个已经存在的祖先」的真实路径，再把尚未落盘的尾部组件挂回去。
+/// 尾部组件还没写出来，不可能已经是链接，所以这样得到的路径就是内核将要写入
+/// 的位置。目标本身存在时直接解析它——这样连「目标已是指向别处的链接」也看得见。
+fn resolve_real(target: &Path) -> Option<PathBuf> {
+    let mut tail: Vec<std::ffi::OsString> = Vec::new();
+    let mut cur = target;
+    loop {
+        if let Ok(c) = cur.canonicalize() {
+            let mut p = normalize_abs(&c);
+            for seg in tail.iter().rev() {
+                p.push(seg);
+            }
+            return Some(p);
+        }
+        tail.push(cur.file_name()?.into());
+        cur = cur.parent()?;
+    }
+}
+
+impl WriteGuard {
+    fn new(dest: &Path, root: &Path, scratch: &Path) -> Self {
+        WriteGuard {
+            dest: dest.into(),
+            root: root.into(),
+            scratch: scratch.into(),
+        }
+    }
+
+    /// 放行返回真正要写的路径，拒绝说明理由。
+    fn check(&self, target: &Path) -> Result<PathBuf, String> {
+        let real = resolve_real(target).ok_or_else(|| "目标路径无法解析，已跳过".to_string())?;
+        if !under_ci(&real, &self.dest) {
+            return Err("导出目录里有链接/junction 指向目录之外，为不写到指定目录以外已跳过".into());
+        }
+        if under_ci(&real, &self.root) && !under_ci(&real, &self.scratch) {
+            return Err("导出目录里有链接/junction 指回客户端目录（只读），已跳过".into());
+        }
+        Ok(real)
+    }
 }
 
 /// 导出核心循环。`progress` 是进度出口：核心只管发一条进度 JSON，接到哪儿是
@@ -562,6 +642,9 @@ fn export_run(
     let mut failed_more = 0usize;
     let mut done = 0usize;
     let mut last_emit = std::time::Instant::now();
+    // 逐文件闸门：开头的目录校验挡的是「指到客户端根里」，这里挡的是
+    // 「指到客户端根里的那条链接」。两个面都要收，只读纪律才不是纸面规矩。
+    let guard = WriteGuard::new(&dn, &rn, &scratch);
     // 同一导出路径只落第一个编号。名字表脏数据（两个不同编号挂同一条原始
     // 路径）时，谁后到谁覆盖会让幸存的内容全看排序运气；这里跳过后写的、
     // 计入 failed 并如实报出来——written 从此等于磁盘上实际多出的文件数。
@@ -584,7 +667,7 @@ fn export_run(
         // 路径不安全也是「处理完了一个」：done 照样销账，不然进度条到不了头。
         let res = match target {
             // insert 返回 false = 路径已被前一个编号占用 → 跳过这次写。
-            Some(t) if used_paths.insert(t.clone()) => decode_and_write(&pak, rec, &t),
+            Some(t) if used_paths.insert(t.clone()) => decode_and_write(&pak, rec, &t, &guard),
             Some(_) => Err("同一导出路径已被另一个编号占用（名字表脏数据），为免覆盖只保留先导出的".into()),
             None => Err("路径不安全，已跳过".into()),
         };
@@ -813,9 +896,84 @@ mod tests {
         }
     }
 
+    /// 造一条 junction（不需要管理员权限；符号链接 symlink_dir 要）。
+    /// 造不出来就返回 false，让用例自己跳过——闸门要能验红，不能靠猜。
+    #[cfg(windows)]
+    fn make_junction(link: &Path, target: &Path) -> bool {
+        std::process::Command::new("cmd")
+            .args([
+                "/C",
+                "mklink",
+                "/J",
+                &link.to_string_lossy(),
+                &target.to_string_lossy(),
+            ])
+            .stdout(std::process::Stdio::null())
+            .stderr(std::process::Stdio::null())
+            .status()
+            .map(|s| s.success())
+            .unwrap_or(false)
+    }
+
     #[test]
-    fn preview_index_agrees_with_linear_scan() {
-        let list = browse_paks().expect("browse_paks");
+    #[cfg(windows)]
+    fn write_guard_sees_through_junction_into_client_root() {
+        // 假客户端根 + 假导出目录，全在临时目录里，不碰真客户端一眼。
+        let base = std::env::temp_dir().join("tlbb_write_guard_test");
+        std::fs::remove_dir_all(&base).ok();
+        let fake_root = base.join("client");
+        let fake_scratch = fake_root.join(".scratch");
+        let protected = fake_root.join("protected");
+        let dest = base.join("dest");
+        for d in [&fake_root, &fake_scratch, &protected, &dest] {
+            std::fs::create_dir_all(d).expect("预置临时目录");
+        }
+        let guard = WriteGuard::new(
+            &normalize_abs(&dest.canonicalize().unwrap()),
+            &normalize_abs(&fake_root.canonicalize().unwrap()),
+            &normalize_abs(&fake_scratch.canonicalize().unwrap()),
+        );
+
+        // 正常路径照常放行。
+        assert!(guard.check(&dest.join("data/x.mesh")).is_ok(), "导出目录内的正常路径必须放行");
+
+        // dest/link → root/protected：跟着链接写就等于写客户端目录，必须拦。
+        let link = dest.join("link");
+        if !make_junction(&link, &protected) {
+            eprintln!("跳过：本机造不出 junction");
+            std::fs::remove_dir_all(&base).ok();
+            return;
+        }
+        let thru = guard.check(&link.join("effect/x.mesh"));
+        assert!(
+            thru.is_err(),
+            "junction 指进客户端根必须被拦，实际放行：{:?} 落在 {:?}",
+            thru.as_ref().err(),
+            thru.as_ref().ok(),
+        );
+
+        // 导出目录本身就在 .scratch 里（合法）时，链接指回根内非 .scratch 同样拦。
+        let scratch_dest = fake_scratch.join("export");
+        std::fs::create_dir_all(&scratch_dest).unwrap();
+        let guard2 = WriteGuard::new(
+            &normalize_abs(&scratch_dest.canonicalize().unwrap()),
+            &normalize_abs(&fake_root.canonicalize().unwrap()),
+            &normalize_abs(&fake_scratch.canonicalize().unwrap()),
+        );
+        let link2 = scratch_dest.join("back");
+        if make_junction(&link2, &protected) {
+            assert!(
+                guard2.check(&link2.join("x.mesh")).is_err(),
+                "从 .scratch 里用链接写回客户端根必须被拦"
+            );
+        }
+        // .scratch 内正常路径仍放行（别把产物区一起拦死）。
+        assert!(guard2.check(&scratch_dest.join("a/x.png")).is_ok());
+        std::fs::remove_dir_all(&base).ok();
+    }
+
+    #[test]
+    fn preview_index_agrees_with_linear_scan() {        let list = browse_paks().expect("browse_paks");
         let name = list.paks[0].name.clone();
         let (root, _) = roots();
         let pak = open_pak(&root, &name).expect("打开 pak");

@@ -157,12 +157,26 @@
 
 ### 2. 重建资源清单
 
-`resources.db`（145MB）不入库，需要用 `catalog` 的建库工具重新索引客户端：
+`resources.db`（145MB）不入库，需要重新索引客户端。建库脚本随仓库分发在
+`.scratch/dbbuild.py`（Python + 标准库 sqlite3，无第三方依赖）。一趟跑全三阶段：
 
 ```bash
-# 详见 tlbb-explorer/crates/core/src/bin/ 下的 catalog 相关 bin
-cargo run --release --bin <catalog 建库 bin> -- --root <客户端根> --out .scratch/resources.db
+python .scratch/dbbuild.py --rels --assets
+#   ① 扫 6 个 pak 的索引 → resources / records（顺带落 .scratch/index_off.tsv）
+#   ② --rels：读 JBCF 字符串表 → relations / refs
+#   ③ --assets：聚资产图 → agroups / amembers / agroup_names / dangling
 ```
+
+客户端不在 `D:\TLGL`、或库想建到别处，用命令行或环境变量覆盖（与 Rust 侧同一套约定）：
+
+```bash
+python .scratch/dbbuild.py --root E:/Games/TLBB --db E:/Games/TLBB/.scratch/resources.db --rels --assets
+# 等价：TLBB_ROOT=... TLBB_DB=... python .scratch/dbbuild.py --rels --assets
+```
+
+> 名字表来自 `.scratch/names_jrpc.tsv`（JRPC 恢复出来的 hash→虚拟路径，随仓库分发）。
+> 没有它照样建库，只是绝大多数条目会落到「未命名」那一边——那是客户端打包时
+> 剥掉文件名的结果，不是解析漏了。
 
 建完后**务必跑基线核对**（等级分布是冻结值）：
 
@@ -173,6 +187,16 @@ cargo run --release --bin catalog_baseline
 ```
 
 对不上就说明索引方式和当初不同，**先查清楚再继续**，不要改冻结值。
+
+> **2026-09-29 实测：照上面重建，数字会比冻结基线多 1,799 条（107,126 vs 105,327），
+> 这不是重建错了，是随仓库那份库少算了。** 差全部来自 `data_1.pak`（更新器写的补丁包）
+> 的第 12、13 两代索引数组：老库只跟到第 11 代，而新库是老库的严格超集（老库独有的
+> hash 有 0 个）。根因是建库脚本的索引遍历靠「上一条 payload 的末尾」猜下一个数组位置，
+> 补丁包的数组不连着排就断了链——已改成与 Rust `jpak` 同一口径顺着数组头里的 `next`
+> 指针走（`.scratch/pakunpack2.py`），改完 Python 侧与 Rust 侧一字不差：
+> `data.pak` 16 数组 / 15,651 槽，`data_1.pak` 14 数组 / 13,684 槽。
+> **基线常量还没重钉**（那要连随仓库那份库一起换，属于口径变更），在此之前
+> 重建后跑 `catalog_baseline` 必然对不上，原因就在这段话里。
 
 ### 3. 构建
 

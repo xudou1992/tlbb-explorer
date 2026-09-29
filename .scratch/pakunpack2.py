@@ -26,6 +26,7 @@ import json
 import mmap
 import os
 import struct
+import zlib
 import sys
 from array import array
 
@@ -89,24 +90,33 @@ def rec_ok(data, p):
 
 
 def walk_generations(data):
-    """Return [(index_records_start, count, payload_end)] for the whole chain."""
+    """Return [(index_records_start, count, payload_end)] for the whole chain.
+
+    以前这里靠「上一条 payload 的末尾」猜下一个索引数组的位置，读 data.pak 这类
+    顺序追加的包碰巧对得上；`data_1.pak` 是更新器写的补丁包，数组之间不连着排，
+    于是第一代之后就读不到链了（实测：只拿到 1,000 条，而引擎侧的 Rust 解析器
+    顺着 `next` 指针拿到 14 个数组 / 13,684 条）。现在与 Rust `jpak::reader::walk`
+    同一口径：数组头是 [cap, used, next, crc]，crc 是头前 12 字节的 zlib crc32，
+    下一个数组在 `next` 指的地方，`next == 0` 结束。
+    """
     gens = []
-    p = 0
-    n = struct.unpack('<I', data[16:20])[0]
-    while n:
-        rp = p + (32 if p == 0 else 16)
-        if not rec_ok(data, rp):
+    at = 16                                  # 文件头 16B，第一个数组紧跟其后
+    while at:
+        if at + 16 > len(data):
             break
-        mx = 0
-        for i in range(n):
-            _, off, size, occ, _, _, _, _, _, _ = REC.unpack_from(data, rp + i * 36)
+        cap, used, nxt, crc = struct.unpack_from('<4I', data, at)
+        if zlib.crc32(data[at:at + 12]) & 0xFFFFFFFF != crc:
+            break
+        if used > cap or cap > 65536:
+            break
+        rp = at + 16
+        mx = rp + used * 36
+        for i in range(used):
+            _h, off, size, occ, _o, _v, _f, _m, _c, _u = REC.unpack_from(data, rp + i * 36)
             if off + occ > mx:
                 mx = off + occ
-        gens.append((rp, n, max(mx, rp + n * 36)))
-        p = mx
-        if p + 24 >= len(data):
-            break
-        n = struct.unpack_from('<I', data, p)[0]
+        gens.append((rp, used, mx))
+        at = nxt
     return gens
 
 

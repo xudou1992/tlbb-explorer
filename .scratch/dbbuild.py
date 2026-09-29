@@ -14,7 +14,7 @@ Schema
   refs(from_hash, from_path, name, kind, to_hash, ambig)   -- JBCF string-table imports
   agroups/amembers/agroup_names/dangling                   -- stage 3 asset graph
 
-Usage:  python dbbuild.py [--no-rescan] [--rels] [--assets]
+Usage:  python dbbuild.py [--root DIR] [--db FILE] [--no-rescan] [--rels] [--assets]
 """
 import argparse
 import binascii
@@ -36,9 +36,12 @@ import jbcf                      # noqa: E402  sdecode + BinaryConfigFile reader
 import jbpu                      # noqa: E402  particle-effect (.pu) reader
 
 M = 0xFFFFFFFF
-ROOT = r'D:\TLGL'
+# 客户端根与库路径以前写死在本机（D:\TLGL + .scratch/resources.db），换一台机器
+# 或客户端装在别处就跑不起来。现在与 Rust 侧同一套约定：TLBB_ROOT / TLBB_DB 环境变量，
+# 或命令行 --root / --db；不给时沿用老默认值，本机习惯不变。
+ROOT = os.environ.get('TLBB_ROOT') or r'D:\TLGL'
 OUT_ALL = os.path.join(HERE, 'out', 'all')
-DB = os.path.join(HERE, 'resources.db')
+DB = os.environ.get('TLBB_DB') or os.path.join(HERE, 'resources.db')
 PAKS = ['data.pak', 'data1.pak', 'data2.pak', 'data3.pak', 'data4.pak', 'data_1.pak']
 
 
@@ -746,7 +749,15 @@ def main():
     ap.add_argument('--extras', action='store_true')
     ap.add_argument('--no-build', action='store_true',
                     help='run only the requested later stages against the existing db')
+    ap.add_argument('--root', help='客户端根（含 data*.pak）；默认 $TLBB_ROOT，再默认 D:/TLGL')
+    ap.add_argument('--db', help='建出来的 resources.db 落哪；默认 $TLBB_DB，再默认 .scratch/resources.db')
     a = ap.parse_args()
+    global ROOT, DB
+    if a.root:
+        ROOT = a.root
+    if a.db:
+        DB = a.db
+    print('root=%s' % ROOT); print('db=%s' % DB)
     if a.no_build:
         con = sqlite3.connect(DB)
     else:

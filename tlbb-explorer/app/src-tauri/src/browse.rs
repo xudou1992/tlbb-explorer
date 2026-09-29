@@ -595,7 +595,7 @@ impl WriteGuard {
 /// 导出核心循环。`progress` 是进度出口：核心只管发一条进度 JSON，接到哪儿是
 /// 调用者的事——命令接 AppHandle::emit，测试接 `Arc<Mutex<Vec<_>>>` 收集器
 /// （测试环境拿不到 AppHandle，也不为测试去起假窗口）。
-fn export_run(
+pub(crate) fn export_run(
     pak_name: &str,
     hashes: &[String],
     dest: &str,

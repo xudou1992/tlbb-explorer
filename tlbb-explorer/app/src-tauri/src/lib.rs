@@ -672,6 +672,52 @@ pub fn probe(word: Option<String>) {
             let _ = std::fs::write(dir.join(file), s);
         }
     }
+
+    // ---- 新命令的无头验收 ----
+    // 这三样都是界面里点的，没窗口就没人验过：清单缺口、后台批量试贴的状态、
+    // 以及一次真导出（导出的逐文件闸门只在测试里跑过，那条路走的是临时目录，
+    // 这里用真容器里的一个真文件走一遍，确认闸门不误伤正常导出）。
+    println!("
+清单体检与后台批量（新命令覆盖）");
+    match gap::catalog_gap() {
+        Ok(v) => println!(
+            "  容器去重 {} 条 · 清单登记 {} 条 · 清单缺 {} 条 · 扫了 {} 个容器",
+            v["containerUnique"], v["dbResources"], v["uncovered"], v["paks"]
+        ),
+        Err(e) => println!("  缺口算不出：{e}"),
+    }
+    let ws = texture_warm::texture_warm_status();
+    println!(
+        "  批量试贴：在跑={} · 还差 {} 只模型没进榜",
+        ws["running"], ws["pending"]
+    );
+    match browse::browse_paks() {
+        Ok(list) if !list.paks.is_empty() => {
+            let name = list.paks[0].name.clone();
+            match browse::browse_tree(name.clone())
+                .ok()
+                .and_then(|t| t.entries.into_iter().find(|e| e.path.is_some()))
+            {
+                Some(e) => {
+                    let dest = std::env::temp_dir().join("tlbb_probe_export");
+                    let quiet = |_: serde_json::Value| {};
+                    match browse::export_run(&name, &[e.hash.clone()], &dest.to_string_lossy(), &quiet) {
+                        Ok(rep) => println!(
+                            "  单文件导出：写出 {} · 失败 {} · {}",
+                            rep.written,
+                            rep.failed.len(),
+                            dest.display()
+                        ),
+                        Err(err) => println!("  单文件导出失败：{err}"),
+                    }
+                    let _ = std::fs::remove_dir_all(&dest);
+                }
+                None => println!("  容器里没有带原始路径的条目，跳过导出验收"),
+            }
+        }
+        Ok(_) => println!("  没有容器可开，跳过导出验收"),
+        Err(e) => println!("  列容器失败：{e}"),
+    }
 }
 
 /// 一行网格体检：顶点/面/法线/UV/负载字节/耗时。

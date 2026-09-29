@@ -161,18 +161,26 @@
 `.scratch/dbbuild.py`（Python + 标准库 sqlite3，无第三方依赖）。一趟跑全三阶段：
 
 ```bash
-python .scratch/dbbuild.py --rels --assets
-#   ① 扫 6 个 pak 的索引 → resources / records（顺带落 .scratch/index_off.tsv）
-#   ② --rels：读 JBCF 字符串表 → relations / refs
-#   ③ --assets：聚资产图 → agroups / amembers / agroup_names / dangling
+# 第 1 步：扫 6 个 pak 的索引 → resources / records（顺带落 .scratch/index_off.tsv）
+python .scratch/dbbuild.py
+# 第 2 步：把 payload 解出来（refs / relations 要从文件内容里读，见下方说明）
+python .scratch/pakunpack2.py --outdir <客户端根>/.scratch/out
+# 第 3 步：读 JBCF 字符串表建引用边、聚资产图
+python .scratch/dbbuild.py --no-build --rels --assets --extras
 ```
 
 客户端不在 `D:\TLGL`、或库想建到别处，用命令行或环境变量覆盖（与 Rust 侧同一套约定）：
 
 ```bash
-python .scratch/dbbuild.py --root E:/Games/TLBB --db E:/Games/TLBB/.scratch/resources.db --rels --assets
-# 等价：TLBB_ROOT=... TLBB_DB=... python .scratch/dbbuild.py --rels --assets
+python .scratch/dbbuild.py --root E:/Games/TLBB --db E:/Games/TLBB/.scratch/resources.db
+# 等价：TLBB_ROOT=... TLBB_DB=... python .scratch/dbbuild.py
 ```
+
+> **`--rels` 那一步的产出取决于第 2 步解没解全。** 引用边（`refs`）不是从文件名猜的，
+> 是打开材质/骨架/模型这些 JBCF 文件的字符串表读出来的，所以它只认
+> `.scratch/out/all/<容器>/<编号>…` 里真存在的字节。本机实测：只跑第 1、3 步
+> （`out/all` 不全）得到 `refs` 93,395 / 资产组 12,779；把 payload 解全之后才是
+> 基线那套 98,504 / 13,080。**别拿一个没解全的库去对基线然后说脚本错了。**
 
 > 名字表来自 `.scratch/names_jrpc.tsv`（JRPC 恢复出来的 hash→虚拟路径，随仓库分发）。
 > 没有它照样建库，只是绝大多数条目会落到「未命名」那一边——那是客户端打包时

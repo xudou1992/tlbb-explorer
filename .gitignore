@@ -268,3 +268,6 @@ TLGL.scratchrc3/
 **/CACHEDIR.TAG
 **/.cargo-*-lock
 **/*.timestamp
+
+# 逆向取下来的客户端原始字节（素材不入库，只本机用）
+.scratch/ani/

@@ -60,6 +60,10 @@ dist/
 # 解包树与临时构建（12.8GB / 9.1GB / 4.5GB）
 .scratch/out/
 .scratch/rc3/
+# 试跑产物：从容器取的原始字节、骨架导出 JSON、界面上点「导出」落的文件
+.scratch/raw/
+.scratch/skel_dump/
+.scratch/exports/
 .scratch/rc_app/
 .scratch/rust_check/
 .scratch/versions/

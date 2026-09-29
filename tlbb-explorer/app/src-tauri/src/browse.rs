@@ -1044,6 +1044,90 @@ mod tests {
         assert!(joined.contains("蒙皮权重"), "原因要落到权重/骨链这一层：{joined}");
     }
 
+    /// 全库通用性闸门：随机抽一批 `.ani` 真条目，要求绝大多数按这套布局解得开，
+    /// 并且骨骼数不是恒等于 46（否则「布局认得对」可能只是撞对了这一副骨架）。
+    /// 关键帧格式是今天新解的，只靠 4 份手挑样本作证太薄——这条就是补的那道闸。
+    #[test]
+    fn ani_keyframe_layout_holds_across_the_library() {
+        use std::collections::BTreeMap;
+        let list = browse_paks().expect("browse_paks");
+        let (root, _) = roots();
+        let mut counts: BTreeMap<usize, usize> = BTreeMap::new();
+        let (mut parsed, mut failed) = (0usize, 0usize);
+        let (mut quat_total, mut quat_ok) = (0usize, 0usize);
+        let mut budget = 60usize;
+        for card in list.paks.iter() {
+            if budget == 0 {
+                break;
+            }
+            let tree = match browse_tree(card.name.clone()) {
+                Ok(t) => t,
+                Err(_) => continue,
+            };
+            let pak = match open_pak(&root, &card.name) {
+                Ok(p) => p,
+                Err(_) => continue,
+            };
+            for e in tree.entries.iter().filter(|e| e.kind == "ani") {
+                if budget == 0 {
+                    break;
+                }
+                budget -= 1;
+                let Ok(hex) = u64::from_str_radix(e.hash.trim_start_matches("0x"), 16) else {
+                    continue;
+                };
+                let Some(rec) = pak.records().find(|r| r.hash == hex && r.stored > 0) else {
+                    continue;
+                };
+                let bytes = match tlbb_core::payload::decode(&pak, &rec) {
+                    Ok(d) => d.bytes,
+                    Err(_) => {
+                        failed += 1;
+                        continue;
+                    }
+                };
+                match tlbb_core::preview::parse_ani(&bytes) {
+                    Some(a) => {
+                        parsed += 1;
+                        *counts.entry(a.bones).or_default() += 1;
+                        // 解开了就必须自洽：轨道数 = 骨骼数，每条帧数齐。
+                        assert_eq!(a.tracks.len(), a.bones);
+                        assert!(a.tracks.iter().all(|t| t.rotations.len() == a.frames));
+                        // 「布局对」的判据不能只是「按尺寸切得开」——切得开不代表
+                        // 切出来的是四元数。这里数一遍单位长（全零算静止骨）。
+                        for t in &a.tracks {
+                            for q in &t.rotations {
+                                quat_total += 1;
+                                if tlbb_core::preview::anim::is_unit_quat(q) {
+                                    quat_ok += 1;
+                                }
+                            }
+                        }
+                    }
+                    None => failed += 1,
+                }
+            }
+        }
+        if parsed == 0 {
+            eprintln!("跳过：本机没有可解的 .ani 条目");
+            return;
+        }
+        let total = parsed + failed;
+        assert!(
+            parsed * 10 >= total * 9,
+            "全库抽样 {total} 份只有 {parsed} 份按这套布局解开，布局口径不成立：{counts:?}",
+        );
+        assert!(counts.keys().len() > 1, "骨骼数只有一种（{counts:?}）——样本太单一，换不出结论");
+        // 四元数占比：不到 99% 就说明某个字段切错位了（错位会立刻打散单位长）。
+        assert!(
+            quat_total > 0 && quat_ok * 100 >= quat_total * 99,
+            "抽样的旋转字段只有 {quat_ok}/{quat_total} 是单位长，切分口径有问题"
+        );
+        eprintln!(
+            "ani 抽样：{parsed}/{total} 解开，旋转 {quat_ok}/{quat_total} 单位长，骨骼数分布 {counts:?}"
+        );
+    }
+
     #[test]
     fn preview_index_agrees_with_linear_scan() {        let list = browse_paks().expect("browse_paks");
         let name = list.paks[0].name.clone();

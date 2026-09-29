@@ -106,6 +106,47 @@ fn bytes_of(root: &Path, paks: &mut BTreeMap<String, Pak>, hash: u64, pak: &str)
     payload::decode(p, &rec).ok().map(|d| d.bytes)
 }
 
+/// 一批网格：按路径片段筛，`limit` 兜住别一次跑穿。
+fn mesh_paths(con: &Connection, prefix: &str, limit: usize) -> Vec<String> {
+    let mut stmt = match con.prepare(
+        "SELECT coalesce(path,'') FROM resources WHERE ext='.mesh' AND path LIKE ?1 \
+         ORDER BY stored DESC LIMIT ?2",
+    ) {
+        Ok(s) => s,
+        Err(_) => return Vec::new(),
+    };
+    stmt.query_map(
+        rusqlite::params![format!("%{prefix}%"), limit as i64],
+        |r| r.get::<_, String>(0),
+    )
+    .map(|rows| rows.flatten().collect())
+    .unwrap_or_default()
+}
+
+/// 浮点只留 6 位有效数字。源数据是 f32（本来就只有 7 位有效数字），
+/// 而 serde 按 f32 全展开会写成 `0.7071067690849304` 这种 18 个字符；
+/// 一只模型 46 骨 × 60 帧 × 8 个浮点，光这个就占掉导出体的一大半。
+/// 留 6 位是「不丢工程精度」的下限：四元数分量误差 <1e-6，位移在 1.0 量级。
+fn r6(v: f32) -> f32 {
+    if v == 0.0 || !v.is_finite() {
+        return v;
+    }
+    let step = 10f32.powf(v.abs().log10().floor() - 5.0);
+    (v / step).round() * step
+}
+
+fn r4(v: [f32; 4]) -> [f32; 4] {
+    v.map(r6)
+}
+
+fn r3(v: [f32; 3]) -> [f32; 3] {
+    v.map(r6)
+}
+
+fn r16(v: &[f32; 16]) -> Vec<f32> {
+    v.iter().map(|x| r6(*x)).collect()
+}
+
 /// 组一份骨架 + 动作的导出体。
 fn build(root: &Path, con: &Connection, mesh: Option<&str>, anis: &[String]) -> serde_json::Value {
     let mut paks: BTreeMap<String, Pak> = BTreeMap::new();
@@ -124,8 +165,8 @@ fn build(root: &Path, con: &Connection, mesh: Option<&str>, anis: &[String]) -> 
                         .map(|nd| json!({
                             "name": nd.name,
                             // 行主序 4×4；前三行基向量，第四行 (tx,ty,tz,1) 是绑定位移
-                            "bind": nd.bind,
-                            "bindPosition": [nd.bind[12], nd.bind[13], nd.bind[14]],
+                            "bind": r16(&nd.bind),
+                            "bindPosition": r3([nd.bind[12], nd.bind[13], nd.bind[14]]),
                         }))
                         .collect::<Vec<_>>());
                 }
@@ -145,9 +186,9 @@ fn build(root: &Path, con: &Connection, mesh: Option<&str>, anis: &[String]) -> 
             "tick": a.tick,
             "tracks": a.tracks.iter().map(|t| json!({
                 "bone": t.bone,
-                "rotations": t.rotations,
-                "positions": t.positions,
-                "scales": t.scales,
+                "rotations": t.rotations.iter().copied().map(r4).collect::<Vec<_>>(),
+                "positions": t.positions.iter().copied().map(r3).collect::<Vec<_>>(),
+                "scales": t.scales.iter().copied().map(r6).collect::<Vec<_>>(),
             })).collect::<Vec<_>>(),
         }));
     }
@@ -178,6 +219,8 @@ fn main() {
     let mut out = PathBuf::from(".scratch/skel_dump");
     let mut mesh: Option<String> = None;
     let mut one_ani: Option<String> = None;
+    let mut batch: Option<String> = None;
+    let mut limit: usize = 20;
     let mut args = std::env::args().skip(1);
     while let Some(a) = args.next() {
         match a.as_str() {
@@ -186,6 +229,8 @@ fn main() {
             "--out" => out = PathBuf::from(args.next().unwrap_or_default()),
             "--name" => mesh = Some(args.next().unwrap_or_default()),
             "--ani" => one_ani = Some(args.next().unwrap_or_default()),
+            "--batch" => batch = Some(args.next().unwrap_or_default()),
+            "--limit" => limit = args.next().unwrap_or_default().parse().unwrap_or(20),
             other => eprintln!("未知参数 {other}"),
         }
     }
@@ -200,6 +245,41 @@ fn main() {
             std::process::exit(2);
         }
     };
+
+    // 批量：一条命令出一批模型的骨架 JSON。
+    // 为什么要批量：一只一只点名太慢，而下游（Blender 脚本、别的查看器）要的是
+    // 一批。没有动作的静态网格跳过——那份文件里只有几何，导出来是空壳。
+    if let Some(prefix) = &batch {
+        let paths = mesh_paths(&con, prefix, limit);
+        std::fs::create_dir_all(&out).ok();
+        let (mut done, mut nodes, mut anims) = (0usize, 0usize, 0usize);
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let list = anim_names_for(&con, p);
+            if list.is_empty() {
+                continue;
+            }
+            let v = build(&root, &con, Some(&name), &list);
+            let n = v["nodes"].as_array().map_or(0, |a| a.len());
+            let k = v["animations"].as_array().map_or(0, |a| a.len());
+            let file = out.join(format!("{}.skel.json", name.trim_end_matches(".mesh").replace('/', "_")));
+            match std::fs::write(&file, serde_json::to_string(&v).unwrap_or_default()) {
+                Ok(_) => {
+                    done += 1;
+                    nodes += n;
+                    anims += k;
+                    println!("  {name} · 节点 {n} · 动作 {k}");
+                }
+                Err(e) => eprintln!("  {name} 写不出去：{e}"),
+            }
+        }
+        println!(
+            "批量：扫了 {} 份网格，出了 {done} 份骨架 JSON（节点 {nodes} 条 · 动作 {anims} 条）→ {}",
+            paths.len(),
+            out.display()
+        );
+        return;
+    }
 
     // --name 给的是 .mesh 文件名，或「组干名」——组干名本身没有同名 .mesh，
     // 部件才有（`<组名>_yifu_001.mesh`），所以先找同名，再按前缀取最大的一份。
@@ -219,7 +299,7 @@ fn main() {
             (mf, anis)
         }
         (None, None) => {
-            eprintln!("用法：skel_dump [--root DIR] [--name 模型名] [--ani x.ani] [--out DIR]");
+            eprintln!("用法：skel_dump [--root DIR] [--name 模型名 | --ani x.ani | --batch 路径片段 [--limit N]] [--out DIR]");
             std::process::exit(2);
         }
     };
@@ -228,7 +308,12 @@ fn main() {
     std::fs::create_dir_all(&out).ok();
     let tag = one_ani.clone().or(mesh.clone()).unwrap_or_else(|| "bundle".into());
     let file = out.join(format!("{}.skel.json", tag.trim_end_matches(".mesh").replace('/', "_")));
-    let body = serde_json::to_string_pretty(&v).unwrap_or_default();
+    // 单份导出留 pretty（人要打开看的就是这一份，体积不敏感）；批量走紧凑格式
+    let body = if batch.is_some() {
+        serde_json::to_string(&v).unwrap_or_default()
+    } else {
+        serde_json::to_string_pretty(&v).unwrap_or_default()
+    };
     if let Err(e) = std::fs::write(&file, &body) {
         eprintln!("写不出 {}：{e}", file.display());
         std::process::exit(2);
@@ -327,6 +412,33 @@ mod tests {
             nodes.len(),
             anims.len()
         );
+    }
+
+    /// 批量入口的取文件逻辑：按路径片段筛网格、认得出 .mesh、条数受 limit 管。
+    #[test]
+    fn batch_selects_meshes_under_a_prefix() {
+        let root = std::env::var("TLBB_ROOT")
+            .map(PathBuf::from)
+            .unwrap_or_else(|_| PathBuf::from("D:/TLGL"));
+        let db = root.join(".scratch/resources.db");
+        if !db.is_file() {
+            eprintln!("跳过：本机没有资源清单");
+            return;
+        }
+        let con = Connection::open_with_flags(
+            &db,
+            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+        )
+        .expect("清单");
+        let all = mesh_paths(&con, "npc/quest/w1351_monster_xiyuqiezei", 50);
+        assert!(!all.is_empty(), "这只怪名下该有网格");
+        assert!(all.iter().all(|p| p.ends_with(".mesh")), "只该挑出 .mesh");
+        let few = mesh_paths(&con, "npc/quest/w1351_monster_xiyuqiezei", 1);
+        assert_eq!(few.len(), 1, "limit 必须真起作用");
+        // 挑出来的网格得能配上动作——否则批量等于白跑
+        let with_anim = all.iter().filter(|p| !anim_names_for(&con, p).is_empty()).count();
+        assert!(with_anim >= 1, "批量选出的网格里一个带动作的都没有，这条入口没意义");
+        eprintln!("批量：筛出 {} 份网格，其中 {with_anim} 份带动作", all.len());
     }
 
     /// 只给一个 `.ani` 也要能出活：没有 mesh 就没有节点记录，但动作照样导。

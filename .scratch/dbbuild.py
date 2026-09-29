@@ -582,7 +582,13 @@ def build_asset_groups(con):
             owner.setdefault(s, []).append(lo)
 
     comp = {}
-    fxsrc = {h for (h,) in c.execute("select hash from resources where type='JBPU'")}
+    # 特效源文件的判据：扩展名优先，内容 magic 只当补充。
+    # 原来只看 type='JBPU'，而 type 是「把 payload 解出来读 magic」才填得上的——
+    # 跳过解包那一步时 226 个 .pu 会被标成 'missing'，它们的单文件组件就被下面
+    # 「成员<2 且不属于 owner/fxsrc 就丢」那条规则整批扔掉，清单凭空少 209 组。
+    # 组该不该存在不该取决于本机当时解没解包，所以这里认 ext='.pu'。
+    fxsrc = {h for (h,) in c.execute(
+        "select hash from resources where type='JBPU' or ext='.pu'")}
     for s in list(owner) + list(fxsrc):
         find(s)          # a material that only contributes names is still an asset root
     for h in list(parent):

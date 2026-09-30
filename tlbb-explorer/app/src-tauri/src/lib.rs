@@ -4,6 +4,7 @@
 
 mod browse;
 mod data;
+mod effect;
 mod inspector;
 mod map_view;
 mod mdl_view;
@@ -196,6 +197,7 @@ pub fn run() {
             gap::catalog_gap,
             skeleton::skeleton_view,
             skeleton::animation_view,
+            effect::effect_view,
             texture_warm::texture_warm_status,
             texture_warm::texture_warm_start,
             browse::browse_paks,

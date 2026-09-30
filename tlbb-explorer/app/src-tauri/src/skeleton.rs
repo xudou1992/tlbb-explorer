@@ -55,7 +55,7 @@ pub struct SkeletonReply {
 }
 
 /// 容器名归一：清单里 `pak` 存裸名（`data`），开文件要 `data.pak`。
-fn card_of(pak: &str) -> String {
+pub(crate) fn card_of(pak: &str) -> String {
     if pak.ends_with(".pak") {
         pak.to_string()
     } else {
@@ -63,13 +63,13 @@ fn card_of(pak: &str) -> String {
     }
 }
 
-fn open_db(db: &std::path::Path) -> Result<Connection, String> {
+pub(crate) fn open_db(db: &std::path::Path) -> Result<Connection, String> {
     Connection::open_with_flags(db, OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX)
         .map_err(|e| format!("资源清单打不开：{e}"))
 }
 
 /// 按完整路径取一条资源的 (hash, 容器)。
-fn locate(con: &Connection, path: &str) -> Option<(u64, String)> {
+pub(crate) fn locate(con: &Connection, path: &str) -> Option<(u64, String)> {
     con.query_row(
         "SELECT hash, coalesce(pak,'') FROM resources WHERE path = ?1 AND stored > 0 LIMIT 1",
         [path],
@@ -81,7 +81,7 @@ fn locate(con: &Connection, path: &str) -> Option<(u64, String)> {
 
 /// 同组动作：`<组目录>/ani/*.ani`。
 /// 按目录而不是按名字子串捞——部件网格名带 `_yifu_001` 这类后缀，动作名不带。
-fn anim_paths(con: &Connection, mesh_path: &str) -> Vec<String> {
+pub(crate) fn anim_paths(con: &Connection, mesh_path: &str) -> Vec<String> {
     let dir = match mesh_path.rfind('/') {
         Some(i) => &mesh_path[..i],
         None => return Vec::new(),
@@ -97,7 +97,7 @@ fn anim_paths(con: &Connection, mesh_path: &str) -> Vec<String> {
         .unwrap_or_default()
 }
 
-fn decode(paks: &mut std::collections::HashMap<String, Pak>, root: &std::path::Path, card: &str, hash: u64) -> Option<Vec<u8>> {
+pub(crate) fn decode(paks: &mut std::collections::HashMap<String, Pak>, root: &std::path::Path, card: &str, hash: u64) -> Option<Vec<u8>> {
     if !paks.contains_key(card) {
         paks.insert(card.to_string(), Pak::open(root.join(card)).ok()?);
     }
@@ -144,10 +144,11 @@ pub fn skeleton_view_run(gid: i64) -> Result<SkeletonReply, String> {
         .find(|m| m.role == "mesh")
         .and_then(|m| m.path.clone())
         .or_else(|| {
+            // 同上：只在本组目录里找网格，LIKE 子串会跑到兄弟目录去
             con.query_row(
-                "SELECT coalesce(path,'') FROM resources WHERE ext='.mesh' AND dir LIKE ?1 \
+                "SELECT coalesce(path,'') FROM resources WHERE ext='.mesh' AND dir = ?1 \
                  ORDER BY stored DESC LIMIT 1",
-                [format!("%{}%", insp.dir)],
+                [insp.dir.trim_end_matches('/').to_lowercase()],
                 |r| r.get::<_, String>(0),
             )
             .ok()

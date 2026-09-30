@@ -234,6 +234,134 @@ pub async fn skeleton_view(gid: i64) -> Result<SkeletonReply, String> {
         .map_err(|e| format!("骨架线程没起来：{e}"))?
 }
 
+// ------------------------------------------------------------------ 动作页
+//
+// 一次把整条动作的关键帧发过去，前端拖游标本地取帧：逐帧问后端会变成
+// 「动一下滑块等一次 IPC」，比看不到更烦。
+
+#[derive(Serialize)]
+pub struct TrackSeries {
+    pub bone: String,
+    /// 每帧一个单位四元数。
+    pub rotations: Vec<[f32; 4]>,
+    /// 每帧一个位移（骨骼局部量级 0.01~0.9，不是世界坐标）。
+    pub positions: Vec<[f32; 3]>,
+    /// 每帧一个缩放（样本恒 1.0，含义未证，原样带着）。
+    pub scales: Vec<f32>,
+}
+
+#[derive(Serialize)]
+pub struct AnimReply {
+    pub file: String,
+    /// 同组还有哪些动作，供界面切换。
+    pub files: Vec<String>,
+    pub bones: usize,
+    pub frames: usize,
+    /// 帧率刻度：样本恒 40.0，含义未证——界面不许换算成秒。
+    pub tick: f32,
+    pub moving: usize,
+    pub tracks: Vec<TrackSeries>,
+    pub missing: Vec<String>,
+    pub elapsed_ms: u64,
+}
+
+/// 浮点留 5 位小数：源数据是 f32，界面读数不需要 18 个字符。
+fn q5(v: f32) -> f32 {
+    if !v.is_finite() {
+        return v;
+    }
+    (v as f64 * 1e5).round() as f32 / 1e5 as f32
+}
+
+fn series(a: &tlbb_core::preview::Anim) -> Vec<TrackSeries> {
+    a.tracks
+        .iter()
+        .map(|t| TrackSeries {
+            bone: t.bone.clone(),
+            rotations: t
+                .rotations
+                .iter()
+                .map(|q| q.map(q5))
+                .collect(),
+            positions: t.positions.iter().map(|p| p.map(q5)).collect(),
+            scales: t.scales.iter().copied().map(q5).collect(),
+        })
+        .collect()
+}
+
+pub fn anim_view_run(gid: i64, want: &str) -> Result<AnimReply, String> {
+    let t0 = std::time::Instant::now();
+    let (root, db) = roots();
+    if !db.exists() {
+        return Err(format!("找不到资源清单文件：{}", db.display()));
+    }
+    let con = open_db(&db)?;
+    let insp = inspect(gid)?;
+    // 动作跟着组里那份网格走：同组 `<目录>/ani/*.ani`
+    let mesh_path = insp
+        .members
+        .iter()
+        .find(|m| m.role == "mesh")
+        .and_then(|m| m.path.clone())
+        .ok_or_else(|| "这一组里没有网格文件，动作是套在骨架上的，先有骨架才谈得上动作。".to_string())?;
+    let files = anim_paths(&con, &mesh_path)
+        .iter()
+        .filter_map(|p| p.rsplit('/').next().map(|s| s.to_string()))
+        .collect::<Vec<_>>();
+    if files.is_empty() {
+        return Err("这一组旁边没有 ani/ 目录，客户端没给它配动作文件。".to_string());
+    }
+    // 空 want 或名字对不上时取第一条，别让人面对一个空白页
+    let pick = files
+        .iter()
+        .find(|f| *f == want)
+        .cloned()
+        .unwrap_or_else(|| files[0].clone());
+    let full = anim_paths(&con, &mesh_path)
+        .into_iter()
+        .find(|p| p.ends_with(&format!("/{pick}")))
+        .ok_or_else(|| format!("清单里找不到 {pick} 的完整路径"))?;
+    let (h, pak) = locate(&con, &full).ok_or_else(|| format!("{pick} 在容器里没有对应记录"))?;
+    let mut paks: std::collections::HashMap<String, Pak> = Default::default();
+    let raw = decode(&mut paks, &root, &card_of(&pak), h)
+        .ok_or_else(|| format!("{pick} 的字节解不出来（容器读得出记录，解码失败）"))?;
+    let a = parse_ani(&raw).ok_or_else(|| format!("{pick} 不按已知的 .ani 布局排布"))?;
+    let moving = a
+        .tracks
+        .iter()
+        .filter(|t| track_moves(&t.rotations, &t.positions))
+        .count();
+    let unnamed = a.tracks.iter().filter(|t| t.bone.is_empty()).count();
+    let mut missing = vec![
+        "父骨链未解：这里列的是每根骨自己的旋转与位移，摆不出整具骨架怎么动".to_string(),
+        "蒙皮权重不在这份文件里：所以模型不会跟着动，能看的只有数字".to_string(),
+        format!("帧率刻度 {} 的含义未证（每秒 tick？总时长×40？），界面不换算成秒", a.tick),
+    ];
+    if unnamed > 0 {
+        missing.push(format!(
+            "骨名表比轨道少 {unnamed} 条：那 {unnamed} 根骨客户端没给名字，这里留空，不编"
+        ));
+    }
+    Ok(AnimReply {
+        file: pick,
+        files,
+        bones: a.bones,
+        frames: a.frames,
+        tick: a.tick,
+        moving,
+        tracks: series(&a),
+        missing,
+        elapsed_ms: t0.elapsed().as_millis() as u64,
+    })
+}
+
+#[tauri::command]
+pub async fn animation_view(gid: i64, file: String) -> Result<AnimReply, String> {
+    tauri::async_runtime::spawn_blocking(move || anim_view_run(gid, &file))
+        .await
+        .map_err(|e| format!("动作线程没起来：{e}"))?
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -278,6 +406,53 @@ mod tests {
             rep.animations[0].bones,
             rep.animations[0].frames,
             rep.animations[0].moving
+        );
+    }
+
+    /// 真数据：一条动作的全部关键帧要发得全，轨道数等于骨骼数、每条轨道帧数齐。
+    #[test]
+    fn 动作页回包带全部帧与未解项() {
+        let (root, db) = roots();
+        if !root.join("data.pak").is_file() || !db.is_file() {
+            eprintln!("跳过：本机没有客户端或资源清单");
+            return;
+        }
+        let con = open_db(&db).expect("清单");
+        let gid: i64 = con
+            .query_row(
+                "SELECT id FROM agroups WHERE stem = 'w1351_monster_xiyuqiezei'",
+                [],
+                |r| r.get(0),
+            )
+            .expect("这只怪应在清单里");
+        let rep = anim_view_run(gid, "").expect("空文件名该落到第一条动作");
+        assert!(!rep.files.is_empty(), "同组 ani/ 该有一批动作");
+        assert_eq!(rep.tracks.len(), rep.bones, "轨道数必须等于骨骼数");
+        assert!(rep.frames >= 10, "帧数看着不对：{}", rep.frames);
+        for t in rep.tracks.iter() {
+            assert_eq!(t.rotations.len(), rep.frames, "{} 的旋转帧数不齐", t.bone);
+            assert_eq!(t.positions.len(), rep.frames, "{} 的位移帧数不齐", t.bone);
+            assert_eq!(t.scales.len(), rep.frames, "{} 的缩放帧数不齐", t.bone);
+        }
+        assert!(rep.missing.iter().any(|m| m.contains("父骨链")));
+        assert!(rep.missing.iter().any(|m| m.contains("权重")));
+        assert!(rep.missing.iter().any(|m| m.contains("帧率刻度")));
+        let second = rep
+            .files
+            .iter()
+            .find(|f| *f != &rep.file)
+            .cloned()
+            .expect("应有第二条");
+        let r2 = anim_view_run(gid, &second).expect("第二条动作");
+        assert_eq!(r2.file, second, "指定文件名就该给那一条");
+        eprintln!(
+            "动作页：{} · {} 骨 · {} 帧 · 会动 {} 根 · 同组动作 {} 条 · 用时 {}ms",
+            rep.file,
+            rep.bones,
+            rep.frames,
+            rep.moving,
+            rep.files.len(),
+            rep.elapsed_ms
         );
     }
 

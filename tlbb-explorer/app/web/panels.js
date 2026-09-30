@@ -3,7 +3,8 @@
 // 这一层只做呈现：所有事实都来自 asset_inspect 回包，一个数字都不在这里算出来。
 // 纪律与全库一致：没有的东西不画、不猜，用「缺 / 未命名」如实说。
 
-import { el, esc, num } from "./ui.js";
+import { el, esc, num, chips } from "./ui.js";
+import { animSummary, changedRows, clampFrame, frameRows } from "./lib/animView.js";
 
 /// 引用类别 → 配色 + 单字图标。颜色只作辅助，文字永远是主载体。
 const ROLE_STYLE = {
@@ -37,6 +38,14 @@ export function showTabPane(name) {
   for (const p of document.querySelectorAll(".tabpane[data-pane]")) {
     p.hidden = p.dataset.pane !== name;
   }
+  for (const cb of tabCbs) cb(name);
+}
+
+/// 标签页打开的通知。动作页要等用户真点开才去读关键帧
+/// （一条动作约 0.6 秒，压在每次选资产的路径上不值）。
+const tabCbs = [];
+export function onTabOpen(cb) {
+  tabCbs.push(cb);
 }
 
 let tabsWired = false;
@@ -99,6 +108,52 @@ export function paintSkeleton(v) {
         .join("")}</tbody></table>`;
   }
   el("skelMissing").innerHTML = (v.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
+}
+
+// ---- 动作页：整条关键帧一次取回，游标本地切帧（不逐帧打 IPC） ----
+
+export function clearAnimation() {
+  el("animSum").textContent = "";
+  el("animPick").innerHTML = "";
+  el("animTable").innerHTML = "";
+  el("animMissing").innerHTML = "";
+  el("tabAnimCount").textContent = "";
+}
+
+/// 摆一帧。取哪几行、越界怎么夹、未命名的骨叫什么，全在 lib/animView.js（有测试盯着），
+/// 这里只负责写 DOM。
+export function paintAnimation(rep, frame, onlyChanged, onPick) {
+  clearAnimation();
+  if (!rep) return;
+  el("tabAnimCount").textContent = rep.frames ? String(rep.frames) : "";
+  el("animSum").textContent = animSummary(rep, frame);
+  el("animMissing").innerHTML = (rep.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
+  if ((rep.files || []).length > 1) {
+    chips(
+      el("animPick"),
+      rep.files.map((f) => ({ value: f, label: f.replace(/\.ani$/i, "") })),
+      rep.file,
+      onPick,
+    );
+  }
+  const slider = el("animFrame");
+  slider.min = "0";
+  slider.max = String(Math.max(0, (rep.frames || 1) - 1));
+  slider.value = String(clampFrame(frame, rep.frames));
+  const rows = onlyChanged ? changedRows(rep.tracks, frame) : frameRows(rep.tracks, frame);
+  const cell = (a) => (a ? a.map((v) => v.toFixed(3)).join(" ") : "—");
+  el("animTable").innerHTML = rows.length
+    ? `<table class="hl-table"><thead><tr><th>骨名</th><th>旋转 x y z w</th><th>位移 x y z</th><th>缩放</th></tr></thead><tbody>${rows
+        .map(
+          (r) =>
+            `<tr><td>${esc(r.bone)}</td><td class="n">${cell(r.quat)}</td><td class="n">${cell(
+              r.pos,
+            )}</td><td class="n">${r.scale === null ? "—" : r.scale.toFixed(3)}</td></tr>`,
+        )
+        .join("")}</tbody></table>`
+    : `<p class="dim">这一帧相对第 1 帧没有骨在动。取消「只列变了的骨」可以看全部 ${
+        (rep.tracks || []).length
+      } 根。</p>`;
 }
 
 // ---- 右栏：资源概况 + 引用关系 + 关系图谱 ----

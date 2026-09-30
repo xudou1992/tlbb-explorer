@@ -195,6 +195,7 @@ pub fn run() {
             texture_override::candidate_png,
             gap::catalog_gap,
             skeleton::skeleton_view,
+            skeleton::animation_view,
             texture_warm::texture_warm_status,
             texture_warm::texture_warm_start,
             browse::browse_paks,

@@ -59,6 +59,8 @@ export const browseExportGroup = (gid, dest = "") =>
   call("browse_export_group", { gid, dest });
 /// 骨架页：节点（名字 + 绑定位移）与同组动作清单。解不出的原因由后端原话带回。
 export const skeletonView = (gid) => call("skeleton_view", { gid });
+/// 动作页：一次拿整条动作的全部关键帧，前端拖游标本地取帧。
+export const animationView = (gid, file) => call("animation_view", { gid, file });
 /// 资产侧懒预热开关：只有进「资产」标签才触发后台预热（有缓存时秒级载入）。
 export const startWarm = () => call("start_warm");
 /// 全库批量试贴（贴图候选榜的原料）：问还差多少只模型、发起后台跑、听进度。

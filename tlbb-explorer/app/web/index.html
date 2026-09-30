@@ -143,6 +143,7 @@
               <button type="button" class="tab on" data-tab="preview" role="tab">预览</button>
               <button type="button" class="tab" data-tab="resource" role="tab">资源详情</button>
               <button type="button" class="tab" data-tab="skeleton" role="tab">骨架 <em id="tabSkelCount"></em></button>
+              <button type="button" class="tab" data-tab="animation" role="tab">动作 <em id="tabAnimCount"></em></button>
               <button type="button" class="tab" data-tab="relations" role="tab">组成成员 <em id="tabRelCount"></em></button>
               <button type="button" class="tab" data-tab="missing" role="tab">缺失资源 <em id="tabMissCount"></em></button>
               <button type="button" class="tab" data-tab="files" role="tab">文件清单</button>
@@ -229,6 +230,29 @@
               <section class="d-sec">
                 <h3>还没解出来的</h3>
                 <ul id="skelMissing" class="plain"></ul>
+              </section>
+            </div>
+
+            <!-- 面板：动作。整条动作的关键帧一次取回，拖游标本地切帧。
+                 没有蒙皮权重，所以这里看的是数字，不是模型在动。 -->
+            <div class="tabpane" data-pane="animation" hidden>
+              <section class="d-sec">
+                <h3>动作</h3>
+                <p id="animSum" class="dim"></p>
+                <div class="chips" id="animPick"></div>
+                <label class="field">
+                  <span>第几帧</span>
+                  <input id="animFrame" type="range" min="0" max="0" step="1" value="0" aria-label="帧游标" />
+                </label>
+                <label class="check">
+                  <input id="animOnlyChanged" type="checkbox" checked />
+                  <span>只列这一帧变了的骨</span>
+                </label>
+                <div id="animTable"></div>
+              </section>
+              <section class="d-sec">
+                <h3>还没解出来的</h3>
+                <ul id="animMissing" class="plain"></ul>
               </section>
             </div>
 

@@ -387,3 +387,60 @@ test("同一组的重刷不许把用户从正在看的标签拽回预览", async
   await Promise.resolve(); await Promise.resolve();
   assert.equal(pane("preview").hidden, false, "换了资产该回到第一眼那页");
 });
+
+test("动作页：点开才取数，拖游标只重画不再打后端", async () => {
+  let calls = 0;
+  const rep = {
+    file: "a_walk.ani",
+    files: ["a_walk.ani", "a_run.ani"],
+    bones: 2,
+    frames: 3,
+    tick: 40,
+    moving: 1,
+    tracks: [
+      { bone: "bip01",
+        rotations: [[1, 0, 0, 0], [1, 0, 0, 0], [0.5, 0.5, 0, 0.707]],
+        positions: [[0, 0, 0], [0, 0, 0], [0, 1, 0]], scales: [1, 1, 1] },
+      { bone: "still",
+        rotations: [[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0]],
+        positions: [[0, 0, 0], [0, 0, 0], [0, 0, 0]], scales: [1, 1, 1] },
+    ],
+    missing: ["父骨链未解：摆不出整具骨架怎么动"],
+  };
+  const detail = await sandbox("detail.js", {
+    "mesh.js": meshMock,
+    "api.js": {
+      cardDetail: async () => fixtures.DETAIL_A,
+      assetInspect: async () => fixtures.INSPECT_A,
+      skeletonView: async () => ({ mesh: "a.mesh", declared: 0, nodes: [], animations: [], missing: [], note: "" }),
+      animationView: async () => {
+        calls++;
+        return rep;
+      },
+    },
+  });
+  await detail.module.showDetail(245);
+  await Promise.resolve(); await Promise.resolve();
+  assert.equal(calls, 0, "没点开动作文，不该为一条 0.6 秒的取数白等");
+  detail.el("animOnlyChanged").checked = true; // 真页面默认勾上，替身读不到 HTML 属性
+  detail.get("panels.js").showTabPane("animation");
+  // 桩里的 setTimeout 不会真的排程，只能用微任务把 async 链抽干
+  for (let i = 0; i < 8; i++) await Promise.resolve();
+  assert.equal(calls, 1, "点开动作页才取数");
+  assert.ok(detail.el("animSum").textContent.includes("第 1 / 3 帧"), `摘要该从第 1 帧起：${detail.el("animSum").textContent}`);
+  assert.ok(detail.el("animTable").innerHTML.includes("没有骨在动"), "第 1 帧相对自己没变化");
+  const slider = detail.el("animFrame");
+  slider.value = "2";
+  for (const f of slider.events.input || []) f({ target: slider });
+  assert.equal(calls, 1, "拖游标只重画，不该再打后端");
+  assert.ok(detail.el("animSum").textContent.includes("第 3 / 3 帧"), "游标与摘要要同步");
+  assert.ok(detail.el("animTable").innerHTML.includes("bip01"), "动过的骨要列出来");
+  assert.ok(!detail.el("animTable").innerHTML.includes(">still<"), "勾了「只列变了的骨」就不该出现没动的骨");
+  assert.ok(detail.el("animMissing").innerHTML.includes("父骨链"), "未解项要同屏写明");
+  // 切动作：点筹码要走后端拿那一条
+  const chip = detail.el("animPick").children[1];
+  assert.ok(chip, "同组多条动作要给得出来");
+  chip.onclick();
+  for (let i = 0; i < 8; i++) await Promise.resolve();
+  assert.equal(calls, 2, "换一条动作要重新取数");
+});

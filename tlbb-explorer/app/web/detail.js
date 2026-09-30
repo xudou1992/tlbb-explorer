@@ -18,6 +18,9 @@ import {
   paintSide,
   paintSkeleton,
   clearSkeleton,
+  paintAnimation,
+  clearAnimation,
+  onTabOpen,
   paintTabCounts,
   paintRing,
   paintFiles,
@@ -91,6 +94,9 @@ function clearTabPanes() {
   el("texCand").innerHTML = "";
   texReply = null;
   clearSkeleton();
+  clearAnimation();
+  animReply = null;
+  animFrame = 0;
   showTabPane("preview"); // 停在有话说的那一页，别停在一页残留
 }
 
@@ -161,6 +167,51 @@ let skelSeq = 0;
 /// 当前详情铺的是哪一组。后台刷新会重新走一遍 showDetail（同一组），
 /// 那时不许把用户从他正在看的标签拽回「预览」——只有真的换了一组才回位。
 let paintedGid = 0;
+/// 动作页：整条关键帧取回一次，之后拖游标只重画表，不再打后端。
+let animReply = null;
+let animFrame = 0;
+let animSeq = 0;
+
+function animOnlyChanged() {
+  return el("animOnlyChanged").checked !== false;
+}
+
+function repaintAnim() {
+  if (!animReply) return;
+  paintAnimation(animReply, animFrame, animOnlyChanged(), (f) => loadAnimation(state.selected, f));
+}
+
+async function loadAnimation(gid, file) {
+  const my = ++animSeq;
+  try {
+    const v = await api.animationView(gid, file || "");
+    if (my !== animSeq || state.selected !== gid) return;
+    animReply = v;
+    animFrame = 0;
+    repaintAnim();
+  } catch (e) {
+    if (my !== animSeq || state.selected !== gid) return;
+    animReply = null;
+    clearAnimation();
+    el("animSum").textContent = `动作没读到：${String((e && e.message) || e)}`;
+  }
+}
+
+let animWired = false;
+function initAnim() {
+  if (animWired) return;
+  animWired = true;
+  el("animFrame").addEventListener("input", (ev) => {
+    animFrame = Number(ev && ev.target ? ev.target.value : 0);
+    repaintAnim();
+  });
+  el("animOnlyChanged").addEventListener("change", repaintAnim);
+  // 点开才取数：一条动作约 0.6 秒，不该压在每次选资产的路径上
+  onTabOpen((name) => {
+    if (name !== "animation" || !state.selected) return;
+    if (!animReply) loadAnimation(state.selected, "");
+  });
+}
 // 这一栏最近一次铺的是什么回包 + 后台批量试贴的状态。
 // texSource 与 texReply 分开是有原因的：texReply 只在「有候选榜」时非空，
 // 而「没有榜」恰恰是要提示「后台还没跑完」的那一路——那时也得能重画这一栏。
@@ -343,3 +394,4 @@ export function clearDetail() {
 
 initTabs();
 initTools();
+initAnim();

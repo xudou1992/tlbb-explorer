@@ -440,6 +440,19 @@ fn read_node(raw: &[u8], at: usize) -> Option<Node> {
     if name_bytes[end..].iter().any(|&c| c != 0) {
         return None;
     }
+    // 挂点表（128B = `tx_*` 挂点名 + 骨名 + 矩阵）的第二段也是「骨名 + 矩阵」，
+    // 单看这一条与节点记录一模一样。区别在它前面那 32 字节一定是 `tx_` 开头的挂点名：
+    // 实测这份 .mesh 里 `Bip01_Head`/`Bone01`/`Bip01_Spine1`/`Bip01_Spine` 四条就是这么
+    // 混进骨架节点的——它们是挂点指向的骨名（大写别名），不是额外的四根骨。
+    if at >= 32 {
+        let prev = &raw[at - 32..at];
+        let plen = prev.iter().position(|&c| c == 0).unwrap_or(32);
+        if plen >= 3 && prev[..plen].iter().all(|c| c.is_ascii_alphanumeric() || matches!(c, b'_' | b'-' | b'.'))
+            && prev[..3].eq_ignore_ascii_case(b"tx_")
+        {
+            return None;
+        }
+    }
     let mb = raw.get(at + 32..at + NODE_RECORD)?;
     let mut m = [0f32; 16];
     for (i, chunk) in mb.chunks_exact(4).enumerate() {
@@ -873,6 +886,33 @@ mod node_tests {
         let other = after.iter().find(|x| x.name == m).expect("对侧仍在");
         let still_mirror = (0..3).filter(|k| near(hit.bind[12 + k], other.bind[12 + k])).count();
         assert!(still_mirror < 2, "改了平移却仍然对称，闸门是假的");
+    }
+
+    /// 挂点表不算骨：`tx_*` 后面那个大写的骨名（`Bip01_Head`/`Bone01`/
+    /// `Bip01_Spine1`/`Bip01_Spine`）也是「名字 + 矩阵」，上一版把它们当成
+    /// 多出来的四根骨摆进了骨架页。这条闸门钉住「一条都不许出现」。
+    #[test]
+    fn socket_entries_are_not_bones() {
+        let root = std::env::var("TLBB_ROOT").map(PathBuf::from).unwrap_or_else(|_| PathBuf::from("D:/TLGL"));
+        let Some(mesh) = raw_of(&root, "data", MESH) else {
+            eprintln!("跳过：本机没有 data.pak");
+            return;
+        };
+        let got = parse_nodes(&mesh);
+        let 挂点别名: Vec<&str> = got
+            .iter()
+            .map(|n| n.name.as_str())
+            .filter(|n| n.starts_with("Bip01_") || n == &"Bone01")
+            .collect();
+        assert!(
+            挂点别名.is_empty(),
+            "挂点表的大写骨名混进了骨架节点：{挂点别名:?}"
+        );
+        assert!(
+            got.iter().any(|n| n.name == "bip01_spine"),
+            "真骨不该被一起否掉：小写 bip01_spine 必须在"
+        );
+        eprintln!("挂点排除之后：节点 {} 条（上一版是 36 条，多出的 4 条是挂点表）", got.len());
     }
 
     /// 真数据：影响顶点表读得出来，并且**逐顶点把各骨权重加起来应当 ≈1**。

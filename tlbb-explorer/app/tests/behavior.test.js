@@ -320,7 +320,11 @@ test("详情「导出」：点一下要把整组交出去，并把写了几个�
 test("骨架页：解出来的骨名与动作要真铺进标签页，迟到的回包不许串台", async () => {
   const A = { mesh: "a_yifu.mesh", meshes: ["a_yifu.mesh", "a_shoutao.mesh"],
     declared: 46, note: "", skin_bones: 26, skin_pairs: 1163,
-    nodes: [{ name: "origin", pos: [0, 0, 0], scale: 1, skin: 0 }, { name: "bip01_pelvis", pos: [0.05, 0.0007, -1.0979], scale: 1, skin: 71 }],
+    nodes: [
+      { name: "bip01", pos: null, scale: null, skin: 0, source: "ani" },
+      { name: "origin", pos: [0, 0, 0], scale: 1, skin: 0, source: "mesh" },
+      { name: "bip01_pelvis", pos: [0.05, 0.0007, -1.0979], scale: 1, skin: 71, source: "mesh+ani" },
+    ],
     animations: [{ file: "a_walk.ani", bones: 46, frames: 21, tick: 40, moving: 12 }],
     missing: ["父骨链未解：只知道每根骨在模型里的位置"] };
   const B = { mesh: "b_yifu.mesh", declared: 12, note: "", skin_bones: 0, skin_pairs: 0,
@@ -356,10 +360,14 @@ test("骨架页：解出来的骨名与动作要真铺进标签页，迟到的�
   await d2.module.showDetail(245);
   await Promise.resolve(); await Promise.resolve();
   assert.ok(d2.el("skelTable").innerHTML.includes("bip01_pelvis"), "骨名必须出现在表里");
-  assert.ok(d2.el("skelSum").textContent.includes("声明 46 根骨"), `摘要要说清声明与认出的差额：${d2.el("skelSum").textContent}`);
+  assert.ok(d2.el("skelSum").textContent.includes("46 根骨全列在这里"), `摘要要说清一共几根骨：${d2.el("skelSum").textContent}`);
+  assert.ok(d2.el("skelSum").textContent.includes("其中 2 根在 .mesh 里有绑定位移"), "带矩阵的有几根也要说");
   assert.ok(d2.el("skelAnims").innerHTML.includes("a_walk.ani"), "动作表要列出同组 .ani");
   assert.ok(d2.el("skelMissing").innerHTML.includes("父骨链"), "没解出来的东西必须同屏写明");
-  assert.equal(d2.el("tabSkelCount").textContent, "2", "标签上的数字是节点条数");
+  assert.equal(d2.el("tabSkelCount").textContent, "3", "标签上的数字是骨表行数");
+  // 只有名字、矩阵不在 .mesh 里的那根骨：不许留空行，也不许编一个坐标
+  assert.ok(d2.el("skelTable").innerHTML.includes("矩阵不在 .mesh 里"), "没矩阵的骨要写清缺的是什么");
+  assert.ok(!d2.el("skelTable").innerHTML.includes("NaN"), "不许把空坐标算成 NaN 摆出来");
   // 蒙皮权重已解：影响顶点数要逐骨列出来，带表的骨数要在摘要里说得出
   const skelTable = d2.el("skelTable").innerHTML;
   assert.ok(skelTable.includes("影响顶点"), "表头该有「影响顶点」这一列");

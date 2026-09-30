@@ -22,13 +22,16 @@ use tlbb_core::preview::{bone_count, parse_ani, parse_nodes};
 use crate::inspector::{inspect, roots};
 
 #[derive(Serialize)]
+#[derive(Clone)]
 pub struct BoneRow {
     /// 客户端原文骨名，不翻译不编造。
     pub name: String,
-    /// 绑定位移（模型坐标）：矩阵末行 (tx,ty,tz)。
-    pub pos: [f32; 3],
+    /// 绑定位移（模型坐标）：矩阵末行 (tx,ty,tz)。`None` = 这根骨在 `.mesh` 里没有记录。
+    pub pos: Option<[f32; 3]>,
     /// 基向量长度（等比缩放）；1.0 附近是正常单位。
-    pub scale: f32,
+    pub scale: Option<f32>,
+    /// 这根骨的名字从哪来：`mesh`（节点记录）、`ani`（只有轨道名单）、`mesh+ani`（两边都有）。
+    pub source: String,
     /// 这根骨影响多少个顶点（0 = 这条记录后面没带影响表，根骨就是这样）。
     pub skin: usize,
 }
@@ -215,10 +218,13 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
                 .iter()
                 .map(|nd| BoneRow {
                     name: nd.name.clone(),
-                    pos: [nd.bind[12], nd.bind[13], nd.bind[14]],
-                    scale: (nd.bind[0] * nd.bind[0] + nd.bind[1] * nd.bind[1] + nd.bind[2] * nd.bind[2])
-                        .sqrt(),
+                    pos: Some([nd.bind[12], nd.bind[13], nd.bind[14]]),
+                    scale: Some(
+                        (nd.bind[0] * nd.bind[0] + nd.bind[1] * nd.bind[1] + nd.bind[2] * nd.bind[2])
+                            .sqrt(),
+                    ),
                     skin: nd.skin.as_ref().map_or(0, |s| s.vertices.len()),
+                    source: "mesh".to_string(),
                 })
                 .collect();
             with_skin = nodes.iter().filter(|n| n.skin > 0).count();
@@ -235,11 +241,17 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
     }
 
     let mut animations = Vec::new();
+    let mut roster: Vec<String> = Vec::new();
     for p in anim_paths(&con, &mesh_path) {
         let name = p.rsplit('/').next().unwrap_or("").to_string();
         let Some((h, pak)) = locate(&con, &p) else { continue };
         let Some(raw) = decode(&mut paks, &root, &card_of(&pak), h) else { continue };
         let Some(a) = parse_ani(&raw) else { continue };
+        if roster.is_empty() {
+            // 第一条动作的轨道名单就是这具骨架的骨序：声明 46 根、`.mesh` 只给 32 条矩阵，
+            // 差的那些骨**名字在这里有**，不并进来就等于界面上看不见。
+            roster = a.tracks.iter().map(|t| t.bone.clone()).collect();
+        }
         let moving = a
             .tracks
             .iter()
@@ -254,6 +266,26 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
         });
     }
 
+    // 骨表 = `.ani` 轨道名单（骨序）+ `.mesh` 里多出来的记录（origin/top 这类没有轨道的）
+    if !roster.is_empty() {
+        let mut rows: Vec<BoneRow> = Vec::with_capacity(roster.len() + nodes.len());
+        for (i, nm) in roster.iter().enumerate() {
+            match nodes.iter().find(|n| &n.name == nm) {
+                Some(n) => rows.push(BoneRow { source: "mesh+ani".to_string(), ..n.clone() }),
+                None => rows.push(BoneRow {
+                    name: if nm.is_empty() { format!("未命名骨 #{i}") } else { nm.clone() },
+                    pos: None,
+                    scale: None,
+                    skin: 0,
+                    source: "ani".to_string(),
+                }),
+            }
+        }
+        for n in nodes.iter().filter(|n| !roster.contains(&n.name)) {
+            rows.push(n.clone());
+        }
+        nodes = rows;
+    }
     let mut missing = vec![
         "父骨链未解：只知道每根骨在模型里的位置，不知道谁挂谁，所以这里画不出骨架连线，只能列点".to_string(),
     ];
@@ -273,11 +305,13 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
     if !animations.is_empty() {
         missing.push("帧率刻度（样本恒 40.0）到底是每秒 tick 还是别的，未证——所以不换算成秒".to_string());
     }
-    if declared > nodes.len() {
+    let 带矩阵 = nodes.iter().filter(|n| n.pos.is_some()).count();
+    if declared > 带矩阵 {
         missing.push(format!(
-            "声明 {declared} 根骨，这里只认出 {} 条节点记录：剩下的骨在这份文件里以名字挂在别的记录后面\
-             （一张 32 字节步长的名单），那张名单哪几条算子骨还没对上",
-            nodes.len()
+            "{declared} 根骨里只有 {带矩阵} 根在 `.mesh` 里有绑定矩阵：其余 {} 根的名字在 `.ani` 的轨道名单里，\
+             矩阵不在节点表里——它们在这份文件里以名字挂在别的记录后面（一张 32 字节步长的名单），\
+             那张名单哪几条算子骨还没对上",
+            declared - 带矩阵
         ));
     }
 
@@ -453,9 +487,29 @@ mod tests {
         let rep = skeleton_view_run(gid, "").expect("骨架回包");
         assert!(rep.mesh.ends_with(".mesh"), "骨架该跟着网格：{}", rep.mesh);
         assert_eq!(rep.declared, 46, "头部声明的骨骼数");
-        assert!(rep.nodes.len() >= 30, "只认出 {} 条节点", rep.nodes.len());
-        assert_eq!(rep.nodes[0].name, "origin");
-        assert!(rep.nodes.iter().all(|n| n.pos.iter().all(|v| v.is_finite())));
+        // 骨表按 `.ani` 的轨道名单铺全：声明 46 根一根不少，`.mesh` 里多出来的
+        // 框架骨（`origin`/`top` 没有动画轨道）排在后面，所以总数 ≥ 声明数。
+        assert!(
+            rep.nodes.len() >= rep.declared as usize,
+            "骨表 {} 行比声明 {} 根还少，说明有骨没被列出来",
+            rep.nodes.len(),
+            rep.declared
+        );
+        assert_eq!(rep.nodes[0].name, "bip01", "第一行该是 .ani 骨序的第一根");
+        let 有矩阵 = rep.nodes.iter().filter(|n| n.pos.is_some()).count();
+        assert_eq!(有矩阵, 32, "带矩阵的骨数变了要说清为什么");
+        assert_eq!(
+            rep.nodes.iter().filter(|n| n.source == "mesh").count(),
+            2,
+            "origin/top 这两根只有 .mesh 记录、没有动画轨道，该标成 mesh"
+        );
+        assert!(rep
+            .nodes
+            .iter()
+            .filter_map(|n| n.pos)
+            .all(|p| p.iter().all(|v| v.is_finite())));
+        assert!(rep.nodes.iter().any(|n| n.source == "ani"), "只认名字的骨要能标得出来");
+        assert!(!rep.nodes.iter().any(|n| n.name.starts_with("Bip01_")), "挂点表的大写骨名不该在骨表里");
         assert!(!rep.animations.is_empty(), "同组 ani/ 目录该有一批动作");
         assert!(
             rep.animations.iter().all(|a| a.bones == rep.declared),

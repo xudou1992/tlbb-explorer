@@ -85,8 +85,9 @@ export function paintSkeleton(v, onPick) {
     el("skelSum").textContent = v.note || "这一组里没有骨架数据。";
     return;
   }
+  const 带矩阵 = nodes.filter((n) => n.pos).length;
   el("skelSum").textContent =
-    `骨架来自 ${v.mesh}：文件头声明 ${v.declared} 根骨，这里认出 ${nodes.length} 根的绑定位移` +
+    `骨架来自 ${v.mesh}：${v.declared} 根骨全列在这里，其中 ${带矩阵} 根在 .mesh 里有绑定位移` +
     (v.skin_bones
       ? `；其中 ${v.skin_bones} 根带影响顶点表，一共 ${v.skin_pairs} 个（顶点-骨）对。`
       : "。这份网格没有影响顶点表。");  if ((v.meshes || []).length > 1) {
@@ -101,11 +102,13 @@ export function paintSkeleton(v, onPick) {
     `<table class="hl-table"><thead><tr><th>骨名</th><th>X</th><th>Y</th><th>Z</th><th>缩放</th><th>影响顶点</th></tr></thead><tbody>${nodes
       .map(
         (n) =>
-          `<tr><td>${esc(n.name)}</td><td class="n">${fx(n.pos[0])}</td><td class="n">${fx(
-            n.pos[1],
-          )}</td><td class="n">${fx(n.pos[2])}</td><td class="n">${fx(n.scale)}</td><td class="n">${
-            n.skin ? num(n.skin) : "—"
-          }</td></tr>`,
+          `<tr><td>${esc(n.name)}</td>` +
+          (n.pos
+            ? `<td class="n">${fx(n.pos[0])}</td><td class="n">${fx(n.pos[1])}</td><td class="n">${fx(
+                n.pos[2],
+              )}</td><td class="n">${fx(n.scale)}</td>`
+            : `<td class="dim" colspan="4">矩阵不在 .mesh 里</td>`) +
+          `<td class="n">${n.skin ? num(n.skin) : "—"}</td></tr>`,
       )
       .join("")}</tbody></table>`;
   if (anims.length) {

@@ -387,7 +387,7 @@ pub fn browse_preview(pak_name: String, hash: String) -> Result<BrowsePreview, S
                         if let Some(n) = tlbb_core::preview::bone_count(&dec.bytes) {
                             if n != nodes.len() {
                                 info.push(format!(
-                                    "文件头声明 {n} 根骨，这里认出 {} 个节点——剩下的骨名字后面不跟矩阵，为什么没跟还没查出来",
+                                    "文件头声明 {n} 根骨，这里认出 {} 个节点——其余的骨只有名字（在 .ani 的轨道名单里），节点表没给矩阵",
                                     nodes.len()
                                 ));
                             }
@@ -1425,9 +1425,10 @@ mod tests {
         };
         let pv = browse_preview(pak, hash).expect("browse_preview");
         let joined = pv.info.join(" | ");
-        assert!(joined.contains("骨架节点 36 个"), "该报出节点条数：{joined}");
+        assert!(joined.contains("骨架节点 32 个"), "挂点表不该算骨，节点条数应是 32：{joined}");
         assert!(joined.contains("绑定矩阵"), "该说明每条记录带矩阵：{joined}");
         assert!(joined.contains("声明 46 根骨"), "该说出头部声明与认出的差额：{joined}");
+        assert!(!joined.contains("Bip01_Head"), "挂点表的大写骨名不该混进骨架节点：{joined}");
         assert!(joined.contains("还不能驱动模型") && joined.contains("父指针"), "仍未解的父骨链必须同屏：{joined}");
         eprintln!("网格预览：{joined}");
     }

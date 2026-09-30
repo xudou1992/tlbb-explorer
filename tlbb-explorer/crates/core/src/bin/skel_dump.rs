@@ -5,7 +5,7 @@
 //! ——Blender 脚本、别的查看器、或者只是想看看某根骨第 12 帧朝哪儿。
 //!
 //! 导出的同时把**没解出来的东西显式写进文件**（`missing` 字段）：
-//! 父骨链与蒙皮权重未知，所以这份 JSON 里每个节点都是平铺的，
+//! 蒙皮权重在 `influences` 里（按骨组织的影响顶点表）；父骨链未知，所以节点仍是平铺的，
 //! 没有 `parent`，也没有 `weights`。拿到它的人不必猜少了不少什么。
 //!
 //! 只读纪律：db 只读、pak 只读，只写 `--out` 指定的文件。
@@ -143,6 +143,14 @@ fn r3(v: [f32; 3]) -> [f32; 3] {
     v.map(r6)
 }
 
+/// 权重单个浮点留 6 位有效：源数据是 f32，0.99999994 这种写法只让文件变胖。
+fn r3x1(v: f32) -> f32 {
+    if !v.is_finite() {
+        return v;
+    }
+    (v as f64 * 1e6).round() as f32 / 1e6 as f32
+}
+
 fn r16(v: &[f32; 16]) -> Vec<f32> {
     v.iter().map(|x| r6(*x)).collect()
 }
@@ -162,12 +170,22 @@ fn build(root: &Path, con: &Connection, mesh: Option<&str>, anis: &[String]) -> 
                     declared = bone_count(&raw).map_or(serde_json::Value::Null, |n| json!(n));
                     nodes = json!(got
                         .iter()
-                        .map(|nd| json!({
-                            "name": nd.name,
-                            // 行主序 4×4；前三行基向量，第四行 (tx,ty,tz,1) 是绑定位移
-                            "bind": r16(&nd.bind),
-                            "bindPosition": r3([nd.bind[12], nd.bind[13], nd.bind[14]]),
-                        }))
+                        .map(|nd| {
+                            let mut o = json!({
+                                "name": nd.name,
+                                // 行主序 4×4；前三行基向量，第四行 (tx,ty,tz,1) 是绑定位移
+                                "bind": r16(&nd.bind),
+                                "bindPosition": r3([nd.bind[12], nd.bind[13], nd.bind[14]]),
+                            });
+                            // 蒙皮权重：按骨组织的影响顶点表，没有就不放这个键（不摆空数组）
+                            if let Some(sk) = &nd.skin {
+                                o["influences"] = json!({
+                                    "vertices": sk.vertices,
+                                    "weights": sk.weights.iter().copied().map(r3x1).collect::<Vec<_>>(),
+                                });
+                            }
+                            o
+                        })
                         .collect::<Vec<_>>());
                 }
             }
@@ -198,13 +216,14 @@ fn build(root: &Path, con: &Connection, mesh: Option<&str>, anis: &[String]) -> 
         "nodes": nodes,
         "animations": animations,
         "missing": {
-            "parentChain": "父骨链未解：96 字节节点记录 = 名字 char[32] + 矩阵 f32[16]，排不出父索引的槽位；名字之后还跟着几段名单（子骨名单？用途未证）",
-            "skinWeights": "蒙皮权重未解：.mesh 中段是法线+UV，节点表之后也排不出「4 索引 + 4 权重和为 1」",
+            "parentChain": "父骨链未解：96 字节节点记录里没有父索引槽位；记录后面那些 32 字节名单里，bip01_spine 之后确实跟着 spine1/l_thigh/r_thigh（看着像子骨），但同一份里另有一些名单以「别的骨的名字×2」开头，归属还没定死。也试过拿 bind_i = local_i ∘ bind_父 反解（脚本 .scratch/parent_from_bind.py）：残差最小 0.77，不成立——.ani 第 0 帧已经是姿势而不是绑定态，这个判据本身就不该成立",
             "tickMeaning": "帧率刻度（样本恒 40.0）到底是每秒 tick 还是别的，未证",
+            "skinPerPart": "影响顶点表按份算：同一只怪的衣服那份有 26 根、手套那份一根都没有，所以 nodes 为空或 influences 缺失不代表模型不跟骨走，要换一份网格再看",
             "meshNodesPartial": "mesh 只认出部分骨的节点记录（声明 46 根骨，认出 30 多条）：有些骨的名字后面不跟矩阵。绑定位移只在这些记录里有"
         },
         "provenance": {
             "nodeRecord": "96B = char[32] 名字 + f32[16] 绑定矩阵（D3DX 行向量：末行 tx,ty,tz,1）",
+            "influences": "蒙皮权重在 .mesh：每条 96B 骨记录之后跟 [u32 顶点数 N][N 个顶点号（严格递增）][N 个权重 f32]，是按骨组织的稀疏表，不是每顶点 4 影响的定长表（2026-09-30 实测，闸门 preview::geometry::node_tests::skin_influences_sum_to_one_per_vertex）",
             "restRecord": ".ani 骨架区 60B/骨 = +12 绑定旋转（每条单位长）；+48 那三个浮点用途未证，没往这份导出里放",
             "trackRecord": "每骨每帧 = f32×4 旋转 + f32×3 位移 + f32 缩放",
             "boneCountField": ".mesh 头部 0x110 处的 u32 = 骨骼根数，与该模型 .ani 的轨道数一致",
@@ -334,7 +353,7 @@ fn main() {
             first["frames"].as_u64().unwrap_or(0)
         );
     }
-    println!("  未解项已写进 missing 字段（父骨链 / 蒙皮权重 / 帧率刻度的含义）");
+    println!("  蒙皮权重在 influences 里；未解项写进 missing 字段（父骨链 / 帧率刻度 / 按份算的表）");
 }
 
 #[cfg(test)]
@@ -370,6 +389,30 @@ mod tests {
         assert_eq!(nodes[0]["name"].as_str(), Some("origin"));
         assert_eq!(nodes[0]["bind"].as_array().map(|a| a.len()), Some(16));
         assert_eq!(nodes[0]["bindPosition"].as_array().map(|a| a.len()), Some(3));
+        // 蒙皮权重：按骨的影响顶点表必须进导出文件，且不许再出现在「未解」里
+        let with_inf: Vec<_> = nodes
+            .iter()
+            .filter(|nd| nd["influences"]["vertices"].as_array().map_or(false, |a| !a.is_empty()))
+            .collect();
+        assert!(
+            with_inf.len() >= 20,
+            "这份网格实测 26 根骨带影响顶点表，导出里只有 {}",
+            with_inf.len()
+        );
+        for nd in &with_inf {
+            let v = nd["influences"]["vertices"].as_array().unwrap();
+            let w = nd["influences"]["weights"].as_array().unwrap();
+            assert_eq!(v.len(), w.len(), "顶点号与权重个数该相等");
+            assert!(
+                v.windows(2).all(|p| p[0].as_u64().unwrap() < p[1].as_u64().unwrap()),
+                "顶点号该严格递增"
+            );
+        }
+        assert!(
+            v["missing"].get("skinWeights").is_none(),
+            "权重已解，不许还挂在 missing 里"
+        );
+        assert!(v["provenance"]["influences"].is_string(), "出处要写清");
         // 绑定位移是真的在骨架空间里：左右同名骨必须只差一根轴的符号
         let mut pairs = 0;
         for nd in nodes.iter() {
@@ -406,7 +449,6 @@ mod tests {
         }
         // 没解出来的东西必须写在文件里，不能让人自己发现
         assert!(v["missing"]["parentChain"].is_string());
-        assert!(v["missing"]["skinWeights"].is_string());
         assert!(v["provenance"]["boneCountField"].is_string());
         eprintln!(
             "导出：{mesh} · 声明 {declared} 骨 · mesh 节点 {} 条（左右镜像对 {pairs} 对）· 动作 {} 条（第一条 {bones} 骨 {frames} 帧）",

@@ -480,3 +480,34 @@ test("特效页：点开才取数，材质链要真列成表、参数块未解�
   assert.ok(detail.el("fxMissing").innerHTML.includes("参数块"), "字段语法未解必须同屏");
   assert.equal(detail.el("tabFxCount").textContent, "59");
 });
+
+test("换资产要立刻清空骨架/动作/特效三页，不许留着上一件的文字", async () => {
+  const skelA = { mesh: "a_yifu.mesh", declared: 1, note: "", animations: [], missing: [],
+    nodes: [{ name: "aaa_only_in_A", pos: [0, 0, 0], scale: 1 }] };
+  const skelB = { mesh: "", declared: 0, nodes: [], animations: [], missing: [],
+    note: "这一组里没有网格文件，骨架跟着网格走。" };
+  const detail = await sandbox("detail.js", {
+    "mesh.js": meshMock,
+    "api.js": {
+      cardDetail: async () => fixtures.DETAIL_A,
+      assetInspect: async () => fixtures.INSPECT_A,
+      skeletonView: async (gid) => (gid === 245 ? skelA : skelB),
+      animationView: async () => {
+        throw new Error("这一组旁边没有 ani/ 目录");
+      },
+      effectView: async () => {
+        throw new Error("这一组里没有特效文件");
+      },
+    },
+  });
+  await detail.module.showDetail(245);
+  for (let i = 0; i < 8; i++) await Promise.resolve();
+  assert.ok(detail.el("skelTable").innerHTML.includes("aaa_only_in_A"), "夹具得先真铺上 A 的骨架，否则下面的空断言没意义");
+  await detail.module.showDetail(999);
+  // 换的那一瞬间就该是空的——旧文字挂在新资产上是编故事
+  assert.equal(detail.el("skelTable").innerHTML, "", "换资产的瞬间必须清掉上一件的表");
+  assert.equal(detail.el("tabSkelCount").textContent, "", "标签上的数字也要跟着清");
+  for (let i = 0; i < 8; i++) await Promise.resolve();
+  assert.ok(!detail.el("skelTable").innerHTML.includes("aaa_only_in_A"), "B 不许带着 A 的骨名");
+  assert.ok(detail.el("skelSum").textContent.includes("没有网格文件"), `B 该带上自己的原因：${detail.el("skelSum").textContent}`);
+});

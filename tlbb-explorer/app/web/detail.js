@@ -109,6 +109,17 @@ export async function showDetail(gid, retried = 0) {
   state.selected = gid;
   document.querySelectorAll(".row-item").forEach((n) => n.classList.toggle("on", Number(n.dataset.gid) === gid));
   const my = seq.next();
+  // 换一件资产：骨架 / 动作 / 特效三页立刻清空。真窗口里撞到过——上一件的衣服
+  // 写着「这一组旁边没有 ani/ 目录」，而新点的这只怪其实有 15 条动作，
+  // 旧文字不清就等于给新资产编一句假话。同一件的重刷不清（免得闪）。
+  if (gid !== paintedGid) {
+    animReply = null;
+    fxReply = null;
+    animFrame = 0;
+    clearSkeleton();
+    clearAnimation();
+    clearEffect();
+  }
   paint(loading(gid)); // 从 empty() 出发，旧内容结构上就留不下来
   try {
     const [d, insp] = await Promise.all([api.cardDetail(gid), api.assetInspect(gid)]);

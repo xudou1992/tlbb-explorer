@@ -85,7 +85,12 @@ async function sandbox(entry, mock = {}, expose = {}) {
     if (!elements.has(id)) elements.set(id, new Element());
     return elements.get(id);
   };
-  const panes = ["preview", "resource", "relations", "missing", "files", "origin"].map((pane) =>
+  /// 面板清单从 index.html 现读，不手写：加一个标签页却忘了同步测试，
+  /// 就等于让测试替身比真页面少一块，断言会假绿或假红（这次就撞上了）。
+  const indexHtml = fs.readFileSync(path.join(web, "index.html"), "utf8");
+  const paneNames = [...indexHtml.matchAll(/data-pane="([^"]+)"/g)].map((m) => m[1]);
+  assert.ok(paneNames.length >= 6, `index.html 里只找到 ${paneNames.length} 个面板，读法错了`);
+  const panes = paneNames.map((pane) =>
     Object.assign(new Element(), { dataset: { pane } }),
   );
   el("dTabs").children = panes.map((p) => Object.assign(new Element(), { dataset: { tab: p.dataset.pane } }));
@@ -354,4 +359,31 @@ test("骨架页：解出来的骨名与动作要真铺进标签页，迟到的�
   assert.ok(d2.el("skelAnims").innerHTML.includes("a_walk.ani"), "动作表要列出同组 .ani");
   assert.ok(d2.el("skelMissing").innerHTML.includes("父骨链"), "没解出来的东西必须同屏写明");
   assert.equal(d2.el("tabSkelCount").textContent, "2", "标签上的数字是节点条数");
+});
+
+test("同一组的重刷不许把用户从正在看的标签拽回预览", async () => {
+  const skel = { mesh: "a_yifu.mesh", declared: 46, note: "",
+    nodes: [{ name: "origin", pos: [0, 0, 0], scale: 1 }], animations: [], missing: [] };
+  const detail = await sandbox("detail.js", {
+    "mesh.js": meshMock,
+    "api.js": {
+      cardDetail: async () => fixtures.DETAIL_A,
+      assetInspect: async () => fixtures.INSPECT_A,
+      skeletonView: async () => skel,
+    },
+  });
+  const pane = (n) => detail.panes.find((p) => p.dataset.pane === n);
+  await detail.module.showDetail(245);
+  await Promise.resolve(); await Promise.resolve();
+  detail.get("panels.js").showTabPane("skeleton");
+  assert.equal(pane("skeleton").hidden, false, "骨架页该显示");
+  // 后台刷新会重新走一遍同一组的 showDetail——这时不能动用户所在的标签
+  await detail.module.showDetail(245);
+  await Promise.resolve(); await Promise.resolve();
+  assert.equal(pane("skeleton").hidden, false, "重刷同一组，用户该还停在他打开的那一页");
+  assert.equal(pane("preview").hidden, true, "预览页不该被强行掀回来");
+  // 真换一组才回位
+  await detail.module.showDetail(777);
+  await Promise.resolve(); await Promise.resolve();
+  assert.equal(pane("preview").hidden, false, "换了资产该回到第一眼那页");
 });

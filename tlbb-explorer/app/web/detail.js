@@ -122,7 +122,10 @@ export async function showDetail(gid, retried = 0) {
       loadSkeleton(gid); // 骨架要开容器读字节，放在主画面之后异步补，不挡第一眼
       paintRaw({ card: d, inspect: insp });
       paintFixBar(insp);
-      showTabPane("preview"); // 换资产回到第一眼该看的那一页
+      if (paintedGid !== gid) {
+        showTabPane("preview"); // 换资产回到第一眼该看的那一页；同一组的重刷不动
+        paintedGid = gid;
+      }
     }
   } catch (e) {
     if (seq.isStale(my)) return;
@@ -155,6 +158,9 @@ export async function showDetail(gid, retried = 0) {
 let texReply = null;
 /// 骨架页的在途标记：切资产后旧请求的回包一律丢掉
 let skelSeq = 0;
+/// 当前详情铺的是哪一组。后台刷新会重新走一遍 showDetail（同一组），
+/// 那时不许把用户从他正在看的标签拽回「预览」——只有真的换了一组才回位。
+let paintedGid = 0;
 // 这一栏最近一次铺的是什么回包 + 后台批量试贴的状态。
 // texSource 与 texReply 分开是有原因的：texReply 只在「有候选榜」时非空，
 // 而「没有榜」恰恰是要提示「后台还没跑完」的那一路——那时也得能重画这一栏。
@@ -327,6 +333,7 @@ function initTools() {
 export function clearDetail() {
   seq.next();
   state.selected = 0;
+  paintedGid = 0;
   state.lastInspect = null;
   paint(empty());
   paintSide(null);

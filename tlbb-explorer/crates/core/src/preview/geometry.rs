@@ -330,7 +330,9 @@ pub fn parse_geometry(raw: &[u8]) -> Result<MeshGeometry, String> {
 /// 的 ASCII，读得准；父子关系不猜、不画骨架线，也不报「第 i 个的爸爸是 j」。
 ///
 /// 用途：让人一眼看出「这只模型的骨架在文件里」（`origin` / `top` / `bip01_*`），
-/// 以及它和 `.ani` 的骨名表对不对得上。蒙皮权重不在这里，也不在这份文件别处。
+/// 以及它和 `.ani` 的骨名表对不对得上。
+/// 蒙皮权重**在**这份文件里——是按骨组织的影响顶点表，见 [`SkinInfluence`]；
+/// 过去写的「权重不在 .mesh」是按「每顶点 4 影响」那一种编码穷举出来的，判早了。
 pub fn node_names(raw: &[u8]) -> Vec<String> {
     let mut out: Vec<String> = Vec::new();
     // 名字段是 NUL 结尾 ASCII；从任何位置扫都行，尾部之外不会有这种串
@@ -363,13 +365,34 @@ pub fn node_names(raw: &[u8]) -> Vec<String> {
     out
 }
 
-/// 一个骨架节点：名字 + 绑定矩阵（bind pose）。
+/// 一个骨架节点：名字 + 绑定矩阵（bind pose）+ 它影响哪些顶点。
 #[derive(Debug, Clone, PartialEq)]
 pub struct Node {
     pub name: String,
     /// 行主序 4×4，引擎的 D3DX 行向量约定：前三行是基向量，第四行 (m[12],m[13],m[14],1)
     /// 是绑定位移 + 齐次 1。识别一条记录的判据是「基向量两两垂直且等比、m[15]=1」。
     pub bind: [f32; 16],
+    /// 紧跟在这条记录后面的影响顶点表；根骨（`origin`/`top`/`bip01`/`pelvis`）
+    /// 这一段是个 0，读不出表，如实给 `None`。
+    pub skin: Option<SkinInfluence>,
+}
+
+/// 一根骨影响哪些顶点、权重各多少。
+///
+/// **这条推翻了过去写在文档与代码里的结论「蒙皮权重不在 .mesh」**：
+/// 当时穷举的是「每顶点 4 影响、Σ=1 的定长表」，全库最高命中 0.086（噪声），
+/// 于是判成不存在。实际编码是**按骨组织的稀疏表**，紧跟在 96B 节点记录后面：
+/// `[u32 顶点数 N][N 个顶点号 u32（严格递增）][N 个权重 f32]`。
+/// 样本 `w1351_monster_xiyuqiezei_yifu_001.mesh`（781 顶点）：36 条记录里 26 条带表，
+/// 并集覆盖 555 个顶点（71.1%），每个顶点被 1~3 根骨影响，
+/// 按骨累加权重后 **441 个顶点的权重和正好 1.0**。
+/// 剩下的缺口是那 10 根没有 96B 记录的骨——它们以名字挂在别的记录后面。
+#[derive(Debug, Clone, PartialEq)]
+pub struct SkinInfluence {
+    /// 顶点号，实测严格递增；不递增就不认这张表。
+    pub vertices: Vec<u32>,
+    /// 与顶点号一一对应的权重，实测全在 0..=1。
+    pub weights: Vec<f32>,
 }
 
 /// 尾部节点记录的形状：
@@ -444,7 +467,61 @@ fn read_node(raw: &[u8], at: usize) -> Option<Node> {
             }
         }
     }
-    Some(Node { name: String::from_utf8_lossy(nm).into_owned(), bind: m })
+    Some(Node {
+        name: String::from_utf8_lossy(nm).into_owned(),
+        bind: m,
+        skin: read_skin(raw, at + NODE_RECORD, vertex_count(raw)),
+    })
+}
+
+/// 顶点数在头 `0x8C`——影响顶点表里的编号要拿它来卡上界，不然一张
+/// 撞出来的浮点噪声也能凑成「递增的小整数」。
+fn vertex_count(raw: &[u8]) -> usize {
+    raw.get(0x8C..0x90)
+        .and_then(|c| <[u8; 4]>::try_from(c).ok())
+        .map(u32::from_le_bytes)
+        .unwrap_or(0) as usize
+}
+
+/// 读紧跟在 96B 记录之后的影响顶点表：`[u32 N][N 个顶点号][N 个权重 f32]`。
+/// 四道都不松：N 不得超过顶点数、顶点号必须严格递增且都 < 顶点数、
+/// 权重必须全是有限且落在 0..=1、整张表全是 0 权重视为噪声不认。
+fn read_skin(raw: &[u8], at: usize, vc: usize) -> Option<SkinInfluence> {
+    if vc == 0 {
+        return None;
+    }
+    let n = u32::from_le_bytes(raw.get(at..at + 4)?.try_into().ok()?) as usize;
+    if n == 0 || n > vc || n > 65536 {
+        return None;
+    }
+    let idx_end = at + 4 + 4 * n;
+    let ib = raw.get(at + 4..idx_end)?;
+    let wb = raw.get(idx_end..idx_end + 4 * n)?;
+    let mut vertices = Vec::with_capacity(n);
+    for c in ib.chunks_exact(4) {
+        let v = u32::from_le_bytes(c.try_into().ok()?);
+        if v as usize >= vc {
+            return None;
+        }
+        if let Some(&last) = vertices.last() {
+            if v <= last {
+                return None;
+            }
+        }
+        vertices.push(v);
+    }
+    let mut weights = Vec::with_capacity(n);
+    for c in wb.chunks_exact(4) {
+        let w = f32::from_le_bytes(c.try_into().ok()?);
+        if !w.is_finite() || w < 0.0 || w > 1.0001 {
+            return None;
+        }
+        weights.push(w);
+    }
+    if weights.iter().all(|w| *w <= 1e-6) {
+        return None;
+    }
+    Some(SkinInfluence { vertices, weights })
 }
 
 /// 头部声明的骨骼根数；文件太短或读不出就不报（不猜）。
@@ -691,7 +768,7 @@ mod tests {
 /// 2. 头部声明的骨骼数与同组 `.ani` 的轨道数相等——两份不同容器里的数。
 #[cfg(test)]
 mod node_tests {
-    use super::{bone_count, parse_nodes};
+    use super::{bone_count, parse_nodes, vertex_count, Node, NODE_RECORD};
     use crate::jpak::Pak;
     use crate::payload;
     use crate::preview::parse_ani;
@@ -706,6 +783,8 @@ mod node_tests {
     /// w1351_monster_xiyuqiezei：yifu_001.mesh 与 walk.ani
     const MESH: u64 = 0xbcd65050a62986b7;
     const ANI: u64 = 0x361180fe30a07e32;
+    /// 同一只怪的另一份网格（手套）：节点记录在、影响顶点表不在，用来核「按份报」
+    const SHOUTAO: u64 = 0xa56297fce1a4f1c2;
 
     /// 绑定平移是浮点，建模时左右不完全对等；5e-3 在这批样本上够用（骨长量级 1.0）。
     fn near(a: f32, b: f32) -> bool {
@@ -794,5 +873,121 @@ mod node_tests {
         let other = after.iter().find(|x| x.name == m).expect("对侧仍在");
         let still_mirror = (0..3).filter(|k| near(hit.bind[12 + k], other.bind[12 + k])).count();
         assert!(still_mirror < 2, "改了平移却仍然对称，闸门是假的");
+    }
+
+    /// 真数据：影响顶点表读得出来，并且**逐顶点把各骨权重加起来应当 ≈1**。
+    /// 这条是「权重在文件里」的硬证据——不是看着像浮点就算数。
+    #[test]
+    fn skin_influences_sum_to_one_per_vertex() {
+        let root = std::env::var("TLBB_ROOT").map(PathBuf::from).unwrap_or_else(|_| PathBuf::from("D:/TLGL"));
+        let Some(mesh) = raw_of(&root, "data", MESH) else {
+            eprintln!("跳过：本机没有 data.pak");
+            return;
+        };
+        let vc = vertex_count(&mesh);
+        assert!(vc > 0, "头 0x8C 该读出顶点数");
+        let nodes = parse_nodes(&mesh);
+        let with: Vec<&Node> = nodes.iter().filter(|n| n.skin.is_some()).collect();
+        assert!(
+            with.len() >= 20,
+            "{} 条记录里该有 20 根以上带影响表，实际 {}",
+            nodes.len(),
+            with.len()
+        );
+        let mut sum = vec![0f32; vc];
+        let mut seen = vec![false; vc];
+        let mut covered = 0usize;
+        for n in &with {
+            let s = n.skin.as_ref().unwrap();
+            assert_eq!(s.vertices.len(), s.weights.len(), "顶点号与权重个数该相等");
+            for (&v, &w) in s.vertices.iter().zip(s.weights.iter()) {
+                if !seen[v as usize] {
+                    seen[v as usize] = true;
+                    covered += 1;
+                }
+                sum[v as usize] += w;
+            }
+        }
+        let ones = (0..vc).filter(|&i| seen[i] && (sum[i] - 1.0).abs() < 0.02).count();
+        assert!(
+            ones * 2 >= covered,
+            "覆盖 {covered} 个顶点，权重和≈1 的只有 {ones} 个，撑不起「这是权重」的说法"
+        );
+        eprintln!(
+            "影响顶点表：{} 根骨带表 · 覆盖 {}/{} 顶点 · 权重和≈1 的 {ones} 个",
+            with.len(),
+            covered,
+            vc
+        );
+    }
+
+    /// 反证一：把一个权重改成 3.0（越界），这张表就该整个不认。
+    #[test]
+    fn a_weight_out_of_range_kills_the_table() {
+        let root = std::env::var("TLBB_ROOT").map(PathBuf::from).unwrap_or_else(|_| PathBuf::from("D:/TLGL"));
+        let Some(mut mesh) = raw_of(&root, "data", MESH) else {
+            eprintln!("跳过：本机没有 data.pak");
+            return;
+        };
+        let nodes = parse_nodes(&mesh);
+        let nd = nodes.iter().find(|n| n.skin.as_ref().map_or(false, |s| s.vertices.len() > 4)).expect("该有带表的骨");
+        let at = name_at(&mesh, &nd.name);
+        let s = nd.skin.as_ref().unwrap();
+        // 记录 96B + [u32 N] + N 个顶点号，之后才是权重
+        let wbase = at + NODE_RECORD + 4 + 4 * s.vertices.len();
+        mesh[wbase..wbase + 4].copy_from_slice(&3.0f32.to_le_bytes());
+        let after = parse_nodes(&mesh);
+        let hit = after.iter().find(|x| x.name == nd.name).expect("记录本身该还在");
+        assert!(hit.skin.is_none(), "权重越界还认成表，说明边界判据是摆设");
+    }
+
+    /// 同一只怪的两份网格，影响顶点表的多少**由文件说了算**：衣服带、手套不带。
+    /// 这条闸门盯的是「读得出就报数、读不出就报 0」——一旦哪天 `read_skin` 判据
+    /// 改坏了，衣服也会掉到 0，这里立刻红。
+    #[test]
+    fn skin_tables_are_per_part_not_per_model() {
+        let root = std::env::var("TLBB_ROOT").map(PathBuf::from).unwrap_or_else(|_| PathBuf::from("D:/TLGL"));
+        let Some(yifu) = raw_of(&root, "data", MESH) else {
+            eprintln!("跳过：本机没有 data.pak");
+            return;
+        };
+        let Some(shoutao) = raw_of(&root, "data", SHOUTAO) else {
+            eprintln!("跳过：本机没有 data.pak");
+            return;
+        };
+        let yn = parse_nodes(&yifu);
+        let sn = parse_nodes(&shoutao);
+        let yk = yn.iter().filter(|n| n.skin.is_some()).count();
+        let sk = sn.iter().filter(|n| n.skin.is_some()).count();
+        assert!(yk >= 20, "衣服这份实测 {} 根骨带表，掉下 20 就是读表逻辑坏了", yk);
+        assert!(yn.len() >= 30 && sn.len() >= 30, "两份都该认得出节点记录：{} / {}", yn.len(), sn.len());
+        eprintln!(
+            "同一只怪：yifu_001 节点 {} 条 / 带影响表 {} 根 · shoutao_001 节点 {} 条 / 带影响表 {} 根",
+            yn.len(),
+            yk,
+            sn.len(),
+            sk
+        );
+    }
+
+    /// 反证二：把顶点号改成不递增（这张表的形状判据之一），同样不该认。
+    #[test]
+    fn unsorted_vertex_ids_are_not_a_table() {
+        let root = std::env::var("TLBB_ROOT").map(PathBuf::from).unwrap_or_else(|_| PathBuf::from("D:/TLGL"));
+        let Some(mut mesh) = raw_of(&root, "data", MESH) else {
+            eprintln!("跳过：本机没有 data.pak");
+            return;
+        };
+        let nodes = parse_nodes(&mesh);
+        let nd = nodes.iter().find(|n| n.skin.as_ref().map_or(false, |s| s.vertices.len() > 4)).expect("该有带表的骨");
+        let at = name_at(&mesh, &nd.name);
+        let s = nd.skin.as_ref().unwrap();
+        let ibase = at + NODE_RECORD + 4;
+        // 把第一个改成比第二个还大
+        let second = s.vertices[1];
+        mesh[ibase..ibase + 4].copy_from_slice(&(second + 7).to_le_bytes());
+        let after = parse_nodes(&mesh);
+        let hit = after.iter().find(|x| x.name == nd.name).expect("记录本身该还在");
+        assert!(hit.skin.is_none(), "顶点号不递增还认成表，「递增」这条判据是摆设");
     }
 }

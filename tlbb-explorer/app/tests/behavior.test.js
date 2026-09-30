@@ -318,12 +318,13 @@ test("详情「导出」：点一下要把整组交出去，并把写了几个�
 });
 
 test("骨架页：解出来的骨名与动作要真铺进标签页，迟到的回包不许串台", async () => {
-  const A = { mesh: "a_yifu.mesh", declared: 46, note: "",
-    nodes: [{ name: "origin", pos: [0, 0, 0], scale: 1 }, { name: "bip01_pelvis", pos: [0.05, 0.0007, -1.0979], scale: 1 }],
+  const A = { mesh: "a_yifu.mesh", meshes: ["a_yifu.mesh", "a_shoutao.mesh"],
+    declared: 46, note: "", skin_bones: 26, skin_pairs: 1163,
+    nodes: [{ name: "origin", pos: [0, 0, 0], scale: 1, skin: 0 }, { name: "bip01_pelvis", pos: [0.05, 0.0007, -1.0979], scale: 1, skin: 71 }],
     animations: [{ file: "a_walk.ani", bones: 46, frames: 21, tick: 40, moving: 12 }],
     missing: ["父骨链未解：只知道每根骨在模型里的位置"] };
-  const B = { mesh: "b_yifu.mesh", declared: 12, note: "",
-    nodes: [{ name: "bone001", pos: [1, 2, 3], scale: 1 }], animations: [], missing: [] };
+  const B = { mesh: "b_yifu.mesh", declared: 12, note: "", skin_bones: 0, skin_pairs: 0,
+    nodes: [{ name: "bone001", pos: [1, 2, 3], scale: 1, skin: 0 }], animations: [], missing: [] };
   let gate = null;
   const detail = await sandbox("detail.js", {
     "mesh.js": meshMock,
@@ -349,7 +350,7 @@ test("骨架页：解出来的骨名与动作要真铺进标签页，迟到的�
     "api.js": {
       cardDetail: async () => fixtures.DETAIL_A,
       assetInspect: async () => fixtures.INSPECT_A,
-      skeletonView: async () => A,
+      skeletonView: async (gid, mesh) => ({ ...A, mesh: mesh || A.meshes[0] }),
     },
   });
   await d2.module.showDetail(245);
@@ -359,6 +360,17 @@ test("骨架页：解出来的骨名与动作要真铺进标签页，迟到的�
   assert.ok(d2.el("skelAnims").innerHTML.includes("a_walk.ani"), "动作表要列出同组 .ani");
   assert.ok(d2.el("skelMissing").innerHTML.includes("父骨链"), "没解出来的东西必须同屏写明");
   assert.equal(d2.el("tabSkelCount").textContent, "2", "标签上的数字是节点条数");
+  // 蒙皮权重已解：影响顶点数要逐骨列出来，带表的骨数要在摘要里说得出
+  const skelTable = d2.el("skelTable").innerHTML;
+  assert.ok(skelTable.includes("影响顶点"), "表头该有「影响顶点」这一列");
+  assert.ok(skelTable.includes(">71<"), `这根骨带 71 个影响顶点，表里要看得见：${skelTable.slice(0, 120)}`);
+  assert.ok(skelTable.includes(">—<"), "根骨不带表就留破折号，不写 0 充数");
+  assert.ok(d2.el("skelSum").textContent.includes("26 根带影响顶点表"), `摘要要报得出带表的骨数：${d2.el("skelSum").textContent}`);
+  // 一组多份网格：手套那份没有影响表，必须能点到衣服那份去
+  assert.equal(d2.el("skelPick").children.length, 2, "两份网格该给两颗筹码");
+  d2.el("skelPick").children[1].onclick();
+  await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
+  assert.ok(d2.el("skelSum").textContent.includes("a_shoutao.mesh"), `摘要要跟在手后换：${d2.el("skelSum").textContent}`);
 });
 
 test("同一组的重刷不许把用户从正在看的标签拽回预览", async () => {

@@ -1,0 +1,30 @@
+// 骨架页真窗口验法：筹码在不在、影响顶点列有没有数、换一份网格数字要不要跟着变
+const list = await (await fetch("http://127.0.0.1:9222/json/list")).json();
+const page = list.find((t) => t.type === "page" && t.webSocketDebuggerUrl);
+const ws = new WebSocket(page.webSocketDebuggerUrl);
+let id = 0;
+const send = (m, p = {}) => new Promise((res) => { const mid = ++id; const on = (e) => { const x = JSON.parse(e.data); if (x.id === mid) { ws.removeEventListener("message", on); res(x.result); } }; ws.addEventListener("message", on); ws.send(JSON.stringify({ id: mid, method: m, params: p })); });
+await new Promise((r) => ws.addEventListener("open", r, { once: true }));
+const ev = async (e) => { const r = await send("Runtime.evaluate", { expression: e, returnByValue: true, awaitPromise: true }); if (r?.exceptionDetails) return "抛错:" + (r.exceptionDetails.exception?.description || r.exceptionDetails.text); return r?.result?.value; };
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const Q = (s) => JSON.stringify(s);
+const STEM = "w1351_monster_xiyuqiezei";
+await wait(1500);
+await ev(`(() => { const q=document.getElementById("q"); q.value=${Q(STEM)}; q.dispatchEvent(new Event("input",{bubbles:true})); return 1; })()`);
+await wait(2500);
+console.log(await ev(`(() => { const r=[...document.querySelectorAll(".row-item")].find(x=>x.textContent.includes(${Q(STEM)})); if(!r) return "没找到行"; r.click(); return "点了第一行"; })()`));
+await wait(3000);
+await ev(`(() => { const t=document.querySelector('#dTabs .tab[data-tab="skeleton"]'); t&&t.click(); return 1; })()`);
+await wait(5000);
+console.log("筹码：", await ev(`[...document.querySelectorAll("#skelPick button.chip")].map(b=>b.textContent+(b.classList.contains("on")?"[选中]":"")).join(" ")`));
+console.log("摘要：", await ev(`document.getElementById("skelSum").textContent`));
+console.log("表头：", await ev(`[...document.querySelectorAll("#skelTable thead th")].map(t=>t.textContent).join("|")`));
+console.log("带数字的行：", await ev(`[...document.querySelectorAll("#skelTable tbody tr")].filter(r=>{const c=r.children[5]; return c && c.textContent!=="—"}).slice(0,3).map(r=>r.children[0].textContent+"→"+r.children[5].textContent).join(" ")`));
+console.log("破折号行数：", await ev(`[...document.querySelectorAll("#skelTable tbody tr")].filter(r=>r.children[5]&&r.children[5].textContent==="—").length`));
+console.log("未解项：", await ev(`[...document.querySelectorAll("#skelMissing li")].map(li=>li.textContent.slice(0,46)).join(" ／ ")`));
+// 换一份网格
+await ev(`(() => { const b=[...document.querySelectorAll("#skelPick button.chip")].find(x=>x.textContent.includes("yifu")); if(b) b.click(); return b? b.textContent : "没有 yifu 那颗"; })()`);
+await wait(5000);
+console.log("换份后摘要：", await ev(`document.getElementById("skelSum").textContent`));
+console.log("换份后带数字的行数：", await ev(`[...document.querySelectorAll("#skelTable tbody tr")].filter(r=>{const c=r.children[5]; return c && c.textContent!=="—"}).length`));
+ws.close();

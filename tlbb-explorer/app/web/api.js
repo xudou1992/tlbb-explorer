@@ -58,7 +58,7 @@ export const browseExport = (pakName, hashes, dest) =>
 export const browseExportGroup = (gid, dest = "") =>
   call("browse_export_group", { gid, dest });
 /// 骨架页：节点（名字 + 绑定位移）与同组动作清单。解不出的原因由后端原话带回。
-export const skeletonView = (gid) => call("skeleton_view", { gid });
+export const skeletonView = (gid, mesh) => call("skeleton_view", { gid, mesh: mesh || "" });
 /// 动作页：一次拿整条动作的全部关键帧，前端拖游标本地取帧。
 export const animationView = (gid, file) => call("animation_view", { gid, file });
 /// 特效页：.pu 的材质链与各类类名。参数块字段语法未解，后端原话带回。

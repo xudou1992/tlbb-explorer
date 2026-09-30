@@ -1,0 +1,14 @@
+import { writeFileSync } from "node:fs";
+const list = await (await fetch("http://127.0.0.1:9222/json/list")).json();
+const page = list.find((t) => t.type === "page" && t.webSocketDebuggerUrl);
+const ws = new WebSocket(page.webSocketDebuggerUrl);
+let id = 0;
+const send = (m, p = {}) => new Promise((res) => { const mid = ++id; const on = (e) => { const x = JSON.parse(e.data); if (x.id === mid) { ws.removeEventListener("message", on); res(x.result); } }; ws.addEventListener("message", on); ws.send(JSON.stringify({ id: mid, method: m, params: p })); });
+await new Promise((r) => ws.addEventListener("open", r, { once: true }));
+const ev = async (e) => { const r = await send("Runtime.evaluate", { expression: e, returnByValue: true }); return r?.result?.value; };
+await send("Emulation.setDeviceMetricsOverride", { width: 1500, height: 950, deviceScaleFactor: 1, mobile: false });
+await ev(`(() => { const el=document.getElementById("skelSum"); if(el) el.scrollIntoView({block:"start"}); return 1; })()`);
+const r = await send("Page.captureScreenshot", { format: "png" });
+writeFileSync("D:/TLGL/.scratch/ui_check/skel_skin.png", Buffer.from(r.data, "base64"));
+console.log("写了 skel_skin.png");
+ws.close();

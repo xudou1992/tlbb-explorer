@@ -8,8 +8,10 @@
 //! - 声明骨骼数：`.mesh` 头部 `0x110` 的 u32（与同组 `.ani` 轨道数一致，有闸门）
 //! - 动作：每条 `.ani` 的骨骼数 / 帧数 / 帧率刻度 / 会动的骨数
 //!
-//! 没证的东西一律写进 `missing`，不猜：父骨链未解（所以画不出骨架连线，只有点），
-//! 蒙皮权重不在这份文件里（所以模型本身动不了），帧率刻度的含义未证。
+//! 没证的东西一律写进 `missing`，不猜：**父骨链未解**（所以画不出骨架连线，只能列点）。
+//! 蒙皮权重**已解**——2026-09-30 实测在 `.mesh` 里，按骨组织成「影响顶点表」
+//! （见 `preview::SkinInfluence`）；此前写的「权重不在 .mesh」是按「每顶点 4 影响」
+//! 那一种编码穷举出来的，判早了。帧率刻度的含义仍未证。
 
 use rusqlite::{Connection, OpenFlags};
 use serde::Serialize;
@@ -27,6 +29,8 @@ pub struct BoneRow {
     pub pos: [f32; 3],
     /// 基向量长度（等比缩放）；1.0 附近是正常单位。
     pub scale: f32,
+    /// 这根骨影响多少个顶点（0 = 这条记录后面没带影响表，根骨就是这样）。
+    pub skin: usize,
 }
 
 #[derive(Serialize)]
@@ -44,9 +48,15 @@ pub struct AnimRow {
 pub struct SkeletonReply {
     /// 骨架来自哪份 `.mesh`（客户端原文名）。
     pub mesh: String,
+    /// 这一组登记了哪几份 `.mesh`（组名同名那份排第一），供界面切换。
+    pub meshes: Vec<String>,
     /// `.mesh` 头部声明的骨骼根数。
     pub declared: usize,
     pub nodes: Vec<BoneRow>,
+    /// 带影响顶点表的骨有几根（0 = 这份网格不跟骨走）。
+    pub skin_bones: usize,
+    /// 所有骨的（顶点-骨）绑定对总数——不是顶点数，一个顶点可以被几根骨同时影响。
+    pub skin_pairs: usize,
     pub animations: Vec<AnimRow>,
     /// 一份文件里没认出节点记录时给的原因，人话。
     pub note: String,
@@ -129,35 +139,73 @@ fn track_moves(rot: &[[f32; 4]], pos: &[[f32; 3]]) -> bool {
     moved_q || moved_p
 }
 
-pub fn skeleton_view_run(gid: i64) -> Result<SkeletonReply, String> {
+/// 这一组登记了哪些 `.mesh`（完整路径，按路径排序，清单 hub 那份排第一）。
+/// 只认组内登记的成员：特效页那次教训在先，按目录挑会挑到兄弟目录的网格。
+fn mesh_paths(con: &Connection, gid: i64, hub: &str, dir: &str) -> Vec<String> {
+    let mut v: Vec<String> = match con.prepare(
+        "SELECT coalesce(r.path,'') FROM amembers m JOIN resources r ON r.hash = m.hash \
+         WHERE m.gid = ?1 AND r.ext = '.mesh' ORDER BY r.path",
+    ) {
+        Ok(mut st) => st
+            .query_map([gid], |r| r.get::<_, String>(0))
+            .map(|rows| rows.filter_map(|x| x.ok()).collect())
+            .unwrap_or_default(),
+        Err(_) => Vec::new(),
+    };
+    v.retain(|p| !p.is_empty());
+    if v.is_empty() {
+        // 成员里一份网格都没有时，才允许看目录——且只在这目录**恰好一份** .mesh
+        // 的时候看；多份就没法判定是哪一份，宁可不列。
+        let one: Option<String> = con
+            .query_row(
+                "SELECT coalesce(path,'') FROM resources WHERE ext='.mesh' AND dir = ?1 \
+                 HAVING count(*) = 1",
+                [dir.trim_end_matches('/').to_lowercase()],
+                |r| r.get::<_, String>(0),
+            )
+            .ok();
+        v = one.into_iter().collect();
+    }
+    if let Some(i) = v.iter().position(|p| p == hub) {
+        let p = v.remove(i);
+        v.insert(0, p);
+    }
+    v
+}
+
+pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> {
     let t0 = std::time::Instant::now();
     let (root, db) = roots();
     if !db.exists() {
         return Err(format!("找不到资源清单文件：{}", db.display()));
     }
     let con = open_db(&db)?;
-    // 组里那份网格：优先用 inspect 已经算好的成员（它认过角色），退化到目录里最大的 .mesh
     let insp = inspect(gid)?;
-    let mesh_path = insp
-        .members
-        .iter()
-        .find(|m| m.role == "mesh")
-        .and_then(|m| m.path.clone())
-        .or_else(|| {
-            // 同上：只在本组目录里找网格，LIKE 子串会跑到兄弟目录去
-            con.query_row(
-                "SELECT coalesce(path,'') FROM resources WHERE ext='.mesh' AND dir = ?1 \
-                 ORDER BY stored DESC LIMIT 1",
-                [insp.dir.trim_end_matches('/').to_lowercase()],
-                |r| r.get::<_, String>(0),
-            )
-            .ok()
+    let hub: String = con
+        .query_row("SELECT coalesce(hub_path,'') FROM agroups WHERE id = ?1", [gid], |r| {
+            r.get(0)
         })
-        .ok_or_else(|| "这一组里没有网格文件，骨架跟着网格走，没有网格就没有骨架。".to_string())?;
+        .unwrap_or_default();
+    let paths = mesh_paths(&con, gid, &hub, &insp.dir);
+    if paths.is_empty() {
+        return Err("这一组里没有网格文件，骨架跟着网格走，没有网格就没有骨架。".to_string());
+    }
+    // 换一份网格：只在这组登记的那几份里换；名字对不上回到第一份（组名同名那份）
+    let mesh_path = paths
+        .iter()
+        .find(|p| p.rsplit('/').next().unwrap_or("") == want)
+        .cloned()
+        .unwrap_or_else(|| paths[0].clone());
+    let meshes = paths
+        .iter()
+        .filter_map(|p| p.rsplit('/').next().map(|s| s.to_string()))
+        .collect::<Vec<_>>();
 
     let mut paks: std::collections::HashMap<String, Pak> = Default::default();
     let mut nodes = Vec::new();
     let mut declared = 0usize;
+    let mut with_skin = 0usize;
+    let mut touched = 0usize;
     let mut note = String::new();
     if let Some((h, pak)) = locate(&con, &mesh_path) {
         if let Some(raw) = decode(&mut paks, &root, &card_of(&pak), h) {
@@ -170,8 +218,11 @@ pub fn skeleton_view_run(gid: i64) -> Result<SkeletonReply, String> {
                     pos: [nd.bind[12], nd.bind[13], nd.bind[14]],
                     scale: (nd.bind[0] * nd.bind[0] + nd.bind[1] * nd.bind[1] + nd.bind[2] * nd.bind[2])
                         .sqrt(),
+                    skin: nd.skin.as_ref().map_or(0, |s| s.vertices.len()),
                 })
                 .collect();
+            with_skin = nodes.iter().filter(|n| n.skin > 0).count();
+            touched = nodes.iter().map(|n| n.skin).sum();
             if nodes.is_empty() {
                 note = "这份网格是静态的：文件里没有骨架节点表（几何照旧能看，只是没有骨）。"
                     .to_string();
@@ -205,22 +256,38 @@ pub fn skeleton_view_run(gid: i64) -> Result<SkeletonReply, String> {
 
     let mut missing = vec![
         "父骨链未解：只知道每根骨在模型里的位置，不知道谁挂谁，所以这里画不出骨架连线，只能列点".to_string(),
-        "蒙皮权重不在这份文件里：顶点跟着哪几根骨、各占多少，客户端没写在 .mesh/.ske/.mdl".to_string(),
     ];
+    if with_skin > 0 {
+        missing.push(format!(
+            "播放还差的就是这条父骨链：这份网格的权重已经按骨读出（{} 根骨、{} 个顶点对），\
+             可逐骨变换要沿父链相乘，链没解出来，模型还是不能跟着摆姿势",
+            with_skin, touched
+        ));
+    } else {
+        missing.push(
+            "这一份网格没有影响顶点表（同一只怪的衣服那份有）：蒙皮权重是按份登记的，\
+             换一份网格看得到"
+                .to_string(),
+        );
+    }
     if !animations.is_empty() {
         missing.push("帧率刻度（样本恒 40.0）到底是每秒 tick 还是别的，未证——所以不换算成秒".to_string());
     }
     if declared > nodes.len() {
         missing.push(format!(
-            "声明 {declared} 根骨，这里只认出 {} 条节点记录：剩下的骨名字后面不跟矩阵，为什么没跟还没查出来",
+            "声明 {declared} 根骨，这里只认出 {} 条节点记录：剩下的骨在这份文件里以名字挂在别的记录后面\
+             （一张 32 字节步长的名单），那张名单哪几条算子骨还没对上",
             nodes.len()
         ));
     }
 
     Ok(SkeletonReply {
         mesh: mesh_path.rsplit('/').next().unwrap_or("").to_string(),
+        meshes,
         declared,
         nodes,
+        skin_bones: with_skin,
+        skin_pairs: touched,
         animations,
         note,
         missing,
@@ -229,8 +296,8 @@ pub fn skeleton_view_run(gid: i64) -> Result<SkeletonReply, String> {
 }
 
 #[tauri::command]
-pub async fn skeleton_view(gid: i64) -> Result<SkeletonReply, String> {
-    tauri::async_runtime::spawn_blocking(move || skeleton_view_run(gid))
+pub async fn skeleton_view(gid: i64, mesh: String) -> Result<SkeletonReply, String> {
+    tauri::async_runtime::spawn_blocking(move || skeleton_view_run(gid, &mesh))
         .await
         .map_err(|e| format!("骨架线程没起来：{e}"))?
 }
@@ -335,7 +402,7 @@ pub fn anim_view_run(gid: i64, want: &str) -> Result<AnimReply, String> {
     let unnamed = a.tracks.iter().filter(|t| t.bone.is_empty()).count();
     let mut missing = vec![
         "父骨链未解：这里列的是每根骨自己的旋转与位移，摆不出整具骨架怎么动".to_string(),
-        "蒙皮权重不在这份文件里：所以模型不会跟着动，能看的只有数字".to_string(),
+        "模型还不会跟着动：权重在 .mesh 的影响顶点表里，但父骨链未解，逐骨变换相乘不起来".to_string(),
         format!("帧率刻度 {} 的含义未证（每秒 tick？总时长×40？），界面不换算成秒", a.tick),
     ];
     if unnamed > 0 {
@@ -383,7 +450,7 @@ mod tests {
                 |r| r.get(0),
             )
             .expect("这只怪应在清单里");
-        let rep = skeleton_view_run(gid).expect("骨架回包");
+        let rep = skeleton_view_run(gid, "").expect("骨架回包");
         assert!(rep.mesh.ends_with(".mesh"), "骨架该跟着网格：{}", rep.mesh);
         assert_eq!(rep.declared, 46, "头部声明的骨骼数");
         assert!(rep.nodes.len() >= 30, "只认出 {} 条节点", rep.nodes.len());
@@ -398,11 +465,55 @@ mod tests {
         // 没证的东西必须写在回包里，界面才不用自己编
         assert!(rep.missing.iter().any(|m| m.contains("父骨链")));
         assert!(rep.missing.iter().any(|m| m.contains("权重")));
+        // 一组多份网格：选择条要给全，换一份看的是另一份的数据
+        assert!(
+            rep.meshes.len() >= 2,
+            "这只怪至少登记了衣服与手套两份网格，选择条却只有 {:?}",
+            rep.meshes
+        );
+        let yifu = skeleton_view_run(gid, "w1351_monster_xiyuqiezei_yifu_001.mesh").expect("换衣服那份");
+        assert_eq!(yifu.mesh, "w1351_monster_xiyuqiezei_yifu_001.mesh", "点了一份却列的另一份");
+        assert!(
+            yifu.skin_bones >= 20,
+            "衣服那份实测 26 根骨带影响顶点表，这里只报 {}",
+            yifu.skin_bones
+        );
+        // 文案要跟着数据走：一份都不带时不许说「权重已经按骨读出（0 根）」
+        assert!(
+            rep.missing.iter().any(|m| m.contains("没有影响顶点表")),
+            "这份网格不带表，未解项要说这份的情况：{:?}",
+            rep.missing
+        );
+        assert!(
+            !rep.missing.iter().any(|m| m.contains("(0 根") || m.contains("（0 根")),
+            "0 根还写「已按骨读出」是自相矛盾：{:?}",
+            rep.missing
+        );
+        assert!(
+            yifu.missing.iter().any(|m| m.contains("26 根骨")),
+            "衣服那份该报得出读出了多少根：{:?}",
+            yifu.missing
+        );
+        // 已证的东西要报得出、且自洽。这一页只列组里第一份网格，份与份带不带
+        // 影响顶点表不一样（实测：yifu_001 有 26 根、shoutao_001 一根都没有），
+        // 所以这里只核自洽性；「26 根 / 权重逐顶点加起来 ≈1」那条量级判据在 core 闸门里。
+        assert_eq!(
+            rep.skin_bones,
+            rep.nodes.iter().filter(|n| n.skin > 0).count(),
+            "逐行的影响顶点数与汇总对不上"
+        );
+        assert_eq!(
+            rep.skin_pairs,
+            rep.nodes.iter().map(|n| n.skin).sum::<usize>(),
+            "（顶点-骨）对总数与逐行求和对不上"
+        );
         eprintln!(
-            "骨架页：{} · 声明 {} 骨 · 节点 {} 条 · 动作 {} 条（第一条 {} 骨 {} 帧，会动 {} 根）",
+            "骨架页：{} · 声明 {} 骨 · 节点 {} 条 · 带权重表 {} 根 / {} 对 · 动作 {} 条（第一条 {} 骨 {} 帧，会动 {} 根）",
             rep.mesh,
             rep.declared,
             rep.nodes.len(),
+            rep.skin_bones,
+            rep.skin_pairs,
             rep.animations.len(),
             rep.animations[0].bones,
             rep.animations[0].frames,
@@ -480,7 +591,7 @@ mod tests {
             eprintln!("跳过：没找到无网格的组");
             return;
         };
-        match skeleton_view_run(gid) {
+        match skeleton_view_run(gid, "") {
             Ok(r) => {
                 assert!(
                     r.nodes.is_empty() && !r.note.is_empty(),

@@ -140,7 +140,7 @@ export async function showDetail(gid, retried = 0) {
       paintTabCounts(insp);
       paintRing(st);
       paintFiles(insp);
-      loadSkeleton(gid); // 骨架要开容器读字节，放在主画面之后异步补，不挡第一眼
+      loadSkeleton(gid, ""); // 骨架要开容器读字节，放在主画面之后异步补，不挡第一眼
       paintRaw({ card: d, inspect: insp });
       paintFixBar(insp);
       if (paintedGid !== gid) {
@@ -304,12 +304,12 @@ api.onTextureWarming?.((ev) => {
 /// 回包 null / 报错都让占位框留着，title 说明原因——没有图就是没有图。
 /// 认卡只认编号：榜单在 Rust 侧按综合分重排过，名次不再对应缓存里的下标。
 /// 骨架页取数。切走资产后迟到的回包必须丢掉，否则会把上一只怪的骨名画到这一只上。
-async function loadSkeleton(gid) {
+async function loadSkeleton(gid, mesh) {
   skelSeq = gid;
   try {
-    const v = await api.skeletonView(gid);
+    const v = await api.skeletonView(gid, mesh || "");
     if (skelSeq !== gid || state.selected !== gid) return;
-    paintSkeleton(v);
+    paintSkeleton(v, (m) => loadSkeleton(gid, m));
   } catch (e) {
     if (skelSeq !== gid || state.selected !== gid) return;
     // 「这一组没有网格」是常态而不是故障，措辞跟着后端原话走

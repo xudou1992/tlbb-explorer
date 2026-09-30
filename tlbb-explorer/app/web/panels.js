@@ -67,6 +67,7 @@ const fx = (v) => (Number.isFinite(v) ? v.toFixed(3) : "—");
 
 export function clearSkeleton() {
   el("skelSum").textContent = "";
+  el("skelPick").innerHTML = "";
   el("skelTable").innerHTML = "";
   el("skelAnims").innerHTML = "";
   el("skelMissing").innerHTML = "";
@@ -74,7 +75,7 @@ export function clearSkeleton() {
   el("secSkelAnims").hidden = true;
 }
 
-export function paintSkeleton(v) {
+export function paintSkeleton(v, onPick) {
   clearSkeleton();
   const nodes = v.nodes || [];
   const anims = v.animations || [];
@@ -85,14 +86,26 @@ export function paintSkeleton(v) {
     return;
   }
   el("skelSum").textContent =
-    `骨架来自 ${v.mesh}：文件头声明 ${v.declared} 根骨，这里认出 ${nodes.length} 根的绑定位移。`;
+    `骨架来自 ${v.mesh}：文件头声明 ${v.declared} 根骨，这里认出 ${nodes.length} 根的绑定位移` +
+    (v.skin_bones
+      ? `；其中 ${v.skin_bones} 根带影响顶点表，一共 ${v.skin_pairs} 个（顶点-骨）对。`
+      : "。这份网格没有影响顶点表。");  if ((v.meshes || []).length > 1) {
+    chips(
+      el("skelPick"),
+      v.meshes.map((m) => ({ value: m, label: m.replace(/\.mesh$/i, "") })),
+      v.mesh,
+      onPick,
+    );
+  }
   el("skelTable").innerHTML =
-    `<table class="hl-table"><thead><tr><th>骨名</th><th>X</th><th>Y</th><th>Z</th><th>缩放</th></tr></thead><tbody>${nodes
+    `<table class="hl-table"><thead><tr><th>骨名</th><th>X</th><th>Y</th><th>Z</th><th>缩放</th><th>影响顶点</th></tr></thead><tbody>${nodes
       .map(
         (n) =>
           `<tr><td>${esc(n.name)}</td><td class="n">${fx(n.pos[0])}</td><td class="n">${fx(
             n.pos[1],
-          )}</td><td class="n">${fx(n.pos[2])}</td><td class="n">${fx(n.scale)}</td></tr>`,
+          )}</td><td class="n">${fx(n.pos[2])}</td><td class="n">${fx(n.scale)}</td><td class="n">${
+            n.skin ? num(n.skin) : "—"
+          }</td></tr>`,
       )
       .join("")}</tbody></table>`;
   if (anims.length) {

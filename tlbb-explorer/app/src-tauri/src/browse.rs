@@ -490,8 +490,8 @@ pub fn browse_preview(pak_name: String, hash: String) -> Result<BrowsePreview, S
                         "会动的骨 {moving} 根（其余各帧旋转相同）· 骨名读到 {named} 条"
                     ));
                     info.push(
-                        "还不能播放：父骨链与蒙皮权重不在这份文件里（.ske 是动作登记表，\
-                         也没有骨架矩阵）"
+                        "还不能播放：绑定位移与蒙皮权重都在 .mesh 里（权重是按骨组织的影响顶点表），\
+                         缺的只有父骨链——不知道谁挂谁，逐骨变换就没法相乘"
                             .into(),
                     );
                     Ok(BrowsePreview {

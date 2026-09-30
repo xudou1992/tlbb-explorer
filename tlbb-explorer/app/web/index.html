@@ -144,6 +144,7 @@
               <button type="button" class="tab" data-tab="resource" role="tab">资源详情</button>
               <button type="button" class="tab" data-tab="skeleton" role="tab">骨架 <em id="tabSkelCount"></em></button>
               <button type="button" class="tab" data-tab="animation" role="tab">动作 <em id="tabAnimCount"></em></button>
+              <button type="button" class="tab" data-tab="effect" role="tab">特效 <em id="tabFxCount"></em></button>
               <button type="button" class="tab" data-tab="relations" role="tab">组成成员 <em id="tabRelCount"></em></button>
               <button type="button" class="tab" data-tab="missing" role="tab">缺失资源 <em id="tabMissCount"></em></button>
               <button type="button" class="tab" data-tab="files" role="tab">文件清单</button>
@@ -253,6 +254,20 @@
               <section class="d-sec">
                 <h3>还没解出来的</h3>
                 <ul id="animMissing" class="plain"></ul>
+              </section>
+            </div>
+
+            <!-- 面板：特效。材质链与各类类名来自 .pu（JBPU）字符串表；
+                 参数块字段语法未解，只报字节数与浮点个数，这句原话同屏。 -->
+            <div class="tabpane" data-pane="effect" hidden>
+              <section class="d-sec">
+                <h3>特效</h3>
+                <p id="fxSum" class="dim"></p>
+                <div id="fxTable"></div>
+              </section>
+              <section class="d-sec">
+                <h3>还没解出来的</h3>
+                <ul id="fxMissing" class="plain"></ul>
               </section>
             </div>
 

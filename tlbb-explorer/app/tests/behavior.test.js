@@ -444,3 +444,39 @@ test("动作页：点开才取数，拖游标只重画不再打后端", async ()
   for (let i = 0; i < 8; i++) await Promise.resolve();
   assert.equal(calls, 2, "换一条动作要重新取数");
 });
+
+test("特效页：点开才取数，材质链要真列成表、参数块未解要同屏", async () => {
+  const rep = {
+    file: "a.pu", name: "a", group: "skill", label: "a_1",
+    materials: ["x.mtl", "y.mtl"], textures: ["t.tga"], meshes: [], blends: ["add"],
+    renderers: ["Billboard"], emitters: ["Circle"], updaters: ["TextureAnimator"],
+    dynamics: ["dyn_random"], other: [], string_total: 59,
+    param_floats: 72, param_bytes: 6739, anims: 0,
+    missing: ["参数块的字段语法未解：块里 6739 字节、72 个像浮点的数", "播放未做"],
+  };
+  let calls = 0;
+  const detail = await sandbox("detail.js", {
+    "mesh.js": meshMock,
+    "api.js": {
+      cardDetail: async () => fixtures.DETAIL_A,
+      assetInspect: async () => fixtures.INSPECT_A,
+      skeletonView: async () => ({ mesh: "a.mesh", declared: 0, nodes: [], animations: [], missing: [], note: "" }),
+      effectView: async () => {
+        calls++;
+        return rep;
+      },
+    },
+  });
+  await detail.module.showDetail(245);
+  for (let i = 0; i < 4; i++) await Promise.resolve();
+  assert.equal(calls, 0, "没点开特效页不该取数");
+  detail.get("panels.js").showTabPane("effect");
+  for (let i = 0; i < 8; i++) await Promise.resolve();
+  assert.equal(calls, 1, "点开才取一次");
+  const table = detail.el("fxTable").innerHTML;
+  assert.ok(table.includes("x.mtl") && table.includes("y.mtl"), `材质链要列得出：${table.slice(0, 80)}`);
+  assert.ok(!table.includes(">网格<"), "空的类别不摆行——空行不等于「没有」");
+  assert.ok(detail.el("fxSum").textContent.includes("6739"), "摘要要带参数块大小");
+  assert.ok(detail.el("fxMissing").innerHTML.includes("参数块"), "字段语法未解必须同屏");
+  assert.equal(detail.el("tabFxCount").textContent, "59");
+});

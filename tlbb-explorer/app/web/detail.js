@@ -20,6 +20,8 @@ import {
   clearSkeleton,
   paintAnimation,
   clearAnimation,
+  paintEffect,
+  clearEffect,
   onTabOpen,
   paintTabCounts,
   paintRing,
@@ -97,6 +99,8 @@ function clearTabPanes() {
   clearAnimation();
   animReply = null;
   animFrame = 0;
+  clearEffect();
+  fxReply = null;
   showTabPane("preview"); // 停在有话说的那一页，别停在一页残留
 }
 
@@ -208,9 +212,29 @@ function initAnim() {
   el("animOnlyChanged").addEventListener("change", repaintAnim);
   // 点开才取数：一条动作约 0.6 秒，不该压在每次选资产的路径上
   onTabOpen((name) => {
-    if (name !== "animation" || !state.selected) return;
-    if (!animReply) loadAnimation(state.selected, "");
+    if (!state.selected) return;
+    if (name === "animation" && !animReply) loadAnimation(state.selected, "");
+    if (name === "effect" && !fxReply) loadEffect(state.selected);
   });
+}
+
+/// 特效页：.pu 的材质链与各类类名。没有 .pu 的组后端会给原因，原样转述。
+let fxReply = null;
+let fxSeq = 0;
+
+async function loadEffect(gid) {
+  const my = ++fxSeq;
+  try {
+    const v = await api.effectView(gid);
+    if (my !== fxSeq || state.selected !== gid) return;
+    fxReply = v;
+    paintEffect(v);
+  } catch (e) {
+    if (my !== fxSeq || state.selected !== gid) return;
+    fxReply = null;
+    clearEffect();
+    el("fxSum").textContent = String((e && e.message) || e);
+  }
 }
 // 这一栏最近一次铺的是什么回包 + 后台批量试贴的状态。
 // texSource 与 texReply 分开是有原因的：texReply 只在「有候选榜」时非空，

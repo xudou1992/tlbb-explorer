@@ -156,6 +156,45 @@ export function paintAnimation(rep, frame, onlyChanged, onPick) {
       } 根。</p>`;
 }
 
+// ---- 特效页：.pu 的材质链与各类类名 ----
+
+export function clearEffect() {
+  el("fxSum").textContent = "";
+  el("fxTable").innerHTML = "";
+  el("fxMissing").innerHTML = "";
+  el("tabFxCount").textContent = "";
+}
+
+/// 类别表。名字一律用客户端原文，一类没有就不摆那一行（空行不等于「没有」）。
+export function paintEffect(rep) {
+  clearEffect();
+  if (!rep) return;
+  const groups = [
+    ["材质", rep.materials],
+    ["贴图", rep.textures],
+    ["网格", rep.meshes],
+    ["混合模式", rep.blends],
+    ["渲染器", rep.renderers],
+    ["发射器形状", rep.emitters],
+    ["更新器", rep.updaters],
+    ["动态参数名", rep.dynamics],
+    ["其他名字", rep.other],
+  ].filter(([, v]) => (v || []).length);
+  el("tabFxCount").textContent = String(rep.string_total || "");
+  el("fxSum").textContent =
+    `${rep.file} · 特效名 ${rep.name || "未读到"} · 分组 ${rep.group || "未读到"} · ` +
+    `驻留字符串 ${rep.string_total} 条 · 参数块 ${rep.param_bytes} 字节 / ${rep.param_floats} 个像浮点的数`;
+  el("fxTable").innerHTML = groups.length
+    ? `<table class="hl-table"><thead><tr><th>类别</th><th>数量</th><th>客户端原文</th></tr></thead><tbody>${groups
+        .map(
+          ([k, v]) =>
+            `<tr><td>${esc(k)}</td><td class="n">${v.length}</td><td>${v.map((s) => esc(s)).join("、")}</td></tr>`,
+        )
+        .join("")}</tbody></table>`
+    : `<p class="dim">这份 .pu 里没归出任何一类名字，只有字符串表本身。</p>`;
+  el("fxMissing").innerHTML = (rep.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
+}
+
 // ---- 右栏：资源概况 + 引用关系 + 关系图谱 ----
 
 /// 概况表的行。空值一律写「未读到」——不留下划线让人猜是空的还是没读。

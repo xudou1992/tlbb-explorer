@@ -180,12 +180,26 @@ fn read_strtab(raw: &[u8], off: usize) -> Result<(u32, Vec<Str>), Error> {
             return Err(Error::StrtabChars);
         }
         out.push(Str {
-            text: String::from_utf8_lossy(s).into_owned(),
+            text: decode_str(s),
             hash,
         });
         p = end;
     }
     Ok((flag, out))
+}
+
+/// 字符串表是 **GBK**（客户端跑在中文 Windows 上）。按 UTF-8 硬解会把
+/// 「龙头01.tga」损成两个替换符——材质页上就是一排 `◆◆`。先按 UTF-8 试
+/// （纯 ASCII 名字两边都合法，走快路），试不通再按 GBK，两边都不通才留替换符。
+fn decode_str(bytes: &[u8]) -> String {
+    if let Ok(s) = std::str::from_utf8(bytes) {
+        return s.to_string();
+    }
+    let (cow, _, bad) = encoding_rs::GBK.decode(bytes);
+    if !bad {
+        return cow.into_owned();
+    }
+    String::from_utf8_lossy(bytes).into_owned()
 }
 
 /// Extensions the material/model graph actually uses.
@@ -212,5 +226,36 @@ pub fn role(name: &str) -> Role {
         "scene" | "map" => Role::Scene,
         _ if name.to_ascii_lowercase().contains("shader") => Role::Shader,
         _ => Role::Other,
+    }
+}
+
+#[cfg(test)]
+mod decode_tests {
+    use super::decode_str;
+
+    /// 字符串表是 GBK（客户端跑在中文 Windows 上）：`龙头01.tga` 的字节是
+    /// `C1FA CDB7 30 31 2E 74 67 61`。按 UTF-8 硬解会掉两个替换符——
+    /// 材质页上就是一排 `◆◆`，那是把客户端原文写坏了。
+    #[test]
+    fn gbk_bytes_decode_to_chinese() {
+        let raw = b"\xC1\xFA\xCD\xB7\x30\x31\x2E\x74\x67\x61";
+        let s = decode_str(raw);
+        assert_eq!(s, "龙头01.tga", "GBK 名字解错了：{s}");
+        assert!(!s.contains('\u{FFFD}'), "还留着替换符：{s}");
+    }
+
+    /// 纯 ASCII 走 UTF-8 快路，不许被 GBK 通道改动。
+    #[test]
+    fn ascii_names_are_untouched() {
+        assert_eq!(decode_str(b"template_default.mtl"), "template_default.mtl");
+    }
+
+    /// 两边都不像的字节：留替换符但不 panic（这是「读不出来」的兜底，不是猜）。
+    /// 顺带记一条实测：GBK 会把单字节 ASCII 当尾字节吃掉，所以这条不许断言
+    /// 「尾巴还在」——只断言不炸、且真的吐出了东西。
+    #[test]
+    fn undecodable_bytes_do_not_panic() {
+        let s = decode_str(b"\xFF\xFE\xFD tail");
+        assert!(!s.is_empty(), "解不出来也要回一个串，不能让界面空白");
     }
 }

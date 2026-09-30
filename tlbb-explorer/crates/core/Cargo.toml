@@ -10,6 +10,7 @@ name = "tlbb_core"
 path = "src/lib.rs"
 
 [dependencies]
+encoding_rs = "0.8"
 memmap2.workspace = true
 crc32fast.workspace = true
 rusqlite = { version = "0.40.2", features = ["bundled"] }

@@ -22,6 +22,8 @@ import {
   clearAnimation,
   paintEffect,
   clearEffect,
+  paintMaterial,
+  clearMaterial,
   onTabOpen,
   paintTabCounts,
   paintRing,
@@ -101,6 +103,8 @@ function clearTabPanes() {
   animFrame = 0;
   clearEffect();
   fxReply = null;
+  clearMaterial();
+  mtlReply = null;
   showTabPane("preview"); // 停在有话说的那一页，别停在一页残留
 }
 
@@ -115,10 +119,12 @@ export async function showDetail(gid, retried = 0) {
   if (gid !== paintedGid) {
     animReply = null;
     fxReply = null;
+    mtlReply = null;
     animFrame = 0;
     clearSkeleton();
     clearAnimation();
     clearEffect();
+    clearMaterial();
   }
   paint(loading(gid)); // 从 empty() 出发，旧内容结构上就留不下来
   try {
@@ -226,6 +232,7 @@ function initAnim() {
     if (!state.selected) return;
     if (name === "animation" && !animReply) loadAnimation(state.selected, "");
     if (name === "effect" && !fxReply) loadEffect(state.selected, "");
+    if (name === "material" && !mtlReply) loadMaterial(state.selected, "");
   });
 }
 
@@ -248,6 +255,25 @@ async function loadEffect(gid, file) {
     el("fxSum").textContent = String((e && e.message) || e);
   }
 }
+/// 材质页：.mtl（JBCF）的槽位表。一组可能登记好几份材质，默认列与组同名那份。
+let mtlReply = null;
+let mtlSeq = 0;
+
+async function loadMaterial(gid, file) {
+  const my = ++mtlSeq;
+  try {
+    const v = await api.materialView(gid, file || "");
+    if (my !== mtlSeq || state.selected !== gid) return;
+    mtlReply = v;
+    paintMaterial(v, (f) => loadMaterial(gid, f));
+  } catch (e) {
+    if (my !== mtlSeq || state.selected !== gid) return;
+    mtlReply = null;
+    clearMaterial();
+    el("mtlSum").textContent = String((e && e.message) || e);
+  }
+}
+
 // 这一栏最近一次铺的是什么回包 + 后台批量试贴的状态。
 // texSource 与 texReply 分开是有原因的：texReply 只在「有候选榜」时非空，
 // 而「没有榜」恰恰是要提示「后台还没跑完」的那一路——那时也得能重画这一栏。

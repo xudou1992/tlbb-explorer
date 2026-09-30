@@ -145,6 +145,7 @@
               <button type="button" class="tab" data-tab="skeleton" role="tab">骨架 <em id="tabSkelCount"></em></button>
               <button type="button" class="tab" data-tab="animation" role="tab">动作 <em id="tabAnimCount"></em></button>
               <button type="button" class="tab" data-tab="effect" role="tab">特效 <em id="tabFxCount"></em></button>
+              <button type="button" class="tab" data-tab="material" role="tab">材质 <em id="tabMtlCount"></em></button>
               <button type="button" class="tab" data-tab="relations" role="tab">组成成员 <em id="tabRelCount"></em></button>
               <button type="button" class="tab" data-tab="missing" role="tab">缺失资源 <em id="tabMissCount"></em></button>
               <button type="button" class="tab" data-tab="files" role="tab">文件清单</button>
@@ -270,6 +271,21 @@
               <section class="d-sec">
                 <h3>还没解出来的</h3>
                 <ul id="fxMissing" class="plain"></ul>
+              </section>
+            </div>
+
+            <!-- 面板：材质。.mtl 是 JBCF 配置容器，里面写着这个模型用哪张贴图、
+                 走哪个着色器、套哪个模板材质；对不上实体的槽位写「缺」。 -->
+            <div class="tabpane" data-pane="material" hidden>
+              <section class="d-sec">
+                <h3>材质</h3>
+                <p id="mtlSum" class="dim"></p>
+                <div class="chips" id="mtlPick"></div>
+                <div id="mtlTable"></div>
+              </section>
+              <section class="d-sec">
+                <h3>还没解出来的</h3>
+                <ul id="mtlMissing" class="plain"></ul>
               </section>
             </div>
 

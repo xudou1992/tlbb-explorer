@@ -219,6 +219,47 @@ export function paintEffect(rep, onPick) {
   el("fxMissing").innerHTML = (rep.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
 }
 
+// ---- 材质页：.mtl（JBCF）的槽位表 ----
+
+export function clearMaterial() {
+  el("mtlSum").textContent = "";
+  el("mtlPick").innerHTML = "";
+  el("mtlTable").innerHTML = "";
+  el("mtlMissing").innerHTML = "";
+  el("tabMtlCount").textContent = "";
+}
+
+/// 槽位一行行摆：类型、客户端原文、对上的实体路径（对不上写「缺」）。
+export function paintMaterial(rep, onPick) {
+  clearMaterial();
+  if (!rep) return;
+  el("tabMtlCount").textContent = rep.slots ? String(rep.slots.length) : "";
+  el("mtlSum").textContent =
+    `${rep.file} · 槽位 ${(rep.slots || []).length} 个 · 对得上实体 ${
+      (rep.slots || []).length - (rep.unresolved || 0)
+    } 个 · 缺 ${rep.unresolved || 0} 个` +
+    ((rep.files || []).length > 1 ? ` · 这一组还登记了 ${rep.files.length - 1} 份材质，点下面的名字换` : "");
+  if ((rep.files || []).length > 1) {
+    chips(
+      el("mtlPick"),
+      rep.files.map((f) => ({ value: f, label: f.replace(/\.mtl$/i, "") })),
+      rep.file,
+      onPick,
+    );
+  }
+  el("mtlTable").innerHTML = (rep.slots || []).length
+    ? `<table class="hl-table fx-cat"><thead><tr><th>槽位</th><th>客户端原文</th><th>对上的实体</th></tr></thead><tbody>${rep.slots
+        .map(
+          (s) =>
+            `<tr><td>${esc(s.role)}</td><td>${esc(s.name)}</td><td class="dim">${
+              s.path ? esc(s.path) : "缺"
+            }</td></tr>`,
+        )
+        .join("")}</tbody></table>`
+    : `<p class="dim">这份 .mtl 里没认出任何一类槽位（贴图/材质/模型/骨骼/动作都不在）。</p>`;
+  el("mtlMissing").innerHTML = (rep.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
+}
+
 // ---- 右栏：资源概况 + 引用关系 + 关系图谱 ----
 
 /// 概况表的行。空值一律写「未读到」——不留下划线让人猜是空的还是没读。

@@ -112,6 +112,24 @@ fn shipped_material_exposes_its_graph() {
 
     assert_eq!(role(path), Role::Material);
     assert!(!f.names(Role::Texture).is_empty(), "no textures named");
+    // 真数据闸门：这份材质里有中文贴图名（GBK），解错就会在界面上摆一排
+    // 替换符。名字带 U+FFFD 就是解码链路坏了，不是「客户端给了乱码」。
+    let garbled: Vec<&String> = f
+        .strings
+        .iter()
+        .map(|s| &s.text)
+        .filter(|t| t.contains('\u{FFFD}'))
+        .collect();
+    assert!(
+        garbled.is_empty(),
+        "字符串表里出现替换符，GBK 没解对：{garbled:?}"
+    );
+    let has_cjk = f.strings.iter().any(|s| {
+        s.text
+            .chars()
+            .any(|c| ('\u{4E00}'..='\u{9FFF}').contains(&c))
+    });
+    assert!(has_cjk, "这份 .mtl 里该有中文贴图名，一个都没解出来");
     assert!(
         f.names(Role::Material).iter().any(|m| m.ends_with(".mtl")),
         "no parent material"

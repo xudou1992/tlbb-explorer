@@ -531,6 +531,52 @@ test("特效页：一组登记多份 .pu 时要点名字能换，不许列着 A 
   assert.ok(detail.el("fxTable").innerHTML.includes("a.mtl"), "换的仍是特效表");
 });
 
+test("材质页：点开才取数，槽位要列得出类型与原文，对不上实体的写「缺」", async () => {
+  const rep = {
+    file: "grp.mtl",
+    files: ["grp.mtl", "template_default.mtl"],
+    slots: [
+      { role: "贴图", name: "w1351_a.tga", path: "data/effect/textures/w1351_a.tga" },
+      { role: "着色器", name: "DynModelShader", path: "" },
+      { role: "材质", name: "template_default.mtl", path: "data/sharematerial/template_default.mtl" },
+    ],
+    unresolved: 1,
+    missing: ["1 个槽位在资源清单里对不上实体（界面写「缺」）——这是客户端的设计"],
+  };
+  const asked = [];
+  const detail = await sandbox("detail.js", {
+    "mesh.js": meshMock,
+    "api.js": {
+      cardDetail: async () => fixtures.DETAIL_A,
+      assetInspect: async () => fixtures.INSPECT_A,
+      skeletonView: async () => ({ mesh: "", declared: 0, nodes: [], animations: [], missing: [], note: "" }),
+      materialView: async (gid, file) => {
+        asked.push(file);
+        const want = file === "template_default.mtl" ? file : "grp.mtl";
+        return { ...rep, file: want };
+      },
+    },
+  });
+  await detail.module.showDetail(245);
+  for (let i = 0; i < 4; i++) await Promise.resolve();
+  assert.equal(asked.length, 0, "没点开材质页不该取数");
+  detail.get("panels.js").showTabPane("material");
+  for (let i = 0; i < 8; i++) await Promise.resolve();
+  assert.deepEqual(asked.slice(0, 1), [""], "首屏问「默认那一份」");
+  const table = detail.el("mtlTable").innerHTML;
+  assert.ok(table.includes("w1351_a.tga"), `贴图槽位要列得出：${table.slice(0, 90)}`);
+  assert.ok(table.includes("data/effect/textures/w1351_a.tga"), "对得上实体的要报出路径");
+  assert.ok(table.includes(">缺<"), "对不上的写「缺」，不猜一个名字顶上");
+  assert.ok(table.includes("着色器"), "槽位类型要原样列");
+  assert.ok(detail.el("mtlMissing").innerHTML.includes("客户端的设计"), "「缺」是设计这件事必须同屏");
+  assert.equal(detail.el("tabMtlCount").textContent, "3", "标签上的数字是槽位数");
+  assert.equal(detail.el("mtlPick").children.length, 2, "两份材质该给两颗筹码");
+  detail.el("mtlPick").children[1].onclick();
+  for (let i = 0; i < 8; i++) await Promise.resolve();
+  assert.deepEqual(asked.slice(-1), ["template_default.mtl"], "点这份就要这份");
+  assert.ok(detail.el("mtlSum").textContent.startsWith("template_default.mtl"), "表头文件名要跟着换");
+});
+
 test("换资产要立刻清空骨架/动作/特效三页，不许留着上一件的文字", async () => {
   const skelA = { mesh: "a_yifu.mesh", declared: 1, note: "", animations: [], missing: [],
     nodes: [{ name: "aaa_only_in_A", pos: [0, 0, 0], scale: 1 }] };

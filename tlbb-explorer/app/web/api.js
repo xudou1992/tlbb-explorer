@@ -57,6 +57,8 @@ export const browseExport = (pakName, hashes, dest) =>
 /// `<客户端根>/.scratch/exports/<组名>`，不必先选目录。
 export const browseExportGroup = (gid, dest = "") =>
   call("browse_export_group", { gid, dest });
+/// 骨架页：节点（名字 + 绑定位移）与同组动作清单。解不出的原因由后端原话带回。
+export const skeletonView = (gid) => call("skeleton_view", { gid });
 /// 资产侧懒预热开关：只有进「资产」标签才触发后台预热（有缓存时秒级载入）。
 export const startWarm = () => call("start_warm");
 /// 全库批量试贴（贴图候选榜的原料）：问还差多少只模型、发起后台跑、听进度。

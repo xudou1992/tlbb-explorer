@@ -16,6 +16,8 @@ import {
   initTabs,
   showTabPane,
   paintSide,
+  paintSkeleton,
+  clearSkeleton,
   paintTabCounts,
   paintRing,
   paintFiles,
@@ -88,6 +90,7 @@ function clearTabPanes() {
   el("texSlots").innerHTML = "";
   el("texCand").innerHTML = "";
   texReply = null;
+  clearSkeleton();
   showTabPane("preview"); // 停在有话说的那一页，别停在一页残留
 }
 
@@ -116,6 +119,7 @@ export async function showDetail(gid, retried = 0) {
       paintTabCounts(insp);
       paintRing(st);
       paintFiles(insp);
+      loadSkeleton(gid); // 骨架要开容器读字节，放在主画面之后异步补，不挡第一眼
       paintRaw({ card: d, inspect: insp });
       paintFixBar(insp);
       showTabPane("preview"); // 换资产回到第一眼该看的那一页
@@ -149,6 +153,8 @@ export async function showDetail(gid, retried = 0) {
 // ---- 贴图试贴候选（步骤③④⑤）：区块内容来自 lib/textureState.js（纯函数），
 // 这里只负责铺 DOM 和接按钮。确认/撤销走覆盖表，套上看看只动显存拷贝。
 let texReply = null;
+/// 骨架页的在途标记：切资产后旧请求的回包一律丢掉
+let skelSeq = 0;
 // 这一栏最近一次铺的是什么回包 + 后台批量试贴的状态。
 // texSource 与 texReply 分开是有原因的：texReply 只在「有候选榜」时非空，
 // 而「没有榜」恰恰是要提示「后台还没跑完」的那一路——那时也得能重画这一栏。
@@ -204,6 +210,20 @@ api.onTextureWarming?.((ev) => {
 /// 取到的图顺手回填进回包，这样「套上看看」和旧缓存一样直接用现成的 png；
 /// 回包 null / 报错都让占位框留着，title 说明原因——没有图就是没有图。
 /// 认卡只认编号：榜单在 Rust 侧按综合分重排过，名次不再对应缓存里的下标。
+/// 骨架页取数。切走资产后迟到的回包必须丢掉，否则会把上一只怪的骨名画到这一只上。
+async function loadSkeleton(gid) {
+  skelSeq = gid;
+  try {
+    const v = await api.skeletonView(gid);
+    if (skelSeq !== gid || state.selected !== gid) return;
+    paintSkeleton(v);
+  } catch (e) {
+    if (skelSeq !== gid || state.selected !== gid) return;
+    // 「这一组没有网格」是常态而不是故障，措辞跟着后端原话走
+    paintSkeleton({ nodes: [], animations: [], missing: [], note: String((e && e.message) || e) });
+  }
+}
+
 async function loadCandidatePngs() {
   if (el("secTex").hidden) return; // 区块没露脸就不花这份解码钱
   const reply = texReply; // 换资产后 texReply 会换人：旧回包的图不许写进新榜

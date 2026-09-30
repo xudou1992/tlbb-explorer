@@ -12,6 +12,7 @@ mod mesh_view;
 mod present;
 mod texture_override;
 mod gap;
+mod skeleton;
 mod texture_warm;
 
 use std::path::PathBuf;
@@ -193,6 +194,7 @@ pub fn run() {
             texture_override::texture_override_clear,
             texture_override::candidate_png,
             gap::catalog_gap,
+            skeleton::skeleton_view,
             texture_warm::texture_warm_status,
             texture_warm::texture_warm_start,
             browse::browse_paks,

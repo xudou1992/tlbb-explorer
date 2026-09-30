@@ -49,6 +49,58 @@ export function initTabs() {
   });
 }
 
+// ---- 骨架页：节点表 + 动作表 ----
+//
+// 一个数字都不在这里算：绑定位移、声明骨骼数、每条动作几骨几帧、会动的骨数，
+// 全部来自 skeleton_view 回包。这里只负责摆出来，以及把「没解出来的」原话说清。
+
+const fx = (v) => (Number.isFinite(v) ? v.toFixed(3) : "—");
+
+export function clearSkeleton() {
+  el("skelSum").textContent = "";
+  el("skelTable").innerHTML = "";
+  el("skelAnims").innerHTML = "";
+  el("skelMissing").innerHTML = "";
+  el("tabSkelCount").textContent = "";
+  el("secSkelAnims").hidden = true;
+}
+
+export function paintSkeleton(v) {
+  clearSkeleton();
+  const nodes = v.nodes || [];
+  const anims = v.animations || [];
+  el("tabSkelCount").textContent = nodes.length ? String(nodes.length) : "";
+  if (!nodes.length) {
+    // 静态网格、解不出字节、组里没网格——后端给的原因原样转述，不换成「暂无数据」
+    el("skelSum").textContent = v.note || "这一组里没有骨架数据。";
+    return;
+  }
+  el("skelSum").textContent =
+    `骨架来自 ${v.mesh}：文件头声明 ${v.declared} 根骨，这里认出 ${nodes.length} 根的绑定位移。`;
+  el("skelTable").innerHTML =
+    `<table class="hl-table"><thead><tr><th>骨名</th><th>X</th><th>Y</th><th>Z</th><th>缩放</th></tr></thead><tbody>${nodes
+      .map(
+        (n) =>
+          `<tr><td>${esc(n.name)}</td><td class="n">${fx(n.pos[0])}</td><td class="n">${fx(
+            n.pos[1],
+          )}</td><td class="n">${fx(n.pos[2])}</td><td class="n">${fx(n.scale)}</td></tr>`,
+      )
+      .join("")}</tbody></table>`;
+  if (anims.length) {
+    el("secSkelAnims").hidden = false;
+    el("skelAnims").innerHTML =
+      `<table class="hl-table"><thead><tr><th>动作文件</th><th>骨骼</th><th>关键帧</th><th>会动的骨</th></tr></thead><tbody>${anims
+        .map(
+          (a) =>
+            `<tr><td>${esc(a.file)}</td><td class="n">${a.bones}</td><td class="n">${
+              a.frames
+            }</td><td class="n">${a.moving}</td></tr>`,
+        )
+        .join("")}</tbody></table>`;
+  }
+  el("skelMissing").innerHTML = (v.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
+}
+
 // ---- 右栏：资源概况 + 引用关系 + 关系图谱 ----
 
 /// 概况表的行。空值一律写「未读到」——不留下划线让人猜是空的还是没读。

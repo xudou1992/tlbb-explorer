@@ -311,3 +311,47 @@ test("详情「导出」：点一下要把整组交出去，并把写了几个�
   await btn.events.click[0]();
   assert.equal(calls.length, 1, "没选资产也去调后端，是多余的一次请求");
 });
+
+test("骨架页：解出来的骨名与动作要真铺进标签页，迟到的回包不许串台", async () => {
+  const A = { mesh: "a_yifu.mesh", declared: 46, note: "",
+    nodes: [{ name: "origin", pos: [0, 0, 0], scale: 1 }, { name: "bip01_pelvis", pos: [0.05, 0.0007, -1.0979], scale: 1 }],
+    animations: [{ file: "a_walk.ani", bones: 46, frames: 21, tick: 40, moving: 12 }],
+    missing: ["父骨链未解：只知道每根骨在模型里的位置"] };
+  const B = { mesh: "b_yifu.mesh", declared: 12, note: "",
+    nodes: [{ name: "bone001", pos: [1, 2, 3], scale: 1 }], animations: [], missing: [] };
+  let gate = null;
+  const detail = await sandbox("detail.js", {
+    "mesh.js": meshMock,
+    "api.js": {
+      cardDetail: async () => fixtures.DETAIL_A,
+      assetInspect: async () => fixtures.INSPECT_A,
+      skeletonView: async (gid) => (gid === 245 ? new Promise((r) => { gate = () => r(A); }) : Promise.resolve(B)),
+    },
+  });
+  await detail.module.showDetail(245);
+  // 先切到另一只，再放 A 的回包——它必须被丢掉
+  await detail.module.showDetail(999);
+  await Promise.resolve(); await Promise.resolve();
+  assert.ok(detail.el("skelTable").innerHTML.includes("bone001"), "B 的骨架该铺出来");
+  gate();
+  await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
+  const sum = detail.el("skelSum").textContent;
+  assert.ok(!sum.includes("46"), `A 的迟到回包不许覆盖 B：${sum}`);
+  assert.ok(sum.includes("12"), "停在当前资产 B 的数字上");
+  // 正常一路：A 单独来时表、动作、未解项都要有
+  const d2 = await sandbox("detail.js", {
+    "mesh.js": meshMock,
+    "api.js": {
+      cardDetail: async () => fixtures.DETAIL_A,
+      assetInspect: async () => fixtures.INSPECT_A,
+      skeletonView: async () => A,
+    },
+  });
+  await d2.module.showDetail(245);
+  await Promise.resolve(); await Promise.resolve();
+  assert.ok(d2.el("skelTable").innerHTML.includes("bip01_pelvis"), "骨名必须出现在表里");
+  assert.ok(d2.el("skelSum").textContent.includes("声明 46 根骨"), `摘要要说清声明与认出的差额：${d2.el("skelSum").textContent}`);
+  assert.ok(d2.el("skelAnims").innerHTML.includes("a_walk.ani"), "动作表要列出同组 .ani");
+  assert.ok(d2.el("skelMissing").innerHTML.includes("父骨链"), "没解出来的东西必须同屏写明");
+  assert.equal(d2.el("tabSkelCount").textContent, "2", "标签上的数字是节点条数");
+});

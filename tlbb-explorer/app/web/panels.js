@@ -160,13 +160,14 @@ export function paintAnimation(rep, frame, onlyChanged, onPick) {
 
 export function clearEffect() {
   el("fxSum").textContent = "";
+  el("fxPick").innerHTML = "";
   el("fxTable").innerHTML = "";
   el("fxMissing").innerHTML = "";
   el("tabFxCount").textContent = "";
 }
 
 /// 类别表。名字一律用客户端原文，一类没有就不摆那一行（空行不等于「没有」）。
-export function paintEffect(rep) {
+export function paintEffect(rep, onPick) {
   clearEffect();
   if (!rep) return;
   const groups = [
@@ -181,11 +182,21 @@ export function paintEffect(rep) {
     ["其他名字", rep.other],
   ].filter(([, v]) => (v || []).length);
   el("tabFxCount").textContent = String(rep.string_total || "");
+  const more = (rep.files || []).length - 1;
   el("fxSum").textContent =
     `${rep.file} · 特效名 ${rep.name || "未读到"} · 分组 ${rep.group || "未读到"} · ` +
-    `驻留字符串 ${rep.string_total} 条 · 参数块 ${rep.param_bytes} 字节 / ${rep.param_floats} 个像浮点的数`;
+    `驻留字符串 ${rep.string_total} 条 · 参数块 ${rep.param_bytes} 字节 / ${rep.param_floats} 个像浮点的数` +
+    (more > 0 ? ` · 这一组还登记了 ${more} 份特效，点下面的名字换` : "");
+  if (more > 0) {
+    chips(
+      el("fxPick"),
+      rep.files.map((f) => ({ value: f, label: f.replace(/\.pu$/i, "") })),
+      rep.file,
+      onPick,
+    );
+  }
   el("fxTable").innerHTML = groups.length
-    ? `<table class="hl-table"><thead><tr><th>类别</th><th>数量</th><th>客户端原文</th></tr></thead><tbody>${groups
+    ? `<table class="hl-table fx-cat"><thead><tr><th>类别</th><th>数量</th><th>客户端原文</th></tr></thead><tbody>${groups
         .map(
           ([k, v]) =>
             `<tr><td>${esc(k)}</td><td class="n">${v.length}</td><td>${v.map((s) => esc(s)).join("、")}</td></tr>`,

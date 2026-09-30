@@ -450,7 +450,7 @@ test("特效页：点开才取数，材质链要真列成表、参数块未解�
     file: "a.pu", name: "a", group: "skill", label: "a_1",
     materials: ["x.mtl", "y.mtl"], textures: ["t.tga"], meshes: [], blends: ["add"],
     renderers: ["Billboard"], emitters: ["Circle"], updaters: ["TextureAnimator"],
-    dynamics: ["dyn_random"], other: [], string_total: 59,
+    dynamics: ["dyn_random"], other: [], string_total: 59, files: ["a.pu"],
     param_floats: 72, param_bytes: 6739, anims: 0,
     missing: ["参数块的字段语法未解：块里 6739 字节、72 个像浮点的数", "播放未做"],
   };
@@ -479,6 +479,44 @@ test("特效页：点开才取数，材质链要真列成表、参数块未解�
   assert.ok(detail.el("fxSum").textContent.includes("6739"), "摘要要带参数块大小");
   assert.ok(detail.el("fxMissing").innerHTML.includes("参数块"), "字段语法未解必须同屏");
   assert.equal(detail.el("tabFxCount").textContent, "59");
+  assert.equal(detail.el("fxPick").children.length, 0, "只登记一份特效时不该摆选择条");
+});
+
+test("特效页：一组登记多份 .pu 时要点名字能换，不许列着 A 的表写着 B 的名", async () => {
+  const base = {
+    name: "grp", group: "other", label: "", materials: ["a.mtl"], textures: [], meshes: [],
+    blends: [], renderers: [], emitters: [], updaters: [], dynamics: [], other: [],
+    string_total: 12, param_floats: 5, param_bytes: 2438, anims: 0,
+    missing: ["参数块的字段语法未解：块里 2438 字节、5 个像浮点的数"],
+    files: ["grp.pu", "w1351_boss_sss_mrb_rm_buff02.pu"],
+  };
+  const asked = [];
+  const detail = await sandbox("detail.js", {
+    "mesh.js": meshMock,
+    "api.js": {
+      cardDetail: async () => fixtures.DETAIL_A,
+      assetInspect: async () => fixtures.INSPECT_A,
+      skeletonView: async () => ({ mesh: "", declared: 0, nodes: [], animations: [], missing: [], note: "" }),
+      effectView: async (gid, file) => {
+        asked.push(file);
+        const want = file === "w1351_boss_sss_mrb_rm_buff02.pu" ? base.files[1] : base.files[0];
+        return { ...base, file: want, name: want.replace(/\.pu$/, "") };
+      },
+    },
+  });
+  await detail.module.showDetail(245);
+  for (let i = 0; i < 4; i++) await Promise.resolve();
+  detail.get("panels.js").showTabPane("effect");
+  for (let i = 0; i < 8; i++) await Promise.resolve();
+  assert.deepEqual(asked, [""], "首屏要问「默认那一份」，把选择权交给后端");
+  assert.ok(detail.el("fxSum").textContent.startsWith("grp.pu"), `默认该是本名那份：${detail.el("fxSum").textContent}`);
+  assert.ok(detail.el("fxSum").textContent.includes("还登记了 1 份"), "同组还有几份要写在摘要上");
+  assert.equal(detail.el("fxPick").children.length, 2, "两份都要给得出");
+  detail.el("fxPick").children[1].onclick();
+  for (let i = 0; i < 8; i++) await Promise.resolve();
+  assert.deepEqual(asked.slice(-1), ["w1351_boss_sss_mrb_rm_buff02.pu"], "点这份就要这份");
+  assert.ok(detail.el("fxSum").textContent.startsWith("w1351_boss_sss_mrb_rm_buff02.pu"), "表头文件名要跟着换");
+  assert.ok(detail.el("fxTable").innerHTML.includes("a.mtl"), "换的仍是特效表");
 });
 
 test("换资产要立刻清空骨架/动作/特效三页，不许留着上一件的文字", async () => {

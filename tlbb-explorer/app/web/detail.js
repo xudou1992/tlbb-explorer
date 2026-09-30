@@ -225,21 +225,22 @@ function initAnim() {
   onTabOpen((name) => {
     if (!state.selected) return;
     if (name === "animation" && !animReply) loadAnimation(state.selected, "");
-    if (name === "effect" && !fxReply) loadEffect(state.selected);
+    if (name === "effect" && !fxReply) loadEffect(state.selected, "");
   });
 }
 
 /// 特效页：.pu 的材质链与各类类名。没有 .pu 的组后端会给原因，原样转述。
+/// 一个组名下可能登记好几份 .pu，后端默认给与组同名的那份，其余摆成选择条。
 let fxReply = null;
 let fxSeq = 0;
 
-async function loadEffect(gid) {
+async function loadEffect(gid, file) {
   const my = ++fxSeq;
   try {
-    const v = await api.effectView(gid);
+    const v = await api.effectView(gid, file || "");
     if (my !== fxSeq || state.selected !== gid) return;
     fxReply = v;
-    paintEffect(v);
+    paintEffect(v, (f) => loadEffect(gid, f));
   } catch (e) {
     if (my !== fxSeq || state.selected !== gid) return;
     fxReply = null;

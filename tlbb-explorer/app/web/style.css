@@ -479,6 +479,9 @@ em.na { color: var(--muted); font-style: normal; }
 .hl-table td { padding: 8px 7px; border-bottom: 1px solid var(--line); }
 .hl-table tbody tr:hover td { background: var(--panel-2); }
 .hl-table .n { color: var(--text); font: 12px var(--mono); text-align: right; }
+/* 特效表的「类别」列只有两三个字，第三列却很长：不给它 nowrap 会被挤成一字一行 */
+.fx-cat td:first-child, .fx-cat th:first-child { white-space: nowrap; width: 1%; }
+.fx-cat td:nth-child(2), .fx-cat th:nth-child(2) { white-space: nowrap; }
 .bar-cell { white-space: nowrap; }
 .bar-cell em { margin-left: 5px; color: var(--muted); font: 11.5px var(--mono); font-style: normal; }
 .mini-bar { display: inline-flex; width: 72px; height: 5px; overflow: hidden; vertical-align: middle; border-radius: 99px; background: var(--panel-2); }

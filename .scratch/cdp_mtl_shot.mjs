@@ -12,15 +12,17 @@ await wait(1200);
 // 先把主视图切回「资产」，再搜、再点行、再开材质页
 await ev(`(() => { const b=[...document.querySelectorAll("button")].find(x=>x.textContent.trim()==="资产"); if(b) b.click(); return b?1:0; })()`);
 await wait(4000);
-await ev(`(() => { const q=document.getElementById("q"); q.value="gbnan_long"; q.dispatchEvent(new Event("input",{bubbles:true})); return 1; })()`);
+await ev(`(() => { const q=document.getElementById("q"); q.value="zq_qszd"; q.dispatchEvent(new Event("input",{bubbles:true})); return 1; })()`);
 await wait(6000);
 console.log("行数：", await ev(`document.querySelectorAll(".row-item").length`));
-console.log(await ev(`(() => { const r=[...document.querySelectorAll(".row-item")].find(x=>x.textContent.includes("gbnan_long")); if(!r) return "没找到行"; r.click(); return "点了"; })()`));
+console.log(await ev(`(() => { const r=[...document.querySelectorAll(".row-item")].find(x=>x.textContent.includes("zq_qszd")); if(!r) return "没找到行"; r.click(); return "点了"; })()`));
 await wait(4000);
 await ev(`(() => { const t=document.querySelector('#dTabs .tab[data-tab="material"]'); t&&t.click(); return 1; })()`);
 await wait(5000);
 await ev(`(() => { const el=document.getElementById("mtlSum"); if(el) el.scrollIntoView({block:"start"}); return 1; })()`);
 console.log("材质表行数：", await ev(`document.querySelectorAll("#mtlTable tbody tr").length`));
+console.log("表内容：", await ev(`[...document.querySelectorAll("#mtlTable tbody tr")].map(r=>[...r.children].map(c=>c.textContent).join("|")).join(" ~~ ")`));
+console.log("其他名字：", await ev(`(() => { const p=[...document.querySelectorAll("#mtlTable p")].map(x=>x.textContent)[0]; return p? p.slice(0,120) : "无"; })()`));
 console.log("摘要：", await ev(`document.getElementById("mtlSum").textContent`));
 const shot = await send("Page.captureScreenshot", { format: "png" });
 if (shot?.data) { writeFileSync("D:/TLGL/.scratch/ui_check/mtl_view.png", Buffer.from(shot.data, "base64")); console.log("截图写了 mtl_view.png"); }

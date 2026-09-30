@@ -76,7 +76,16 @@
 **材质页**：全库 8,536 份 `.mtl` 是 JBCF 配置容器，`view.exe` 早就打得出一张
 「槽位 / 客户端原文 / 对不对得上实体」的表，工作台上却只有两行字。
 现在详情第十个标签「材质」列这张表，对不上的写「缺」并说明是客户端的设计。
-只认组内登记的 `.mtl`（与特效页同一道归属闸门：400 组逐个核）。
+只认组内登记的定义文件（与特效页同一道归属闸门：400 组逐个核）。
+**`.mdl`（2,146 份模型定义）也走这一页**——因为一批 NPC/怪物组的**本名其实是 `.mdl`**，
+只列 `.mtl` 等于把本名那份漏掉；`.mdl` 回的是「骨架 + 网格·材质对 + 其他名字」，
+段名（LOD / `MainBodyMesh`）跟着每一对走，不然多组时分不清谁是谁。
+
+**筹码区加了上限（24 颗）**：验 `.mdl` 时撞出来的一屏事故——有个组名下登记了
+**838 份定义**（就是那个 3,405 成员的巨无霸组），筹码把整排铺下去之后
+**要看的表被挤出了屏幕**，等于换了个地方看不见。现在最多摆 24 颗并写明
+「还有 N 项没列出（在「组成成员」里能看全）」，且**当前选中的那颗一定摆进来**，
+哪怕它排在 24 之后。两条闸门盯着这两件事。
 
 **顺带修了一个把客户端原文写坏的 bug**：JBCF 字符串表是 **GBK**，
 原先 `String::from_utf8_lossy` 把「龙头01.tga」损成 `◆◆01.tga` 摆在界面上。
@@ -327,10 +336,10 @@ cd app/src-tauri && CARGO_TARGET_DIR=../../../.scratch/rc3 cargo build --release
 ### 4. 验证
 
 ```bash
-# 前端 255 条（含 behavior 那批：node:vm 沙箱里跑真前端，开关已写进 npm script）
+# 前端 258 条（含 behavior 那批：node:vm 沙箱里跑真前端，开关已写进 npm script）
 cd tlbb-explorer/app && npm test
 
-# Rust：core 74 通过 / 3 忽略、骨架导出器 3 条；app 46 通过 / 1 忽略
+# Rust：core 74 通过 / 3 忽略、骨架导出器 3 条；app 47 通过 / 1 忽略
 # （带真数据的用例要 TLBB_ROOT 指向客户端根，没有就打印「跳过」并算过）
 cd tlbb-explorer && CARGO_TARGET_DIR=.scratch/rc3 cargo test --jobs 1 --lib --bin skel_dump
 cd tlbb-explorer/app/src-tauri && CARGO_TARGET_DIR=../../../.scratch/rc3 cargo test --jobs 1

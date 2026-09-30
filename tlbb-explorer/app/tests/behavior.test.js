@@ -577,6 +577,74 @@ test("材质页：点开才取数，槽位要列得出类型与原文，对不�
   assert.ok(detail.el("mtlSum").textContent.startsWith("template_default.mtl"), "表头文件名要跟着换");
 });
 
+test("筹码区有上限：巨无霸组不许把要看的表挤出屏幕", async () => {
+  const ui = await sandbox("ui.js", {});
+  const node = ui.makeEl ? null : null;
+  const box = { children: [], innerHTML: "", appendChild(c) { this.children.push(c); } };
+  // 直接验纯逻辑：838 项只摆 24 颗，并说明还剩多少
+  ui.module.chips(box, Array.from({ length: 838 }, (_, i) => ({ value: `f${i}.mdl`, label: `f${i}` })), "f900", () => {}, 24);
+  const 按钮 = box.children.filter((c) => c.className === "chip");
+  assert.equal(按钮.length, 24, `只该摆 24 颗，实际 ${按钮.length}`);
+  const 说明 = box.children.find((c) => c.className === "chip-more");
+  assert.ok(说明 && /还有 814 项/.test(说明.textContent), `要写明还剩多少：${说明 && 说明.textContent}`);
+});
+
+test("筹码区当前选中的那颗即使排在 cap 之后也要摆出来", async () => {
+  const ui = await sandbox("ui.js", {});
+  const box = { children: [], innerHTML: "", appendChild(c) { this.children.push(c); } };
+  const opts = Array.from({ length: 60 }, (_, i) => ({ value: `f${i}.mdl`, label: `f${i}` }));
+  ui.module.chips(box, opts, "f59.mdl", () => {}, 24);
+  // 选中的那颗会被 markChips 加成 class="chip on"，按等号筛会把它漏掉——
+  // 这条断言验的正是「选中的那颗在不在」，别被自己的筛法筛没了。
+  const 值 = box.children
+    .filter((c) => /^chip( |$)/.test(String(c.className)))
+    .map((c) => String(c.innerHTML));
+  assert.ok(值.some((h) => h.includes("f59")), "选中那颗不见了，用户会以为没选上");
+  assert.equal(值.length, 25, `前 24 颗 + 选中那颗，实际 ${值.length}`);
+  assert.ok(box.children.some((c) => String(c.className).includes("on")), "选中态要打上");
+});
+
+test("材质页也管模型定义：.mdl 组要列得出骨架与网格·材质对，不许绕开本名去列别份", async () => {
+  const rep = {
+    file: "grp.mdl",
+    files: ["grp.mdl", "a.mtl"],
+    kind: "模型定义",
+    model_name: "grp_model",
+    base_dir: "data/source/npc/model/grp/",
+    skeletons: [{ role: "骨架", name: "grp.ske", path: "data/source/npc/model/grp/grp.ske" }],
+    bodies: [{ label: "LOD0", mesh: "grp_body.mesh", mesh_path: "", material: "a.mtl", material_path: "data/x/a.mtl" }],
+    others: ["tx_head", "variation_01"],
+    slots: [],
+    unresolved: 0,
+    missing: ["挂点/变体这些剩下的字符串按文件出现序原样带着（列在「其他名字」里），语义没断言"],
+  };
+  const detail = await sandbox("detail.js", {
+    "mesh.js": meshMock,
+    "api.js": {
+      cardDetail: async () => fixtures.DETAIL_A,
+      assetInspect: async () => fixtures.INSPECT_A,
+      skeletonView: async () => ({ mesh: "", declared: 0, nodes: [], animations: [], missing: [], note: "" }),
+      materialView: async () => rep,
+    },
+  });
+  await detail.module.showDetail(245);
+  for (let i = 0; i < 4; i++) await Promise.resolve();
+  detail.get("panels.js").showTabPane("material");
+  for (let i = 0; i < 8; i++) await Promise.resolve();
+  const sum = detail.el("mtlSum").textContent;
+  assert.ok(sum.includes("模型定义"), `摘要要说明这屏是模型定义：${sum}`);
+  assert.ok(sum.includes("模型名 grp_model"), "模型名要看得见");
+  const table = detail.el("mtlTable").innerHTML;
+  assert.ok(table.includes("grp.ske"), "骨架引用要列出来");
+  assert.ok(table.includes("grp_body.mesh"), "网格要列出来");
+  assert.ok(table.includes("a.mtl"), "材质要列出来");
+  assert.ok(table.includes("LOD0"), "段名/LOD 标签要跟着，不然多组时分不清谁是谁");
+  assert.ok(table.includes(">缺<"), "对不上实体的那行写「缺」");
+  assert.ok(table.includes("tx_head"), "其他名字原样带着，不丢掉");
+  assert.ok(detail.el("mtlMissing").innerHTML.includes("语义没断言"), "不许把挂点说成已看懂");
+  assert.equal(detail.el("tabMtlCount").textContent, "2", "标签上的数是骨架+网格材质对的条数");
+});
+
 test("换资产要立刻清空骨架/动作/特效三页，不许留着上一件的文字", async () => {
   const skelA = { mesh: "a_yifu.mesh", declared: 1, note: "", animations: [], missing: [],
     nodes: [{ name: "aaa_only_in_A", pos: [0, 0, 0], scale: 1 }] };

@@ -1,4 +1,7 @@
-//! 材质页：`.mtl`（JBCF 配置容器）的槽位表进界面。
+//! 材质页：`.mtl`（材质定义）与 `.mdl`（模型定义）的组成表进界面。
+//! 两者都是 JBCF 配置容器，一个写「用什么贴图/着色器」，
+//! 一个写「这个模型由哪些骨架、网格+材质对、挂点拼成」——而一批 NPC/怪物组的
+//! **本名其实是 `.mdl`**，只列 `.mtl` 就等于把本名那份漏掉。
 //!
 //! 欠票与骨架页同源：`material_slots` 早就在 core 里，命令行 `view.exe --name=x.mtl`
 //! 能打出一张「槽位类型 / 客户端原文 / 对不对得上实体」的表，但工作台里
@@ -25,10 +28,32 @@ pub struct MaterialSlot {
     pub path: String,
 }
 
+/// `.mdl` 里的一组「网格 + 材质」。
+#[derive(Serialize)]
+pub struct BodyRow {
+    /// 紧邻其前的无扩展名字符串（LOD / 段名），可能为空。
+    pub label: String,
+    pub mesh: String,
+    pub mesh_path: String,
+    pub material: String,
+    pub material_path: String,
+}
+
 #[derive(Serialize)]
 pub struct MaterialReply {
-    /// 这一屏列的是哪份 `.mtl`。
+    /// 这一屏列的是哪份定义文件（`.mtl` 或 `.mdl`）。
     pub file: String,
+    /// 「材质」或「模型定义」——由文件扩展名说，不是我们给的分类。
+    pub kind: String,
+    /// `.mdl` 里的模型名与资源基目录（客户端原文）；`.mtl` 时为空。
+    pub model_name: String,
+    pub base_dir: String,
+    /// `.mdl` 引用的骨架。
+    pub skeletons: Vec<MaterialSlot>,
+    /// `.mdl` 的网格+材质对。
+    pub bodies: Vec<BodyRow>,
+    /// `.mdl` 里剩下的字符串（挂点/变体/骨骼名），语义未断言，原样带着。
+    pub others: Vec<String>,
     /// 这一组登记了哪几份 `.mtl`（组名同名那份排第一），供界面切换。
     pub files: Vec<String>,
     pub slots: Vec<MaterialSlot>,
@@ -43,7 +68,7 @@ pub struct MaterialReply {
 fn mtl_paths(con: &rusqlite::Connection, gid: i64, hub: &str) -> Vec<String> {
     let mut v: Vec<String> = match con.prepare(
         "SELECT coalesce(r.path,'') FROM amembers m JOIN resources r ON r.hash = m.hash \
-         WHERE m.gid = ?1 AND r.ext = '.mtl' ORDER BY r.path",
+         WHERE m.gid = ?1 AND r.ext IN ('.mtl', '.mdl') ORDER BY r.path",
     ) {
         Ok(mut st) => st
             .query_map([gid], |r| r.get::<_, String>(0))
@@ -98,7 +123,7 @@ pub fn material_view_run(gid: i64, want: &str) -> Result<MaterialReply, String> 
         .unwrap_or_default();
     let paths = mtl_paths(&con, gid, &hub);
     if paths.is_empty() {
-        return Err("这一组没有登记材质文件（.mtl）。模型用哪张贴图、走哪个着色器都写在这里，缺它就没什么可列的。".to_string());
+        return Err("这一组没有登记材质或模型定义文件（.mtl / .mdl）。用什么贴图、走哪个着色器、由哪些网格拼成都写在这类文件里，缺它就没什么可列的。".to_string());
     }
     let mtl_path = paths
         .iter()
@@ -114,10 +139,10 @@ pub fn material_view_run(gid: i64, want: &str) -> Result<MaterialReply, String> 
     let mut paks: std::collections::HashMap<String, Pak> = Default::default();
     let raw = decode(&mut paks, &root, &card_of(&pak), h)
         .ok_or_else(|| "材质文件的字节解不出来（容器读得出记录，解码失败）".to_string())?;
-    // core 的接口只问「这个名字对得上实体吗」（Option<u64>），界面要的是路径，
-    // 所以查一次把路径存下来，回包时按 core 给的顺序取——顺序本身是文件里的信息。
+    // 两种定义文件走各自的解析器：.mdl 回的是「骨架 + 网格·材质对 + 挂点」，
+    // .mtl 回的是槽位表。名字都取客户端原文，路径查一遍存下来复用。
     let found: std::cell::RefCell<std::collections::HashMap<String, String>> = Default::default();
-    let body = material_slots(&raw, |n| {
+    let look = |n: &str| -> Option<u64> {
         let mut m = found.borrow_mut();
         if !m.contains_key(n) {
             let path = resolve(&con, n);
@@ -126,7 +151,48 @@ pub fn material_view_run(gid: i64, want: &str) -> Result<MaterialReply, String> 
             }
         }
         m.get(n).map(|_| 1u64)
-    });
+    };
+    let take = |n: &str| found.borrow().get(n).cloned().unwrap_or_default();
+    if mtl_path.to_lowercase().ends_with(".mdl") {
+        let ViewBody::Model(m) = tlbb_core::preview::summary::mdl_summary(&raw, look) else {
+            return Err("这份 .mdl 不按已知的 JBCF 配置容器排布".to_string());
+        };
+        return Ok(MaterialReply {
+            file: mtl_path.rsplit('/').next().unwrap_or("").to_string(),
+            kind: "模型定义".to_string(),
+            model_name: m.name.clone(),
+            base_dir: m.base_dir.clone(),
+            skeletons: m
+                .skeletons
+                .iter()
+                .map(|s| MaterialSlot {
+                    role: "骨架".to_string(),
+                    name: s.name.clone(),
+                    path: take(&s.name),
+                })
+                .collect(),
+            bodies: m
+                .bodies
+                .iter()
+                .map(|b| BodyRow {
+                    label: b.label.clone(),
+                    mesh: b.mesh.name.clone(),
+                    mesh_path: take(&b.mesh.name),
+                    material: b.material.name.clone(),
+                    material_path: take(&b.material.name),
+                })
+                .collect(),
+            others: m.others.clone(),
+            files,
+            slots: Vec::new(),
+            unresolved: 0,
+            missing: vec![
+                "挂点/变体这些剩下的字符串按文件出现序原样带着（列在「其他名字」里），语义没断言".to_string(),
+            ],
+            elapsed_ms: t0.elapsed().as_millis() as u64,
+        });
+    }
+    let body = material_slots(&raw, look);
     let ViewBody::Material(core_slots) = body else {
         return Err("这份 .mtl 不按已知的 JBCF 配置容器排布".to_string());
     };
@@ -152,6 +218,12 @@ pub fn material_view_run(gid: i64, want: &str) -> Result<MaterialReply, String> 
     }
     Ok(MaterialReply {
         file: mtl_path.rsplit('/').next().unwrap_or("").to_string(),
+        kind: "材质".to_string(),
+        model_name: String::new(),
+        base_dir: String::new(),
+        skeletons: Vec::new(),
+        bodies: Vec::new(),
+        others: Vec::new(),
         files,
         slots,
         unresolved,
@@ -181,19 +253,22 @@ mod tests {
             return;
         }
         let con = od(&db).expect("清单");
+        // 挑「本名就是 .mtl」的组：这一页优先列本名那份，本名是 .mdl 的组会走
+        // 模型定义那条路（另有一条闸门管那种组），拿它验槽位表是拿错样本。
         let Some(gid) = con
             .query_row(
-                "SELECT m.gid FROM amembers m JOIN resources r ON r.hash = m.hash \
-                 WHERE r.ext = '.mtl' GROUP BY m.gid HAVING count(*) > 0 ORDER BY m.gid LIMIT 1",
+                "SELECT g.id FROM agroups g JOIN resources r ON r.path = g.hub_path AND r.ext = '.mtl' \\
+                 WHERE coalesce(r.type,'') = 'JBCF' LIMIT 1",
                 [],
                 |r| r.get::<_, i64>(0),
             )
             .ok()
         else {
-            eprintln!("跳过：清单里没有含 .mtl 的组");
+            eprintln!("跳过：清单里没有本名为 .mtl 的组");
             return;
         };
         let rep = material_view_run(gid, "").expect("材质回包");
+        assert_eq!(rep.kind, "材质", "本名是 .mtl 的组该走槽位表这条路：{}", rep.file);
         assert!(rep.file.ends_with(".mtl"), "该跟着 .mtl：{}", rep.file);
         assert!(!rep.slots.is_empty(), "槽位表一条都没有");
         assert!(
@@ -210,6 +285,48 @@ mod tests {
             rep.slots.len(),
             贴图,
             rep.slots.len() - rep.unresolved
+        );
+    }
+
+    /// 真数据：本名是 `.mdl` 的组，这一页要列得出「模型定义」那张组成表，
+    /// 而不是绕开它去列同组随便一份 `.mtl`。
+    #[test]
+    fn 模型定义页列得出骨架与网格材质对() {
+        let (_root, db) = roots();
+        if !db.is_file() {
+            eprintln!("跳过：本机没有资源清单");
+            return;
+        }
+        let con = od(&db).expect("清单");
+        let Some(gid) = con
+            .query_row(
+                "SELECT g.id FROM agroups g JOIN resources r ON r.path = g.hub_path AND r.ext = '.mdl'                  WHERE coalesce(r.type,'') = 'JBCF' LIMIT 1",
+                [],
+                |r| r.get::<_, i64>(0),
+            )
+            .ok()
+        else {
+            eprintln!("跳过：清单里没有本名为 .mdl 的组");
+            return;
+        };
+        let rep = material_view_run(gid, "").expect("模型定义回包");
+        assert_eq!(rep.kind, "模型定义", "该按 .mdl 走模型定义这条路：{}", rep.file);
+        assert!(rep.file.ends_with(".mdl"), "列的应是组本名那份：{}", rep.file);
+        assert!(
+            !rep.bodies.is_empty() || !rep.skeletons.is_empty(),
+            "网格·材质对与骨架都空，多半是解析没吃下这份 .mdl"
+        );
+        assert!(
+            rep.bodies.iter().all(|b| !b.mesh.is_empty() && !b.material.is_empty()),
+            "一对里网格或材质为空就是配对读错了"
+        );
+        eprintln!(
+            "模型定义页：{} · 模型名 {} · 骨架 {} · 网格·材质对 {} · 其他名字 {}",
+            rep.file,
+            rep.model_name,
+            rep.skeletons.len(),
+            rep.bodies.len(),
+            rep.others.len()
         );
     }
 

@@ -233,12 +233,23 @@ export function clearMaterial() {
 export function paintMaterial(rep, onPick) {
   clearMaterial();
   if (!rep) return;
-  el("tabMtlCount").textContent = rep.slots ? String(rep.slots.length) : "";
-  el("mtlSum").textContent =
-    `${rep.file} · 槽位 ${(rep.slots || []).length} 个 · 对得上实体 ${
-      (rep.slots || []).length - (rep.unresolved || 0)
-    } 个 · 缺 ${rep.unresolved || 0} 个` +
-    ((rep.files || []).length > 1 ? ` · 这一组还登记了 ${rep.files.length - 1} 份材质，点下面的名字换` : "");
+  const mdl = rep.kind === "模型定义";
+  el("tabMtlCount").textContent = mdl
+    ? String((rep.bodies || []).length + (rep.skeletons || []).length)
+    : String((rep.slots || []).length);
+  el("mtlSum").textContent = mdl
+    ? `${rep.file} · 模型定义 · 模型名 ${rep.model_name || "未读到"} · 骨架 ${
+        (rep.skeletons || []).length
+      } 份 · 网格·材质对 ${(rep.bodies || []).length} 组` +
+      ((rep.files || []).length > 1
+        ? ` · 这一组还登记了 ${rep.files.length - 1} 份定义，点下面的名字换`
+        : "")
+    : `${rep.file} · 槽位 ${(rep.slots || []).length} 个 · 对得上实体 ${
+        (rep.slots || []).length - (rep.unresolved || 0)
+      } 个 · 缺 ${rep.unresolved || 0} 个` +
+      ((rep.files || []).length > 1
+        ? ` · 这一组还登记了 ${rep.files.length - 1} 份定义，点下面的名字换`
+        : "");
   if ((rep.files || []).length > 1) {
     chips(
       el("mtlPick"),
@@ -247,7 +258,19 @@ export function paintMaterial(rep, onPick) {
       onPick,
     );
   }
-  el("mtlTable").innerHTML = (rep.slots || []).length
+  el("mtlTable").innerHTML = mdl
+    ? `${(rep.skeletons || []).length ? `<table class="hl-table fx-cat"><thead><tr><th>部件</th><th>客户端原文</th><th>对上的实体</th></tr></thead><tbody>${[
+          ...(rep.skeletons || []).map((k) => `<tr><td>骨架</td><td>${esc(k.name)}</td><td class="dim">${k.path ? esc(k.path) : "缺"}</td></tr>`),
+          ...(rep.bodies || []).map(
+            (b) =>
+              `<tr><td>网格${b.label ? `（${esc(b.label)}）` : ""}</td><td>${esc(b.mesh)}</td><td class="dim">${b.mesh_path ? esc(b.mesh_path) : "缺"}</td></tr>` +
+              `<tr><td>材质${b.label ? `（${esc(b.label)}）` : ""}</td><td>${esc(b.material)}</td><td class="dim">${b.material_path ? esc(b.material_path) : "缺"}</td></tr>`,
+          ),
+        ].join("")}</tbody></table>` : ""}` +
+      ((rep.others || []).length
+        ? `<p class="dim">其他名字（挂点/变体/骨骼名，语义未断言）：${(rep.others || []).map((x) => esc(x)).join("、")}</p>`
+        : "")
+    : (rep.slots || []).length
     ? `<table class="hl-table fx-cat"><thead><tr><th>槽位</th><th>客户端原文</th><th>对上的实体</th></tr></thead><tbody>${rep.slots
         .map(
           (s) =>

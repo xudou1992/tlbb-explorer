@@ -157,6 +157,7 @@ input[type="checkbox"] { accent-color: var(--teal); width: 15px; height: 15px; }
 .chip em { color: var(--faint); font: 11.5px var(--mono); font-style: normal; }
 .chip.on em { color: var(--teal); }
 /* 完整程度：整行一个，带色点徽章——A/B/C/D 是这一屏最重要的四档。 */
+.chip-more { align-self: center; font-size: 11.5px; color: var(--muted); padding: 2px 4px; }
 .chips.grades { flex-direction: column; gap: 3px; }
 .chips.grades .chip { width: 100%; justify-content: flex-start; }
 .gdot {

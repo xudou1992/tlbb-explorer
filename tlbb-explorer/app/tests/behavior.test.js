@@ -580,18 +580,40 @@ test("材质页：点开才取数，槽位要列得出类型与原文，对不�
 test("筹码区有上限：巨无霸组不许把要看的表挤出屏幕", async () => {
   const ui = await sandbox("ui.js", {});
   const node = ui.makeEl ? null : null;
-  const box = { children: [], innerHTML: "", appendChild(c) { this.children.push(c); } };
+  // 替身 DOM 要跟真 DOM 一样：innerHTML = "" 必须把子节点清掉，
+  // 不然「重画」在这里看起来像「追加」，测出来的数永远是错的。
+  const box = {
+    children: [],
+    _html: "",
+    get innerHTML() { return this._html; },
+    set innerHTML(v) { this._html = v; if (v === "") this.children = []; },
+    appendChild(c) { this.children.push(c); },
+  };
   // 直接验纯逻辑：838 项只摆 24 颗，并说明还剩多少
   ui.module.chips(box, Array.from({ length: 838 }, (_, i) => ({ value: `f${i}.mdl`, label: `f${i}` })), "f900", () => {}, 24);
   const 按钮 = box.children.filter((c) => c.className === "chip");
   assert.equal(按钮.length, 24, `只该摆 24 颗，实际 ${按钮.length}`);
   const 说明 = box.children.find((c) => c.className === "chip-more");
   assert.ok(说明 && /还有 814 项/.test(说明.textContent), `要写明还剩多少：${说明 && 说明.textContent}`);
+  // 说明不能只是一句话：点它要把下一批真的摆出来，否则是指路给一个不存在的地方
+  assert.equal(typeof 说明.onclick, "function", "这句说明得能点");
+  说明.onclick();
+  const 第二次 = box.children.filter((c) => /^chip( |$)/.test(String(c.className)));
+  assert.equal(第二次.length, 124, `点一次该多出 100 颗，实际 ${第二次.length}`);
+  assert.ok(box.children.find((c) => c.className === "chip-more" && /还有 714 项/.test(c.textContent)), "剩下的数要跟着减");
 });
 
 test("筹码区当前选中的那颗即使排在 cap 之后也要摆出来", async () => {
   const ui = await sandbox("ui.js", {});
-  const box = { children: [], innerHTML: "", appendChild(c) { this.children.push(c); } };
+  // 替身 DOM 要跟真 DOM 一样：innerHTML = "" 必须把子节点清掉，
+  // 不然「重画」在这里看起来像「追加」，测出来的数永远是错的。
+  const box = {
+    children: [],
+    _html: "",
+    get innerHTML() { return this._html; },
+    set innerHTML(v) { this._html = v; if (v === "") this.children = []; },
+    appendChild(c) { this.children.push(c); },
+  };
   const opts = Array.from({ length: 60 }, (_, i) => ({ value: `f${i}.mdl`, label: `f${i}` }));
   ui.module.chips(box, opts, "f59.mdl", () => {}, 24);
   // 选中的那颗会被 markChips 加成 class="chip on"，按等号筛会把它漏掉——

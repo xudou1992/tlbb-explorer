@@ -22,28 +22,37 @@ export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 /// 全摆出来会把要看的表挤出屏幕——那是把「看不见」换了个地方，不是解决问题。
 /// 当前选中的那颗一定摆进来，哪怕它排在 cap 之后。
 export function chips(node, options, current, pick, cap = 24) {
-  node.innerHTML = "";
-  let shown = options.slice(0, cap);
-  if (options.length > cap && current != null && !shown.some((o) => String(o.value) === String(current))) {
-    const cur = options.find((o) => String(o.value) === String(current));
-    if (cur) shown = shown.concat([cur]);
-  }
-  for (const opt of shown) {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "chip";
-    b.dataset.value = String(opt.value);
-    b.innerHTML = `<span>${esc(opt.label)}</span>` + (opt.count === undefined ? "" : `<em>${num(opt.count)}</em>`);
-    b.onclick = () => pick(opt.value);
-    node.appendChild(b);
-  }
-  if (options.length > shown.length) {
-    const more = document.createElement("span");
-    more.className = "chip-more";
-    more.textContent = `还有 ${options.length - shown.length} 项没列出（在「组成成员」里能看全）`;
-    node.appendChild(more);
-  }
-  markChips(node, current);
+  const step = 100;
+  const render = (upto) => {
+    node.innerHTML = "";
+    let shown = options.slice(0, upto);
+    if (options.length > upto && current != null && !shown.some((o) => String(o.value) === String(current))) {
+      const cur = options.find((o) => String(o.value) === String(current));
+      if (cur) shown = shown.concat([cur]);
+    }
+    for (const opt of shown) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "chip";
+      b.dataset.value = String(opt.value);
+      b.innerHTML = `<span>${esc(opt.label)}</span>` + (opt.count === undefined ? "" : `<em>${num(opt.count)}</em>`);
+      b.onclick = () => pick(opt.value);
+      node.appendChild(b);
+    }
+    if (options.length > shown.length) {
+      // 说明必须能点开：只写「还有 N 项没列出」是指路给一个不存在的地方，
+      // 那等于把「看不见」换个说法留在屏幕上。这里让它自己把下一批摆出来。
+      const more = document.createElement("button");
+      more.type = "button";
+      more.className = "chip-more";
+      const left = options.length - shown.length;
+      more.textContent = `还有 ${left} 项没列出 · 再看 ${Math.min(step, left)} 项`;
+      more.onclick = () => render(upto + step);
+      node.appendChild(more);
+    }
+    markChips(node, current);
+  };
+  render(cap);
 }
 
 /// 只把「哪一颗是选中的」同步到 DOM，一个节点都不重建。

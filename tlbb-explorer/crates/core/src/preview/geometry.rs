@@ -16,7 +16,8 @@
 //!                        [+ 8·vc UV] [+ 8·vc 第二套 UV] [+ 2·fc 面级 u16]
 //!             p          u32 面数 × sm   ← 连续数组，步长 4 字节，Σ = fc
 //!             p + 4·sm   索引  fc × 3 × u16（各子网格按顺序紧挨着排）
-//!             …尾部       命名节点表（parent + 名字，可能带 4×4 矩阵；未解，只报字节数）
+//!             …尾部       骨架条目流：origin/top 前奏 + 变长条目 ×N + tx_ 挂点表
+//!                         （父骨链已解出，见下方 `parse_hierarchy` 的口径注释）
 //! ```
 //!
 //! 定位办法（不猜布局，让数据自证）：把文件里可能的位置按 4 字节余数分四类，
@@ -324,10 +325,9 @@ pub fn parse_geometry(raw: &[u8]) -> Result<MeshGeometry, String> {
 
 /// 从 mesh 尾部把**骨架节点名**捞出来（去重保序）。
 ///
-/// 尾部是「命名节点表」：每个节点一份 96B 记录，里面有名字、一份 4×4 仿射矩阵，
-/// 以及看着像父索引的整数。矩阵阵列的相位与父指针的字段位置还没定死（见
-/// `.scratch/动画骨架_线索_20260929.md`），所以这里**只报名字**——名字是 NUL 结尾
-/// 的 ASCII，读得准；父子关系不猜、不画骨架线，也不报「第 i 个的爸爸是 j」。
+/// 尾部是「命名节点表」：每个节点一份 96B 记录，里面有名字、一份 4×4 仿射矩阵。
+/// 这里**只报名字**——名字是 NUL 结尾的 ASCII，读得准；要看父子关系用
+/// [`parse_hierarchy`]（2026-10-05 已解出，口径见彼处注释）。
 ///
 /// 用途：让人一眼看出「这只模型的骨架在文件里」（`origin` / `top` / `bip01_*`），
 /// 以及它和 `.ani` 的骨名表对不对得上。
@@ -404,7 +404,8 @@ pub struct SkinInfluence {
 /// 第四行是 (tx, ty, tz, 1)**——平移在最后一行，不是 (0,0,0,1)。
 /// 一开始按「末行恒 0,0,0,1」认记录，只有单位矩阵的骨（origin、top）能过，
 /// 真骨骼全被否掉了：46 根骨的怪只认出 2 根。改成允许平移后，同一文件认出 32 根。
-/// 父指针**不在记录里**，所以这里只报名字与矩阵，不猜父子关系。
+/// 记录里确实没有父指针的槽位——父链在记录之外的「孩子名单」里，
+/// 见下方 `parse_hierarchy`。
 ///
 /// 另有两种记录混在同一段里，认出来但不当骨架节点：
 /// 128 字节的挂点表 = `tx_*` 挂点名 char[32] + 骨名 char[32] + 矩阵 f32[16]
@@ -563,6 +564,460 @@ pub fn parse_nodes(raw: &[u8]) -> Vec<Node> {
         i += 4;
     }
     out
+}
+
+// ===========================================================================
+// 父骨链（2026-10-05 解出；字节证据与差分记录见 .scratch/父骨链_验证_20261005.md）
+//
+// 尾部整段是**一串变长条目 + 挂点表**，不再「只报字节数」：
+//
+// ```text
+// 尾部 = [origin 记录][top 记录]            ← 两条场景前奏：只有 96B 记录，没有条目尾
+//      = 条目 × N（深度优先顺序）
+//      = 挂点段 [u32 挂点数][挂点数 × (tx_名 char32 + 骨名 char32 + 矩阵 f32×16)]
+//
+// 条目 = [96B 记录]?                        ← 只有「自己的名字 == 条目名」时才属于本条目，
+//                                              否则它是前奏（origin/top）；多数骨的记录
+//                                              是以「父条目孩子名单里的一个槽」出现的
+//      + [块]*                              ← 三种块，实测顺序固定：
+//          影响顶点表 [u32 N][N×u32 顶点（严格递增）][N×f32 权重]，N=0 合法（4B 空表）
+//          对角块 88B [d,0,0,0,0]×3 + [1.0,0,0,0] + [100,100,100]，
+//                     d 逐文件 0.9998（xiyuqiezei）或 1.0（hamigua），语义未证
+//          局部矩阵 64B 行主序 4×4（前三行正交、末列 0,0,0,1），带它的条目不足一半，
+//                     与 bind 的复合关系四种口径全对不上（残差 2.3~4.8）——语义未证，
+//                     只识别不解释
+//      + [u32 标志]                          ← 实测恒 1，唯一根（`000`）为 0xFFFFFFFF(-1)。
+//                                              47 份差分样本无一例外，**不是父索引**
+//                                              （早先把它当父索引的猜想就此钉死）
+//      + [char32 名字 ×2]                    ← 自名两遍
+//      + [u32 孩子数][孩子数 × 孩子]          ← 孩子槽 = [char32 名字]（无绑定矩阵的骨）
+//                                              或整条 96B 记录（有矩阵的骨，
+//                                              名字段就是孩子名——共用字节）
+// ```
+//
+// 证据链（样本 `w1351_monster_xiyuqiezei_yifu_001.mesh`，52,536B，0x110 声明 46 骨）：
+// * 条目数 = 声明数（46 = 46）；差分 47 份、33 种骨数（14~128，含 24/25/46）全部
+//   「整文件走到 EOF 分毫不差 + 条目数 = 声明数」。
+// * 名字两遍的组恰好 46 个 = 头部声明的 46；孩子名单之并 = 除根外每个条目恰一次
+//   （46 节点、45 个孩子槽、Σ孩子数 = 45）。
+// * 解出的链与 Biped 解剖一致：spine→spine1→neck→head，clavicle→upperarm→forearm
+//   →hand→finger，thigh→calf→foot→toe0，bone10→bone11→bone12 及其 mirror 链。
+// * 几何对账：全部「父子都有绑定矩阵」的对，|Δ位移| 落在骨长量级
+//   （pelvis←bip01 = 1.0991、foot←calf = 0.4052、toe0←foot = 0.5460，
+//   与 2026-09-29 手算的表逐一对上）；三个超 2.0 的例外全是 accessory 链
+//   （bone05→bone06 = 3.18、r_clavicle→r_upperarm = 2.45、b10mm→b11mm = 2.40）。
+//
+// 纪律：孩子名对不上条目、被列两次、多根、有环、条目数 ≠ 声明数——任何一条不满足
+// 就整体拒绝（`None`），不猜、不补。
+// ===========================================================================
+
+/// 骨架里的一个节点：名字 + 父骨（在 [`SkeletonHierarchy::bones`] 里的下标）+ 绑定矩阵。
+#[derive(Debug, Clone, PartialEq)]
+pub struct BoneNode {
+    pub name: String,
+    /// 父骨下标；整棵树唯一的根（实测叫 `000` 或 `bip01`）为 `None`。
+    pub parent: Option<usize>,
+    /// 绑定矩阵（行主序、D3DX 行向量约定）。没有 96B 记录的骨
+    /// （如 `bip01_spine1`/`bip01_neck`/两条 thigh）为 `None`——播放时它的位姿
+    /// 只能靠 `.ani` 轨道与父链推。
+    pub bind: Option<[f32; 16]>,
+    /// 子骨下标，按文件里孩子名单的顺序。
+    pub children: Vec<usize>,
+}
+
+/// `tx_*` 挂点：挂点名 + 挂到的骨 + 挂点变换（尾部最后一段，跟骨架不同源）。
+#[derive(Debug, Clone, PartialEq)]
+pub struct SocketEntry {
+    pub name: String,
+    pub bone: String,
+    pub bind: [f32; 16],
+}
+
+/// 尾部解出的整棵骨架 + 挂点表。
+#[derive(Debug, Clone, PartialEq)]
+pub struct SkeletonHierarchy {
+    /// 深度优先顺序（= 文件顺序）。
+    pub bones: Vec<BoneNode>,
+    pub sockets: Vec<SocketEntry>,
+}
+
+struct TailEntry {
+    name: String,
+    /// 条目开头那条属于自己名字的 96B 记录（多数骨没有；它们的矩阵在孩子槽里）。
+    own_bind: Option<[f32; 16]>,
+    children: Vec<(String, Option<[f32; 16]>)>,
+}
+
+fn tail_name_at(raw: &[u8], at: usize) -> Option<&str> {
+    if at < 1 || at + 32 > raw.len() {
+        return None;
+    }
+    let prev = raw[at - 1];
+    if prev.is_ascii_alphanumeric() || matches!(prev, b'_' | b'-' | b'.') {
+        return None;
+    }
+    let nb = &raw[at..at + 32];
+    let end = nb.iter().position(|&c| c == 0)?;
+    if end < 3 || end > 31 {
+        return None;
+    }
+    if !nb[..end]
+        .iter()
+        .all(|c| c.is_ascii_alphanumeric() || matches!(c, b'_' | b'-' | b'.'))
+    {
+        return None;
+    }
+    if nb[end..].iter().any(|&c| c != 0) {
+        return None;
+    }
+    std::str::from_utf8(&nb[..end]).ok()
+}
+
+fn tail_f32(raw: &[u8], at: usize) -> Option<f32> {
+    let b: [u8; 4] = raw.get(at..at + 4)?.try_into().ok()?;
+    Some(f32::from_le_bytes(b))
+}
+
+fn tail_u32(raw: &[u8], at: usize) -> Option<u32> {
+    let b: [u8; 4] = raw.get(at..at + 4)?.try_into().ok()?;
+    Some(u32::from_le_bytes(b))
+}
+
+/// 96B 记录：名字 + 绑定矩阵（判据与 `read_node` 一致，只是不读影响表）。
+fn tail_record_at(raw: &[u8], at: usize) -> Option<(&str, [f32; 16])> {
+    let name = tail_name_at(raw, at)?;
+    let mut m = [0f32; 16];
+    for k in 0..16 {
+        m[k] = tail_f32(raw, at + 32 + k * 4)?;
+    }
+    if !m.iter().all(|v| v.is_finite() && v.abs() < 1e7) || (m[15] - 1.0).abs() > 1e-3 {
+        return None;
+    }
+    let rows = [&m[0..3], &m[4..7], &m[8..11]];
+    let lens: [f32; 3] = rows.map(|r| r.iter().map(|v| v * v).sum::<f32>().sqrt());
+    let mn = lens.iter().cloned().fold(f32::INFINITY, f32::min);
+    let mx = lens.iter().cloned().fold(0f32, f32::max);
+    if mn <= 1e-6 || mx / mn > 1.05 {
+        return None;
+    }
+    for i in 0..3 {
+        for k in i + 1..3 {
+            let d: f32 = (0..3).map(|t| rows[i][t] * rows[k][t]).sum();
+            if d.abs() / (lens[i] * lens[k]) > 0.03 {
+                return None;
+            }
+        }
+    }
+    Some((name, m))
+}
+
+/// 对角块 88B：`[d,0,0,0,0]×3 + [1.0,0,0,0] + [100,100,100]`。
+/// 它的前 64B 恰好也是一张合法的「对角矩阵」，所以**必须先于局部矩阵判**。
+fn tail_is_u92(raw: &[u8], at: usize) -> bool {
+    let Some(d) = tail_f32(raw, at) else { return false };
+    if !(0.9..=1.1).contains(&d) {
+        return false;
+    }
+    if tail_f32(raw, at + 20).map_or(true, |v| (v - d).abs() > 1e-6) {
+        return false;
+    }
+    if tail_f32(raw, at + 40).map_or(true, |v| (v - d).abs() > 1e-6) {
+        return false;
+    }
+    if tail_f32(raw, at + 60).map_or(true, |v| (v - 1.0).abs() > 1e-3) {
+        return false;
+    }
+    [76, 80, 84]
+        .iter()
+        .all(|&o| tail_f32(raw, at + o).map_or(false, |v| (v - 100.0).abs() < 1e-2))
+}
+
+/// 64B 局部矩阵：行主序 4×4，前三行正交、末列 (0,0,0,1)。用途未证，只识别。
+fn tail_is_mat64(raw: &[u8], at: usize) -> bool {
+    let Some(m) = (0..16)
+        .map(|k| tail_f32(raw, at + k * 4))
+        .collect::<Option<Vec<_>>>()
+    else {
+        return false;
+    };
+    if !m.iter().all(|v| v.is_finite() && v.abs() < 1e7) {
+        return false;
+    }
+    if m[3].abs() > 1e-3 || m[7].abs() > 1e-3 || m[11].abs() > 1e-3 || (m[15] - 1.0).abs() > 1e-3 {
+        return false;
+    }
+    let rows = [&m[0..3], &m[4..7], &m[8..11]];
+    let lens: [f32; 3] = rows.map(|r| r.iter().map(|v| v * v).sum::<f32>().sqrt());
+    let mn = lens.iter().cloned().fold(f32::INFINITY, f32::min);
+    let mx = lens.iter().cloned().fold(0f32, f32::max);
+    if mn <= 1e-4 || mx / mn > 1.05 {
+        return false;
+    }
+    for i in 0..3 {
+        for k in i + 1..3 {
+            let d: f32 = (0..3).map(|t| rows[i][t] * rows[k][t]).sum();
+            if d.abs() > 1e-2 {
+                return false;
+            }
+        }
+    }
+    true
+}
+
+/// 影响顶点表 `[u32 N][N×u32 顶点][N×f32 权重]`；N=0 是合法的空表（只占 4 字节）。
+fn tail_is_inf(raw: &[u8], at: usize, vc: usize) -> bool {
+    let Some(n) = tail_u32(raw, at) else { return false };
+    if n == 0 {
+        return true;
+    }
+    let n = n as usize;
+    if n > vc || n > 200_000 || at + 4 + 8 * n > raw.len() {
+        return false;
+    }
+    let mut last = 0u32;
+    for k in 0..n {
+        let v = match tail_u32(raw, at + 4 + 4 * k) {
+            Some(v) => v,
+            None => return false,
+        };
+        if k > 0 && v <= last {
+            return false;
+        }
+        if v as usize >= vc {
+            return false;
+        }
+        last = v;
+    }
+    (0..n).all(|k| {
+        tail_f32(raw, at + 4 + 4 * n + 4 * k)
+            .map_or(false, |w| w.is_finite() && (-1e-3..=1.001).contains(&w))
+    })
+}
+
+/// 试探一个条目。开头那条 96B 记录只在「它的名字 == 条目名」时才算本条目的
+/// （否则是 origin/top 场景前奏，由调用方按裸记录跳过）。
+fn tail_try_entry(raw: &[u8], at: usize, vc: usize) -> Option<(TailEntry, usize)> {
+    let mut p = at;
+    let own = tail_record_at(raw, p);
+    if own.is_some() {
+        p += NODE_RECORD;
+    }
+    loop {
+        if tail_is_u92(raw, p) {
+            p += 88;
+            continue;
+        }
+        if tail_is_mat64(raw, p) {
+            p += 64;
+            continue;
+        }
+        let n = tail_u32(raw, p)?;
+        if tail_is_inf(raw, p, vc) {
+            p += 4 + 8 * n as usize;
+            continue;
+        }
+        break;
+    }
+    let flag = tail_u32(raw, p)?;
+    let _ = flag; // 实测恒 1 / 根 -1；不是父索引，不解释
+    p += 4;
+    let nm1 = tail_name_at(raw, p)?;
+    let nm2 = tail_name_at(raw, p + 32)?;
+    if nm1 != nm2 {
+        return None;
+    }
+    if let Some((rn, _)) = own {
+        if rn != nm1 {
+            return None;
+        }
+    }
+    p += 64;
+    let c = tail_u32(raw, p)? as usize;
+    if c > 4096 {
+        return None;
+    }
+    p += 4;
+    let mut children = Vec::with_capacity(c);
+    for _ in 0..c {
+        if let Some((cn, cm)) = tail_record_at(raw, p) {
+            children.push((cn.to_string(), Some(cm)));
+            p += NODE_RECORD;
+        } else {
+            let cn = tail_name_at(raw, p)?;
+            children.push((cn.to_string(), None));
+            p += 32;
+        }
+    }
+    Some((
+        TailEntry {
+            name: nm1.to_string(),
+            own_bind: own.map(|(_, m)| m),
+            children,
+        },
+        p,
+    ))
+}
+
+/// 挂点段：`[块]* [u32 标志][u32 挂点数][挂点数 × (tx_名 char32 + 骨名 char32 + 矩阵)]`。
+fn tail_try_sockets(raw: &[u8], mut p: usize, vc: usize) -> Option<(Vec<SocketEntry>, usize)> {
+    loop {
+        if tail_is_u92(raw, p) {
+            p += 88;
+            continue;
+        }
+        if tail_is_mat64(raw, p) {
+            p += 64;
+            continue;
+        }
+        let n = tail_u32(raw, p)?;
+        if tail_is_inf(raw, p, vc) {
+            p += 4 + 8 * n as usize;
+            continue;
+        }
+        break;
+    }
+    let _flag = tail_u32(raw, p)?;
+    p += 4;
+    let count = tail_u32(raw, p)? as usize;
+    p += 4;
+    if count == 0 || count > 4096 || p + count * 128 > raw.len() {
+        return None;
+    }
+    let mut out = Vec::with_capacity(count);
+    for _ in 0..count {
+        let name = tail_name_at(raw, p)?.to_string();
+        let bone = tail_name_at(raw, p + 32)?.to_string();
+        let mut m = [0f32; 16];
+        for k in 0..16 {
+            m[k] = tail_f32(raw, p + 64 + k * 4)?;
+        }
+        if !m.iter().all(|v| v.is_finite() && v.abs() < 1e7) || (m[15] - 1.0).abs() > 1e-3 {
+            return None;
+        }
+        out.push(SocketEntry { name, bone, bind: m });
+        p += 128;
+    }
+    Some((out, p))
+}
+
+/// 从 `start`（origin 记录）走到 EOF：前奏记录 + 条目 × N + 挂点段。
+/// 任何一段对不上、最后不恰好落在文件尾，都算失败。
+fn tail_walk(raw: &[u8], start: usize, vc: usize) -> Option<(Vec<TailEntry>, Vec<SocketEntry>)> {
+    let mut p = start;
+    let mut entries = Vec::new();
+    let mut sockets = Vec::new();
+    while p < raw.len() {
+        if let Some((e, np)) = tail_try_entry(raw, p, vc) {
+            entries.push(e);
+            p = np;
+            continue;
+        }
+        if tail_record_at(raw, p).is_some() {
+            p += NODE_RECORD; // 场景前奏：origin / top，只有记录没有条目尾
+            continue;
+        }
+        if let Some((s, np)) = tail_try_sockets(raw, p, vc) {
+            sockets = s;
+            p = np;
+            break;
+        }
+        return None;
+    }
+    if p != raw.len() {
+        return None;
+    }
+    Some((entries, sockets))
+}
+
+/// 解尾部整段，给出父骨链。判据不满足（条目数 ≠ 头部声明数、孩子名对不上、
+/// 多根、有环、有孩子被列两次）就整体返回 `None`——不猜、不补。
+pub fn parse_hierarchy(raw: &[u8]) -> Option<SkeletonHierarchy> {
+    let declared = bone_count(raw)?;
+    let vc = vertex_count(raw);
+    // 候选起点：名字叫 origin 的 96B 记录（实测尾部都以 origin/top 开头；
+    // 没有这条记录的文件是另一套尾部变体，本实现不认，如实给 None）。
+    let mut starts = Vec::new();
+    let mut i = 0usize;
+    while i + NODE_RECORD <= raw.len() {
+        match tail_record_at(raw, i) {
+            Some((nm, _)) => {
+                if nm == "origin" {
+                    starts.push(i);
+                }
+                i += NODE_RECORD;
+            }
+            None => i += 4,
+        }
+    }
+    let mut walked = None;
+    for start in starts {
+        if let Some(got) = tail_walk(raw, start, vc) {
+            if got.0.len() == declared {
+                walked = Some(got);
+                break;
+            }
+        }
+    }
+    let (entries, sockets) = walked?;
+    let mut index = std::collections::HashMap::with_capacity(entries.len());
+    entries.iter().enumerate().for_each(|(i, e)| {
+        index.insert(e.name.as_str(), i);
+    });
+    if index.len() != entries.len() {
+        return None; // 名字重复
+    }
+    // 父链：每个非根条目必须恰好被列一次；孩子名必须能对上条目。
+    let mut parent = vec![None::<usize>; entries.len()];
+    for (i, e) in entries.iter().enumerate() {
+        for (cn, _) in &e.children {
+            let j = *index.get(cn.as_str())?;
+            if parent[j].is_some() {
+                return None; // 被列两次
+            }
+            parent[j] = Some(i);
+        }
+    }
+    if parent.iter().filter(|p| p.is_none()).count() != 1 {
+        return None; // 不是单根
+    }
+    // 无环：从每个节点向上走，重见自己即断。
+    for i in 0..entries.len() {
+        let mut seen = std::collections::HashSet::new();
+        let mut cur = Some(i);
+        while let Some(c) = cur {
+            if !seen.insert(c) {
+                return None; // 环
+            }
+            cur = parent[c];
+        }
+    }
+    // 绑定矩阵：条目自带的记录优先，否则用「父条目孩子名单里那条记录」的。
+    let mut binds: Vec<Option<[f32; 16]>> = entries.iter().map(|e| e.own_bind).collect();
+    for e in &entries {
+        for (cn, cb) in &e.children {
+            if let Some(m) = cb {
+                let j = index[cn.as_str()];
+                if binds[j].is_none() {
+                    binds[j] = Some(*m);
+                }
+            }
+        }
+    }
+    let bones = entries
+        .iter()
+        .enumerate()
+        .map(|(i, e)| BoneNode {
+            name: e.name.clone(),
+            parent: parent[i],
+            bind: binds[i],
+            children: e
+                .children
+                .iter()
+                .map(|(cn, _)| index[cn.as_str()])
+                .collect(),
+        })
+        .collect();
+    Some(SkeletonHierarchy { bones, sockets })
 }
 
 #[cfg(test)]

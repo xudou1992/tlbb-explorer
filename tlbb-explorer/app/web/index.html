@@ -146,10 +146,13 @@
               <button type="button" class="tab" data-tab="animation" role="tab">动作 <em id="tabAnimCount"></em></button>
               <button type="button" class="tab" data-tab="effect" role="tab">特效 <em id="tabFxCount"></em></button>
               <button type="button" class="tab" data-tab="material" role="tab">材质 <em id="tabMtlCount"></em></button>
-              <button type="button" class="tab" data-tab="relations" role="tab">组成成员 <em id="tabRelCount"></em></button>
-              <button type="button" class="tab" data-tab="missing" role="tab">缺失资源 <em id="tabMissCount"></em></button>
-              <button type="button" class="tab" data-tab="files" role="tab">文件清单</button>
-              <button type="button" class="tab" data-tab="origin" role="tab">原始数据</button>
+              <button type="button" class="tab tab-more" id="tabMore" aria-expanded="false" title="组成成员、缺失资源、文件清单、原始数据收在这里">更多 ▾</button>
+              <span class="tab-extra" id="tabExtra" hidden>
+                <button type="button" class="tab" data-tab="relations" role="tab">组成成员 <em id="tabRelCount"></em></button>
+                <button type="button" class="tab" data-tab="missing" role="tab">缺失资源 <em id="tabMissCount"></em></button>
+                <button type="button" class="tab" data-tab="files" role="tab">文件清单</button>
+                <button type="button" class="tab" data-tab="origin" role="tab">原始数据</button>
+              </span>
             </div>
 
             <!-- 面板 1：预览（大图 / 立体模型） -->
@@ -177,6 +180,7 @@
 
             <!-- 面板 2：资源详情（完整度 + 有什么缺什么 + 贴图试贴 + 技术信息） -->
             <div class="tabpane" data-pane="resource" hidden>
+              <p class="lead">这一页是体检报告：<span class="lk-ok">青色</span> = 齐全，<span class="lk-bad">红色</span> = 客户端本来就没带，<span class="lk-warn">橙色</span> = 还没读懂。百分比按下面几项算。</p>
               <section class="d-sec" id="secRing">
                 <h3>资源完整度</h3>
                 <div class="ring-wrap" id="ringBox"></div>
@@ -190,7 +194,7 @@
                 <div id="texSlots"></div>
                 <div id="texCand"></div>
               </section>
-              <details class="d-raw" open>
+              <details class="d-raw">
                 <summary>技术信息（给排查的人看）</summary>
                 <dl class="tech" id="tech"></dl>
               </details>
@@ -222,7 +226,7 @@
             <div class="tabpane" data-pane="skeleton" hidden>
               <section class="d-sec">
                 <h3>骨架</h3>
-                <p id="skelSum" class="dim"></p>
+                <p id="skelSum" class="lead"></p>
                 <div class="chips" id="skelPick"></div>
                 <div id="skelTable"></div>
               </section>
@@ -230,10 +234,12 @@
                 <h3>动作</h3>
                 <div id="skelAnims"></div>
               </section>
-              <section class="d-sec">
-                <h3>还没解出来的</h3>
-                <ul id="skelMissing" class="plain"></ul>
-              </section>
+              <details class="fold">
+                <summary>还没解出来的<em>研究注记</em></summary>
+                <div class="fold-body">
+                  <ul id="skelMissing" class="plain"></ul>
+                </div>
+              </details>
             </div>
 
             <!-- 面板：动作。整条动作的关键帧一次取回，拖游标本地切帧。
@@ -241,7 +247,7 @@
             <div class="tabpane" data-pane="animation" hidden>
               <section class="d-sec">
                 <h3>动作</h3>
-                <p id="animSum" class="dim"></p>
+                <p id="animSum" class="lead"></p>
                 <div class="chips" id="animPick"></div>
                 <label class="field">
                   <span>第几帧</span>
@@ -253,10 +259,12 @@
                 </label>
                 <div id="animTable"></div>
               </section>
-              <section class="d-sec">
-                <h3>还没解出来的</h3>
-                <ul id="animMissing" class="plain"></ul>
-              </section>
+              <details class="fold">
+                <summary>还没解出来的<em>研究注记</em></summary>
+                <div class="fold-body">
+                  <ul id="animMissing" class="plain"></ul>
+                </div>
+              </details>
             </div>
 
             <!-- 面板：特效。材质链与各类类名来自 .pu（JBPU）字符串表；
@@ -264,14 +272,16 @@
             <div class="tabpane" data-pane="effect" hidden>
               <section class="d-sec">
                 <h3>特效</h3>
-                <p id="fxSum" class="dim"></p>
+                <p id="fxSum" class="lead"></p>
                 <div class="chips" id="fxPick"></div>
                 <div id="fxTable"></div>
               </section>
-              <section class="d-sec">
-                <h3>还没解出来的</h3>
-                <ul id="fxMissing" class="plain"></ul>
-              </section>
+              <details class="fold">
+                <summary>还没解出来的<em>研究注记</em></summary>
+                <div class="fold-body">
+                  <ul id="fxMissing" class="plain"></ul>
+                </div>
+              </details>
             </div>
 
             <!-- 面板：材质。.mtl 是 JBCF 配置容器，里面写着这个模型用哪张贴图、
@@ -279,14 +289,16 @@
             <div class="tabpane" data-pane="material" hidden>
               <section class="d-sec">
                 <h3>材质</h3>
-                <p id="mtlSum" class="dim"></p>
+                <p id="mtlSum" class="lead"></p>
                 <div class="chips" id="mtlPick"></div>
                 <div id="mtlTable"></div>
               </section>
-              <section class="d-sec">
-                <h3>还没解出来的</h3>
-                <ul id="mtlMissing" class="plain"></ul>
-              </section>
+              <details class="fold">
+                <summary>还没解出来的<em>研究注记</em></summary>
+                <div class="fold-body">
+                  <ul id="mtlMissing" class="plain"></ul>
+                </div>
+              </details>
             </div>
 
             <div class="tabpane" data-pane="files" hidden>

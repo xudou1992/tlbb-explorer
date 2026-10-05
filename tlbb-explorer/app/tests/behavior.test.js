@@ -360,25 +360,32 @@ test("骨架页：解出来的骨名与动作要真铺进标签页，迟到的�
   await d2.module.showDetail(245);
   await Promise.resolve(); await Promise.resolve();
   assert.ok(d2.el("skelTable").innerHTML.includes("bip01_pelvis"), "骨名必须出现在表里");
-  assert.ok(d2.el("skelSum").textContent.includes("46 根骨全列在这里"), `摘要要说清一共几根骨：${d2.el("skelSum").textContent}`);
-  assert.ok(d2.el("skelSum").textContent.includes("其中 2 根在 .mesh 里有绑定位移"), "带矩阵的有几根也要说");
+  // 人话导语：第一句是白话，术语让位到折叠区
+  const skelSum = d2.el("skelSum").textContent;
+  assert.ok(skelSum.includes("46 根骨头"), `导语要说清一共几根骨：${skelSum}`);
+  assert.ok(skelSum.includes("2 根的位置已经读出来"), `导语要说清位置读出几根：${skelSum}`);
+  assert.ok(!skelSum.includes("绑定位移"), "导语是人话，术语不许出现");
+  const skelFold = d2.el("skelTable").innerHTML;
+  assert.ok(skelFold.includes("46 根骨全列在这里"), "术语版注记要住进折叠区");
+  assert.ok(skelFold.includes("其中 2 根在 .mesh 里有绑定位移"), "带矩阵的有几根也要说");
   assert.ok(d2.el("skelAnims").innerHTML.includes("a_walk.ani"), "动作表要列出同组 .ani");
   assert.ok(d2.el("skelMissing").innerHTML.includes("父骨链"), "没解出来的东西必须同屏写明");
   assert.equal(d2.el("tabSkelCount").textContent, "3", "标签上的数字是骨表行数");
   // 只有名字、矩阵不在 .mesh 里的那根骨：不许留空行，也不许编一个坐标
   assert.ok(d2.el("skelTable").innerHTML.includes("矩阵不在 .mesh 里"), "没矩阵的骨要写清缺的是什么");
   assert.ok(!d2.el("skelTable").innerHTML.includes("NaN"), "不许把空坐标算成 NaN 摆出来");
-  // 蒙皮权重已解：影响顶点数要逐骨列出来，带表的骨数要在摘要里说得出
+  // 蒙皮权重已解：影响顶点数要逐骨列出来，带表的骨数要在导语里说得出
   const skelTable = d2.el("skelTable").innerHTML;
   assert.ok(skelTable.includes("影响顶点"), "表头该有「影响顶点」这一列");
   assert.ok(skelTable.includes(">71<"), `这根骨带 71 个影响顶点，表里要看得见：${skelTable.slice(0, 120)}`);
   assert.ok(skelTable.includes(">—<"), "根骨不带表就留破折号，不写 0 充数");
-  assert.ok(d2.el("skelSum").textContent.includes("26 根带影响顶点表"), `摘要要报得出带表的骨数：${d2.el("skelSum").textContent}`);
+  assert.ok(skelSum.includes("26 根记着哪些皮肤顶点"), `导语要报得出带表的骨数：${skelSum}`);
+  assert.ok(skelFold.includes("26 根带影响顶点表"), "术语版注记也要报得出带表的骨数");
   // 一组多份网格：手套那份没有影响表，必须能点到衣服那份去
   assert.equal(d2.el("skelPick").children.length, 2, "两份网格该给两颗筹码");
   d2.el("skelPick").children[1].onclick();
   await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
-  assert.ok(d2.el("skelSum").textContent.includes("a_shoutao.mesh"), `摘要要跟在手后换：${d2.el("skelSum").textContent}`);
+  assert.ok(d2.el("skelTable").innerHTML.includes("a_shoutao.mesh"), `注记要跟在手后换：${d2.el("skelSum").textContent}`);
 });
 
 test("同一组的重刷不许把用户从正在看的标签拽回预览", async () => {
@@ -447,13 +454,14 @@ test("动作页：点开才取数，拖游标只重画不再打后端", async ()
   // 桩里的 setTimeout 不会真的排程，只能用微任务把 async 链抽干
   for (let i = 0; i < 8; i++) await Promise.resolve();
   assert.equal(calls, 1, "点开动作页才取数");
-  assert.ok(detail.el("animSum").textContent.includes("第 1 / 3 帧"), `摘要该从第 1 帧起：${detail.el("animSum").textContent}`);
+  assert.ok(detail.el("animSum").textContent.includes("还不能跟着动"), `导语要说清现在看的是数据：${detail.el("animSum").textContent}`);
+  assert.ok(detail.el("animTable").innerHTML.includes("第 1 / 3 帧"), `帧数注记该从第 1 帧起：${detail.el("animTable").innerHTML.slice(0, 160)}`);
   assert.ok(detail.el("animTable").innerHTML.includes("没有骨在动"), "第 1 帧相对自己没变化");
   const slider = detail.el("animFrame");
   slider.value = "2";
   for (const f of slider.events.input || []) f({ target: slider });
   assert.equal(calls, 1, "拖游标只重画，不该再打后端");
-  assert.ok(detail.el("animSum").textContent.includes("第 3 / 3 帧"), "游标与摘要要同步");
+  assert.ok(detail.el("animTable").innerHTML.includes("第 3 / 3 帧"), "游标与折叠区注记要同步");
   assert.ok(detail.el("animTable").innerHTML.includes("bip01"), "动过的骨要列出来");
   assert.ok(!detail.el("animTable").innerHTML.includes(">still<"), "勾了「只列变了的骨」就不该出现没动的骨");
   assert.ok(detail.el("animMissing").innerHTML.includes("父骨链"), "未解项要同屏写明");
@@ -496,7 +504,9 @@ test("特效页：点开才取数，材质链要真列成表、参数块未解�
   const table = detail.el("fxTable").innerHTML;
   assert.ok(table.includes("x.mtl") && table.includes("y.mtl"), `材质链要列得出：${table.slice(0, 80)}`);
   assert.ok(!table.includes(">网格<"), "空的类别不摆行——空行不等于「没有」");
-  assert.ok(detail.el("fxSum").textContent.includes("6739"), "摘要要带参数块大小");
+  assert.ok(detail.el("fxSum").textContent.includes("还没破译完"), "导语要说清参数还没破译完");
+  assert.ok(!detail.el("fxSum").textContent.includes("参数块"), "导语是人话，术语不许出现");
+  assert.ok(detail.el("fxTable").innerHTML.includes("6739"), "参数块大小要写进折叠区注记");
   assert.ok(detail.el("fxMissing").innerHTML.includes("参数块"), "字段语法未解必须同屏");
   assert.equal(detail.el("tabFxCount").textContent, "59");
   assert.equal(detail.el("fxPick").children.length, 0, "只登记一份特效时不该摆选择条");
@@ -529,13 +539,13 @@ test("特效页：一组登记多份 .pu 时要点名字能换，不许列着 A 
   detail.get("panels.js").showTabPane("effect");
   for (let i = 0; i < 8; i++) await Promise.resolve();
   assert.deepEqual(asked, [""], "首屏要问「默认那一份」，把选择权交给后端");
-  assert.ok(detail.el("fxSum").textContent.startsWith("grp.pu"), `默认该是本名那份：${detail.el("fxSum").textContent}`);
-  assert.ok(detail.el("fxSum").textContent.includes("还登记了 1 份"), "同组还有几份要写在摘要上");
+  assert.ok(detail.el("fxTable").innerHTML.includes("grp.pu ·"), `默认该是本名那份：${detail.el("fxTable").innerHTML.slice(0, 120)}`);
+  assert.ok(detail.el("fxTable").innerHTML.includes("还登记了 1 份"), "同组还有几份要写在折叠区注记上");
   assert.equal(detail.el("fxPick").children.length, 2, "两份都要给得出");
   detail.el("fxPick").children[1].onclick();
   for (let i = 0; i < 8; i++) await Promise.resolve();
   assert.deepEqual(asked.slice(-1), ["w1351_boss_sss_mrb_rm_buff02.pu"], "点这份就要这份");
-  assert.ok(detail.el("fxSum").textContent.startsWith("w1351_boss_sss_mrb_rm_buff02.pu"), "表头文件名要跟着换");
+  assert.ok(detail.el("fxTable").innerHTML.includes("w1351_boss_sss_mrb_rm_buff02.pu ·"), "表头文件名要跟着换");
   assert.ok(detail.el("fxTable").innerHTML.includes("a.mtl"), "换的仍是特效表");
 });
 
@@ -582,7 +592,7 @@ test("材质页：点开才取数，槽位要列得出类型与原文，对不�
   detail.el("mtlPick").children[1].onclick();
   for (let i = 0; i < 8; i++) await Promise.resolve();
   assert.deepEqual(asked.slice(-1), ["template_default.mtl"], "点这份就要这份");
-  assert.ok(detail.el("mtlSum").textContent.startsWith("template_default.mtl"), "表头文件名要跟着换");
+  assert.ok(detail.el("mtlTable").innerHTML.includes("template_default.mtl · 槽位"), "表头文件名要跟着换");
 });
 
 test("筹码区有上限：巨无霸组不许把要看的表挤出屏幕", async () => {
@@ -662,8 +672,10 @@ test("材质页也管模型定义：.mdl 组要列得出骨架与网格·材质�
   detail.get("panels.js").showTabPane("material");
   for (let i = 0; i < 8; i++) await Promise.resolve();
   const sum = detail.el("mtlSum").textContent;
-  assert.ok(sum.includes("模型定义"), `摘要要说明这屏是模型定义：${sum}`);
-  assert.ok(sum.includes("模型名 grp_model"), "模型名要看得见");
+  assert.ok(sum.includes("说明书"), `导语要说清这屏是模型说明书：${sum}`);
+  assert.ok(sum.includes("一共 2 条"), `导语要报条数：${sum}`);
+  assert.ok(detail.el("mtlTable").innerHTML.includes("模型定义"), "术语注记要住进折叠区");
+  assert.ok(detail.el("mtlTable").innerHTML.includes("模型名 grp_model"), "模型名要看得见");
   const table = detail.el("mtlTable").innerHTML;
   assert.ok(table.includes("grp.ske"), "骨架引用要列出来");
   assert.ok(table.includes("grp_body.mesh"), "网格要列出来");

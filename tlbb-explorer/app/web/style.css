@@ -685,3 +685,56 @@ em.na { color: var(--muted); font-style: normal; }
 .fix-bar .ico { flex: none; width: 16px; height: 16px; border-radius: 99px; background: var(--red); color: #fff; display: grid; place-items: center; font: 700 11px/1 var(--sans); }
 .fix-bar b { color: #8f2b25; }
 .fix-bar button { margin-left: auto; flex: none; }
+
+/* ---- 人话优先改版（2026-10-05）：导语 / 折叠区 / 标签瘦身 ----
+   用户原话「描述的东西密密麻麻的 我又看不懂」。从此每个详情标签
+   第一句是人话导语，表格与研究注记默认收进折叠区，想看再展开。 */
+
+.lead {
+  margin: 0 0 12px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--text);
+}
+.lead .lk-ok { color: var(--teal-deep); font-weight: 600; }
+.lead .lk-bad { color: var(--red); font-weight: 600; }
+.lead .lk-warn { color: var(--amber); font-weight: 600; }
+
+details.fold {
+  margin: 10px 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+details.fold > summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 12px;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--muted);
+  border-radius: var(--radius);
+}
+details.fold > summary:hover { color: var(--text); background: var(--panel-2); }
+details.fold > summary em {
+  font: 11px var(--mono);
+  font-style: normal;
+  color: var(--faint);
+}
+details.fold[open] > summary {
+  border-bottom: 1px solid var(--line);
+  border-radius: var(--radius) var(--radius) 0 0;
+  color: var(--text);
+}
+.fold-body { padding: 4px 12px 12px; }
+.fold-body .dim { margin: 6px 0; }
+
+/* 次级标签收进「更多 ▾」：span 用 contents 让按钮回到同一行布局里，
+   hidden 时必须显式压回 none（作者样式会盖过浏览器默认的 [hidden]）。 */
+.tab-extra { display: contents; }
+.tab-extra[hidden] { display: none; }
+.tab-more { color: var(--muted); }
+.tab-more.on, .tab-more:hover { color: var(--teal-deep); }

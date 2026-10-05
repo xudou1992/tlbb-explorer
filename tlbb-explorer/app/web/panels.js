@@ -5,6 +5,7 @@
 
 import { el, esc, num, chips } from "./ui.js";
 import { animSummary, changedRows, clampFrame, frameRows } from "./lib/animView.js";
+import { skeletonLead, animationLead, effectLead, materialLead } from "./lib/plain.js";
 
 /// 引用类别 → 配色 + 单字图标。颜色只作辅助，文字永远是主载体。
 const ROLE_STYLE = {
@@ -30,6 +31,10 @@ function styleOf(role) {
 
 // ---- 标签页 ----
 
+/// 收进「更多 ▾」的次级标签。切换到其中之一时自动展开（见 showTabPane），
+/// 平时收着——十个标签一字排开本身就是「密密麻麻」的一部分。
+const EXTRA_TABS = new Set(["relations", "missing", "files", "origin"]);
+
 /// 把详情切到某个标签。按钮高亮与面板显隐同源，一起改，不会走散。
 export function showTabPane(name) {
   for (const b of el("dTabs").querySelectorAll(".tab")) {
@@ -38,7 +43,20 @@ export function showTabPane(name) {
   for (const p of document.querySelectorAll(".tabpane[data-pane]")) {
     p.hidden = p.dataset.pane !== name;
   }
+  const extra = el("tabExtra");
+  if (extra && EXTRA_TABS.has(name)) {
+    extra.hidden = false;
+    el("tabMore").classList.add("on");
+  }
   for (const cb of tabCbs) cb(name);
+}
+
+/// 「更多 ▾」只管展开/收起次级标签，不切页。
+function toggleMore() {
+  const extra = el("tabExtra");
+  extra.hidden = !extra.hidden;
+  el("tabMore").classList.toggle("on", !extra.hidden);
+  el("tabMore").setAttribute("aria-expanded", extra.hidden ? "false" : "true");
 }
 
 /// 标签页打开的通知。动作页要等用户真点开才去读关键帧
@@ -54,8 +72,19 @@ export function initTabs() {
   tabsWired = true;
   el("dTabs").addEventListener("click", (e) => {
     const b = e.target.closest(".tab");
-    if (b) showTabPane(b.dataset.tab);
+    if (!b) return;
+    if (b.id === "tabMore") {
+      toggleMore();
+      return;
+    }
+    if (b.dataset.tab) showTabPane(b.dataset.tab);
   });
+}
+
+/// 折叠区：表格与研究注记的家。默认收起，标题用人话说这里有什么，
+/// 展开才见原始数据——这是「先说人话，数据收起来」的那一半。
+function fold(caption, badge, inner) {
+  return `<details class="fold"><summary>${esc(caption)}<em>${esc(badge)}</em></summary><div class="fold-body">${inner}</div></details>`;
 }
 
 // ---- 骨架页：节点表 + 动作表 ----
@@ -86,11 +115,14 @@ export function paintSkeleton(v, onPick) {
     return;
   }
   const 带矩阵 = nodes.filter((n) => n.pos).length;
-  el("skelSum").textContent =
+  // 第一句人话（lib/plain.js）；术语版研究注记跟着数据一起住进折叠区。
+  el("skelSum").textContent = skeletonLead(v);
+  const dense =
     `骨架来自 ${v.mesh}：${v.declared} 根骨全列在这里，其中 ${带矩阵} 根在 .mesh 里有绑定位移` +
     (v.skin_bones
       ? `；其中 ${v.skin_bones} 根带影响顶点表，一共 ${v.skin_pairs} 个（顶点-骨）对。`
-      : "。这份网格没有影响顶点表。");  if ((v.meshes || []).length > 1) {
+      : "。这份网格没有影响顶点表。");
+  if ((v.meshes || []).length > 1) {
     chips(
       el("skelPick"),
       v.meshes.map((m) => ({ value: m, label: m.replace(/\.mesh$/i, "") })),
@@ -98,22 +130,28 @@ export function paintSkeleton(v, onPick) {
       onPick,
     );
   }
-  el("skelTable").innerHTML =
-    `<table class="hl-table"><thead><tr><th>骨名</th><th>X</th><th>Y</th><th>Z</th><th>缩放</th><th>影响顶点</th></tr></thead><tbody>${nodes
-      .map(
-        (n) =>
-          `<tr><td>${esc(n.name)}</td>` +
-          (n.pos
-            ? `<td class="n">${fx(n.pos[0])}</td><td class="n">${fx(n.pos[1])}</td><td class="n">${fx(
-                n.pos[2],
-              )}</td><td class="n">${fx(n.scale)}</td>`
-            : `<td class="dim" colspan="4">矩阵不在 .mesh 里</td>`) +
-          `<td class="n">${n.skin ? num(n.skin) : "—"}</td></tr>`,
-      )
-      .join("")}</tbody></table>`;
+  el("skelTable").innerHTML = fold(
+    "每根骨头搭在哪",
+    `${nodes.length} 行`,
+    `<p class="dim">${esc(dense)}</p>` +
+      `<table class="hl-table"><thead><tr><th>骨名</th><th>X</th><th>Y</th><th>Z</th><th>缩放</th><th>影响顶点</th></tr></thead><tbody>${nodes
+        .map(
+          (n) =>
+            `<tr><td>${esc(n.name)}</td>` +
+            (n.pos
+              ? `<td class="n">${fx(n.pos[0])}</td><td class="n">${fx(n.pos[1])}</td><td class="n">${fx(
+                  n.pos[2],
+                )}</td><td class="n">${fx(n.scale)}</td>`
+              : `<td class="dim" colspan="4">矩阵不在 .mesh 里</td>`) +
+            `<td class="n">${n.skin ? num(n.skin) : "—"}</td></tr>`,
+        )
+        .join("")}</tbody></table>`,
+  );
   if (anims.length) {
     el("secSkelAnims").hidden = false;
-    el("skelAnims").innerHTML =
+    el("skelAnims").innerHTML = fold(
+      "它会做的动作",
+      `${anims.length} 条`,
       `<table class="hl-table"><thead><tr><th>动作文件</th><th>骨骼</th><th>关键帧</th><th>会动的骨</th></tr></thead><tbody>${anims
         .map(
           (a) =>
@@ -121,7 +159,8 @@ export function paintSkeleton(v, onPick) {
               a.frames
             }</td><td class="n">${a.moving}</td></tr>`,
         )
-        .join("")}</tbody></table>`;
+        .join("")}</tbody></table>`,
+    );
   }
   el("skelMissing").innerHTML = (v.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
 }
@@ -142,7 +181,7 @@ export function paintAnimation(rep, frame, onlyChanged, onPick) {
   clearAnimation();
   if (!rep) return;
   el("tabAnimCount").textContent = rep.frames ? String(rep.frames) : "";
-  el("animSum").textContent = animSummary(rep, frame);
+  el("animSum").textContent = animationLead(rep);
   el("animMissing").innerHTML = (rep.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
   if ((rep.files || []).length > 1) {
     chips(
@@ -158,18 +197,29 @@ export function paintAnimation(rep, frame, onlyChanged, onPick) {
   slider.value = String(clampFrame(frame, rep.frames));
   const rows = onlyChanged ? changedRows(rep.tracks, frame) : frameRows(rep.tracks, frame);
   const cell = (a) => (a ? a.map((v) => v.toFixed(3)).join(" ") : "—");
+  // 第几帧这类活数字随滑杆变——它住折叠区里，跟着每次重画一起刷新。
+  const dense = animSummary(rep, frame);
   el("animTable").innerHTML = rows.length
-    ? `<table class="hl-table"><thead><tr><th>骨名</th><th>旋转 x y z w</th><th>位移 x y z</th><th>缩放</th></tr></thead><tbody>${rows
-        .map(
-          (r) =>
-            `<tr><td>${esc(r.bone)}</td><td class="n">${cell(r.quat)}</td><td class="n">${cell(
-              r.pos,
-            )}</td><td class="n">${r.scale === null ? "—" : r.scale.toFixed(3)}</td></tr>`,
-        )
-        .join("")}</tbody></table>`
-    : `<p class="dim">这一帧相对第 1 帧没有骨在动。取消「只列变了的骨」可以看全部 ${
-        (rep.tracks || []).length
-      } 根。</p>`;
+    ? fold(
+        "这一帧的姿势",
+        `${rows.length} 根骨`,
+        `<p class="dim">${esc(dense)}</p>` +
+          `<table class="hl-table"><thead><tr><th>骨名</th><th>旋转 x y z w</th><th>位移 x y z</th><th>缩放</th></tr></thead><tbody>${rows
+            .map(
+              (r) =>
+                `<tr><td>${esc(r.bone)}</td><td class="n">${cell(r.quat)}</td><td class="n">${cell(
+                  r.pos,
+                )}</td><td class="n">${r.scale === null ? "—" : r.scale.toFixed(3)}</td></tr>`,
+            )
+            .join("")}</tbody></table>`,
+      )
+    : fold(
+        "这一帧的姿势",
+        "都在原位",
+        `<p class="dim">${esc(dense)}</p><p class="dim">这一帧相对第 1 帧没有骨在动。取消「只列变了的骨」可以看全部 ${
+          (rep.tracks || []).length
+        } 根。</p>`,
+      );
 }
 
 // ---- 特效页：.pu 的材质链与各类类名 ----
@@ -199,10 +249,12 @@ export function paintEffect(rep, onPick) {
   ].filter(([, v]) => (v || []).length);
   el("tabFxCount").textContent = String(rep.string_total || "");
   const more = (rep.files || []).length - 1;
-  el("fxSum").textContent =
+  el("fxSum").textContent = effectLead(rep);
+  // 术语版注记（文件名/字符串表/参数块字节数）跟着名字表一起住进折叠区。
+  const dense =
     `${rep.file} · 特效名 ${rep.name || "未读到"} · 分组 ${rep.group || "未读到"} · ` +
     `驻留字符串 ${rep.string_total} 条 · 参数块 ${rep.param_bytes} 字节 / ${rep.param_floats} 个像浮点的数` +
-    (more > 0 ? ` · 这一组还登记了 ${more} 份特效，点下面的名字换` : "");
+    (more > 0 ? ` · 这一组还登记了 ${more} 份特效，点上面的名字换` : "");
   if (more > 0) {
     chips(
       el("fxPick"),
@@ -212,12 +264,17 @@ export function paintEffect(rep, onPick) {
     );
   }
   el("fxTable").innerHTML = groups.length
-    ? `<table class="hl-table fx-cat"><thead><tr><th>类别</th><th>数量</th><th>客户端原文</th></tr></thead><tbody>${groups
-        .map(
-          ([k, v]) =>
-            `<tr><td>${esc(k)}</td><td class="n">${v.length}</td><td>${v.map((s) => esc(s)).join("、")}</td></tr>`,
-        )
-        .join("")}</tbody></table>`
+    ? fold(
+        "它登记的名字",
+        `${groups.length} 类`,
+        `<p class="dim">${esc(dense)}</p>` +
+          `<table class="hl-table fx-cat"><thead><tr><th>类别</th><th>数量</th><th>客户端原文</th></tr></thead><tbody>${groups
+            .map(
+              ([k, v]) =>
+                `<tr><td>${esc(k)}</td><td class="n">${v.length}</td><td>${v.map((s) => esc(s)).join("、")}</td></tr>`,
+            )
+            .join("")}</tbody></table>`,
+      )
     : `<p class="dim">这份 .pu 里没归出任何一类名字，只有字符串表本身。</p>`;
   el("fxMissing").innerHTML = (rep.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
 }
@@ -240,19 +297,21 @@ export function paintMaterial(rep, onPick) {
   el("tabMtlCount").textContent = mdl
     ? String((rep.bodies || []).length + (rep.skeletons || []).length)
     : String((rep.slots || []).length);
-  el("mtlSum").textContent = mdl
+  // 术语版注记（文件名/槽位数/对上数）跟表一起住进折叠区，导语只说人话。
+  const dense = mdl
     ? `${rep.file} · 模型定义 · 模型名 ${rep.model_name || "未读到"} · 骨架 ${
         (rep.skeletons || []).length
       } 份 · 网格·材质对 ${(rep.bodies || []).length} 组` +
       ((rep.files || []).length > 1
-        ? ` · 这一组还登记了 ${rep.files.length - 1} 份定义，点下面的名字换`
+        ? ` · 这一组还登记了 ${rep.files.length - 1} 份定义，点上面的名字换`
         : "")
     : `${rep.file} · 槽位 ${(rep.slots || []).length} 个 · 对得上实体 ${
         (rep.slots || []).length - (rep.unresolved || 0)
       } 个 · 缺 ${rep.unresolved || 0} 个` +
       ((rep.files || []).length > 1
-        ? ` · 这一组还登记了 ${rep.files.length - 1} 份定义，点下面的名字换`
+        ? ` · 这一组还登记了 ${rep.files.length - 1} 份定义，点上面的名字换`
         : "");
+  el("mtlSum").textContent = materialLead(rep);
   if ((rep.files || []).length > 1) {
     chips(
       el("mtlPick"),
@@ -261,19 +320,19 @@ export function paintMaterial(rep, onPick) {
       onPick,
     );
   }
-  el("mtlTable").innerHTML = mdl
-    ? `${(rep.skeletons || []).length ? `<table class="hl-table fx-cat"><thead><tr><th>部件</th><th>客户端原文</th><th>对上的实体</th></tr></thead><tbody>${[
-          ...(rep.skeletons || []).map((k) => `<tr><td>骨架</td><td>${esc(k.name)}</td><td class="dim">${k.path ? esc(k.path) : "缺"}</td></tr>`),
-          ...(rep.bodies || []).map(
-            (b) =>
-              `<tr><td>网格${b.label ? `（${esc(b.label)}）` : ""}</td><td>${esc(b.mesh)}</td><td class="dim">${b.mesh_path ? esc(b.mesh_path) : "缺"}</td></tr>` +
-              `<tr><td>材质${b.label ? `（${esc(b.label)}）` : ""}</td><td>${esc(b.material)}</td><td class="dim">${b.material_path ? esc(b.material_path) : "缺"}</td></tr>`,
-          ),
-        ].join("")}</tbody></table>` : ""}` +
-      ((rep.others || []).length
-        ? `<p class="dim">其他名字（挂点/变体/骨骼名，语义未断言）：${(rep.others || []).map((x) => esc(x)).join("、")}</p>`
-        : "")
-    : (rep.slots || []).length
+  const mdlBody =
+    `${(rep.skeletons || []).length ? `<table class="hl-table fx-cat"><thead><tr><th>部件</th><th>客户端原文</th><th>对上的实体</th></tr></thead><tbody>${[
+      ...(rep.skeletons || []).map((k) => `<tr><td>骨架</td><td>${esc(k.name)}</td><td class="dim">${k.path ? esc(k.path) : "缺"}</td></tr>`),
+      ...(rep.bodies || []).map(
+        (b) =>
+          `<tr><td>网格${b.label ? `（${esc(b.label)}）` : ""}</td><td>${esc(b.mesh)}</td><td class="dim">${b.mesh_path ? esc(b.mesh_path) : "缺"}</td></tr>` +
+          `<tr><td>材质${b.label ? `（${esc(b.label)}）` : ""}</td><td>${esc(b.material)}</td><td class="dim">${b.material_path ? esc(b.material_path) : "缺"}</td></tr>`,
+      ),
+    ].join("")}</tbody></table>` : ""}` +
+    ((rep.others || []).length
+      ? `<p class="dim">其他名字（挂点/变体/骨骼名，语义未断言）：${(rep.others || []).map((x) => esc(x)).join("、")}</p>`
+      : "");
+  const slotBody = (rep.slots || []).length
     ? `<table class="hl-table fx-cat"><thead><tr><th>槽位</th><th>客户端原文</th><th>对上的实体</th></tr></thead><tbody>${rep.slots
         .map(
           (s) =>
@@ -282,6 +341,13 @@ export function paintMaterial(rep, onPick) {
             }</td></tr>`,
         )
         .join("")}</tbody></table>`
+    : "";
+  el("mtlTable").innerHTML = mdl
+    ? (rep.skeletons || []).length || (rep.bodies || []).length
+      ? fold("骨架与网格·材质怎么配", `${(rep.bodies || []).length + (rep.skeletons || []).length} 条`, `<p class="dim">${esc(dense)}</p>` + mdlBody)
+      : `<p class="dim">${esc(dense)}</p>` + mdlBody
+    : (rep.slots || []).length
+    ? fold("贴图与渲染清单", `${(rep.slots || []).length} 条`, `<p class="dim">${esc(dense)}</p>` + slotBody)
     : `<p class="dim">这份 .mtl 里没认出任何一类槽位（贴图/材质/模型/骨骼/动作都不在）。</p>`;
   el("mtlMissing").innerHTML = (rep.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
 }

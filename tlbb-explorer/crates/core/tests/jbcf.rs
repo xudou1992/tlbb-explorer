@@ -87,6 +87,13 @@ fn rejects_foreign_and_inconsistent_payloads() {
 /// End to end over shipped data: a real `.mtl` must yield its texture and parent names,
 /// and the catalog must resolve the parent to a hash while the texture stays dangling
 /// (world textures are indexed by a path table this install does not contain).
+///
+/// ★ 2026-10-05 换样本：原先钉的 `w1351_boss_sunmeimei_lian_001.mtl` 实测**只有
+/// ASCII 名**（解码 600 字节全量 hex 可查：三串全是 `0x21..=0x7e`），`has_cjk`
+/// 在那份文件上永远不成立——这条闸门自 2f2e696 起就没绿过。换成本份
+/// `w1351_model_ymg02_nan_slbw_h001.mtl`（data3）：贴图名是真 GBK 的
+/// 「龙头01.tga」，父材质 `template_default.mtl` 解析成功、贴图悬空，
+/// 与本测试断言的图形状完全一致（先在 db refs 与 view.exe 里核实过）。
 #[test]
 fn shipped_material_exposes_its_graph() {
     let root = Path::new("D:/TLGL");
@@ -96,7 +103,7 @@ fn shipped_material_exposes_its_graph() {
         return;
     }
     let cat = tlbb_core::catalog::Catalog::open_ro(db).expect("open catalog");
-    let path = "data/source/npc/quest/w1351_boss_sunmeimei/w1351_boss_sunmeimei_lian_001.mtl";
+    let path = "data/source/npc/model/w1351_model_ymg02_nan_slbw_h001/w1351_model_ymg02_nan_slbw_h001.mtl";
     let hash = cat
         .hash_by_path(path)
         .expect("query")

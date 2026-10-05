@@ -8,7 +8,7 @@ import { el, esc, num, chips, markChips, errText } from "./ui.js";
 import * as api from "./api.js";
 import { state, saveState } from "./state.js";
 import { showDetail } from "./detail.js";
-import { listCount, railCount, rowMissChip, progressLine } from "./lib/wording.js";
+import { listCount, railCount, rowMissChip, progressLine, emptyMessage } from "./lib/wording.js";
 import { isNotReadyMsg } from "./lib/detailState.js";
 import { makeSeq } from "./lib/seq.js";
 
@@ -353,18 +353,9 @@ export async function refresh(opts = {}) {
     // 0 条时把「是谁把列表筛空的」说明白：有搜索词说搜索词，别让用户对着
     // 一句干巴巴的「没有符合条件的资产」猜自己点了什么。
     if (page.items.length === 0) {
-      const strong = el("empty").querySelector("strong");
-      const span = el("empty").querySelector("span");
-      if (state.query) {
-        strong.textContent = `没有命中「${state.query}」`;
-        span.textContent = "换个关键词，或点上方「清空筛选」清掉全部条件。";
-      } else if (!page.ready) {
-        strong.textContent = "后台还在准备资产清单";
-        span.textContent = "已就绪的会陆续出现，顶栏有进度。";
-      } else {
-        strong.textContent = "没有符合条件的资产";
-        span.textContent = "换个关键词，或点「清空筛选」。";
-      }
+      const m = emptyMessage({ query: state.query, state, ready: page.ready });
+      el("empty").querySelector("strong").textContent = m.strong;
+      el("empty").querySelector("span").textContent = m.span;
     }
     el("count").textContent = listCount(page.total, page.items.length, page.ready);
     el("words").textContent =

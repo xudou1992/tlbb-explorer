@@ -6,7 +6,7 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
-import { pctText, texPair, listCount, railCount, citedVerdict, rowMissChip, mapNoObjects, progressLine, titleHtml } from "../web/lib/wording.js";
+import { pctText, texPair, listCount, railCount, citedVerdict, rowMissChip, mapNoObjects, progressLine, titleHtml, emptyMessage } from "../web/lib/wording.js";
 
 test("25/30,585 显示成「不足 1%」而不是 0%", () => {
   assert.equal(pctText(0, 25), "不足 1%");
@@ -144,4 +144,24 @@ test("短名字不插断点：本来就不会折，插了只是噪音", () => {
 test("标题转义：名字里带尖括号也不能当标签跑掉", () => {
   assert.equal(titleHtml("<img src=x>"), "&lt;img src=x&gt;");
   assert.ok(!titleHtml("aaaaaaaaaaaaaaaaaaaaaaaaaaaa<b>").includes("<b>"));
+});
+
+/// 筛空列表的锅常常在「还开着的筛选条件」上：这些条件存在本地、重启也还在。
+/// 只说「没有命中关键词」是把锅推给搜索词。
+test("空列表文案点名还开着的筛选条件", () => {
+  const 默认 = { kind: "全部", scenario: "全部", grade: "全部", onlyImage: false, named: true };
+  const a = emptyMessage({ query: "xiyuqiezei", state: { ...默认, kind: "场景物件" }, ready: true });
+  assert.ok(a.strong.includes("xiyuqiezei"), "搜索词要还在");
+  assert.ok(a.span.includes("类型：场景物件"), `要点名开着的条件：${a.span}`);
+  assert.ok(a.span.includes("重启也还在"), "要说清它会跨启动留着");
+
+  const b = emptyMessage({ query: "", state: { ...默认, grade: "A" }, ready: true });
+  assert.ok(b.strong.includes("筛空"), `没有搜索词时该说是条件筛空的：${b.strong}`);
+  assert.ok(b.span.includes("完整程度：A"), b.span);
+
+  const c = emptyMessage({ query: "", state: 默认, ready: true });
+  assert.ok(c.span.includes("未命名"), "全默认还空着，该提示默认不列未命名资产");
+
+  const d = emptyMessage({ query: "x", state: 默认, ready: false });
+  assert.ok(d.strong.includes("后台还在准备"), `没读完不该说没命中：${d.strong}`);
 });

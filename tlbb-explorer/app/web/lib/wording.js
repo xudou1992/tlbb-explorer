@@ -121,3 +121,40 @@ export function mapNoObjects(s) {
     : `读到了 ${num(s.records)} 条记录，可这一版画得出的是 0 条`;
   return `${lead}${why}。`;
 }
+
+/// 列表被筛空时该说什么。把**正开着的筛选条件点名**是这里的全部目的：
+/// 这些条件存在 localStorage 里、重启也还在，人回来接着搜就会以为「搜不到」，
+/// 而真相是「类型：场景物件」还开着。只说「没有命中」是把锅推给关键词。
+export function emptyMessage({ query, state, ready }) {
+  const 开着 = [];
+  if (state.kind && state.kind !== "全部") 开着.push(`类型：${state.kind}`);
+  if (state.scenario && state.scenario !== "全部") 开着.push(`用途：${state.scenario}`);
+  if (state.grade && state.grade !== "全部") 开着.push(`完整程度：${state.grade}`);
+  if (state.onlyImage) 开着.push("只看有缺失的资源");
+  if (state.named === false) 开着.push("只看未命名资产");
+  if (!ready) {
+    return {
+      strong: "后台还在准备资产清单",
+      span: "已就绪的会陆续出现，顶栏有进度——这时候搜不到不代表没有。",
+    };
+  }
+  if (query && 开着.length) {
+    return {
+      strong: `没有命中「${query}」`,
+      span: `同时还开着 ${开着.join("、")} —— 这些条件存在本地，重启也还在。点「清空筛选」一次清掉。`,
+    };
+  }
+  if (开着.length) {
+    return {
+      strong: "这些筛选条件把列表筛空了",
+      span: `开着 ${开着.join("、")}。点「清空筛选」一次清掉。`,
+    };
+  }
+  if (query) {
+    return { strong: `没有命中「${query}」`, span: "换个关键词，或点上方「清空筛选」清掉全部条件。" };
+  }
+  return {
+    strong: "没有符合条件的资产",
+    span: "默认不列没名字的资产；左下有「看未命名资产」。",
+  };
+}

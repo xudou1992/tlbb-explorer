@@ -132,6 +132,9 @@ fn chain_product_as_local(
 }
 
 /// 三个已知骨距逐对复现 + 「存储当局部」被数字否掉 + 无矩阵骨沿链补齐。
+///
+/// 注意这条闸门**分辨不了 S 与 S⁻¹**（骨距在求逆下几乎不变），钉的是「链结构
+/// 与补齐口径」。真正钉住读法的是 `bind_origins_sit_inside_their_skinned_geometry`。
 #[test]
 fn bind_worlds_reproduce_known_bone_distances_and_reject_the_local_reading() {
     let Some(mesh) = mesh_bytes() else {
@@ -150,7 +153,10 @@ fn bind_worlds_reproduce_known_bone_distances_and_reject_the_local_reading() {
     let cases = [
         ("bip01_pelvis", "bip01", 1.0991),
         ("bip01_l_foot", "bip01_l_calf", 0.4052),
-        ("bip01_l_toe0", "bip01_l_foot", 0.5460),
+        // 第三个值档案里记的是 0.5460——那是**存储矩阵 S 直接当骨位**量出来的；
+        // 现口径（B = S⁻¹）给 0.5539，差 1.4%。前两个值两种读法一字不差，
+        // 因为 |t| 在求逆下不变（t' = −Rᵀt）——这正是旧口径能骗过这条闸门的原因。
+        ("bip01_l_toe0", "bip01_l_foot", 0.5539),
     ];
     for (child, parent, want) in cases {
         let d = dist_t(&worlds[idx(child)], &worlds[idx(parent)]);
@@ -168,7 +174,7 @@ fn bind_worlds_reproduce_known_bone_distances_and_reject_the_local_reading() {
     );
     assert!(
         max_dev > 0.5,
-        "偏差只有 {max_dev:.4}——「存储是世界矩阵」的口径要重新审（先复核 .scratch 档案，别直接改代码）"
+        "偏差只有 {max_dev:.4}——「存储既不是世界矩阵也不是局部矩阵」，口径要重新审（先复核 .scratch 档案，别直接改代码）"
     );
 
     // —— 无矩阵的骨沿父链补齐：46 根里 30 根带存储矩阵（既有闸门钉过），
@@ -183,7 +189,7 @@ fn bind_worlds_reproduce_known_bone_distances_and_reject_the_local_reading() {
             }
         }
     }
-    eprintln!("bind 世界矩阵：{with_bind} 根用存储值，{} 根沿父链补齐", h.bones.len() - with_bind);
+    eprintln!("bind 世界矩阵：{with_bind} 根用存储值的逆，{} 根沿父链补齐", h.bones.len() - with_bind);
     // 结构抽查：脊柱链平移（W 口径下骨位的实况，供人工核对）
     for name in ["bip01", "bip01_pelvis", "bip01_spine", "bip01_l_calf", "bip01_l_toe0"] {
         let t = &worlds[idx(name)][12..15];
@@ -612,4 +618,96 @@ fn skin_keeps_rigid_vertices_at_their_bone_distance() {
 
 fn vec_len(v: [f64; 3]) -> f64 {
     (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt()
+}
+
+/// **口径判据（物理的，不依赖任何既有结论）**：一根骨的绑定原点应当落在它
+/// 蒙皮顶点的加权重心附近。主样本 26 根带表骨实测：
+///
+/// | 把什么当骨位 | mean | rms | max | 父子骨原点距离 |
+/// |---|---|---|---|---|
+/// | 存储值 S（2026-10-05 旧口径） | 1.4393 | 1.5848 | 2.6391 | 0.000~3.180 |
+/// | **S 的逆 B（现口径）** | **0.1488** | 0.1606 | 0.2531 | 0.000~1.099 |
+///
+/// 差近十倍，而且 B 的平移是**站立的解剖高度**（脚趾 y≈0.14、脚踝 y≈0.69、
+/// 胸口 y≈1.27），与网格立在 y 0.019..2.240 同空间；S 的平移 y 多数≈0，
+/// 骨架躺在地上。2026-10-06 靠这条翻案：`.mesh` 里存的 96B 矩阵是
+/// **世界绑定矩阵的逆**（= glTF 的 inverseBindMatrix = D3DX 的 bone offset）。
+///
+/// 反向钉：旧读法（S 直接当骨位）的 mean 必须显著大于现读法，否则这条判据
+/// 没有分辨力，口径随时可能被人再翻回去。
+#[test]
+fn bind_origins_sit_inside_their_skinned_geometry() {
+    let Some(mesh) = mesh_bytes() else {
+        eprintln!("跳过：本机没有 data.pak 或这份资源不在里面");
+        return;
+    };
+    let h = parse_hierarchy(&mesh).expect("父骨链应能解出");
+    let l = parse_mesh(&mesh).expect("几何应能解出");
+    let pos = &l.geometry.positions;
+    let nodes = parse_nodes(&mesh);
+    let worlds = bind_worlds(&h);
+
+    let mut cur = Vec::new();
+    let mut old = Vec::new();
+    let mut heights: Vec<(String, [f32; 3])> = Vec::new();
+    for nd in &nodes {
+        let Some(sk) = &nd.skin else { continue };
+        let Some(i) = h.bones.iter().position(|b| b.name == nd.name) else { continue };
+        let (mut c, mut wsum) = ([0f64; 3], 0f64);
+        for (&v, &w) in sk.vertices.iter().zip(sk.weights.iter()) {
+            let p = &pos[v as usize];
+            for k in 0..3 {
+                c[k] += w as f64 * p[k] as f64;
+            }
+            wsum += w as f64;
+        }
+        if wsum <= 0.0 {
+            continue;
+        }
+        for k in 0..3 {
+            c[k] /= wsum;
+        }
+        let b = &worlds[i];
+        // 现口径：bind_worlds 已经是 B = S⁻¹；旧口径 = 存储的 S，从 B 再逆回去拿
+        let s_mat = mat_inverse_affine(b).expect("正交矩阵必可逆");
+        let d = |m: &[f32; 16]| {
+            ((0..3).map(|k| (m[12 + k] as f64 - c[k]).powi(2)).sum::<f64>()).sqrt()
+        };
+        cur.push(d(b));
+        old.push(d(&s_mat));
+        heights.push((nd.name.clone(), [b[12], b[13], b[14]]));
+    }
+    let mean = |v: &Vec<f64>| v.iter().sum::<f64>() / v.len() as f64;
+    let rms = |v: &Vec<f64>| (v.iter().map(|x| x * x).sum::<f64>() / v.len() as f64).sqrt();
+    let mx = |v: &Vec<f64>| v.iter().fold(0f64, |a, &b| a.max(b));
+    assert!(cur.len() >= 20, "带表骨该有 20 根以上（实际 {}）", cur.len());
+    eprintln!(
+        "骨位↔蒙皮重心：现口径(B=S⁻¹) mean {:.4} rms {:.4} max {:.4} ｜ 旧口径(S) mean {:.4} rms {:.4} max {:.4}（{} 根带表骨）",
+        mean(&cur), rms(&cur), mx(&cur), mean(&old), rms(&old), mx(&old), cur.len()
+    );
+    assert!(mean(&cur) < 0.3, "绑定原点应贴着蒙皮重心，实测 mean {:.4}", mean(&cur));
+    assert!(
+        mean(&old) > 3.0 * mean(&cur),
+        "反向验红：旧口径必须差出一个量级，否则这条判据没有分辨力（旧 {:.4} 新 {:.4}）",
+        mean(&old),
+        mean(&cur)
+    );
+
+    // 解剖抽查：脚在低处、髋在身高一半上下，且左右镜像。
+    // 注意查的是**全部 46 根骨**的世界平移（`bip01_pelvis` 这类根段没有影响表，
+    // 不在上面 heights 里），别拿带表骨那 26 根去查。
+    let at = |n: &str| {
+        h.bones
+            .iter()
+            .position(|b| b.name == n)
+            .map(|i| [worlds[i][12], worlds[i][13], worlds[i][14]])
+    };
+    for (bone, lo, hi) in [("bip01_l_toe0", 0.02f32, 0.30), ("bip01_l_foot", 0.30, 1.00), ("bip01_pelvis", 0.90, 1.30)] {
+        let t = at(bone).unwrap_or_else(|| panic!("{bone} 该在带表骨里"));
+        assert!(t[1] > lo && t[1] < hi, "{bone} 的 y={:.3} 不在站立高度区间 {lo}..{hi}", t[1]);
+        eprintln!("  {bone:>14} y={:.3} ✓ 站立", t[1]);
+    }
+    let (lt, rt) = (at("bip01_l_toe0").unwrap(), at("bip01_r_toe0").unwrap());
+    assert!(lt[0] > 0.0 && rt[0] < 0.0, "左右脚趾应关于 x 镜像：左 {:.3} 右 {:.3}", lt[0], rt[0]);
+    assert!((lt[1] - rt[1]).abs() < 0.02 && (lt[2] - rt[2]).abs() < 0.02, "左右等高等深");
 }

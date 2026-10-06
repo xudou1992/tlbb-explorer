@@ -19,14 +19,18 @@
 //!
 //! # 口径与未证项（导出前必读）
 //!
-//! * **存储 bind 矩阵是世界空间 bind 姿态**（实测口径：当局部沿链复合与存储值
-//!   差 1.0~3.8，见 `preview::pose` 的注释；本文件不 use pose，只沿用其口径）。
-//!   glTF node 的变换必须是**局部**的，所以有矩阵的骨取
-//!   `local = bind子 · bind父⁻¹`（行向量推导见 [`to_glb_rigged`]）；没矩阵的骨
-//!   node 仍在（joints 引用必须完整）、局部恒等并按 README 口径写明缺失。
+//! * **存储的 96B 绑定矩阵是「骨→世界」绑定矩阵的逆**（`B = S⁻¹`，即 glTF 的
+//!   `inverseBindMatrix`、D3DX 的 bone offset）。判据是物理的：骨位应贴着它蒙皮
+//!   顶点的加权重心——现口径 mean 0.149，把存储值直接当骨位是 1.439（骨架会躺在
+//!   地上）。证据链与翻案经过见 `preview::pose::bind_worlds`。bind 世界矩阵与
+//!   4×4 工具**直接 use pose 那一份**，本文件不再抄第二份（抄过一次，翻案当天
+//!   就分叉，被规范侧对账闸门抓住）。glTF node 的变换必须是**局部**的，所以
+//!   有矩阵的骨取 `local = B子 · B父⁻¹`；没矩阵的骨 node 仍在（joints 引用必须
+//!   完整）、局部恒等并按 README 口径写明缺失。
 //! * **frame0 是否等于 bind 姿态未证实**。导出的 bind 姿态来自 `.mesh` 存储矩阵，
 //!   动画来自 `.ani` 轨道，两者关系未证。已知开口（照实带出，不在导出里圆）：
-//!   bind 骨架与网格世界不重合；`.ani` 静态区 +48 与存储平移的轴系 unresolved；
+//!   `.ani` 静态区 +48 与存储平移的轴系 unresolved（2026-10-06：bind 骨架与网格
+//!   **同空间已实锤**，剩下的动画异常出在 `.ani` 自己的空间，与 bind 无关）；
 //!   64B 局部矩阵块、88B 对角块语义未证。**查看器里姿势若怪，是数据口径，
 //!   不是导出错**——数字都是存储值。
 //! * **权重和必须为 1.0**（glTF 硬要求，官方校验器实测会把不对的报成
@@ -72,7 +76,7 @@ use crate::preview::anim::Anim;
 use crate::preview::geometry::{MeshLayout, Node, SkeletonHierarchy};
 // 权重整形与槽位数与播放层共用一份（见 `pose::unify_weights`）；矩阵小工具
 // 仍然是本文件自己实现——那是标准仿射代数，口径证据链在 preview::pose 的注释里。
-use crate::preview::pose;
+use crate::preview::pose::{self, mat_inverse_affine, mat_mul};
 
 /// 一个材质槽的展示信息。名字来自 `.mdl` / `.mtl`，没有就给槽号。
 #[derive(Debug, Clone, Default)]
@@ -178,6 +182,11 @@ pub fn to_glb_rigged(
         return Err("没有顶点或没有三角面，glb 里放不了空网格".to_string());
     }
     let vc = g.vertex_count as usize;
+    // POSITION 的 min/max 是规范要求必给的：坐标里混进 NaN/Inf 时 f32::min/max
+    // 会把它静默吞掉，产物边界就成了假的——这种数据不导出，报出来。
+    if !g.positions.iter().take(vc).all(|p| p.iter().all(|v| v.is_finite())) {
+        return Err("顶点坐标里有 NaN/Inf：边界值不可信，拒绝导出".to_string());
+    }
     if !anims.is_empty() && rig.is_none() {
         return Err("有动作但没有骨架：轨道没有可挂的节点，拒绝导出".to_string());
     }
@@ -311,44 +320,13 @@ pub fn to_glb_rigged(
             }
         }
 
-        // 每根骨的 bind **世界**矩阵（存储值即世界矩阵——口径证据见模块注释与
-        // preview::pose；这里按同一口径独立实现）。没有 96B 记录的骨沿父链补
-        // （恒等局部 ⇒ 世界 = 父世界），与「没矩阵的骨写明缺失」的既有口径一致。
         let n = bones.len();
         stats.joints = n;
-        let mut worlds = vec![mat_identity(); n];
-        let mut done = vec![false; n];
-        for _ in 0..=n {
-            let mut progress = false;
-            for (i, b) in bones.iter().enumerate() {
-                if done[i] {
-                    continue;
-                }
-                match b.bind {
-                    Some(m) => {
-                        worlds[i] = m;
-                        done[i] = true;
-                        progress = true;
-                    }
-                    None => match b.parent {
-                        None => {
-                            worlds[i] = mat_identity();
-                            done[i] = true;
-                            progress = true;
-                        }
-                        Some(p) if done[p] => {
-                            worlds[i] = worlds[p];
-                            done[i] = true;
-                            progress = true;
-                        }
-                        Some(_) => {}
-                    },
-                }
-            }
-            if !progress {
-                break;
-            }
-        }
+        // bind 世界矩阵直接取播放层那一份实现（`pose::bind_worlds`：存储的 96B
+        // 矩阵是世界绑定的逆，无记录的骨沿父链补）。以前这里独立抄了一份填充
+        // 循环，2026-10-06 口径翻案（S 是逆矩阵）时两份立刻分叉，被规范侧对账
+        // 闸门当场抓住——同一个口径只许有一份代码。
+        let worlds = pose::bind_worlds(r.hierarchy);
         for b in bones {
             if b.bind.is_none() {
                 stats.bones_without_bind.push(b.name.clone());
@@ -724,68 +702,12 @@ fn report_stats(name: &str, s: &RigStats) {
 }
 
 // ---------------------------------------------------------------- 矩阵小工具
-// 独立实现（不 use preview::pose）：公式是标准仿射代数，口径（行向量、
-// 存储矩阵=世界矩阵）的实测证据链在 preview::pose 的模块注释里。
+// 4×4 的单位阵/乘法/仿射求逆**直接用 preview::pose 那一份**（连同 bind 世界
+// 矩阵的填充口径）——同一个口径抄两份迟早分叉，2026-10-06 就分叉过一次。
+// 下面只留导出侧特有的三件：TRS 分解、TRS 回乘、旋转矩阵→四元数。
 
-/// 行主序 4×4 单位阵。
-fn mat_identity() -> [f32; 16] {
-    let mut m = [0f32; 16];
-    m[0] = 1.0;
-    m[5] = 1.0;
-    m[10] = 1.0;
-    m[15] = 1.0;
-    m
-}
 
-/// 行向量约定下的乘法：`v·(a·b) == (v·a)·b`。
-fn mat_mul(a: &[f32; 16], b: &[f32; 16]) -> [f32; 16] {
-    let mut o = [0f32; 16];
-    for r in 0..4 {
-        for c in 0..4 {
-            o[r * 4 + c] = a[r * 4] * b[c]
-                + a[r * 4 + 1] * b[4 + c]
-                + a[r * 4 + 2] * b[8 + c]
-                + a[r * 4 + 3] * b[12 + c];
-        }
-    }
-    o
-}
 
-/// 仿射矩阵求逆（末行 `(tx,ty,tz,1)`）：左上 3×3 伴随法，平移行 `−t·R⁻¹`。
-/// 奇异或布局不对返回 None——调用方要么 Err 要么换口径，不拿假逆凑。
-fn mat_inverse_affine(m: &[f32; 16]) -> Option<[f32; 16]> {
-    if !m.iter().all(|v| v.is_finite()) || (m[15] - 1.0).abs() > 1e-3 {
-        return None;
-    }
-    let (a, b, c) = (m[0], m[1], m[2]);
-    let (d, e, f) = (m[4], m[5], m[6]);
-    let (g, h, i) = (m[8], m[9], m[10]);
-    let det = a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
-    if !det.is_finite() || det.abs() < 1e-12 {
-        return None;
-    }
-    let iv = 1.0 / det;
-    let (r00, r01, r02) = ((e * i - f * h) * iv, -(b * i - c * h) * iv, (b * f - c * e) * iv);
-    let (r10, r11, r12) = (-(d * i - f * g) * iv, (a * i - c * g) * iv, -(a * f - c * d) * iv);
-    let (r20, r21, r22) = ((d * h - e * g) * iv, -(a * h - b * g) * iv, (a * e - b * d) * iv);
-    let t = [m[12], m[13], m[14]];
-    let mut o = [0f32; 16];
-    o[0] = r00;
-    o[1] = r01;
-    o[2] = r02;
-    o[4] = r10;
-    o[5] = r11;
-    o[6] = r12;
-    o[8] = r20;
-    o[9] = r21;
-    o[10] = r22;
-    // −t·R⁻¹（行向量口径，平移在第 4 行）
-    o[12] = -(t[0] * r00 + t[1] * r10 + t[2] * r20);
-    o[13] = -(t[0] * r01 + t[1] * r11 + t[2] * r21);
-    o[14] = -(t[0] * r02 + t[1] * r12 + t[2] * r22);
-    o[15] = 1.0;
-    Some(o)
-}
 
 /// 引擎局部矩阵 → glTF TRS。返回 (translation, rotation(x,y,z,w), scale)。
 ///
@@ -966,6 +888,7 @@ fn index_range(idx: &[u16]) -> (u32, u32) {
 mod tests {
     use super::*;
     use crate::preview::geometry::parse_mesh;
+    use crate::preview::pose::mat_identity;
 
     fn synth() -> Vec<u8> {
         let vc = 4usize;
@@ -1182,10 +1105,12 @@ mod tests {
         let ibm_acc = skin["inverseBindMatrices"].as_u64().unwrap() as usize;
         assert_eq!(doc["accessors"][ibm_acc]["count"], json!(2));
         assert_eq!(doc["accessors"][ibm_acc]["type"], json!("MAT4"));
-        // root 的局部 = 平移 (1,0,0)（bind 是世界值，根骨局部 = 自身世界）
-        assert_eq!(doc["nodes"][1]["translation"], json!([1.0, 0.0, 0.0]));
-        // child 局部 = 世界 (0,2,0) · 父世界 (1,0,0)⁻¹ = 平移 (−1,2,0)、无旋转
-        assert_eq!(doc["nodes"][2]["translation"], json!([-1.0, 2.0, 0.0]));
+        // 存储的是**世界绑定的逆**（2026-10-06 口径），所以合成骨架存的
+        // S_root=(1,0,0)、S_child=(0,2,0) 对应 B_root=(−1,0,0)、B_child=(0,−2,0)。
+        // 根骨局部 = 自身世界 = (−1,0,0)。
+        assert_eq!(doc["nodes"][1]["translation"], json!([-1.0, 0.0, 0.0]));
+        // child 局部 = B_child · B_root⁻¹ = (0,−2,0) − (−1,0,0) = (1,−2,0)、无旋转
+        assert_eq!(doc["nodes"][2]["translation"], json!([1.0, -2.0, 0.0]));
         assert_eq!(doc["nodes"][2]["rotation"], json!([0.0, 0.0, 0.0, 1.0]));
         // 动画：root 对上（3 通道），ghost 对不上（0 通道）→ extras 记账
         let anims = doc["animations"].as_array().unwrap();

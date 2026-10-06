@@ -411,6 +411,8 @@ pub struct SkinInfluence {
 /// 128 字节的挂点表 = `tx_*` 挂点名 char[32] + 骨名 char[32] + 矩阵 f32[16]
 /// （骨名大写，如 `Bip01_Head`），以及只出现名字、后面不带矩阵的子骨名单。
 const NODE_RECORD: usize = 96;
+/// 名字字段宽度：`char[32]`，NUL 结尾、剩余填 0（记录名/条目名/孩子名通用）。
+const NAME_FIELD: usize = 32;
 /// 头部声明的骨骼根数（46 根骨的怪在这里正好是 46，与它 `.ani` 的轨道数一致）。
 const BONE_COUNT_AT: usize = 0x110;
 
@@ -567,20 +569,27 @@ pub fn parse_nodes(raw: &[u8]) -> Vec<Node> {
 }
 
 // ===========================================================================
-// 父骨链（2026-10-05 解出；字节证据与差分记录见 .scratch/父骨链_验证_20261005.md）
+// 父骨链（2026-10-05 解出；字节证据与差分记录见 .scratch/父骨链_验证_20261005.md
+// 与 .scratch/hamigua_尾部变体_20261005.md）
 //
-// 尾部整段是**一串变长条目 + 挂点表**，不再「只报字节数」：
+// 尾部整段是**一串变长条目 + 挂点段**，不再「只报字节数」：
 //
 // ```text
-// 尾部 = [origin 记录][top 记录]            ← 两条场景前奏：只有 96B 记录，没有条目尾
-//      = 条目 × N（深度优先顺序）
-//      = 挂点段 [u32 挂点数][挂点数 × (tx_名 char32 + 骨名 char32 + 矩阵 f32×16)]
+// 尾部 = [origin 记录][top 记录] 条目 × N 挂点段     ← 常见版：前奏两条
+//      = 条目 × N 挂点段                             ← hamigua 变体：无前奏，
+//                                                       根条目直接 -1 起步
+//      （条目按深度优先顺序排：孩子名单展开序 == 条目序，两族实测一致）
+// 挂点段 = [u32 挂点数][挂点数 × (tx_名 char32 + 骨名 char32 + 矩阵 f32×16)]
+//          （挂点数可为 0——hamigua 族尾部收在 [u32 1][u32 0]）
 //
 // 条目 = [96B 记录]?                        ← 只有「自己的名字 == 条目名」时才属于本条目，
 //                                              否则它是前奏（origin/top）；多数骨的记录
 //                                              是以「父条目孩子名单里的一个槽」出现的
 //      + [块]*                              ← 三种块，实测顺序固定：
-//          影响顶点表 [u32 N][N×u32 顶点（严格递增）][N×f32 权重]，N=0 合法（4B 空表）
+//          影响顶点表 [u32 N][N×u32 顶点][N×f32 权重]，N=0 合法（4B 空表）。
+//                     顶点号**互异且 < 顶点数**；xiyuqiezei 一族恰好排成递增，
+//                     hamigua 族按「绘制序」存（相邻成对交换的排列）——两种都是
+//                     同一张蒙皮表，顺序对语义无谓
 //          对角块 88B [d,0,0,0,0]×3 + [1.0,0,0,0] + [100,100,100]，
 //                     d 逐文件 0.9998（xiyuqiezei）或 1.0（hamigua），语义未证
 //          局部矩阵 64B 行主序 4×4（前三行正交、末列 0,0,0,1），带它的条目不足一半，
@@ -607,8 +616,18 @@ pub fn parse_nodes(raw: &[u8]) -> Vec<Node> {
 //   与 2026-09-29 手算的表逐一对上）；三个超 2.0 的例外全是 accessory 链
 //   （bone05→bone06 = 3.18、r_clavicle→r_upperarm = 2.45、b10mm→b11mm = 2.40）。
 //
-// 纪律：孩子名对不上条目、被列两次、多根、有环、条目数 ≠ 声明数——任何一条不满足
-// 就整体拒绝（`None`），不猜、不补。
+// 纪律：孩子名对不上条目、被列两次、多根、有环、条目数 ≠ 声明数、不恰好 EOF——
+// 任何一条不满足就整体拒绝（`None`），不猜、不补。
+//
+// hamigua 变体的证据链（2026-10-05，全库 2,696 份 declared>0 的 .mesh 实测）：
+// * 三开关（无 origin/top 前奏、挂点数 0、影响表按绘制序）放开后走通
+//   1,072 → 2,208 份；老样本逐文件验证零回退（V0⊆V1⊆V2）。
+// * 根条目起步（root-flag）的 1,104 份全部是旧口径失败的纯变体；
+//   条目序 = DFS 序在全部走通样本无一违反。
+// * 解剖学：变体族声明 ≥14 骨且 bip01 命名的 315 份做 11 条 Biped 关系抽验，
+//   97.5% 命中 ≥8 条；heihou（29 骨）16 对「父子都有矩阵」的 |Δ位移| 全落在
+//   (0.02, 1.11]（r_upperarm←r_clavicle = 1.1017、foot←calf = 0.3728）。
+// * .ani 对账：变体族旁有同干名 .ani 的 594 份里 590 份轨道数 == 声明数。
 // ===========================================================================
 
 /// 骨架里的一个节点：名字 + 父骨（在 [`SkeletonHierarchy::bones`] 里的下标）+ 绑定矩阵。
@@ -765,6 +784,10 @@ fn tail_is_mat64(raw: &[u8], at: usize) -> bool {
 }
 
 /// 影响顶点表 `[u32 N][N×u32 顶点][N×f32 权重]`；N=0 是合法的空表（只占 4 字节）。
+/// 顶点号必须**互异**且都 < 顶点数——hamigua 族（2026-10-05 解出，见
+/// `.scratch/hamigua_尾部变体_20261005.md`）按「绘制序」存这张表（相邻成对交换
+/// 的排列，如 `1,0,2,3,…`），老判据「严格递增」只对排过序的一族成立；
+/// 「互异 + 有界 + 权重在 [0,1]」仍是强噪声滤子（随机浮点流凑不齐这三样）。
 fn tail_is_inf(raw: &[u8], at: usize, vc: usize) -> bool {
     let Some(n) = tail_u32(raw, at) else { return false };
     if n == 0 {
@@ -774,19 +797,18 @@ fn tail_is_inf(raw: &[u8], at: usize, vc: usize) -> bool {
     if n > vc || n > 200_000 || at + 4 + 8 * n > raw.len() {
         return false;
     }
-    let mut last = 0u32;
+    let mut seen = std::collections::HashSet::with_capacity(n.min(1024));
     for k in 0..n {
         let v = match tail_u32(raw, at + 4 + 4 * k) {
             Some(v) => v,
             None => return false,
         };
-        if k > 0 && v <= last {
-            return false;
-        }
         if v as usize >= vc {
             return false;
         }
-        last = v;
+        if !seen.insert(v) {
+            return false; // 互异：同一顶点不该对同一骨列两次
+        }
     }
     (0..n).all(|k| {
         tail_f32(raw, at + 4 + 4 * n + 4 * k)
@@ -859,6 +881,8 @@ fn tail_try_entry(raw: &[u8], at: usize, vc: usize) -> Option<(TailEntry, usize)
 }
 
 /// 挂点段：`[块]* [u32 标志][u32 挂点数][挂点数 × (tx_名 char32 + 骨名 char32 + 矩阵)]`。
+/// 挂点数可以为 0（hamigua 族实测：整段收在 `[u32 1][u32 0]`，EOF 分毫不差；
+/// 见 `.scratch/hamigua_尾部变体_20261005.md`）。
 fn tail_try_sockets(raw: &[u8], mut p: usize, vc: usize) -> Option<(Vec<SocketEntry>, usize)> {
     loop {
         if tail_is_u92(raw, p) {
@@ -880,7 +904,7 @@ fn tail_try_sockets(raw: &[u8], mut p: usize, vc: usize) -> Option<(Vec<SocketEn
     p += 4;
     let count = tail_u32(raw, p)? as usize;
     p += 4;
-    if count == 0 || count > 4096 || p + count * 128 > raw.len() {
+    if count > 4096 || p + count * 128 > raw.len() {
         return None;
     }
     let mut out = Vec::with_capacity(count);
@@ -930,12 +954,19 @@ fn tail_walk(raw: &[u8], start: usize, vc: usize) -> Option<(Vec<TailEntry>, Vec
 }
 
 /// 解尾部整段，给出父骨链。判据不满足（条目数 ≠ 头部声明数、孩子名对不上、
-/// 多根、有环、有孩子被列两次）就整体返回 `None`——不猜、不补。
+/// 多根、有环、有孩子被列两次、最后不恰好落在文件尾）就整体返回 `None`——
+/// 不猜、不补。
+///
+/// 候选起点分两档，按序试，第一个「走到 EOF 且条目数 == 声明数」的胜出：
+/// 1. 名字叫 `origin` 的 96B 记录——多数文件尾部以 origin/top 前奏开头；
+/// 2. **hamigua 变体**（2026-10-05 解出，证据档案
+///    `.scratch/hamigua_尾部变体_20261005.md`）：整份文件没有 origin/top，
+///    尾部直接以根条目开始——`[u32 0xFFFFFFFF][名字×2 相同]`。-1 恰是根条目
+///    的标志位；浮点流里的 NaN 位型要再凑出「两个相同的合法名字」才能成为
+///    误报，而走不通/条目数对不上/树不合法照样整体拒绝。
 pub fn parse_hierarchy(raw: &[u8]) -> Option<SkeletonHierarchy> {
     let declared = bone_count(raw)?;
     let vc = vertex_count(raw);
-    // 候选起点：名字叫 origin 的 96B 记录（实测尾部都以 origin/top 开头；
-    // 没有这条记录的文件是另一套尾部变体，本实现不认，如实给 None）。
     let mut starts = Vec::new();
     let mut i = 0usize;
     while i + NODE_RECORD <= raw.len() {
@@ -949,8 +980,21 @@ pub fn parse_hierarchy(raw: &[u8]) -> Option<SkeletonHierarchy> {
             None => i += 4,
         }
     }
+    // 变体起点：[u32 -1][名字×2]（标志后紧跟两个 32B 名字段）。
+    let mut variant_starts = Vec::new();
+    let mut i = 0usize;
+    while i + 4 + 2 * NAME_FIELD <= raw.len() {
+        if tail_u32(raw, i) == Some(u32::MAX) {
+            if let Some(nm) = tail_name_at(raw, i + 4) {
+                if tail_name_at(raw, i + 4 + NAME_FIELD) == Some(nm) {
+                    variant_starts.push(i);
+                }
+            }
+        }
+        i += 4;
+    }
     let mut walked = None;
-    for start in starts {
+    for start in starts.into_iter().chain(variant_starts) {
         if let Some(got) = tail_walk(raw, start, vc) {
             if got.0.len() == declared {
                 walked = Some(got);

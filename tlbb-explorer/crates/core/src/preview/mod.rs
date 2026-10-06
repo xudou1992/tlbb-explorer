@@ -11,6 +11,7 @@ pub mod anim;
 pub mod effect;
 pub mod geometry;
 pub mod image;
+pub mod pose;
 pub mod scene;
 pub mod summary;
 pub mod uvfit;

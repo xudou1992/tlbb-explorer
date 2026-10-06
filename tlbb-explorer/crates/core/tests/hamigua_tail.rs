@@ -9,7 +9,10 @@
 //! 2. 家族大样本 `w1351_caiji_heihou_01`（29 骨）：链与 Biped 解剖一致 +
 //!    16 对父子矩阵位移全带内 + 三个实测值逐对复现；
 //! 3. 带挂点的变体 `w1351_model_fenghuang_h001`（43 骨、5 挂点）照常解出；
-//! 4. 反向验红 ×2：改孩子槽名字 / 抹掉根条目的 -1 标志 → 整体拒绝。
+//! 4. 反向验红 ×2：改孩子槽名字 / 抹掉根条目的 -1 标志 → 整体拒绝；
+//! 5. 挂点段锚定（2026-10-06）：合成样本——真挂点头 `[u32 1][u32 n]` + n×128B 收到
+//!    EOF 照常解出；把收尾换成 `[u32 x≠1][u32 0]` 这种「假空挂点段」（旧口径会白收，
+//!    条目链就此停在 EOF 之前）→ 必须整体拒绝。
 
 use std::path::PathBuf;
 
@@ -206,5 +209,80 @@ fn tampering_root_flag_breaks_the_variant_start() {
     assert!(
         parse_hierarchy(&mesh).is_none(),
         "抹掉 -1 起点还能解出，闸门是假的"
+    );
+}
+
+// === 挂点段的收束判据（2026-10-06）===========================================
+// 尾部是「条目链 → 挂点段 → EOF」。挂点段真头 = `[u32 1][u32 挂点数]` + 挂点数×128B，
+// 而且**正好收到文件尾**（`at + 8 + 128×count == len`）。老口径只把标志读出来丢掉、
+// 要求 count ≤ 4096 且不越界，于是任何 `[x][00 00 00 00]` 收尾都被当「空挂点段」收下，
+// 条目链就此停在 EOF 之前。下面两条用合成样本（不依赖 pak）把这条锚定钉住：
+// 真头照收（正向）、假收尾必须拒（反向验红）。
+
+/// 拼一份最小尾部：0x118 头（0x8C 顶点数、0x110 声明 1 骨）+ 根条目
+/// `[u32 -1]["bone001"×2][u32 0 孩子]`，尾段由调用方给。
+fn synth_one_bone(tail: &[u8]) -> Vec<u8> {
+    let mut v = vec![0u8; 0x118 + 4 + 64 + 4];
+    v[0x8C..0x90].copy_from_slice(&8u32.to_le_bytes()); // 顶点数（影响表判据要用）
+    v[0x110..0x114].copy_from_slice(&1u32.to_le_bytes()); // 声明 1 根骨
+    v[0x118..0x11c].copy_from_slice(&u32::MAX.to_le_bytes()); // 根条目标志 -1
+    let mut nm = [0u8; 32];
+    nm[..7].copy_from_slice(b"bone001");
+    v[0x11c..0x13c].copy_from_slice(&nm);
+    v[0x13c..0x15c].copy_from_slice(&nm);
+    // 0x15c..0x160 = 孩子数 0
+    v.extend_from_slice(tail);
+    v
+}
+
+/// 128B 挂点记录：`tx_01` → `Bone001` + 单位矩阵（齐次位 1）。
+fn synth_socket_record() -> Vec<u8> {
+    let mut rec = vec![0u8; 128];
+    rec[..5].copy_from_slice(b"tx_01");
+    rec[32..40].copy_from_slice(b"Bone001\0");
+    for i in 0..4 {
+        rec[64 + (i * 4 + i) * 4..64 + (i * 4 + i) * 4 + 4].copy_from_slice(&1.0f32.to_le_bytes());
+    }
+    rec
+}
+
+/// 挂点段头 `[u32 1][u32 1]` + 一条 128B 记录，正好收到 EOF。
+fn synth_socket_true_head() -> Vec<u8> {
+    let mut tail = Vec::new();
+    tail.extend_from_slice(&1u32.to_le_bytes());
+    tail.extend_from_slice(&1u32.to_le_bytes());
+    tail.extend_from_slice(&synth_socket_record());
+    tail
+}
+
+/// 正向：真挂点头 `[1][1]` + 一条 128B，正好收到 EOF → 照常解出，挂点解得 1 条。
+#[test]
+fn socket_segment_with_true_head_ending_at_eof_is_accepted() {
+    let mesh = synth_one_bone(&synth_socket_true_head());
+    let h = parse_hierarchy(&mesh).expect("真挂点头应能解出");
+    assert_eq!(h.bones.len(), 1, "条目数 = 声明数");
+    assert_eq!(h.sockets.len(), 1, "挂点段声明 1 条");
+    assert_eq!(h.sockets[0].name, "tx_01");
+    assert_eq!(h.sockets[0].bone, "Bone001");
+}
+
+/// 反向验红：以 `[u32 12592][u32 0]` 假收尾（就是骨名第 5–8 字节 + 4 个 0 的形状，
+/// 恰好停在 EOF）。老口径在这里「收到空挂点段」→ 整份文件被收下；锚定后这个点
+/// 既不是 flag==1、块链也接不上任何真头，必须整体拒绝。
+#[test]
+fn fake_socket_footer_x_zero_is_no_longer_accepted() {
+    // 假收尾：4B 非 1 的标志 + 4B 的 count=0，之后就是 EOF。
+    let mut tail = Vec::new();
+    tail.extend_from_slice(&12592u32.to_le_bytes()); // ASCII "01\0\0"——名字里的字节，不是挂点标志
+    tail.extend_from_slice(&0u32.to_le_bytes());
+    let mesh = synth_one_bone(&tail);
+    assert_eq!(
+        &mesh[mesh.len() - 8..],
+        [0x30, 0x31, 0, 0, 0, 0, 0, 0],
+        "现场就是「[x][00 00 00 00]」收尾"
+    );
+    assert!(
+        parse_hierarchy(&mesh).is_none(),
+        "[x][0] 假收尾还能收下，说明挂点段的 EOF 锚定没生效"
     );
 }

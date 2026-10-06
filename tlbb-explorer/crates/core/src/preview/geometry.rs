@@ -881,10 +881,26 @@ fn tail_try_entry(raw: &[u8], at: usize, vc: usize) -> Option<(TailEntry, usize)
 }
 
 /// 挂点段：`[块]* [u32 标志][u32 挂点数][挂点数 × (tx_名 char32 + 骨名 char32 + 矩阵)]`。
-/// 挂点数可以为 0（hamigua 族实测：整段收在 `[u32 1][u32 0]`，EOF 分毫不差；
-/// 见 `.scratch/hamigua_尾部变体_20261005.md`）。
+/// 收束判据两条，**缺一不可**：
+/// 1. 标志恰为 `1`（实测挂点段标志恒 1；`-1` 只出现在根条目）；
+/// 2. EOF 锚定——整段正好收到文件尾，`at + 8 + 128 × 挂点数 == raw.len()`，不多不少。
+///
+/// 挂点数 0 仍合法（hamigua 族实测：整段收在 `[u32 1][u32 0]`，EOF 分毫不差）。
+///
+/// 为什么要锚定：老口径只在「块链走到底」的那个点**硬读一次** `[标志][挂点数]`，
+/// 于是任意 `[u32 x][u32 00 00 00 00]` 形状的收尾都会被当成「空挂点段」收下——
+/// 骨名里第 5–8 字节（如 `tx_001` 的 `"01\0\0"` = 12592）当标志、随后 4 个 0 当
+/// count=0，条目链就此停在 EOF 之前（全库 `tx-not-eof` 一族，2026-10-05 复算）。
+/// 现在改成**沿块链逐点试**：假收尾的点过不了锚定就被跳过，walker 继续前进到真挂点头
+/// （现场例 `w1351_pvpcaiji_mie.mesh`：真头 0x174c = `[u32 1][u32 1]` + 1 条 128B
+/// `tx_001`→`Bone001`，正好收到 EOF 0x17d4）。
+/// 除此之外**一条判据都没放宽**：条目/记录/块/影响表/树闸门与起点候选全部原样。
 fn tail_try_sockets(raw: &[u8], mut p: usize, vc: usize) -> Option<(Vec<SocketEntry>, usize)> {
     loop {
+        // 块链上每个可能的收束位置都试一次（含起点本身）。
+        if let Some(got) = tail_sockets_at(raw, p) {
+            return Some(got);
+        }
         if tail_is_u92(raw, p) {
             p += 88;
             continue;
@@ -898,15 +914,22 @@ fn tail_try_sockets(raw: &[u8], mut p: usize, vc: usize) -> Option<(Vec<SocketEn
             p += 4 + 8 * n as usize;
             continue;
         }
-        break;
-    }
-    let _flag = tail_u32(raw, p)?;
-    p += 4;
-    let count = tail_u32(raw, p)? as usize;
-    p += 4;
-    if count > 4096 || p + count * 128 > raw.len() {
+        // 块链走到头还没收上：这个点不是挂点段，整段失败。
         return None;
     }
+}
+
+/// 在 `at` 这一点试收挂点段（不推进块链）。标志不是 1、或收不到 EOF 分毫不差 → `None`。
+fn tail_sockets_at(raw: &[u8], at: usize) -> Option<(Vec<SocketEntry>, usize)> {
+    if tail_u32(raw, at) != Some(1) {
+        return None;
+    }
+    let count = tail_u32(raw, at + 4)? as usize;
+    let end = (at + 8).checked_add(count.checked_mul(128)?)?;
+    if count > 4096 || end != raw.len() {
+        return None;
+    }
+    let mut p = at + 8;
     let mut out = Vec::with_capacity(count);
     for _ in 0..count {
         let name = tail_name_at(raw, p)?.to_string();

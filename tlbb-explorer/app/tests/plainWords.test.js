@@ -28,6 +28,7 @@ test("骨架导语：数字齐全、说清还差什么，术语不许出现", ()
   assert.ok(s.includes("44 根只登记了名字"), s);
   assert.ok(s.includes("26 根"), s);
   assert.ok(s.includes("1 条动作"), s);
+  assert.ok(s.includes("3D 预览逐帧播放"), "要指路动作页的 3D 预览：" + s);
   for (const w of 黑话) assert.ok(!s.includes(w), `导语里不许出现「${w}」：${s}`);
 });
 

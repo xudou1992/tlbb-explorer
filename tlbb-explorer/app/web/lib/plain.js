@@ -19,7 +19,7 @@ export function skeletonLead(v) {
     s += `${withPos} 根的位置已经读出来，另外 ${declared - withPos} 根只登记了名字。`;
   else s += "每根骨头的位置都读出来了。";
   if (v.skin_bones) s += `其中 ${v.skin_bones} 根记着哪些皮肤顶点跟着它动。`;
-  if (anims.length) s += `它登记了 ${anims.length} 条动作，到「动作」页可以逐帧看。`;
+  if (anims.length) s += `它登记了 ${anims.length} 条动作，到「动作」页可以看 3D 预览逐帧播放。`;
   if (v.chain === true) s += "骨头谁挨着谁也读出来了。";
   return s;
 }

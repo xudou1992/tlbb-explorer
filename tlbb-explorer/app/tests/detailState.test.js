@@ -222,14 +222,14 @@ test("状态分三类：拿到了 / 客户端没给 / 工具还没解出，不�
   const rows = absencesOf(INSPECT_A, CARD_A);
   const by = Object.fromEntries(rows.map((r) => [r.label, r]));
   assert.equal(by["立体模型"].state, "ok");
-  // 骨骼文件在，挂接和权重都读出来了，但画面上还不能摆 —— 仍是未知，不能说成"缺"或"好了"
+  // 骨骼文件在，挂接和权重都读出来了 —— 仍是未知（动作语义未全解），不能说成"缺"或"好了"
   assert.equal(by["骨骼"].state, "unknown");
   assert.ok(by["骨骼"].why.includes("谁挂谁"), by["骨骼"].why);
-  assert.ok(by["骨骼"].why.includes("还不能摆姿势"), by["骨骼"].why);
-  // 动作的逐帧数据读出来了，画面还不能跟着动
+  assert.ok(!by["骨骼"].why.includes("还不能摆姿势"), "过时的「还不能摆」不许再出现", by["骨骼"].why);
+  // 动作读出来了，动作页画布已经能按帧摆（锚=动作第 0 帧）
   assert.equal(by["动画"].state, "unknown");
-  assert.ok(by["动画"].why.includes("怎么转"), by["动画"].why);
-  assert.ok(by["动画"].why.includes("还不能跟着动"), by["动画"].why);
+  assert.ok(by["动画"].why.includes("按帧摆出来"), by["动画"].why);
+  assert.ok(by["动画"].why.includes("第 0 帧为基准锚定"), by["动画"].why);
 });
 
 test("静态物件没有骨骼动画时，说「客户端没记过」而不是失败", () => {

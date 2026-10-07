@@ -12,7 +12,8 @@
 //!
 //! 父骨链**已解**（`parse_hierarchy`：孩子名单的并，不是父索引字段）。回包里
 //! `chain` 为真时每根骨带 `parent`（根的 `root` 为真）。没读出挂接时 `chain` 为假，
-//! 不编父子。画面上还不能跟着动：动作第 0 帧和网格绑定姿势不是同一副。
+//! 不编父子。画面上已经能跟着动（「动作」页预览，锚=该动作第 0 帧），
+//! 静止形状与播放锚不同源：动作第 0 帧和网格绑定姿势不是同一副。
 //! 蒙皮权重**已解**——2026-09-30 实测在 `.mesh` 里，按骨组织成「影响顶点表」
 //! （见 `preview::SkinInfluence`）；此前写的「权重不在 .mesh」是按「每顶点 4 影响」
 //! 那一种编码穷举出来的，判早了。帧率刻度的含义仍未证。
@@ -356,7 +357,7 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
     let mut missing = Vec::new();
     if chain {
         missing.push(
-            "模型还不会跟着动：动作第 0 帧的骨架和网格里的绑定骨架不是同一副姿势，播出来会撕开。骨头谁挂谁已经读出来了。"
+            "骨头谁挂谁已经读出来了。到「动作」页可以把模型按动作摆起来：预览以该动作第 0 帧为基准锚定，静止显示用的绑定姿势跟它不同源。"
                 .to_string(),
         );
     } else {
@@ -364,7 +365,7 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
     }
     if with_skin > 0 {
         missing.push(format!(
-            "这份网格的权重已经按骨读出（{with_skin} 根骨、{touched} 个顶点对）。起始姿势对不上，模型还是不能跟着摆姿势"
+            "这份网格的权重已经按骨读出（{with_skin} 根骨、{touched} 个顶点对）。动作页的预览就是拿它们把顶点摆起来的"
         ));
     } else {
         missing.push(
@@ -519,12 +520,12 @@ pub fn anim_view_run(gid: i64, want: &str) -> Result<AnimReply, String> {
     let unnamed = a.tracks.iter().filter(|t| t.bone.is_empty()).count();
     let mut missing = vec![
         if mesh_chain {
-            "这里列的是每根骨自己的旋转与位移。骨头谁挂谁已经从网格读出来了，但动作第 0 帧和网格里的绑定姿势不是同一副，所以模型还不会跟着动。"
+            "这里列的是每根骨自己的旋转与位移。上面的画布已经能把模型按帧摆出来：锚定用这条动作自己的第 0 帧，跟网格里的绑定姿势不是同一副。"
                 .to_string()
         } else {
-            "这份网格没读出骨头谁挂谁，所以这里只能列每根骨自己的旋转与位移。".to_string()
+            "这份网格没读出骨头谁挂谁，所以这里只能列每根骨自己的旋转与位移，画布摆不了姿势。".to_string()
         },
-        "模型还不会跟着动：权重在 .mesh 的影响顶点表里。不播是因为起始姿势对不上，不是因为权重没读出来。"
+        "预览的蒙皮权重在 .mesh 的影响顶点表里；锚定用动作第 0 帧（静止形状还是网格的绑定姿态），播放速度只是参考。"
             .to_string(),
         format!("帧率刻度 {} 的含义未证（每秒 tick？总时长×40？），界面不换算成秒", a.tick),
     ];
@@ -785,8 +786,8 @@ mod tests {
             assert_eq!(t.scales.len(), rep.frames, "{} 的缩放帧数不齐", t.bone);
         }
         assert!(
-            rep.missing.iter().any(|m| m.contains("还不会跟着动")),
-            "要说清为什么还不能动：{:?}",
+            rep.missing.iter().any(|m| m.contains("画布已经能把模型按帧摆出来")),
+            "要说清预览已经能摆：{:?}",
             rep.missing
         );
         assert!(!rep.missing.iter().any(|m| m.contains("父骨链未解")), "{:?}", rep.missing);

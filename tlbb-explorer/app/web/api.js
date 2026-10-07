@@ -65,8 +65,10 @@ export const skeletonView = (gid, mesh) => call("skeleton_view", { gid, mesh: me
 export const animationView = (gid, file) => call("animation_view", { gid, file });
 /// 动作页 3D 预览：把某一帧蒙皮后的顶点摆出来（锚 = 该动作第 0 帧）。
 /// mesh 传 null/空串时后端自动挑该组第一份网格，回包用 mesh 字段告知实际用了哪份。
-export const animPose = (gid, anim, mesh, frame) =>
-  call("anim_pose", { gid, anim, mesh: mesh || null, frame });
+/// parts 是整组部件名单（文件名数组）：命中 ≥1 件时后端逐件摆好、回包带 parts
+/// 字段；一个都没命中回落单件路径（回包没有 parts 字段）。
+export const animPose = (gid, anim, mesh, frame, parts) =>
+  call("anim_pose", { gid, anim, mesh: mesh || null, frame, parts: parts && parts.length ? parts : null });
 /// 特效页：.pu 的材质链与各类类名。参数块字段语法未解，后端原话带回。
 export const effectView = (gid, file) => call("effect_view", { gid, file: file || "" });
 export const materialView = (gid, file) => call("material_view", { gid, file: file || "" });

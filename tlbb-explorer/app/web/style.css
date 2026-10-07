@@ -169,6 +169,10 @@ input[type="checkbox"] { accent-color: var(--teal); width: 15px; height: 15px; }
 .gdot.gC { background: #97a5a1; }
 .gdot.gD { background: var(--red); }
 .check { display: flex; align-items: center; gap: 7px; margin-top: 15px; color: var(--muted); font-size: 12.5px; }
+/* 动作页部件勾选区：一排 .check 标签（复用现成样式，只改排布——多件套每件
+   一个，默认全开，关掉的不画不请求）。整组一起摆时才出现。 */
+.part-pick { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 2px 0 6px; }
+.part-pick .check { margin-top: 0; }
 .rail-count {
   margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line);
   color: var(--faint); font-size: 12px;

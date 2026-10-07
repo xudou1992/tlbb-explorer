@@ -4,7 +4,19 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
-import { makePoseGate, poseNote, nextFrame, PLAY_STEP_MS, clampFrame } from "../web/lib/animPose.js";
+import {
+  makePoseGate,
+  poseNote,
+  poseNotesLine,
+  nextFrame,
+  PLAY_STEP_MS,
+  clampFrame,
+  meshTail,
+  checkedPartList,
+  partLoadSummary,
+  matchPartPoses,
+  sameNameList,
+} from "../web/lib/animPose.js";
 
 test("在途闸门：第一个请求放行，在途期间只记最新帧", () => {
   const gate = makePoseGate();
@@ -53,4 +65,96 @@ test("帧夹取与动作页表格同一把尺子（animView.clampFrame）", () =
   assert.equal(clampFrame(999, 3), 2);
   assert.equal(clampFrame("x", 3), 0);
   assert.equal(clampFrame(-1, 3), 0);
+});
+
+// ---------------------------------------------------------------------------
+// 整组部件一起摆（多件套）：勾选 → 请求参数 → 回包对号 → 逐件降级。
+// 容错口径与上面同一族：脏数据丢掉、不抛、不编。
+// ---------------------------------------------------------------------------
+
+test("尾名对号：完整路径与文件名都能切出同一名（与后端 mesh 匹配规则同一条）", () => {
+  assert.equal(meshTail("a/b/c/yifu_001.mesh"), "yifu_001.mesh");
+  assert.equal(meshTail("yifu_001.mesh"), "yifu_001.mesh");
+  assert.equal(meshTail("no-slash/"), "", "以 / 结尾的脏输入回空串，不抛");
+  assert.equal(meshTail(42), "", "非字符串不抛");
+  assert.equal(meshTail(null), "");
+});
+
+test("勾选 → 请求参数：开着的按原顺序带走，关掉的不进名单", () => {
+  const names = ["yifu_001.mesh", "shoutao_001.mesh", "huxiu_001.mesh"];
+  const checks = { "yifu_001.mesh": true, "shoutao_001.mesh": false, "huxiu_001.mesh": true };
+  const isEnabled = (n) => checks[n];
+  assert.deepEqual(
+    checkedPartList(names, isEnabled),
+    ["yifu_001.mesh", "huxiu_001.mesh"],
+    "关掉的那件不进请求名单，顺序保持清单原序",
+  );
+  assert.deepEqual(checkedPartList(names, () => true), names, "默认全开就是全名单");
+  assert.deepEqual(checkedPartList(names, () => false), [], "一件没开就是空表：调用方据此清画布不发请求");
+  assert.deepEqual(checkedPartList([null, "", "yifu_001.mesh"], () => true), ["yifu_001.mesh"], "空名/非字符串不进名单");
+  assert.deepEqual(checkedPartList("不是数组", () => true), []);
+});
+
+test("逐件取几何聚合：成功的按序留下，失败的点名进一句人话", () => {
+  const names = ["a.mesh", "b.mesh", "c.mesh"];
+  const ok = (v) => ({ status: "fulfilled", value: v });
+  const all = partLoadSummary(names, [ok("A"), ok("B"), ok("C")]);
+  assert.deepEqual(all.ok.map((o) => o.name), names, "全成时按请求顺序");
+  assert.deepEqual(all.ok.map((o) => o.data), ["A", "B", "C"]);
+  assert.equal(all.failed.length, 0);
+  assert.equal(all.message, null, "没有失败就不写失败行");
+
+  const some = partLoadSummary(names, [ok("A"), { status: "rejected", reason: "x" }, { status: "fulfilled", value: null }]);
+  assert.deepEqual(some.ok.map((o) => o.name), ["a.mesh"], "失败与空回包都不算取到");
+  assert.deepEqual(some.failed, ["b.mesh", "c.mesh"], "点名哪件，不能只说「失败了」");
+  assert.equal(some.message, "这几件没取到几何，先摆其余的：b.mesh、c.mesh");
+
+  const none = partLoadSummary(names, []);
+  assert.equal(none.ok.length, 0, "结果缺失按失败算（调用方据此整组回退）");
+  assert.equal(none.failed.length, 3);
+  assert.ok(none.message.includes("a.mesh、b.mesh、c.mesh"));
+  assert.deepEqual(partLoadSummary(names, "脏输入").ok, [], "结果不是数组不抛");
+  assert.deepEqual(partLoadSummary("脏输入", []).ok, []);
+});
+
+test("回包对号：按尾名对到画布上的件下标，不按位置硬配，对不上的丢掉", () => {
+  const loaded = ["yifu_001.mesh", "shoutao_001.mesh"];
+  const pose = (mesh) => ({ mesh, positions: [[0, 0, 0]] });
+  const out = matchPartPoses([pose("group/yifu_001.mesh"), pose("group/shoutao_001.mesh")], loaded);
+  assert.deepEqual(
+    out.map((m) => m.index),
+    [0, 1],
+    "完整路径按尾名对到装载下标",
+  );
+  assert.deepEqual(out.map((m) => m.name), loaded);
+  assert.deepEqual(
+    matchPartPoses([pose("group/shoutao_001.mesh"), pose("group/yifu_001.mesh")], loaded).map((m) => m.index),
+    [1, 0],
+    "顺序变过也对得上号——对号靠名字不靠位置",
+  );
+  assert.deepEqual(
+    matchPartPoses([pose("group/没勾的.mesh"), pose(null), { mesh: "group/yifu_001.mesh" }], loaded),
+    [],
+    "画布上没有的件、没有顶点的件、残缺的条目都丢掉，不硬画",
+  );
+  assert.deepEqual(matchPartPoses("脏输入", loaded), []);
+  assert.deepEqual(matchPartPoses([], "脏输入"), []);
+});
+
+test("整组注记整段上屏：「这件不变形」的部件实况跟着固定三条一起到，不刷屏", () => {
+  const notes = ["锚定口径：…", "帧率未证：…", "shoutao_001.mesh 没有影响顶点表（顶点全绑在根骨上），这件不变形"];
+  assert.equal(poseNotesLine(notes, ""), notes.join("；"), "整段 join，不能只取第一条把部件实况丢掉");
+  assert.equal(poseNotesLine(notes, notes.join("；")), null, "同一整段不重写");
+  assert.equal(poseNotesLine([], ""), null, "没有 notes 不动屏幕");
+  assert.equal(poseNotesLine([42, null, notes[0]], ""), notes[0], "非字符串条目跳过");
+  assert.equal(poseNotesLine(null, ""), null);
+});
+
+test("fresh 守卫的名单比对：逐位相等才算新鲜，勾选刚变过就算旧", () => {
+  assert.equal(sameNameList(["a.mesh", "b.mesh"], ["a.mesh", "b.mesh"]), true);
+  assert.equal(sameNameList(["a.mesh", "b.mesh"], ["b.mesh", "a.mesh"]), false, "顺序变了就是换过缓冲");
+  assert.equal(sameNameList(["a.mesh"], ["a.mesh", "b.mesh"]), false, "多一件少一件都算旧");
+  assert.equal(sameNameList([], []), true);
+  assert.equal(sameNameList(null, []), false, "非数组不抛、一律判旧");
+  assert.equal(sameNameList(["a.mesh"], "脏输入"), false);
 });

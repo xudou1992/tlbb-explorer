@@ -811,6 +811,23 @@ const poseReply = (mesh, frame, extra = {}) => ({
   ...extra,
 });
 
+/// 整组路径的回包：parts 与请求名单一一对应，顶层字段 = parts[0]（后端契约）。
+/// notes 末尾带一条部件实况（「这件不变形」），钉住「整段上屏」这条文案红线。
+const partsReply = (names, frame, extra = {}) => ({
+  mesh: names[0],
+  anim: "a_walk.ani",
+  frame,
+  frames: 3,
+  vertexCount: 4,
+  positions: [[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
+  notes: [
+    "锚定口径：顶点按这条动作的第 1 帧对齐。",
+    "shoutao_001.mesh 没有影响顶点表（顶点全绑在根骨上），这件不变形",
+  ],
+  parts: names.map((mesh) => ({ mesh, vertexCount: 4, positions: [[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]] })),
+  ...extra,
+});
+
 /// 把第 frame 帧那张在途请求从队列里取走（resolve 一次就作废，别重复拿）。
 function take(deferred, frame) {
   const i = deferred.findIndex((d) => d.frame === frame);
@@ -818,28 +835,45 @@ function take(deferred, frame) {
   return deferred.splice(i, 1)[0];
 }
 
-async function poseSandbox(expose = "") {
+async function poseSandbox(expose = "", opts = {}) {
   const poseCalls = [];
   const meshDataCalls = [];
   const deferred = [];
   const viewers = [];
+  const meshFails = {}; // 注入几何失败：name → 剩余失败次数（-1 = 一直失败）
   class FakeViewer {
     constructor(canvas) {
       this.canvas = canvas;
       this.loads = [];
+      this.partLoads = [];
       this.poses = [];
+      this.partPoses = [];
+      this.cleared = 0;
       viewers.push(this);
     }
     load(data, bones) {
       this.loads.push({ data, bones });
     }
+    loadParts(items) {
+      // Array.from 把 vm 沙箱里的数组搬回宿主 realm——不然 deepStrictEqual
+      // 会因 Array.prototype 分属两个 realm 而假红。
+      this.partLoads.push(Array.from(items));
+    }
     setPose(p) {
       this.poses.push(p);
       return true;
     }
+    setPartPose(i, p) {
+      this.partPoses.push({ i, p });
+      return true;
+    }
+    clearParts() {
+      this.cleared += 1;
+    }
     draw() {}
     stop() {}
   }
+  for (const [name, n] of Object.entries(opts.meshFail || {})) meshFails[name] = n;
   const detail = await sandbox("detail.js", {
     "mesh.js": meshMock,
     "mesh-viewer.js": { MeshViewer: FakeViewer },
@@ -852,22 +886,30 @@ async function poseSandbox(expose = "") {
           : { mesh: "b_only.mesh", meshes: ["b_only.mesh"], declared: 0, nodes: [], animations: [], missing: [], note: "" },
       meshData: async (name, hash) => {
         meshDataCalls.push({ name, hash });
+        const left = meshFails[name];
+        if (left === -1 || left > 0) {
+          if (left > 0) meshFails[name] = left - 1;
+          throw new Error(`AUDIT: ${name} 取几何失败`);
+        }
         return { path: name, vertexCount: 4, faceCount: 2, buffer: "", hasNormals: false, hasUvs: false };
       },
       animationView: async () => ANIM_REP,
-      animPose: async (gid, anim, mesh, frame) => {
-        poseCalls.push({ gid, anim, mesh, frame });
-        return new Promise((resolve) => deferred.push({ gid, mesh, frame, resolve }));
+      animPose: async (gid, anim, mesh, frame, parts) => {
+        // parts 从沙箱里的生产代码传过来，是 vm realm 的数组：搬回宿主再记，
+        // 否则 deepStrictEqual 按原型比较会假红。
+        const partsList = parts ? Array.from(parts) : null;
+        poseCalls.push({ gid, anim, mesh, frame, parts: partsList });
+        return new Promise((resolve) => deferred.push({ gid, mesh, parts: partsList, frame, resolve }));
       },
     },
   }, expose ? { "detail.js": expose } : {});
   const drain = async (n = 14) => {
     for (let i = 0; i < n; i++) await Promise.resolve();
   };
-  return { detail, poseCalls, meshDataCalls, deferred, viewers, drain };
+  return { detail, poseCalls, meshDataCalls, deferred, viewers, drain, meshFails };
 }
 
-test("动作页 3D 预览：游标→pose 参数正确、在途只留最新、切资产后陈旧回包丢弃", async () => {
+test("动作页 3D 预览（整组）：loadParts 收到 N 份、animPose 带全名单、在途只留最新、切资产陈旧回包丢弃", async () => {
   const { detail, poseCalls, deferred, viewers, drain } = await poseSandbox();
   await detail.module.showDetail(245);
   await drain();
@@ -876,18 +918,36 @@ test("动作页 3D 预览：游标→pose 参数正确、在途只留最新、�
   await drain();
   assert.deepEqual(
     poseCalls,
-    [{ gid: 245, anim: "a_walk.ani", mesh: "a_yifu.mesh", frame: 0 }],
-    "首帧 pose 的参数：组号 / 动作文件 / 默认第一份网格 / 第 0 帧",
+    [{ gid: 245, anim: "a_walk.ani", mesh: null, frame: 0, parts: ["a_yifu.mesh", "a_shoutao.mesh"] }],
+    "首帧 pose：整组名单一起发（≥2 份网格就是多件套），mesh 参数让位给 null",
   );
   const viewer = viewers[0];
   assert.ok(viewer, "预览 viewer 该建出来");
-  assert.equal(viewer.loads.length, 1, "几何取一次");
-  assert.equal(viewer.loads[0].bones, null, "动作预览不摆骨线——那是网格页绑定姿态的事");
+  assert.equal(viewer.partLoads.length, 1, "整组几何一次装好");
+  assert.deepEqual(
+    viewer.partLoads[0].map((d) => d.path),
+    ["a_yifu.mesh", "a_shoutao.mesh"],
+    "loadParts 收到两件，顺序 = 清单原序",
+  );
+  assert.equal(viewer.loads.length, 0, "整组模式不走单网格 load");
   assert.equal(detail.el("animPoseBox").hidden, false, "画布块该露出来");
-  take(deferred, 0).resolve(poseReply("a_yifu.mesh", 0));
+  assert.ok(
+    detail.el("animPoseMeta").textContent.includes("整组一起摆：2 件"),
+    `meta 行要写「整组一起摆」的人话：${detail.el("animPoseMeta").textContent}`,
+  );
+  assert.ok(detail.el("animPoseMeta").textContent.includes("共用一副骨架"), "meta 行要点明共用一副骨架");
+  assert.equal(detail.el("animPartPick").children.length, 2, "两件部件各一个勾选框");
+  assert.equal(detail.el("animPartPick").children[0].children[0].checked, true, "默认全开");
+  assert.equal(detail.el("animPartPick").children[1].children[0].checked, true, "默认全开");
+  take(deferred, 0).resolve(partsReply(["a_yifu.mesh", "a_shoutao.mesh"], 0));
   await drain();
-  assert.equal(viewer.poses.length, 1, "第 0 帧的顶点要摆进画布");
-  assert.ok(detail.el("animPoseNote").textContent.includes("锚定口径"), `注记行取回包 notes 的第一条：${detail.el("animPoseNote").textContent}`);
+  assert.equal(viewer.partPoses.length, 2, "两件都摆进画布");
+  assert.deepEqual(viewer.partPoses.map((x) => x.i), [0, 1], "按回包对号进各自的缓冲");
+  assert.ok(
+    detail.el("animPoseNote").textContent.includes("锚定口径") &&
+      detail.el("animPoseNote").textContent.includes("不变形"),
+    `部件实况（这件不变形）要跟着锚定口径整段上屏：${detail.el("animPoseNote").textContent}`,
+  );
   // 游标连动：在途时只保留最新一帧，不排队积压
   const slider = detail.el("animFrame");
   const move = (v) => {
@@ -898,29 +958,31 @@ test("动作页 3D 预览：游标→pose 参数正确、在途只留最新、�
   move("1");
   await drain();
   assert.equal(poseCalls.length, 2, "在途期间游标再动不该叠出第二个请求");
-  take(deferred, 2).resolve(poseReply("a_yifu.mesh", 2));
+  take(deferred, 2).resolve(partsReply(["a_yifu.mesh", "a_shoutao.mesh"], 2));
   await drain();
   assert.deepEqual(poseCalls.map((c) => c.frame), [0, 2, 1], "回包落地后补发的必须是攒下的最新帧");
-  take(deferred, 1).resolve(poseReply("a_yifu.mesh", 1));
+  take(deferred, 1).resolve(partsReply(["a_yifu.mesh", "a_shoutao.mesh"], 1));
   await drain();
-  assert.equal(viewer.poses.length, 3);
+  assert.equal(viewer.partPoses.length, 6, "3 帧 × 2 件，每帧整组同步摆");
   // 资产切走：在途回包必须被丢，预览收摊，不许把旧怪的姿势或错误留给新怪
   move("2");
   await detail.module.showDetail(999);
   assert.equal(detail.el("animPoseBox").hidden, true, "切资产立刻收掉预览");
-  take(deferred, 2).resolve(poseReply("a_yifu.mesh", 2));
+  assert.ok(viewer.cleared >= 1, "切资产要清整组部件的显存与状态");
+  assert.equal(detail.el("animPartPick").children.length, 0, "勾选区跟着清空");
+  take(deferred, 2).resolve(partsReply(["a_yifu.mesh", "a_shoutao.mesh"], 2));
   await drain();
-  assert.equal(viewer.poses.length, 3, "陈旧回包不得再进画布");
+  assert.equal(viewer.partPoses.length, 6, "陈旧回包不得再进画布");
   assert.equal(detail.el("animPoseErr").hidden, true, "被丢的回包也不该冒出错误行");
 });
 
-test("动作页 3D 预览：播放步进到尾回卷、暂停恢复、切走 tab 自动停", async () => {
+test("动作页 3D 预览（整组）：播放步进到尾回卷、暂停恢复、切走 tab 自动停", async () => {
   const { detail, poseCalls, deferred, drain } = await poseSandbox("\nexport { playStep, setPlaying };");
   await detail.module.showDetail(245);
   await drain();
   detail.get("panels.js").showTabPane("animation");
   await drain();
-  take(deferred, 0).resolve(poseReply("a_yifu.mesh", 0));
+  take(deferred, 0).resolve(partsReply(["a_yifu.mesh", "a_shoutao.mesh"], 0));
   await drain();
   const btn = detail.el("animPlay");
   // 按钮的初始文案/可读名是 index.html 的静态属性，替身 DOM 不含它，按源码钉
@@ -929,20 +991,25 @@ test("动作页 3D 预览：播放步进到尾回卷、暂停恢复、切走 tab
   assert.match(html, /<canvas id="animCanvas" aria-label="动作预览"><\/canvas>/, "画布要带「动作预览」的可读名");
   assert.match(html, /id="animPlayHint"[^>]*>参考速度</, "按钮旁要有「参考速度」小字");
   assert.ok(!/25\s*fps/.test(html), "帧率刻度含义未证，不许把 25fps 当真值写进页面");
+  assert.ok(!/和游戏画面一致|与游戏画面一致/.test(html), "文案红线：不许写「和游戏画面一致」");
   detail.module.setPlaying(true);
   assert.equal(btn.textContent, "暂停", "播放中按钮要说「暂停」");
   assert.equal(btn.getAttribute("aria-label"), "暂停");
   assert.equal(detail.el("animFrame").value, "1", "点播放立刻走一步");
-  // 替身定时器不跑，手动步进；每步都同步游标值并把当前帧交给 pose
-  take(deferred, 1).resolve(poseReply("a_yifu.mesh", 1));
+  // 替身定时器不跑，手动步进；每步都同步游标值并把当前帧交给 pose（整组名单照发）
+  take(deferred, 1).resolve(partsReply(["a_yifu.mesh", "a_shoutao.mesh"], 1));
   await drain();
   detail.module.playStep();
   assert.equal(detail.el("animFrame").value, "2");
-  take(deferred, 2).resolve(poseReply("a_yifu.mesh", 2));
+  take(deferred, 2).resolve(partsReply(["a_yifu.mesh", "a_shoutao.mesh"], 2));
   await drain();
   detail.module.playStep();
   assert.equal(detail.el("animFrame").value, "0", "到尾要回卷，别停在最后一帧");
-  assert.deepEqual(poseCalls.map((c) => c.frame), [0, 1, 2, 0], "每步都要把当前帧交给 pose");
+  assert.deepEqual(
+    poseCalls.map((c) => [c.frame, c.parts]),
+    [[0, ["a_yifu.mesh", "a_shoutao.mesh"]], [1, ["a_yifu.mesh", "a_shoutao.mesh"]], [2, ["a_yifu.mesh", "a_shoutao.mesh"]], [0, ["a_yifu.mesh", "a_shoutao.mesh"]]],
+    "每步都要把当前帧连同整组名单交给 pose",
+  );
   detail.module.setPlaying(false);
   assert.equal(btn.textContent, "播放", "再点一次回到「播放」");
   assert.equal(btn.getAttribute("aria-label"), "播放");
@@ -954,16 +1021,37 @@ test("动作页 3D 预览：播放步进到尾回卷、暂停恢复、切走 tab
   assert.equal(btn.getAttribute("aria-label"), "播放");
 });
 
-test("动作页 3D 预览：部件筹码换网格、坏回包降级成一行话、切资产清网格缓存", async () => {
-  const { detail, poseCalls, meshDataCalls, deferred, viewers, drain } = await poseSandbox();
+test("动作页 3D 预览（整组）：单件几何失败点名跳过、坏回包降级成一行话、表格游标照常", async () => {
+  // a_shoutao 这件取几何失败：其余件照摆、点名哪件、请求名单与画布都少它
+  const { detail, poseCalls, meshDataCalls, deferred, viewers, drain } = await poseSandbox("", {
+    meshFail: { "a_shoutao.mesh": -1 },
+  });
   await detail.module.showDetail(245);
   await drain();
   detail.get("panels.js").showTabPane("animation");
   await drain();
   assert.deepEqual(meshDataCalls[0], { name: "a_yifu.mesh", hash: null }, "取几何按路径找，hash 传 null");
-  take(deferred, 0).resolve(poseReply("a_yifu.mesh", 0));
+  assert.deepEqual(meshDataCalls.some((c) => c.name === "a_shoutao.mesh"), true, "失败那件也试过取");
+  const viewer = viewers[0];
+  assert.deepEqual(
+    viewer.partLoads[0].map((d) => d.path),
+    ["a_yifu.mesh"],
+    "失败那件跳过，其余照装",
+  );
+  assert.ok(
+    detail.el("animPartNote").textContent.includes("a_shoutao.mesh"),
+    `单件失败要点名哪件：${detail.el("animPartNote").textContent}`,
+  );
+  assert.equal(detail.el("animPartPick").children.length, 1, "勾选区只摆取到手的件");
+  assert.deepEqual(
+    poseCalls[0].parts,
+    ["a_yifu.mesh"],
+    "整组名单少失败那件——不请求画不出的东西",
+  );
+  take(deferred, 0).resolve(partsReply(["a_yifu.mesh"], 0));
   await drain();
-  // 坏回包：没有顶点 → 画布下一行人话，关键帧表格与游标照常
+  assert.deepEqual(viewer.partPoses.map((x) => x.i), [0], "取到手的那件照摆");
+  // 坏回包（没有 parts 字段——后端回落了单件）：画布下一行人话，表格与游标照常
   const slider = detail.el("animFrame");
   const move = (v) => {
     slider.value = v;
@@ -974,30 +1062,136 @@ test("动作页 3D 预览：部件筹码换网格、坏回包降级成一行话�
   await drain();
   assert.equal(detail.el("animPoseErr").hidden, false, "坏回包的错误行要露出来");
   assert.ok(detail.el("animPoseErr").textContent.includes("这一帧没摆出来"), `坏回包要说人话：${detail.el("animPoseErr").textContent}`);
+  assert.ok(detail.el("animTable").innerHTML.length > 0 || detail.el("animSum").textContent, "表格照常");
   // 好回包来了把错误行收掉
   move("2");
-  take(deferred, 2).resolve(poseReply("a_yifu.mesh", 2));
+  take(deferred, 2).resolve(partsReply(["a_yifu.mesh"], 2));
   await drain();
   assert.equal(detail.el("animPoseErr").hidden, true, "摆出来之后错误行要收掉");
-  // 部件筹码：点哪份就取哪份的几何、摆哪份的顶点
-  const pick = detail.el("animMeshPick");
-  assert.equal(pick.children.length, 2, "两份网格该给两颗筹码");
-  pick.children[1].onclick();
+  assert.ok(detail.el("animPoseNote").textContent.includes("不变形"), "部件实况整段上屏");
+});
+
+test("动作页 3D 预览（整组）：勾选关一件 → 请求与重画都少它；全关清画布不发请求；勾回恢复", async () => {
+  const { detail, poseCalls, deferred, viewers, drain } = await poseSandbox();
+  await detail.module.showDetail(245);
   await drain();
-  assert.deepEqual(meshDataCalls[meshDataCalls.length - 1], { name: "a_shoutao.mesh", hash: null }, "点这份就要这份的几何");
-  take(deferred, 2).resolve(poseReply("a_shoutao.mesh", 2));
-  await drain();
-  assert.deepEqual(
-    poseCalls[poseCalls.length - 1],
-    { gid: 245, anim: "a_walk.ani", mesh: "a_shoutao.mesh", frame: 2 },
-    "换网格后摆的是当前帧",
-  );
-  assert.equal(viewers[0].loads.length, 2, "换网格要重新 load 几何");
-  // 切资产：网格清单缓存失效——新资产的清单与几何都按新的组号取
-  await detail.module.showDetail(999);
   detail.get("panels.js").showTabPane("animation");
   await drain();
+  take(deferred, 0).resolve(partsReply(["a_yifu.mesh", "a_shoutao.mesh"], 0));
+  await drain();
+  const viewer = viewers[0];
+  assert.equal(viewer.partPoses.length, 2, "首次整组：两件都摆上");
+  const pick = detail.el("animPartPick");
+  const setCheck = (box, on) => {
+    box.children[0].checked = on;
+    for (const f of box.children[0].events.change || []) f();
+  };
+  // 关掉 a_shoutao（第 2 个勾选框）：画布整批换成剩下那件，并按当前帧补一请求
+  setCheck(pick.children[1], false);
+  await drain();
+  assert.equal(viewer.partLoads.length, 2, "勾选变了要重装画布");
+  assert.deepEqual(viewer.partLoads[1].map((d) => d.path), ["a_yifu.mesh"], "重画少它");
+  assert.ok(detail.el("animPoseMeta").textContent.includes("1/2 件"), `meta 要如实写画布上有几件：${detail.el("animPoseMeta").textContent}`);
+  assert.deepEqual(
+    poseCalls[1],
+    { gid: 245, anim: "a_walk.ani", mesh: null, frame: 0, parts: ["a_yifu.mesh"] },
+    "换装后的补发请求：名单少它、帧还是当前帧",
+  );
+  take(deferred, 0).resolve(partsReply(["a_yifu.mesh"], 0));
+  await drain();
+  assert.equal(viewer.partPoses.length, 3, "换装后补发的第 0 帧照摆");
+  assert.equal(viewer.partPoses[2].i, 0, "画布上只剩一件，按它的下标摆");
+  // 游标再动：请求与名单都只含画布上的件
+  const slider = detail.el("animFrame");
+  const move = (v) => {
+    slider.value = v;
+    for (const f of slider.events.input || []) f({ target: slider });
+  };
+  move("1");
+  await drain();
+  assert.equal(poseCalls.length, 3, "游标动 → 请求第 1 帧");
+  take(deferred, 1).resolve(partsReply(["a_yifu.mesh"], 1));
+  await drain();
+  assert.equal(viewer.partPoses.length, 4, "第 1 帧照摆");
+  // 全关：清画布、不发请求——空名单会让后端回落单件，那是画错
+  const callsBefore = poseCalls.length;
+  const loadsBefore = viewer.partLoads.length;
+  setCheck(pick.children[0], false);
+  await drain();
+  assert.ok(viewer.cleared >= 1, "全关要清整组部件");
+  assert.equal(viewer.partLoads.length, loadsBefore, "全关不重装空画布");
+  move("2");
+  await drain();
+  assert.equal(poseCalls.length, callsBefore, "全关后游标再动也不发请求");
+  assert.ok(
+    detail.el("animPartNote").textContent.includes("一件都没勾上"),
+    `全关要说人话：${detail.el("animPartNote").textContent}`,
+  );
+  // 勾回一件：库存里还有几何，不用重新取；画布与请求恢复
+  setCheck(pick.children[0], true);
+  await drain();
+  assert.equal(viewer.partLoads.length, 3, "勾回那件重新上架");
+  assert.deepEqual(viewer.partLoads[2].map((d) => d.path), ["a_yifu.mesh"], "上架的是勾着的那件");
+  assert.deepEqual(poseCalls[3].parts, ["a_yifu.mesh"], "恢复后请求名单跟上勾选");
+  assert.equal(poseCalls[3].frame, 2, "补的是当前帧（游标停在哪就摆哪）");
+  take(deferred, 2).resolve(partsReply(["a_yifu.mesh"], 2));
+  await drain();
+  assert.equal(viewer.partPoses.length, 5, "恢复后照摆");
+});
+
+test("动作页 3D 预览：切资产清 parts 状态，单件网格组照旧走单件老路", async () => {
+  const { detail, poseCalls, meshDataCalls, deferred, viewers, drain } = await poseSandbox();
+  await detail.module.showDetail(245);
+  await drain();
+  detail.get("panels.js").showTabPane("animation");
+  await drain();
+  take(deferred, 0).resolve(partsReply(["a_yifu.mesh", "a_shoutao.mesh"], 0));
+  await drain();
+  const viewer = viewers[0];
+  assert.equal(viewer.partLoads.length, 1, "整组先架上");
+  // 切到单件网格组（b_only）：parts 状态清空，回单件老路
+  await detail.module.showDetail(999);
+  await drain();
+  assert.ok(viewer.cleared >= 1, "切资产要清整组部件的显存与状态");
+  detail.get("panels.js").showTabPane("animation");
+  await drain();
+  assert.deepEqual(
+    poseCalls.filter((c) => c.gid === 999),
+    [{ gid: 999, anim: "a_walk.ani", mesh: "b_only.mesh", frame: 0, parts: null }],
+    "单件组照旧：mesh 路径发出去，parts 名单不出现",
+  );
   assert.deepEqual(meshDataCalls[meshDataCalls.length - 1], { name: "b_only.mesh", hash: null }, "切资产后网格缓存必须失效");
+  take(deferred, 0).resolve(poseReply("b_only.mesh", 0));
+  await drain();
+  assert.equal(viewer.loads.length, 1, "单件组走 load 老路");
+  assert.equal(viewer.poses.length, 1, "单件组照旧 setPose");
+  assert.equal(detail.el("animPartPick").hidden, true, "单件组不出勾选区");
   assert.equal(detail.el("animMeshPick").children.length, 0, "只有一份网格不摆筹码");
   assert.ok(detail.el("animPoseMeta").textContent.includes("b_only.mesh"), `meta 行要写实际用的网格（客户端原文）：${detail.el("animPoseMeta").textContent}`);
+  assert.ok(!detail.el("animPoseMeta").textContent.includes("整组一起摆"), "单件组不冒充整组");
+});
+
+test("动作页 3D 预览：整组几何全取不到 → 回退单件路径（现状代码保留）", async () => {
+  // a_yifu 只失败第一次（整组那轮），回退单件重取时放行；a_shoutao 一直失败
+  const { detail, poseCalls, deferred, viewers, drain } = await poseSandbox("", {
+    meshFail: { "a_yifu.mesh": 1, "a_shoutao.mesh": -1 },
+  });
+  await detail.module.showDetail(245);
+  await drain();
+  detail.get("panels.js").showTabPane("animation");
+  await drain();
+  const viewer = viewers[0];
+  assert.equal(viewer.partLoads.length, 0, "一件几何都没取到，整组不装");
+  assert.equal(viewer.loads.length, 1, "回退单件：老路把第一份网格装进画布");
+  assert.deepEqual(viewer.loads[0].data.path, "a_yifu.mesh", "回退的是清单里第一份");
+  assert.deepEqual(
+    poseCalls[0],
+    { gid: 245, anim: "a_walk.ani", mesh: "a_yifu.mesh", frame: 0, parts: null },
+    "回退后按单件老路发请求（mesh 路径、不带名单）",
+  );
+  assert.equal(detail.el("animMeshPick").children.length, 2, "回退单件后筹码回来，用户可以换一份再试");
+  assert.equal(detail.el("animPartPick").hidden, true, "回退单件不出勾选区");
+  take(deferred, 0).resolve(poseReply("a_yifu.mesh", 0));
+  await drain();
+  assert.equal(viewer.poses.length, 1, "回退路径照常摆帧");
 });

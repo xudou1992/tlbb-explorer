@@ -228,6 +228,50 @@ export function instancedPickBounds(pool, inst) {
   return out;
 }
 
+/// 蒙皮顶点数组的整备：校验（数组形状、长度、全有限）并摊平成 f32。
+/// 校验不过回 null——调用方静默拒绝，画布停在上一帧的姿势，
+/// 绝不能把坏数据灌进 GPU 画出一个鬼影。单网格 setPose 与整组
+/// setPartPose 共用这一份，两条路的「不合格不进显存」只有一个来源。
+function poseFlat(positions, vertexCount) {
+  if (!Array.isArray(positions) || positions.length !== vertexCount) return null;
+  for (const p of positions) {
+    if (!Array.isArray(p) || p.length !== 3) return null;
+    for (let i = 0; i < 3; i++) if (!Number.isFinite(p[i])) return null;
+  }
+  const flat = new Float32Array(positions.length * 3);
+  let o = 0;
+  for (const p of positions) {
+    flat[o++] = p[0];
+    flat[o++] = p[1];
+    flat[o++] = p[2];
+  }
+  return flat;
+}
+
+/// 整组部件的世界包围盒：部件共用一副骨架 = 同一模型空间，把各自的局部盒
+/// 直接并起来就是取景框（单件那样拿 parts[0] 的盒子充数会让其余几件出画）。
+/// 盒子缺了/不有限的件跳过——少算一件最多取景偏一点，拿 NaN 凑则是全黑。
+/// @returns {{ center: number[], size: number }}
+export function partsUnionBounds(list) {
+  const mn = [Infinity, Infinity, Infinity];
+  const mx = [-Infinity, -Infinity, -Infinity];
+  let any = false;
+  for (const p of Array.isArray(list) ? list : []) {
+    const a = p && p.bboxMin;
+    const b = p && p.bboxMax;
+    if (!Array.isArray(a) || !Array.isArray(b) || a.length < 3 || b.length < 3) continue;
+    if (!a.concat(b).every(Number.isFinite)) continue;
+    any = true;
+    for (let k = 0; k < 3; k++) {
+      mn[k] = Math.min(mn[k], a[k]);
+      mx[k] = Math.max(mx[k], b[k]);
+    }
+  }
+  if (!any) return { center: [0, 0, 0], size: 1 };
+  const size = Math.max(mx[0] - mn[0], mx[1] - mn[1], mx[2] - mn[2], 1e-3);
+  return { center: [(mn[0] + mx[0]) / 2, (mn[1] + mx[1]) / 2, (mn[2] + mx[2]) / 2], size };
+}
+
 export class MeshViewer {
   constructor(canvas) {
     this.canvas = canvas;
@@ -280,6 +324,9 @@ export class MeshViewer {
     this.drag = null;
     this.raf = 0;
     this.mesh = null;
+    // 整组部件路径：每件一份独立缓冲，loadParts 建、unloadParts 收。
+    // 与单网格 / 多实例互斥——同一时刻只有一种东西在画。
+    this.parts = null;
     this.bindEvents();
   }
 
@@ -307,7 +354,7 @@ export class MeshViewer {
     c.addEventListener("pointerup", release);
     c.addEventListener("pointercancel", release);
     c.addEventListener("wheel", (e) => {
-      if (!this.mesh && !this.inst) return; // 还没加载模型时让页面正常滚
+      if (!this.mesh && !this.inst && !this.parts) return; // 还没加载模型时让页面正常滚
       e.preventDefault();
       const k = e.deltaY > 0 ? 1.12 : 1 / 1.12;
       this.cam.tdist = Math.max(this.limits.min, Math.min(this.limits.max, this.cam.tdist * k));
@@ -322,11 +369,12 @@ export class MeshViewer {
     c.addEventListener("webglcontextlost", (e) => {
       e.preventDefault();
       this.stop();
-      // 上下文没了，缓冲和 program 都成了废引用：多实例路径的状态必须一并清掉，
-      // 不然"buffer 还在、其实早就没了"会一路带进下一次 draw。
+      // 上下文没了，缓冲和 program 都成了废引用：多实例与整组两条路径的
+      // 状态必须一并清掉，不然"buffer 还在、其实早就没了"会一路带进下一次 draw。
       this.mesh = null;
       this.inst = null;
       this.pool = [];
+      this.parts = null;
       this.pickBound = null;
       this.boneCount = 0;
       if (this.onlost) this.onlost();
@@ -390,28 +438,89 @@ export class MeshViewer {
   }
 
   /// 把「按某帧动作摆好的顶点」写进现有位置缓冲（动作页蒙皮预览专用）。
-  /// 只在单网格路径可用：多实例的几何住在池里，那是地图的静态形状，不该被逐帧改写。
+  /// 只在单网格路径可用：多实例的几何住在池里，那是地图的静态形状，不该被逐帧改写；
+  /// 整组部件走 setPartPose（与这里互斥：parts 在架上时 mesh 必为 null）。
   ///
   /// 数据不合格（长度对不上 / 坐标不是有限数）静默拒绝并回 false——蒙皮复合出了
   /// NaN 时画布顶多停在上一帧的姿势，绝不能把坏数据灌进 GPU 画出一个鬼影。
   /// 只用 bufferSubData 改内容，不建新缓冲：游标一拖就是一次调用，每帧
   /// bufferData 等于把 STATIC_DRAW 当垃圾桶用。
   setPose(positions) {
-    if (!this.mesh || this.inst) return false;
-    if (!Array.isArray(positions) || positions.length !== this.mesh.vertexCount) return false;
-    for (const p of positions) {
-      if (!Array.isArray(p) || p.length !== 3) return false;
-      for (let i = 0; i < 3; i++) if (!Number.isFinite(p[i])) return false;
-    }
-    const flat = new Float32Array(positions.length * 3);
-    let o = 0;
-    for (const p of positions) {
-      flat[o++] = p[0];
-      flat[o++] = p[1];
-      flat[o++] = p[2];
-    }
+    if (!this.mesh || this.inst || this.parts) return false;
+    const flat = poseFlat(positions, this.mesh.vertexCount);
+    if (!flat) return false;
     const gl = this.gl;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buf.pos);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, flat);
+    this.draw();
+    return true;
+  }
+
+  // ---- 整组部件路径（多件套网格一起摆：每件一份独立缓冲，同一 program 依次画）----
+  //
+  // 与单网格 / 多实例互斥：loadParts 架上 parts、把 mesh/inst 置空；
+  // load / loadInstances 反过来先收 parts。三条路谁在画只看这三个字段，
+  // 不存在"画了单网格又画部件"的中间态。
+
+  /// 整组装载。items = meshData 回包数组（与单网格 load 的 data 同一形状，
+  /// 每件自带 bboxMin/bboxMax 供取景并盒）。任一件数据校验不过就整批不换——
+  /// 旧的几件原样留着，调用方按件降级，画布不会变成半个黑屏。
+  loadParts(items) {
+    const gl = this.gl;
+    const list = Array.isArray(items) ? items : [];
+    if (!list.length) throw new Error("整组预览一件网格都没有，画不出东西");
+    // 先建后拆：全部建成功才收旧的，中途抛错旧画面还在。
+    const fresh = [];
+    try {
+      for (const data of list) {
+        const geo = uploadMesh(gl, data);
+        fresh.push({ buf: geo.buf, ic: geo.ic, vertexCount: geo.vertexCount, ...viewOf(geo, data) });
+      }
+    } catch (e) {
+      // uv 段可能没建（无 UV 的网格里它是 null），deleteBuffer 对 null 是空操作。
+      for (const p of fresh) for (const b of [p.buf.pos, p.buf.nrm, p.buf.idx, p.buf.uv]) if (b) gl.deleteBuffer(b);
+      throw e;
+    }
+    this.unloadParts();
+    this.parts = fresh;
+    this.mesh = null;
+    this.inst = null;
+    this.pickBound = null;
+    // 骨线是单网格绑定姿态的事，整组路径不摆它。
+    this.setBoneLines(null);
+    // 取景用整组并盒：单件的盒子会把其余几件切出画面。
+    this.applyFrame(partsUnionBounds(fresh));
+    this.trackAllocation();
+    this.syncViewport();
+    this.draw(); // 先画定一帧，理由同 load
+  }
+
+  /// 每份部件缓冲整体换新/清空都从这里走，四个缓冲一个不漏（含可能为 null 的 uv）。
+  unloadParts() {
+    const gl = this.gl;
+    for (const p of this.parts || []) {
+      for (const b of [p.buf.pos, p.buf.nrm, p.buf.idx, p.buf.uv]) if (b) gl.deleteBuffer(b);
+    }
+    this.parts = null;
+  }
+
+  /// 整组收摊（切资产 / 清页时调用）：缓冲删掉、状态清空、重画一次——
+  /// 画布上不该再留着上一只怪的最后一步。
+  clearParts() {
+    this.unloadParts();
+    this.draw();
+  }
+
+  /// 把第 i 件「按某帧动作摆好的顶点」写进它自己的位置缓冲。
+  /// 校验不过（没在整组路径 / 下标越界 / 顶点数或坐标不合格）静默回 false，
+  /// 语义与 setPose 一致：那一帧没摆上就停在上一帧，不硬画。
+  setPartPose(i, positions) {
+    const parts = this.parts;
+    if (!parts || !Number.isInteger(i) || i < 0 || i >= parts.length) return false;
+    const flat = poseFlat(positions, parts[i].vertexCount);
+    if (!flat) return false;
+    const gl = this.gl;
+    gl.bindBuffer(gl.ARRAY_BUFFER, parts[i].buf.pos);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, flat);
     this.draw();
     return true;
@@ -443,6 +552,7 @@ export class MeshViewer {
     for (const b of [tmp.pos, tmp.nrm, tmp.idx, tmp.uv]) if (b) gl.deleteBuffer(b);
 
     this.unloadPool(); // 从多实例切回单网格：地图的几何池该收掉了
+    this.unloadParts(); // 与整组路径互斥：老路径一上来，部件必须收干净
     // vertexCount 原本不在 viewOf 的产出里（那是单/多实例共用的口径函数），
     // 蒙皮预览的 setPose 要拿它核对回包顶点数——加在这里不动共享口径。
     this.mesh = { ...viewOf(geo, data), vertexCount: geo.vertexCount };
@@ -524,6 +634,7 @@ export class MeshViewer {
       throw e;
     }
     this.unloadPool();
+    this.unloadParts(); // 与整组路径互斥
     this.pool = fresh;
 
     // 实例表：矩阵预先转置 + 预先推法线矩阵，绘制时只剩一次 uniformMatrix 调用。
@@ -562,7 +673,7 @@ export class MeshViewer {
     this.syncViewport();
     gl.clearColor(0.055, 0.067, 0.078, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    if (!this.mesh && !this.inst) return false;
+    if (!this.mesh && !this.inst && !this.parts) return false;
     gl.enable(gl.DEPTH_TEST);
 
     const frame = this.frame || { center: [0, 0, 0], size: 1 };
@@ -594,7 +705,8 @@ export class MeshViewer {
     gl.uniformMatrix4fv(this.un.pj, false, proj);
     gl.uniformMatrix4fv(this.un.mv, false, mv);
 
-    if (this.inst) this.drawInstanced();
+    if (this.parts) this.drawParts();
+    else if (this.inst) this.drawInstanced();
     else {
       this.drawSingle();
       this.drawBoneLines(mv, proj);
@@ -729,6 +841,26 @@ export class MeshViewer {
     }
   }
 
+  /// 整组部件：与多实例同一档朴素——每件 bind 一次几何、drawElements 一次。
+  /// 件数是个位数（一只怪的衣服+手套+护腕…），uUseInst 恒 0、不套贴图
+  /// （贴图是网格页「套上看看」的事，动作页始终灰模）。部件共用一副骨架 =
+  /// 同一模型空间，不叠加任何件级矩阵，直接画就是拼好的整组。
+  drawParts() {
+    const gl = this.gl;
+    gl.uniform1f(this.un.use, 0);
+    gl.uniform1f(this.un.useTex, 0);
+    for (const p of this.parts) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, p.buf.pos);
+      gl.enableVertexAttribArray(this.at.pos);
+      gl.vertexAttribPointer(this.at.pos, 3, gl.FLOAT, false, 0, 0);
+      gl.bindBuffer(gl.ARRAY_BUFFER, p.buf.nrm);
+      gl.enableVertexAttribArray(this.at.nrm);
+      gl.vertexAttribPointer(this.at.nrm, 3, gl.FLOAT, false, 0, 0);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, p.buf.idx);
+      gl.drawElements(gl.TRIANGLES, p.ic, gl.UNSIGNED_SHORT, 0);
+    }
+  }
+
   /// 点选：返回 { index, approximate: true }，没打中返回 null。index 是 instances 数组下标。
   ///
   /// **精度坦白**：这是射线 × 每实例**外接盒**的近似，不是三角形级求交。
@@ -750,6 +882,7 @@ export class MeshViewer {
     for (const b of Object.values(this.buf)) gl.deleteBuffer(b);
     if (this.boneBuf) gl.deleteBuffer(this.boneBuf);
     this.unloadPool();
+    this.unloadParts();
     gl.deleteProgram(this.prog);
     if (this.lineProg) gl.deleteProgram(this.lineProg);
     this.mesh = null;

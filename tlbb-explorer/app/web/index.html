@@ -243,8 +243,9 @@
             </div>
 
             <!-- 面板：动作。整条动作的关键帧一次取回，拖游标本地切帧。
-                 画布用 anim_pose 回来的蒙皮顶点把网格按这条动作摆出来；
-                 摆不出来时表格与游标照常，原因写在画布下。 -->
+                 画布用 anim_pose 回来的蒙皮顶点把网格按这条动作摆出来；组内
+                 登记 ≥2 份网格时整组一起摆（共用一副骨架），部件勾选区决定
+                 画哪几件；摆不出来时表格与游标照常，原因写在画布下。 -->
             <div class="tabpane" data-pane="animation" hidden>
               <section class="d-sec">
                 <h3>动作</h3>
@@ -255,6 +256,9 @@
                     <p id="animPoseMeta" class="dim"></p>
                     <div class="chips" id="animMeshPick"></div>
                   </div>
+                  <!-- 部件勾选区：多件套每件一个 checkbox（默认全开），
+                       关掉的不画不请求。整组模式才出现，单件组保持隐藏。 -->
+                  <div id="animPartPick" class="part-pick" hidden></div>
                   <div class="mesh-stage" id="animStage">
                     <canvas id="animCanvas" aria-label="动作预览"></canvas>
                     <p class="mesh-hint">按住拖动旋转 · 滚轮远近 · 双击回到正面</p>
@@ -267,6 +271,7 @@
                     <p class="dim" id="animPoseErr" hidden></p>
                   </div>
                   <p class="dim" id="animPoseNote" hidden></p>
+                  <p class="dim" id="animPartNote" hidden></p>
                 </div>
                 <label class="field">
                   <span>第几帧</span>

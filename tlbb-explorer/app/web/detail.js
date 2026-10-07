@@ -12,7 +12,19 @@ import { empty, loading, failed, notReady, loaded, isNotReadyMsg } from "./lib/d
 import { titleHtml } from "./lib/wording.js";
 import { showMeshes, hideMeshes, applyTexture } from "./mesh.js";
 import { MeshViewer } from "./mesh-viewer.js";
-import { makePoseGate, poseNote, nextFrame, PLAY_STEP_MS, clampFrame } from "./lib/animPose.js";
+import {
+  makePoseGate,
+  poseNote,
+  poseNotesLine,
+  nextFrame,
+  PLAY_STEP_MS,
+  clampFrame,
+  meshTail,
+  checkedPartList,
+  partLoadSummary,
+  matchPartPoses,
+  sameNameList,
+} from "./lib/animPose.js";
 import { texBlock } from "./lib/textureState.js";
 import {
   initTabs,
@@ -265,6 +277,18 @@ let poseListBusy = false;
 let poseMeshPath = "";
 let poseMeshLoaded = false;
 let poseNoteShown = "";
+/// 整组部件路径（组内登记 ≥2 份网格才走；单件与回退维持 loadPoseMesh 老路）。
+/// partData 是**取到手**的全部部件几何（勾回来不用再取的库存）；
+/// partNames 是**此刻在画布上**的件序（loadParts 的装载序，setPartPose 的
+/// 下标按它对号）。两个名单有意分开：勾掉一件是把它从画布撤下，不是扔掉。
+/// partChecks 只管库存里每件开不开，默认全开。
+let poseMode = "single"; // "single" | "parts"
+let partData = [];
+let partNames = [];
+let partChecks = new Map();
+/// 逐件取几何的失败点名（partLoadSummary 的人话），画布下单独一行，不与
+/// 「这一帧没摆出来」混用——一个是装载实况、一个是帧级事故。
+let partLoadNote = "";
 /// 播放：定时步进游标。PLAY_STEP_MS 只是参考速度——帧率刻度含义未证，
 /// 不许当成「游戏就是 25fps」写进任何文案。
 let playTimer = 0;
@@ -311,9 +335,7 @@ function paintPoseMeshChips() {
     poseMeshPath,
     (m) => loadPoseMesh(state.selected, m),
   );
-}
-
-/// 预览总入口：viewer 建一次、网格清单按组取一次、网格就位后摆当前帧。
+}/// 预览总入口：viewer 建一次、网格清单按组取一次、网格就位后摆当前帧。
 /// 谁触发都行（点开 tab / 动作回包落地 / 换动作筹码），每步都有
 /// 「已就位就跳过」的闸，重复调用不会重复取数。
 function poseEnsure() {
@@ -346,7 +368,6 @@ function ensurePoseMeshes(gid) {
       if (state.selected !== gid) return; // 迟到的清单不进缓存
       poseMeshes = (v && v.meshes) || [];
       poseMeshGid = gid;
-      paintPoseMeshChips();
       pickPoseMesh(gid);
     })
     .catch((e) => {
@@ -362,9 +383,136 @@ function pickPoseMesh(gid) {
     poseCursor(); // 几何已在缓冲里（换动作回到这里就是这个分支）：只补当前帧
     return;
   }
+  // 复合的账：组内登记 ≥2 份网格 = 多件套（36% 的 .mesh 是这种），整组一起摆。
+  // 单件网格组与整组失败回退的那一路仍走 loadPoseMesh 老路。
+  if (poseMeshes.length >= 2) {
+    loadPoseParts(gid);
+    return;
+  }
   const want = poseMeshPath || (poseMeshes.length ? poseMeshes[0] : "");
   if (want) loadPoseMesh(gid, want);
   else poseAutoPick(gid); // 清单是空的：让后端自己挑，回包带实际用的路径
+}
+
+/// 整组部件的 meta 行：组级事实（共几件、名单）+ 此刻画布上有几件。
+function partsMetaText() {
+  const total = partData.length;
+  const drawn = partNames.length;
+  const head = drawn === total ? `整组一起摆：${total} 件` : `整组一起摆：${drawn}/${total} 件`;
+  return `${head}，共用一副骨架（${partData.map((o) => o.name).join("、")}）`;
+}
+
+/// 部件勾选区：每件一个 checkbox，复用 .check 的现成样式。关掉的不画不请求
+/// （名单与画布同时少它），全关就是空画布加一行说明，绝不发空名单的请求。
+function paintPartChecks() {
+  const box = el("animPartPick");
+  box.innerHTML = "";
+  box.hidden = !partData.length;
+  for (const o of partData) {
+    const label = document.createElement("label");
+    label.className = "check";
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.checked = partChecks.get(o.name) !== false;
+    input.addEventListener("change", () => togglePart(o.name, input.checked));
+    const name = document.createElement("span");
+    name.textContent = o.name;
+    label.appendChild(input);
+    label.appendChild(name);
+    box.appendChild(label);
+  }
+}
+
+function writePartNote(text) {
+  el("animPartNote").hidden = !text;
+  el("animPartNote").textContent = text || "";
+}
+
+/// 现在勾着的件名（按库存顺序，勾选状态见 partChecks）。
+function checkedPartsNow() {
+  return checkedPartList(
+    partData.map((o) => o.name),
+    (n) => partChecks.get(n) !== false,
+  );
+}
+
+/// 勾选变了：画布整批换成还开着的件（loadParts 换缓冲），当前帧重新请求
+/// （名单同时少它）。在途回包与攒帧一并作废——缓冲都换了，旧顶点对不上号。
+function togglePart(name, on) {
+  if (poseMode !== "parts" || !animReply || !state.selected) return;
+  partChecks.set(name, on);
+  partNames = partData.filter((o) => partChecks.get(o.name) !== false).map((o) => o.name);
+  poseSeq.next();
+  poseGate.reset();
+  poseMeshLoaded = false;
+  if (!partNames.length) {
+    // 一件没开：清画布、不发请求——空名单会让后端回落单件，那是画错
+    poseViewer.clearParts();
+    el("animPoseMeta").textContent = partsMetaText();
+    writePartNote(
+      [partLoadNote, "整组一件都没勾上：画布先空着，勾上任意一件再摆。"].filter(Boolean).join("；"),
+    );
+    return;
+  }
+  try {
+    poseViewer.loadParts(partNames.map((n) => partData.find((o) => o.name === n).data));
+  } catch (e) {
+    poseBreak(`预览没摆出来：${errText(e)}`);
+    return;
+  }
+  el("animPoseMeta").textContent = partsMetaText();
+  writePartNote(partLoadNote);
+  poseMeshLoaded = true;
+  poseCursor();
+}
+
+/// 整组装载：懒取部件清单后逐件取几何（allSettled——单件失败点名跳过，
+/// 不炸整组），loadParts 一次装好，之后每帧一个 anim_pose 请求按件对号摆。
+/// 整组失败（一件几何都没取到 / 缓冲装不起来）回退单件路径，现状代码保留。
+async function loadPoseParts(gid) {
+  if (!poseViewer) return;
+  const my = poseSeq.next(); // 换部件装法：旧回包与攒帧全部作废
+  poseGate.reset();
+  poseMeshLoaded = false;
+  const paths = poseMeshes;
+  const names = paths.map(meshTail);
+  const settled = await Promise.allSettled(paths.map((p) => api.meshData(p, null)));
+  if (poseSeq.isStale(my) || state.selected !== gid) return;
+  const sum = partLoadSummary(names, settled);
+  if (!sum.ok.length) {
+    // 整组失败：回退单件老路（网格筹码也跟着回来，用户可以换一份再试）
+    await loadPoseMesh(gid, paths[0]);
+    return;
+  }
+  poseMode = "parts";
+  partData = sum.ok;
+  // 勾选默认全开；同一组重取（换动作回来）时保留用户勾过的选择
+  partChecks = new Map(partData.map((o) => [o.name, partChecks.get(o.name) !== false]));
+  partNames = partData.filter((o) => partChecks.get(o.name) !== false).map((o) => o.name);
+  partLoadNote = sum.message || "";
+  el("animMeshPick").innerHTML = ""; // 整组模式没有单件筹码：勾选区替它
+  paintPartChecks();
+  writePartNote(partLoadNote);
+  if (!partNames.length) {
+    poseViewer.clearParts();
+    el("animStage").hidden = false;
+    el("animPoseMeta").textContent = partsMetaText();
+    writePartNote(
+      [partLoadNote, "整组一件都没勾上：画布先空着，勾上任意一件再摆。"].filter(Boolean).join("；"),
+    );
+    return;
+  }
+  try {
+    poseViewer.loadParts(partNames.map((n) => partData.find((o) => o.name === n).data));
+  } catch (e) {
+    // 缓冲装不起来也算整组失败：回退单件，画布不能停在半个黑屏上
+    await loadPoseMesh(gid, paths[0]);
+    return;
+  }
+  el("animStage").hidden = false;
+  el("animPoseMeta").textContent = partsMetaText();
+  poseMeshLoaded = true;
+  poseCursor();
 }
 
 /// 后端自动挑网格的那一路：mesh 传空，回包的 mesh 字段是客户端原文，
@@ -390,6 +538,7 @@ async function poseAutoPick(gid) {
 async function loadPoseMesh(gid, path) {
   const my = poseSeq.next(); // 换网格：旧网格在途的 pose 回包连几何都对不上了，一并作废
   poseMeshLoaded = false;
+  enterSinglePoseMode(); // 单件老路一进来，整组部件的库存/勾选/画布全部收干净
   try {
     const data = await api.meshData(path, null); // hash 传 null：后端按路径找
     if (poseSeq.isStale(my) || state.selected !== gid) return;
@@ -403,11 +552,24 @@ async function loadPoseMesh(gid, path) {
     poseMeshLoaded = true;
     el("animStage").hidden = false;
     el("animPoseMeta").textContent = `${path} · ${num(data.vertexCount)} 个顶点`;
+    paintPoseMeshChips(); // 回退到单件时筹码跟着回来，用户可以换一份再试
     poseCursor();
   } catch (e) {
     if (poseSeq.isStale(my) || state.selected !== gid) return;
     poseBreak(`预览没摆出来：${errText(e)}`); // 空画布会让人以为渲染坏了，收掉、给一行话
   }
+}
+
+/// 单件路径的收尾：清掉整组部件的库存、勾选与勾选区 DOM。viewer 侧的 parts
+/// 缓冲由 load() 的互斥逻辑（unloadParts）顺手收掉，这里不重复删。
+function enterSinglePoseMode() {
+  poseMode = "single";
+  partData = [];
+  partNames = [];
+  partChecks = new Map();
+  el("animPartPick").innerHTML = "";
+  el("animPartPick").hidden = true;
+  writePartNote("");
 }
 
 /// 当前帧要摆出来。游标 input、播放步进、网格/动作就位都汇到这一处。
@@ -421,21 +583,32 @@ async function poseRequest(frame) {
   if (issued == null) return; // 已有在途：gate 记下最新想看的帧，回包落地自动补
   const gid = state.selected;
   const file = animReply.file;
-  const mesh = poseMeshPath;
+  // 整组路径发勾着的名单（mesh 参数让位给 null），单件路径发网格路径——
+  // 两条路共用一个命令，后端按 parts 在不在分辨。
+  const parts = poseMode === "parts" ? checkedPartsNow() : null;
+  const mesh = poseMode === "parts" ? null : poseMeshPath;
   const my = poseSeq.next();
   try {
-    const rep = await api.animPose(gid, file, mesh, issued);
-    // 陈旧回包一律丢：资产 / 动作 / 网格任何一个换了，这包顶点都画不得
-    const fresh =
-      !poseSeq.isStale(my) && state.selected === gid && animReply && animReply.file === file && poseMeshPath === mesh;
-    if (fresh) applyPoseReply(rep);
+    const rep = await api.animPose(gid, file, mesh, issued, parts);
+    // 陈旧回包一律丢：资产 / 动作 / 网格 / 勾选任何一个换了，这包顶点都画不得。
+    // 名单逐位比对（sameNameList）：勾选刚变过 = 缓冲换过一批，旧顶点对不上号。
+    const alive =
+      !poseSeq.isStale(my) && state.selected === gid && animReply && animReply.file === file;
+    const fresh = alive &&
+      (parts
+        ? poseMode === "parts" && sameNameList(checkedPartsNow(), parts)
+        : poseMode === "single" && poseMeshPath === mesh);
+    if (fresh) {
+      if (parts) applyPartsReply(rep);
+      else applyPoseReply(rep);
+    }
   } catch (e) {
     const fresh =
-      !poseSeq.isStale(my) && state.selected === gid && animReply && animReply.file === file && poseMeshPath === mesh;
+      !poseSeq.isStale(my) && state.selected === gid && animReply && animReply.file === file;
     if (fresh) poseFail(e);
   } finally {
     // 这一位放出来了。在途期间游标若又动过，把攒下的**最新**一帧补上——
-    // 补发按「现在」的资产/动作/网格取参，不看这个请求出生时的世界。
+    // 补发按「现在」的资产/动作/网格/勾选取参，不看这个请求出生时的世界。
     const follow = poseGate.settled();
     if (follow != null && animReply && poseMeshLoaded && state.selected) poseRequest(follow);
   }
@@ -459,6 +632,43 @@ function applyPoseReply(rep) {
     poseNoteShown = note;
     el("animPoseNote").textContent = note;
     el("animPoseNote").hidden = !note;
+  }
+}
+
+/// 整组回包按件对号摆：rep.parts[i].mesh 的尾名对到画布上的件（matchPartPoses
+/// 不按位置硬配），逐件 setPartPose——某件顶点不合格只丢那一件，其余照摆。
+function applyPartsReply(rep) {
+  const err = el("animPoseErr");
+  err.hidden = true;
+  err.textContent = "";
+  if (!rep || !Array.isArray(rep.parts)) {
+    // 后端一个件都没匹配上会回落单件（不带 parts 字段）：整组模式下这包顶点
+    // 对不上画布的任何一件，如实说，不拿单件顶点去灌多件缓冲。
+    poseFailLine("这一帧没摆出来：后端这次按单件回的包，整组顶点没有。");
+    return;
+  }
+  const matched = matchPartPoses(rep.parts, partNames);
+  if (!matched.length) {
+    poseFailLine("这一帧没摆出来：回包的部件和画布上的对不上号。");
+    return;
+  }
+  let rejected = 0;
+  for (const m of matched) {
+    if (!poseViewer.setPartPose(m.index, m.positions)) rejected += 1;
+  }
+  if (rejected === matched.length) {
+    poseFailLine("这一帧没摆出来：顶点对不上这些部件。");
+    return;
+  }
+  if (rejected > 0) {
+    poseFailLine(`这一帧有 ${rejected} 件没摆出来（顶点对不上，那件停在上一帧），其余照摆。`);
+  }
+  // 「这件不变形」这类部件实况由后端追加在固定三条后面，整段一起上屏才叫如实。
+  const line = poseNotesLine(rep.notes, poseNoteShown);
+  if (line != null) {
+    poseNoteShown = line;
+    el("animPoseNote").textContent = line;
+    el("animPoseNote").hidden = !line;
   }
 }
 
@@ -498,14 +708,25 @@ function poseReset() {
   poseMeshPath = "";
   poseMeshLoaded = false;
   poseNoteShown = "";
+  // 整组部件随资产走：库存、勾选、注记全部清零，显存里的部件缓冲一并删掉——
+  // 上一只怪的衣服留在缓冲里，亮着就是拿旧图冒充新资产。
+  poseMode = "single";
+  partData = [];
+  partNames = [];
+  partChecks = new Map();
+  partLoadNote = "";
+  if (poseViewer) poseViewer.clearParts();
   el("animPoseBox").hidden = true;
   el("animMeshPick").innerHTML = "";
+  el("animPartPick").innerHTML = "";
+  el("animPartPick").hidden = true;
   el("animPoseMeta").textContent = "";
   el("animStage").hidden = false;
   el("animPoseErr").hidden = true;
   el("animPoseErr").textContent = "";
   el("animPoseNote").hidden = true;
   el("animPoseNote").textContent = "";
+  writePartNote("");
 }
 
 /// 特效页：.pu 的材质链与各类类名。没有 .pu 的组后端会给原因，原样转述。

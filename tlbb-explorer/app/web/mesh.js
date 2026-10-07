@@ -126,6 +126,19 @@ async function pick(k) {
   status("");
   el("meshMeta").textContent = `${num(data.vertexCount)} 个顶点 · ${num(data.faceCount)} 个三角面`;
   el("meshTech").innerHTML = techHtml(data);
+  // 「加载即贴」：这格槽位有人工确认过的贴图就直接套上——确认层存在的意义就是
+  // 让确认的成果持久，不该每次开模型都手动再套一遍。查不到（没确认过）不吭声；
+  // 解不开会 reject，同样静默跳过：覆盖表是加分项，绝不能挡灰模。
+  try {
+    const ov = await api.meshTextureOverride(m.name);
+    if (seq.isStale(my)) return; // 等覆盖图解完的空档可能已经换了模型
+    if (ov && ov.png) {
+      v.setTexture(ov.png);
+      el("meshMeta").textContent += " · 已套用人工确认的贴图";
+    }
+  } catch {
+    // 查询失败不提示：槽位状态以贴图试贴区的 🟢/🟡 为准，这里不重复报错。
+  }
 }
 
 /// 收起立体面板。必须同时把序号推走：否则上一次点击还在飞的 mesh_data 回包

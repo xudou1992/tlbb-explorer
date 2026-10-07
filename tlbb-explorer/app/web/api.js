@@ -24,6 +24,8 @@ export const preview = (hash) => call("preview", { hash });
 export const meshData = (name, hash) => call("mesh_data", { name, hash: hash || null });
 /// 绑定姿态的骨头连线。解不出骨架时回空表，不是失败。
 export const meshBoneLines = (name, hash) => call("mesh_bone_lines", { name, hash: hash || null });
+/// 「加载即贴」：这格槽位在覆盖表里有人工确认的贴图就回 PNG data URL，没有回 null。
+export const meshTextureOverride = (name) => call("mesh_override_png", { name });
 export const refHealth = (danglingLimit) => call("ref_health", { danglingLimit });
 /// 容器与清单的缺口：pak 索引里有多少条、清单登记了多少条、差多少条没进清单。
 export const catalogGap = () => call("catalog_gap");

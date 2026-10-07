@@ -197,6 +197,7 @@ pub fn run() {
             map_view::map_footprint,
             texture_override::texture_override_set,
             texture_override::texture_override_clear,
+            texture_override::mesh_override_png,
             texture_override::candidate_png,
             gap::catalog_gap,
             skeleton::skeleton_view,

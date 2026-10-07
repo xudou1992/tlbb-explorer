@@ -12,6 +12,7 @@ use rusqlite::{Connection, OpenFlags};
 use serde::Serialize;
 use serde_json::json;
 use tlbb_core::jpak::Pak;
+use tlbb_core::pathmap::PathMap;
 use tlbb_core::preview::{png_bytes, scale_rgba};
 use tlbb_core::{jmt1, payload};
 
@@ -358,6 +359,65 @@ pub fn texture_override_clear(slot_name: String, cfg_path: Option<String>) -> Re
     std::fs::write(&file, body).map_err(|e| e.to_string())
 }
 
+/// 「加载即贴」的回包：确认过的那张匿名贴图，解成 PNG data URL。
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MeshOverridePng {
+    pub png: String,
+    pub hash: String,
+    pub slot: String,
+}
+
+/// 查询内核（同步版，测试与命令共用）：网格文件名 → 同名槽位（stem + 贴图扩展名）
+/// → 覆盖表（cfg 键优先，与 `texture_override_set` 同一条键规则）→ 解 PNG。
+/// 查不到覆盖 → Ok(None)，前端照旧灰模；**确认过的贴图解不开要 Err 响出来**，
+/// 不能悄悄退回灰模——那是把坏条目藏进「没确认」里。
+fn mesh_override_png_sync(
+    root: &Path,
+    db: &Path,
+    name: &str,
+) -> Result<Option<MeshOverridePng>, String> {
+    let tail = name.rsplit('/').next().unwrap_or(name).trim();
+    let Some(stem) = tail.strip_suffix(".mesh") else {
+        return Ok(None); // 不是网格文件名，没有「对应槽位」可言
+    };
+    let pm = PathMap::load(root);
+    let ov = load_overrides(root);
+    for ext in [".tga", ".dds", ".png", ".jpg", ".bmp", ".webp"] {
+        let slot = format!("{stem}{ext}");
+        let cfg_path = pm.as_ref().and_then(|p| p.lookup(&slot)).map(String::from);
+        let key = match cfg_path.as_deref() {
+            Some(p) if !p.is_empty() => format!("cfg:{p}"),
+            _ => format!("bare:{slot}"),
+        };
+        let Some(h) = ov.get(&key) else { continue };
+        let hex = h.trim().trim_start_matches("0x");
+        let hash = u64::from_str_radix(hex, 16)
+            .map_err(|_| format!("覆盖表里的编号 {hex} 不是合法的 16 位十六进制"))?;
+        let (mime, bytes) = decode_candidate_png(root, db, hash)?;
+        return Ok(Some(MeshOverridePng {
+            png: format!("data:{mime};base64,{}", crate::inspector::b64(&bytes)),
+            hash: h.clone(),
+            slot,
+        }));
+    }
+    Ok(None)
+}
+
+/// 「加载即贴」：模型渲染前查一次覆盖表，人工确认过的贴图直接套上——
+/// 确认层存在的意义就是让确认的成果持久，不该每次开模型都手动再套一遍。
+/// 查不到（这格没确认过）回 None，前端灰模照旧；候选榜第一名**绝不**冒充
+/// 确认结果——🟡 是 🟡，🟢 是 🟢，这条线不能糊。
+#[tauri::command]
+pub async fn mesh_override_png(name: String) -> Result<Option<MeshOverridePng>, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let (root, db) = crate::inspector::roots();
+        mesh_override_png_sync(&root, &db, &name)
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}
+
 /// 批量候选的按需缩略图：全库批量缓存只存元数据不存图，前端候选卡先摆占位框，
 /// 再按候选自带的编号（hash）来要这一张——现解、缩到长边 256、PNG base64
 /// data URL 回去。
@@ -556,5 +616,71 @@ mod tests {
                 eprintln!("{hex} 解图失败（如实记录，不算失败）：{e}");
             }
         }
+    }
+    /// 「加载即贴」查询内核：真覆盖表、真 PathMap、真解码——设置后查得到、
+    /// 撤销后查不到，键规则必须与 texture_override_set 一致（cfg 键优先）。
+    /// 测试自清（set/clear 成对），覆盖表落盘保持零残留。
+    #[test]
+    fn mesh_override_png_follows_the_override_table() {
+        let (root, db) = crate::inspector::roots();
+        if !root.join("data.pak").is_file() || !db.is_file() {
+            eprintln!("跳过：本机没有客户端 pak 或资源清单");
+            return;
+        }
+        // 拿批量缓存里第一个带候选的网格当真样本
+        let dir = root.join(".scratch/uvfit_batch/results");
+        let mut pick: Option<(String, String)> = None; // (stem, hash_hex)
+        let Ok(rd) = std::fs::read_dir(&dir) else {
+            eprintln!("跳过：没有 uvfit_batch/results 缓存");
+            return;
+        };
+        for e in rd.flatten() {
+            let p = e.path();
+            if p.extension().and_then(|x| x.to_str()) != Some("json") {
+                continue;
+            }
+            let Ok(raw) = std::fs::read(&p) else { continue };
+            let Ok(v) = serde_json::from_slice::<serde_json::Value>(&raw) else { continue };
+            let Some(c0) = v.get("candidates").and_then(|x| x.as_array()).and_then(|a| a.first()) else { continue };
+            let Some(h) = c0.get("hash").and_then(|x| x.as_str()) else { continue };
+            let stem = p.file_stem().and_then(|x| x.to_str()).unwrap_or_default().to_string();
+            pick = Some((stem, h.to_string()));
+            break;
+        }
+        let Some((stem, hash_hex)) = pick else {
+            eprintln!("跳过：批量缓存里没有带候选的网格");
+            return;
+        };
+        let slot = format!("{stem}.tga");
+        let cfg_path = tlbb_core::pathmap::PathMap::load(&root)
+            .and_then(|pm| pm.lookup(&slot).map(String::from));
+
+        // 没确认 → None
+        let before = mesh_override_png_sync(&root, &db, &format!("{stem}.mesh")).expect("查询不该失败");
+        assert!(before.is_none(), "{slot} 本来不该有覆盖，先清环境再跑这条测试");
+
+        // 确认（走 texture_override_set 的真键规则）→ 查得到、hash 对得上
+        texture_override_set(slot.clone(), cfg_path.clone(), hash_hex.clone(), "测试：加载即贴".into())
+            .expect("写覆盖表不该失败");
+        let hit = mesh_override_png_sync(&root, &db, &format!("{stem}.mesh")).expect("查询不该失败");
+        let hit = match hit {
+            Some(h) => h,
+            None => {
+                // 确认的贴图解不出图会 Err 而不是 None——落到这里说明键没对上，是 bug。
+                texture_override_clear(slot.clone(), cfg_path.clone()).expect("清理");
+                panic!("设置了覆盖却查不到：键规则不一致（slot={slot}，cfg={cfg_path:?}）");
+            }
+        };
+        assert_eq!(hit.hash, hash_hex, "回包 hash 必须与覆盖表登记的一致");
+        assert_eq!(hit.slot, slot);
+        assert!(hit.png.starts_with("data:image/"), "回包该是 PNG data URL");
+
+        // 撤销 → 落空（覆盖表零残留）
+        texture_override_clear(slot.clone(), cfg_path.clone()).expect("撤销不该失败");
+        let after = mesh_override_png_sync(&root, &db, &format!("{stem}.mesh")).expect("查询不该失败");
+        assert!(after.is_none(), "撤销后还查得到，键没删干净");
+
+        // 不是网格文件名 → 直接 None，不碰覆盖表
+        assert!(mesh_override_png_sync(&root, &db, "随手一个字符串").expect("查询不该失败").is_none());
     }
 }

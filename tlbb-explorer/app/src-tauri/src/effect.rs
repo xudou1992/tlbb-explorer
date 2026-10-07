@@ -2,8 +2,8 @@
 //!
 //! 欠的票与骨架页同源：`parse_pu` 早就在 core 里，界面上只有两行文字。
 //! 这里把材质链、贴图、网格、混合模式、渲染器、发射器、更新器、动态参数名
-//! 一项项列出来；**参数块的字段语法未解，只报得出浮点个数与块大小**，
-//! 这句原话必须同屏出现，不能让人以为数字读懂了。
+//! 一项项列出来。参数块的记录文法已经解出（按条读到文件末尾），
+//! **每条记录叫什么名字还没定**，所以特效还不能播。这句必须同屏出现。
 //!
 //! 取哪一份 `.pu` 只认组内登记的成员：一个组名下同目录可能躺着几千份特效
 //! （`data/effect/pu_other` 实测 3,326 份），按目录挑就是张冠李戴。
@@ -35,9 +35,12 @@ pub struct EffectReply {
     /// 认不出类别的驻留字符串，原样带着（不塞进上面任何一类充数）。
     pub other: Vec<String>,
     pub string_total: usize,
-    /// 参数块：字段语法未解，只报数量与大小。
+    /// 参数块里像浮点的数，以及按记录文法读出的条数。
     pub param_floats: usize,
     pub param_bytes: usize,
+    pub param_records: usize,
+    /// 记录流是否恰好走到参数区末尾。
+    pub param_walk_complete: bool,
     /// 这个特效组旁边有没有动作文件（`.pu` 自己不带关键帧）。
     pub anims: usize,
     pub missing: Vec<String>,
@@ -102,12 +105,18 @@ pub fn effect_view_run(gid: i64, want: &str) -> Result<EffectReply, String> {
     let e: Effect = parse_pu(&raw).ok_or_else(|| "这份 .pu 不按已知的 JBPU 布局排布".to_string())?;
     let n = &e.names;
     let anims = anim_paths(&con, &pu_path).len();
+    let walked = if e.param_walk_complete {
+        "走到了文件末尾"
+    } else {
+        "中途停了"
+    };
     let mut missing = vec![
         format!(
-            "参数块的字段语法未解：块里 {} 字节、{} 个像浮点的数，说清哪个数是干什么的还没做到",
-            e.param_bytes, e.param_floats
+            "参数块已经按记录读出来了（{} 条，{}）。每条叫什么名字还没定，说清哪个数是寿命、哪个是速度还没做到",
+            e.param_records.len(),
+            walked
         ),
-        "播放未做：材质链与发射器形状读得出来，但没有参数含义就摆不出随时间变化的效果".to_string(),
+        "播放未做：材质链与发射器形状读得出来，但记录名字没定，摆不出随时间变化的效果".to_string(),
     ];
     if !hub.is_empty() && !paths.iter().any(|p| p == &hub) {
         missing.push(format!(
@@ -138,6 +147,8 @@ pub fn effect_view_run(gid: i64, want: &str) -> Result<EffectReply, String> {
         string_total: e.strings.len(),
         param_floats: e.param_floats,
         param_bytes: e.param_bytes,
+        param_records: e.param_records.len(),
+        param_walk_complete: e.param_walk_complete,
         anims,
         missing,
         elapsed_ms: t0.elapsed().as_millis() as u64,

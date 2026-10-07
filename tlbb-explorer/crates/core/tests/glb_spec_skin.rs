@@ -15,14 +15,19 @@
 //!    的正确含义：约定翻转与存储翻转对消，数组层面本就相等）。同一条里反向
 //!    钉住：比对转置版必须差得远（>0.5）——证明这条对账真有分辨力。
 //! 2. **逐帧动画骨世界**：idle01 全 41 帧扫，通道覆盖后按规范复合的世界矩阵
-//!    == [`pose_frame`] 逐元素相等。
-//! 3. **蒙皮顶点**：规范蒙皮公式打出的位置 == [`posed_vertices`] 打出的位置。
-//!    参与比对的顶点：原始 Σw 严格为 1 且影响 ≤4 根（避开导出侧归一/引擎侧
-//!    不归一那条已知口径差），外加未覆盖顶点（两侧都该原地不动）。同一条里
-//!    反向钉住：把 joint↔IBM 的配对整体错开一位，误差必须显著变大。
-//! 4. **原样性**：translation/scale 通道数据与 `.ani` 轨道**逐元素完全相等**；
-//!    rotation 允许整条取反（glTF 的 LINEAR 是归一化线性插值，相邻帧必须同半球，
-//!    而 q 与 −q 是同一个旋转），且**相邻帧点积不得为负**——除了定向，导出不许改数据。
+//!    == 重定基世界 **W' = B·(A⁻¹·W)** 逐元素相等。2026-10-07 播放锚裁决
+//!    （`.scratch/ani_axis/锚点判定_20261007.md`）后导出动画**重定基到
+//!    bind rest**（W = `pose_frame` 的原始世界，A = frame0 世界）：这样查看器
+//!    蒙皮 B⁻¹·W' == app 内 frame0 锚蒙皮 A⁻¹·W，第 0 帧世界 = node rest 不撕。
+//! 3. **蒙皮顶点**：规范蒙皮公式打出的位置 == app 内播放蒙皮
+//!    （`reanchored_palette` → `posed_vertices`）打出的位置。
+//!    参与比对的是全部顶点（导出与播放共用 `pose::unify_weights` 整形）。
+//!    同一条里反向钉住：把 joint↔IBM 的配对整体错开一位，误差必须显著变大。
+//! 4. **frame0 = rest + 定向**：第 0 帧三通道合成的局部 == node 静态局部
+//!    （bind rest——frame0 恒等的设计保证）；rotation 允许整条取反定向
+//!    （glTF 的 LINEAR 是归一化线性插值，q 与 −q 是同一旋转），且**相邻帧
+//!    点积不得为负**；时间轴按 帧/tick。重定基后轨道不再是 `.ani` 存储值的
+//!    原样转抄（原始轨道仍可用 `skel_dump` 取出）。
 //!
 //! 真数据缺席 → 打印说明跳过，不算失败（照 `bone_hierarchy.rs` 的做法）。
 
@@ -32,7 +37,7 @@ use serde_json::Value;
 use tlbb_core::export::gltf::{to_glb_rigged, RigExport};
 use tlbb_core::jpak::Pak;
 use tlbb_core::payload;
-use tlbb_core::preview::pose::{bind_worlds, posed_vertices, pose_frame, skin_palette};
+use tlbb_core::preview::pose::{bind_worlds, mat_mul, posed_vertices, reanchored_palette};
 use tlbb_core::preview::{
     parse_ani, parse_hierarchy, parse_mesh, parse_nodes, Anim, Node, SkeletonHierarchy,
 };
@@ -267,10 +272,8 @@ impl Ctx {
         out
     }
 
-    /// 第 `frame` 帧：按通道覆盖 node 属性后重新复合。
-    fn frame_globals(&self, chs: &[(usize, Channel)], frame: usize) -> Vec<[f32; 16]> {
-        // 每根被动画命中的 node：TRS 三通道合成一张局部矩阵
-        let mut locals: Vec<(usize, [f32; 16])> = Vec::new();
+    /// 第 `frame` 帧：每根被动画命中的 node 的局部矩阵（TRS 三通道合成）。
+    fn frame_locals(&self, chs: &[(usize, Channel)], frame: usize) -> Vec<(usize, [f32; 16])> {
         let mut by_node: std::collections::HashMap<usize, ([f32; 3], [f32; 4], [f32; 3])> =
             std::collections::HashMap::new();
         for (node, c) in chs {
@@ -286,9 +289,12 @@ impl Ctx {
                 p => panic!("未知通道路径 {p}"),
             }
         }
-        for (node, (t, q, s)) in by_node {
-            locals.push((node, trs(&t, &q, &s)));
-        }
+        by_node.into_iter().map(|(node, (t, q, s))| (node, trs(&t, &q, &s))).collect()
+    }
+
+    /// 第 `frame` 帧：按通道覆盖 node 属性后重新复合。
+    fn frame_globals(&self, chs: &[(usize, Channel)], frame: usize) -> Vec<[f32; 16]> {
+        let locals = self.frame_locals(chs, frame);
         self.globals_with(&|i| locals.iter().find(|(n, _)| *n == i).map(|(_, m)| *m))
     }
 
@@ -355,9 +361,12 @@ fn glb_bind_globals_match_engine_binds_elementwise() {
     assert!(max_diff(&g[0], &identity()) < 1e-7, "挂 skin 的网格节点世界应为恒等");
 }
 
-/// 闸门 2：逐帧动画——规范复合的骨世界 == pose_frame（逐元素相等，全 41 帧）。
+/// 闸门 2：逐帧动画——规范复合的骨世界 == 重定基世界 **W' = B·(A⁻¹·W)**
+/// （逐元素相等，全 41 帧）。2026-10-07 播放锚裁决后导出动画重定基到 bind rest：
+/// 查看器按导出轨道复合出的世界不再是 `pose_frame` 的原始世界 W，而是把它搬进
+/// bind 历史的 W'——这样查看器蒙皮 B⁻¹·W' == app 内 frame0 锚蒙皮 A⁻¹·W。
 #[test]
-fn glb_animated_globals_match_pose_frame_every_frame() {
+fn glb_animated_globals_match_rebased_worlds_every_frame() {
     let Some(c) = setup() else { return };
     assert_eq!(c.a.frames, 41);
     let chs = c.channels(&c.idle01());
@@ -365,35 +374,27 @@ fn glb_animated_globals_match_pose_frame_every_frame() {
     let mut worst = (0usize, 0usize, 0f32, String::new());
     for f in 0..c.a.frames {
         let g = c.frame_globals(&chs, f);
-        let w = pose_frame(&c.h, &c.a, f);
+        // 引擎侧重锚调色板（A⁻¹·W，逐动作 frame0 锚的公开口径）
+        let pal = reanchored_palette(&c.h, &c.a, f).expect("重锚调色板");
         for (i, b) in c.h.bones.iter().enumerate() {
-            // pose_frame 的口径：无轨道的骨把**世界** bind 当局部用（近似，函数
-            // 注释已如实标注）；规范侧那条路是「静态 node 值」。两条路只在
-            // 「无轨道且有 bind」的骨上分叉——本样本 46 条轨道里 45 条有名，
-            // 唯一没轨道的是框架根 000，它也没有 bind，两侧都是恒等。
-            let has_track = c
-                .a
-                .tracks
-                .iter()
-                .any(|t| !t.bone.is_empty() && t.bone == b.name && !t.rotations.is_empty());
-            if !has_track && b.bind.is_some() {
-                continue;
-            }
-            let d = max_diff(&g[1 + i], &w[i]);
+            // W'_j = B_j · (A_j⁻¹·W_j)：把 app 内的蒙皮搬进 bind 的历史。
+            // mat_mul 是 pose 层的公开乘法，不在这另写复合。
+            let want = mat_mul(&bind[i], &pal[i]);
+            let d = max_diff(&g[1 + i], &want);
             if d > worst.2 {
                 worst = (f, 1 + i, d, b.name.clone());
             }
-            let _ = &bind;
         }
     }
     eprintln!(
-        "动画对账：41 帧 × {} 骨 · 规范复合 vs pose_frame 最大差 {:e}（第 {} 帧 骨 {}）",
+        "重定基对账：41 帧 × {} 骨 · 规范复合 vs W'=B·A⁻¹·W 最大差 {:e}（第 {} 帧 骨 {}）",
         c.bones, worst.2, worst.0, worst.3
     );
-    assert!(worst.2 < 1e-5, "逐帧骨世界应与 pose_frame 一致（转置口径），差 {}", worst.2);
+    assert!(worst.2 < 1e-5, "逐帧骨世界应与重定基世界一致（转置口径），差 {}", worst.2);
 }
 
-/// 闸门 3：蒙皮顶点——规范蒙皮公式打出的位置 == pose::posed_vertices。
+/// 闸门 3：蒙皮顶点——规范蒙皮公式打出的位置 == app 内播放蒙皮
+/// （`reanchored_palette` → `posed_vertices`）。
 #[test]
 fn glb_skinned_vertices_match_engine_skinning() {
     let Some(c) = setup() else { return };
@@ -433,7 +434,6 @@ fn glb_skinned_vertices_match_engine_skinning() {
     eprintln!("参与比对：全部 {vc} 顶点（其中原始 Σw≠1 的 {off_one} 个、未覆盖 {uncovered} 个）");
     assert_eq!(cmp.len(), vc, "口径统一后没有任何理由跳过顶点");
 
-    let bind = bind_worlds(&c.h);
     let chs = c.channels(&c.idle01());
     let nodes_f: Vec<Node> =
         c.nodes.iter().filter(|n| names.contains(n.name.as_str())).cloned().collect();
@@ -464,8 +464,15 @@ fn glb_skinned_vertices_match_engine_skinning() {
             }
             glb_pos[v] = acc;
         }
-        let eng = posed_vertices(&c.h, &skin_palette(&c.h, &bind, &pose_frame(&c.h, &c.a, f)).unwrap(), &nodes_f, &c.positions)
-            .expect("引擎侧蒙皮");
+        // 引擎侧 = app 内播放口径：逐动作 frame0 锚蒙皮（2026-10-07 裁决后
+        // GLB 导出与其对齐，原 bind 锚口径只管静态渲染）。
+        let eng = posed_vertices(
+            &c.h,
+            &reanchored_palette(&c.h, &c.a, f).expect("重锚调色板"),
+            &nodes_f,
+            &c.positions,
+        )
+        .expect("引擎侧蒙皮");
         for &v in &cmp {
             for x in 0..3 {
                 let d = (glb_pos[v][x] - eng[v][x]).abs();
@@ -507,7 +514,7 @@ fn glb_skinned_vertices_match_engine_skinning() {
     let mut shift_worst = 0f32;
     let eng = posed_vertices(
         &c.h,
-        &skin_palette(&c.h, &bind, &pose_frame(&c.h, &c.a, 20)).unwrap(),
+        &reanchored_palette(&c.h, &c.a, 20).expect("重锚调色板"),
         &nodes_f,
         &c.positions,
     )
@@ -533,56 +540,71 @@ fn glb_skinned_vertices_match_engine_skinning() {
     assert!(shift_worst > 1e-3, "配对错位必须被这条对账抓出来，实测只差 {shift_worst}");
 }
 
+/// 闸门 4：frame0 = rest + 定向 + 时间轴。2026-10-07 起导出动画重定基到
+/// bind rest，轨道**不再是 `.ani` 存储值的原样转抄**（原始轨道仍可用
+/// `skel_dump` 从 `.ani` 取出）——「原样性」改钉重定基后仍然成立的三件事：
+/// ① 第 0 帧三通道合成的局部 == node 静态局部（设计保证 W'(0) = B = node rest，
+///   差分出的局部就是 bind 局部——这是「外部查看器第 0 帧不撕」的矩阵级表述）；
+/// ② rotation 相邻帧点积 ≥ 0（q 与 −q 是同一旋转，导出只许整条取反定向；
+///   LINEAR 是归一化线性插值，反号会在中点算出零四元数）；
+/// ③ 时间轴 = 帧号 / tick（0xC6 按「每秒 tick 数」解读，未证——口径见导出注释）。
 #[test]
-fn glb_animation_channels_carry_stored_ani_values() {
+fn glb_rebased_animation_starts_at_bind_rest_and_stays_in_hemisphere() {
     let Some(c) = setup() else { return };
     let chs = c.channels(&c.idle01());
-    let mut rot_checked = 0usize;
-    let mut tr_checked = 0usize;
-    for (node, ch) in &chs {
-        let bone = &c.h.bones[node - 1];
-        let t = c.a.tracks.iter().find(|t| t.bone == bone.name).expect("轨道存在");
-        let frames = c.a.frames;
-        assert_eq!(ch.times.len(), frames);
-        assert_eq!(ch.values.len(), frames * ch.comps);
-        for f in 0..frames {
-            let v = &ch.values[f * ch.comps..(f + 1) * ch.comps];
-            match ch.path.as_str() {
-                "rotation" => {
-                    let stored = &t.rotations[f];
-                    let neg: Vec<f32> = stored.iter().map(|x| -x).collect();
-                    assert!(
-                        v == stored.as_slice() || v == neg.as_slice(),
-                        "骨 {} 第 {f} 帧四元数只能整条取反（定半球），不能改分量：{:?} vs {:?}",
-                        bone.name,
-                        v,
-                        stored
-                    );
-                    if f > 0 {
-                        let p = &ch.values[(f - 1) * 4..f * 4];
-                        let dot: f32 = p.iter().zip(v.iter()).map(|(a, b)| a * b).sum();
-                        assert!(dot >= -1e-6, "相邻帧必须同半球（LINEAR = 归一化线性插值），第 {f} 帧点积 {dot}");
-                    }
-                    rot_checked += 1;
-                }
-                "translation" => {
-                    assert_eq!(v, &t.positions[f][..], "骨 {} 第 {f} 帧位移应原样写出", bone.name);
-                    tr_checked += 1;
-                }
-                "scale" => {
-                    let s = t.scales[f];
-                    assert_eq!(v, &[s, s, s], "骨 {} 第 {f} 帧缩放应原样写出", bone.name);
-                }
-                p => panic!("未知通道路径 {p}"),
-            }
-        }
-        // 关键帧时间 = 帧号 / tick（口径已在导出注释标注为「未证的解读」）
-        for (f, tt) in ch.times.iter().enumerate() {
-            assert!((tt - f as f32 / c.a.tick).abs() < 1e-6, "时间轴按 帧/tick 写");
+    // ① 第 0 帧 == node rest
+    let locals0 = c.frame_locals(&chs, 0);
+    assert_eq!(locals0.len(), c.bones, "全部关节都被通道覆盖");
+    let mut worst_rest = 0f32;
+    let mut worst_rest_at = (0usize, String::new());
+    for (node, m) in &locals0 {
+        let base = c.base_local(*node);
+        let d = max_diff(m, &base);
+        if d > worst_rest {
+            worst_rest = d;
+            worst_rest_at = (*node, c.h.bones[node - 1].name.clone());
         }
     }
     eprintln!(
-        "原样性：rotation {rot_checked} 条（同半球定向后相等）· translation {tr_checked} 条 · 逐元素核对"
+        "frame0 == node rest：{} 根关节 · 局部矩阵最大差 {:.3e}（骨 {}）",
+        locals0.len(),
+        worst_rest,
+        worst_rest_at.1
     );
-    assert!(rot_checked >= 40 * 40, "对上名的轨道应覆盖 45 骨 × 41 帧");
+    assert!(
+        worst_rest < 1e-4,
+        "第 0 帧局部必须落在 node rest（bind）上，骨 {} 差 {worst_rest:.3e}",
+        worst_rest_at.1
+    );
+    // ② 相邻帧同半球 + ③ 时间轴
+    let mut rot_checked = 0usize;
+    for (node, ch) in &chs {
+        let bone = &c.h.bones[node - 1];
+        assert_eq!(ch.times.len(), c.a.frames, "骨 {} 时间轴长度", bone.name);
+        assert_eq!(ch.values.len(), c.a.frames * ch.comps, "骨 {} 输出长度", bone.name);
+        for (f, tt) in ch.times.iter().enumerate() {
+            assert!(
+                (tt - f as f32 / c.a.tick).abs() < 1e-6,
+                "时间轴按 帧/tick 写（骨 {}）",
+                bone.name
+            );
+        }
+        if ch.path == "rotation" {
+            for f in 1..c.a.frames {
+                let p = &ch.values[(f - 1) * 4..f * 4];
+                let v = &ch.values[f * 4..(f + 1) * 4];
+                let dot: f32 = p.iter().zip(v.iter()).map(|(a, b)| a * b).sum();
+                assert!(
+                    dot >= -1e-6,
+                    "骨 {} 相邻帧必须同半球（LINEAR = 归一化线性插值），第 {f} 帧点积 {dot}",
+                    bone.name
+                );
+            }
+            rot_checked += 1;
+        }
+    }
+    eprintln!(
+        "定向与时间轴：rotation {rot_checked} 条相邻帧同半球 · 时间轴逐帧核对 · 第 0 帧落在 bind rest"
+    );
+    assert!(rot_checked >= c.bones, "每根关节都该有一条 rotation 轨道");
 }

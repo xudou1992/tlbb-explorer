@@ -12,10 +12,10 @@
 //! - **骨架 / 蒙皮 / 动画**（[`to_glb_rigged`]，2026-10-05 起）：蒙皮权重在
 //!   `.mesh` 里按骨组织（`preview::SkinInfluence`，2026-09-30 解出）、父骨链
 //!   也在 `.mesh` 尾部孩子名单的并（`preview::parse_hierarchy`，2026-10-05 解出）、
-//!   动作是 `.ani` 的逐骨逐帧局部 TRS（`preview::parse_ani`）。本导出把这三样
-//!   **原样带出去**：node 树、skin（JOINTS_0/WEIGHTS_0/inverseBindMatrices）、
-//!   逐条 animation。**播放复合在查看器侧完成**——导出不含任何复合后的姿态，
-//!   查看器拿到的就是存储数据本身。
+//!   动作是 `.ani` 的逐骨逐帧局部 TRS（`preview::parse_ani`）。node 树与 skin
+//!   （JOINTS_0/WEIGHTS_0/inverseBindMatrices）原样带出；**动画轨道自 2026-10-07
+//!   起重定基（rebase）到 bind rest**——不再原样抄 `.ani` 局部轨道（见下）。
+//!   骨架/几何/权重数据本身仍是存储值，没有任何编造。
 //!
 //! # 口径与未证项（导出前必读）
 //!
@@ -27,12 +27,27 @@
 //!   就分叉，被规范侧对账闸门抓住）。glTF node 的变换必须是**局部**的，所以
 //!   有矩阵的骨取 `local = B子 · B父⁻¹`；没矩阵的骨 node 仍在（joints 引用必须
 //!   完整）、局部恒等并按 README 口径写明缺失。
-//! * **frame0 是否等于 bind 姿态未证实**。导出的 bind 姿态来自 `.mesh` 存储矩阵，
-//!   动画来自 `.ani` 轨道，两者关系未证。已知开口（照实带出，不在导出里圆）：
-//!   `.ani` 静态区 +48 与存储平移的轴系 unresolved（2026-10-06：bind 骨架与网格
-//!   **同空间已实锤**，剩下的动画异常出在 `.ani` 自己的空间，与 bind 无关）；
-//!   64B 局部矩阵块、88B 对角块语义未证。**查看器里姿势若怪，是数据口径，
-//!   不是导出错**——数字都是存储值。
+//! * **动画必须重定基（rebase）到 bind rest（2026-10-07 播放锚裁决）**。`.ani`
+//!   的第 0 帧骨架与 `.mesh` 的 bind 骨架**不同源**（frame0≠bind，中位 |Δt| 1.92、
+//!   角差 115.9°），而播放的正确锚是**每条动作自己的 frame0**（证据：四种锚 ×
+//!   15 条动作全量比对，frame0 锚 15/15 全胜裸 bind 锚，档案
+//!   `.scratch/ani_axis/锚点判定_20261007.md`）。如果把 `.ani` 原始局部轨道直接
+//!   写进 glTF，查看器的蒙皮是 `B⁻¹·W_t`（B = bind 世界），而 app 内播放是
+//!   `A⁻¹·W_t`（A = frame0 世界，`pose::reanchored_palette`）——锚不同源，播起来
+//!   撕成尖刺。所以导出时把动画**搬进 bind 的历史**：
+//!
+//!   ```text
+//!   W'_j(t) = B_j · A_j⁻¹ · W_j(t)        （行向量约定，全部走 pose 层现成函数）
+//!   导出局部轨道 L'_j(t) = W'_j(t) · W'_parent(t)⁻¹
+//!   ```
+//!
+//!   这样查看器按标准 glTF 蒙皮（IBM·N）播出来的每一帧 `B⁻¹·W' = A⁻¹·W` 与
+//!   app 内 frame0 锚蒙皮**逐顶点一致**；且 t=0 时 W' = B 恰好落在 node rest 上
+//!   ——第 0 帧不撕。代价与回退：GLB 里的动画轨道不再是 `.ani` 的存储值（原始
+//!   轨道仍在 `.ani` 文件里，`skel_dump` 照旧出原始数据）；**没有动画的导出
+//!   （静态 `to_glb`、rigged 但 `anims` 为空）完全不受影响**，node rest 与 IBM
+//!   依旧来自 `.mesh` 存储矩阵。app 内的绝对朝向/相位等未证项随锚继承，见
+//!   `pose::reanchored_palette` 的如实标注。
 //! * **权重和必须为 1.0**（glTF 硬要求，官方校验器实测会把不对的报成
 //!   `ACCESSOR_WEIGHTS_NON_NORMALIZED`）。`.mesh` 的影响表按骨组织，一部分顶点
 //!   只读到一部分骨（缺的那些骨没有 96B 记录，主样本实测 114 个顶点 Σw = 0.815
@@ -40,8 +55,11 @@
 //!   导出世界是恒等阵，权重落在它身上就等于那一份顶点**不跟随变形**，与「未覆盖
 //!   顶点原地不动」是同一条既有口径。引擎侧 `preview::pose::posed_vertices`
 //!   按同一规则算，两边蒙皮结果逐元素相等（闸门 `tests/glb_spec_skin.rs`）。
-//! * **四元数分量序按 D3DX 惯例取 (x,y,z,w)**——`.ani` 的四个 f32 没有从字节上
-//!   钉死（anim.rs 只证了「单位长」），glTF 的分量序恰好也是 (x,y,z,w)，原样写入。
+//! * **四元数分量序按 D3DX 惯例取 (x,y,z,w)**（glTF 恰好同序）。重定基后导出的
+//!   rotation 轨道是 W' 分解出的四元数（decompose_trs → mat3_to_quat），与引擎侧
+//!   `pose::quat_to_mat` 走同一套约定——就算 `.ani` 原始四个 f32 的分量序另有
+//!   真相（未从字节钉死，anim.rs 只证了「单位长」），锚与复合两侧同约定，对齐
+//!   不受影响；原始轨道仍可用 `skel_dump` 取出。
 //! * **帧率刻度**（`.ani` 0xC6，样本恒 40.0）含义未证；animation 的关键帧时间
 //!   按「每秒 tick 数」解读写成 `帧号/tick`，这是**已标注的解读**不是实测结论。
 //! * **四元数按帧定半球后才写**（[`same_hemisphere`]）：q 与 −q 是同一个旋转，
@@ -121,8 +139,18 @@ impl<'a> RigExport<'a> {
 pub struct AnimStats {
     pub name: String,
     pub frames: usize,
+    /// `.ani` 自己的轨道数（存储事实）。
     pub tracks: usize,
+    /// `.ani` 轨道里按骨名对上骨架的条数（pose_frame 复合时真正吃到的）。
     pub matched_tracks: usize,
+    /// rebase 后实际写出轨道的关节数。rebase 对**全部关节**统一做（不止 `.ani`
+    /// 有轨道的那些）：W' 对无轨道的骨一般也在动（父骨在动），只写有轨道的
+    /// 会让无轨道骨在查看器里钉死在 rest 上，与 app 内播放对不上。
+    pub exported_tracks: usize,
+    /// TRS 分解往返（decompose→recompose）残差超过 1e-5 的 (关节, 帧) 数。
+    /// 理论上 0（W' 是刚体复合，TRS 无损）；出现非 0 说明有 TRS 表达不了的成分
+    /// （如切变），导出的动画在那个骨那帧会变形失真——如实计数，不静默。
+    pub trs_mismatch_frames: usize,
     /// 对不上骨架骨名的轨道名（未命名轨道记作 "(unnamed)"），照实报告不编。
     pub unmatched_tracks: Vec<String>,
 }
@@ -167,9 +195,13 @@ pub fn to_glb(name: &str, l: &MeshLayout, slots: &[SlotStyle]) -> Result<Vec<u8>
 ///
 /// * `rig = None` 且 `anims` 为空 → 与 [`to_glb`] 完全同产物；
 /// * `rig = Some` → 建 node 层级 + skin（bind 世界矩阵求逆 + 逐顶点权重打包）；
-/// * `anims` 非空 → 每条一个 glTF animation（rotation/translation/scale 三个
-///   通道；scale 样本恒 1.0 也照样写 sampler，数据就是恒 1）。轨道按**骨名**
-///   对上骨架才写，对不上的计数报告（见 `asset.extras`），不按位置硬配。
+/// * `anims` 非空 → 每条一个 glTF animation。**轨道是重定基（rebase）后的局部
+///   TRS，不是 `.ani` 存储值的原样转抄**：导出局部 = W' = B·A⁻¹·W 沿父链差分
+///   （推导与依据见模块注释「动画必须重定基」），使外部查看器按标准 glTF 蒙皮
+///   播放的结果与 app 内逐动作 frame0 锚蒙皮（`pose::reanchored_palette`）逐顶点
+///   一致。**全部关节**统一写轨道（rotation/translation/scale 三个通道），不止
+///   `.ani` 有轨道的那些——无轨道的骨随父骨一起动，漏写就在查看器里钉死在 rest。
+///   `.ani` 里对不上骨名的轨道照旧计数报告（见 `asset.extras`），不按位置硬配。
 pub fn to_glb_rigged(
     name: &str,
     l: &MeshLayout,
@@ -482,19 +514,40 @@ pub fn to_glb_rigged(
     }
 
     // ------------------------------------------------------------------ 动画
-    // glTF 动画通道吃**局部** TRS，`.ani` 轨道正好是局部 TRS：原样写入。
-    // 轨道按骨名对上骨架的才写；未命名轨道（名字表 45/46 的那条）与对不上
-    // 的名字计数报告，不按位置硬配。scale 恒 1.0 也照样写 sampler（数据就是恒 1）。
+    // 2026-10-07 播放锚裁决（`.scratch/ani_axis/锚点判定_20261007.md`）之后，
+    // 导出的动画**重定基（rebase）到 bind rest**，不再原样抄 `.ani` 局部轨道：
+    // 原样转抄会让查看器蒙皮（B⁻¹·W_t）与 app 内播放蒙皮（A⁻¹·W_t，逐动作
+    // frame0 锚）锚不同源，播起来撕成尖刺。重定基后的世界 W'_j(t) = B_j·A_j⁻¹·W_j(t)
+    // 使 B⁻¹·W' = A⁻¹·W 逐项相等，且 t=0 时 W' = B 正好是 node rest（不撕）。
+    // 导出局部轨道 = W' 沿父链差分后分解 TRS；全部关节统一写轨道（无轨道的骨
+    // 随父骨动，漏写就在查看器里钉死在 rest）。scale 分解出来恒 1（W' 是刚体
+    // 复合），照样写 sampler。`.ani` 里对不上骨名的轨道计数报告，不按位置硬配。
     let mut animations: Vec<Value> = Vec::new();
+    let anim_bind = rig.map(|r| pose::bind_worlds(r.hierarchy));
     for (anim_name, a) in anims {
-        let Some(r) = rig else { break };
+        let (Some(r), Some(bind)) = (rig, anim_bind.as_ref()) else {
+            break;
+        };
         let index = r.bone_index();
+        let bones = &r.hierarchy.bones;
+        let n = bones.len();
         let mut astats = AnimStats {
             name: anim_name.to_string(),
             frames: a.frames,
             tracks: a.tracks.len(),
             ..Default::default()
         };
+        // `.ani` 轨道与骨架的名对账照旧报数（pose_frame 复合时吃的就是对上的那些）。
+        for t in &a.tracks {
+            if !t.bone.is_empty() && index.contains_key(t.bone.as_str()) {
+                astats.matched_tracks += 1;
+            } else {
+                astats
+                    .unmatched_tracks
+                    .push(if t.bone.is_empty() { "(unnamed)".to_string() } else { t.bone.clone() });
+            }
+        }
+
         // 关键帧时间：帧号 / tick（0xC6 那个 f32 按「每秒 tick 数」解读——
         // 样本恒 40.0，含义未证；这是已标注的解读，不是实测结论）。
         let tick = if a.tick.is_finite() && a.tick > 0.0 { a.tick } else { 1.0 };
@@ -515,26 +568,49 @@ pub fn to_glb_rigged(
             "max": [times.last().copied().unwrap_or(0.0)],
         }));
 
+        // ---- 重定基：W' = B·A⁻¹·W 沿父链差分出逐骨局部轨道
+        let locals = rebased_local_tracks(r.hierarchy, a, bind)?;
+        let mut quats: Vec<Vec<[f32; 4]>> = Vec::with_capacity(n);
+        let mut trans: Vec<Vec<[f32; 3]>> = Vec::with_capacity(n);
+        let mut scales: Vec<Vec<[f32; 3]>> = Vec::with_capacity(n);
+        for lmats in &locals {
+            let mut qs = Vec::with_capacity(lmats.len());
+            let mut ts = Vec::with_capacity(lmats.len());
+            let mut ss = Vec::with_capacity(lmats.len());
+            for m in lmats {
+                let (t, q, s) = decompose_trs(m);
+                // 分解往返验证（闸门要求 ≤1e-5，不许拍脑袋假定 W' 可无损分解）：
+                // 回乘对不上原矩阵就计数（出现切变之类的成分），导出继续但
+                // extras 里如实报数——那份动画在那个骨那帧会变形失真。
+                let rebuilt = compose_trs(&t, &q, &s);
+                let diff = m
+                    .iter()
+                    .zip(rebuilt.iter())
+                    .map(|(x, y)| (x - y).abs())
+                    .fold(0.0f32, f32::max);
+                if diff > 1e-5 {
+                    astats.trs_mismatch_frames += 1;
+                }
+                qs.push(q);
+                ts.push(t);
+                ss.push(s);
+            }
+            quats.push(qs);
+            trans.push(ts);
+            scales.push(ss);
+        }
+        astats.exported_tracks = n;
+
+        // ---- 逐骨写通道：rotation/translation/scale 三个 sampler + channel
         let mut samplers: Vec<Value> = Vec::new();
         let mut channels: Vec<Value> = Vec::new();
-        for t in &a.tracks {
-            let lookup = if t.bone.is_empty() {
-                None
-            } else {
-                index.get(t.bone.as_str()).copied()
-            };
-            let Some(bi) = lookup else {
-                astats
-                    .unmatched_tracks
-                    .push(if t.bone.is_empty() { "(unnamed)".to_string() } else { t.bone.clone() });
-                continue;
-            };
-            astats.matched_tracks += 1;
-            let target_node = 1 + bi;
-            let frames = t.rotations.len().min(t.positions.len()).min(t.scales.len());
+        for (j, _b) in bones.iter().enumerate() {
+            let target_node = 1 + j;
+            let frames = a.frames;
 
-            // rotation：四元数分量序 (x,y,z,w)，与 glTF 相同，原样写（未从字节钉死，见模块注释）。
-            let rots = same_hemisphere(&t.rotations, frames);
+            // rotation：分解出的四元数按帧定半球（q 与 −q 同一旋转；glTF 的
+            // LINEAR 是归一化线性插值，相邻帧反号会在中点算出零四元数）。
+            let rots = same_hemisphere(&quats[j], frames);
             let rot_view = push_data(&mut bin, &mut views, 16, |o| {
                 for q in &rots {
                     for k in 0..4 {
@@ -546,11 +622,11 @@ pub fn to_glb_rigged(
             accs.push(json!({
                 "bufferView": rot_view, "componentType": 5126, "count": frames, "type": "VEC4",
             }));
-            // translation：局部位移原样写。
+            // translation：重定基后的局部平移。
             let tr_view = push_data(&mut bin, &mut views, 12, |o| {
-                for f in 0..frames {
+                for t in &trans[j] {
                     for k in 0..3 {
-                        o.extend_from_slice(&t.positions[f][k].to_le_bytes());
+                        o.extend_from_slice(&t[k].to_le_bytes());
                     }
                 }
             });
@@ -558,13 +634,12 @@ pub fn to_glb_rigged(
             accs.push(json!({
                 "bufferView": tr_view, "componentType": 5126, "count": frames, "type": "VEC3",
             }));
-            // scale：样本恒 1.0，照样写 sampler（通道输出按 glTF 规定是 VEC3）。
+            // scale：刚体复合分解出来恒 1，照样写 sampler（通道输出按 glTF 规定是 VEC3）。
             let sc_view = push_data(&mut bin, &mut views, 12, |o| {
-                for f in 0..frames {
-                    let s = t.scales[f];
-                    o.extend_from_slice(&s.to_le_bytes());
-                    o.extend_from_slice(&s.to_le_bytes());
-                    o.extend_from_slice(&s.to_le_bytes());
+                for s in &scales[j] {
+                    for k in 0..3 {
+                        o.extend_from_slice(&s[k].to_le_bytes());
+                    }
                 }
             });
             let sc_acc = accs.len();
@@ -644,6 +719,71 @@ pub fn to_glb_rigged(
     Ok(out)
 }
 
+/// 把一条动作**重定基（rebase）到 bind rest**：返回逐骨逐帧的导出局部矩阵
+/// （`out[骨下标][帧]`，行主序、引擎行向量约定）。
+///
+/// # 数学（2026-10-07 播放锚裁决，证据档案 `.scratch/ani_axis/锚点判定_20261007.md`）
+///
+/// 行向量约定 `world = local · parent_world` 下：
+///
+/// * 引擎（app 内）播放要的蒙皮：`M_j(t) = A_j⁻¹ · W_j(t)`，A = 该动画 frame0
+///   的世界矩阵（逐动作锚），W = 第 t 帧世界矩阵；
+/// * 当前导出的查看器蒙皮：`B_j⁻¹ · W_j`（IBM = B⁻¹），B = bind 世界矩阵——
+///   与上式锚不同源（frame0≠bind），直接抄 `.ani` 轨道播起来就撕；
+/// * 令导出动画产生的节点世界 `W'_j(t) = B_j · M_j(t) = B_j · A_j⁻¹ · W_j(t)`，
+///   则查看器蒙皮 `B⁻¹·W' = A⁻¹·W` **逐项相等**；t=0 时 W' = B（正好是 node
+///   rest，第 0 帧不撕）；
+/// * 导出局部轨道由世界位姿逐骨差分：`L'_j(t) = W'_j(t) · W'_parent(t)⁻¹`
+///   （根骨 parent = 场景根恒等阵，L' = W' 自身）。
+///
+/// # 实现纪律：复合数学只许有一份
+///
+/// W 与 A 直接调 [`pose::pose_frame`]（无轨道骨的回退口径也在它里面，rebase 对
+/// 全部骨统一跟随），M 用现成的 [`pose::skin_palette`]——它的第一参数本来就是
+/// 通用的「锚」，传 frame0 世界就是 `pose::reanchored_palette` 的口径。**导出侧
+/// 不手写第二套复合**；这里自己做的只有「B·M」与父链差分两步标准乘法
+/// （[`pose::mat_mul`] / [`pose::mat_inverse_affine`]）。
+///
+/// 锚/位姿调不出、父位姿不可逆 → `Err`（数据不自洽，不硬导）。
+fn rebased_local_tracks(
+    h: &SkeletonHierarchy,
+    a: &Anim,
+    bind: &[[f32; 16]],
+) -> Result<Vec<Vec<[f32; 16]>>, String> {
+    if bind.len() != h.bones.len() {
+        return Err("bind 世界矩阵数与骨数不符，重定基无从谈起".to_string());
+    }
+    let n = h.bones.len();
+    // A = 该动画自己的 frame0 世界矩阵（逐动作锚，2026-10-07 裁决）。
+    let anchor = pose::pose_frame(h, a, 0);
+    let mut out: Vec<Vec<[f32; 16]>> = (0..n).map(|_| Vec::with_capacity(a.frames)).collect();
+    for f in 0..a.frames {
+        let world = pose::pose_frame(h, a, f);
+        // M = 锚⁻¹·world：skin_palette 第一参数是通用的「锚参数」，传 frame0
+        // 世界就是逐动作 frame0 锚（`reanchored_palette` 的口径，不另写）。
+        let pal = pose::skin_palette(h, &anchor, &world)
+            .ok_or_else(|| format!("第 {f} 帧：骨架与位姿长度不符，重锚调色板调不出来"))?;
+        // W'_j = B_j · M_j：把引擎要的蒙皮搬进 bind 的历史里。
+        let wp: Vec<[f32; 16]> =
+            bind.iter().zip(pal.iter()).map(|(b, m)| mat_mul(b, m)).collect();
+        let mut inverses = Vec::with_capacity(n);
+        for (j, w) in wp.iter().enumerate() {
+            let inv = mat_inverse_affine(w).ok_or_else(|| {
+                format!("第 {f} 帧：骨 {}（#{j}）的重锚世界位姿不可逆，局部轨道差分立不住", h.bones[j].name)
+            })?;
+            inverses.push(inv);
+        }
+        for (j, w) in wp.iter().enumerate() {
+            let local = match h.bones[j].parent {
+                None => *w,
+                Some(p) => mat_mul(w, &inverses[p]),
+            };
+            out[j].push(local);
+        }
+    }
+    Ok(out)
+}
+
 /// 对账数字 → `asset.extras`。人先看到它，才不必猜导出里哪些是数据、哪些是口径。
 fn rig_stats_json(name: &str, s: &RigStats) -> Value {
     json!({
@@ -663,10 +803,15 @@ fn rig_stats_json(name: &str, s: &RigStats) -> Value {
             "weightSumOffNote": "只能按和归一的顶点（Σw > 1，或 4 个槽位占满装不下差额）",
             "overInfluencedVertices": s.over_influenced_vertices,
             "trsMismatchNodes": s.trs_mismatch_nodes,
-            "frame0EqualsBind": "未证实：bind 来自 .mesh 存储矩阵，动画来自 .ani 轨道，两者关系未证；时间轴按 帧/tick（0xC6，未证）解读",
+            // 动画口径（2026-10-07 播放锚裁决，证据 .scratch/ani_axis/锚点判定_20261007.md）：
+            // 轨道已重定基到 bind rest，查看器蒙皮 == app 内逐动作 frame0 锚蒙皮。
+            "animationRebase": "动画轨道重定基（rebase）到 bind rest：W'=B·A⁻¹·W（行向量）。外部查看器按标准 glTF 蒙皮（IBM·N）播放与 app 内 pose::reanchored_palette 蒙皮逐顶点一致；第 0 帧世界 = node rest（bind），不撕。轨道不再是 .ani 存储值的原样转抄，原始轨道仍在 .ani 文件里",
+            "frameTickNote": "时间轴按 帧/tick（0xC6，含义未证）解读",
             "animations": s.animations.iter().map(|a| json!({
                 "name": a.name, "frames": a.frames, "tracks": a.tracks,
                 "matchedTracks": a.matched_tracks, "unmatchedTracks": a.unmatched_tracks,
+                "exportedTracks": a.exported_tracks,
+                "trsMismatchFrames": a.trs_mismatch_frames,
             })).collect::<Vec<_>>(),
         },
     })
@@ -690,13 +835,15 @@ fn report_stats(name: &str, s: &RigStats) {
     );
     for a in &s.animations {
         eprintln!(
-            "[glb]   动画 {}: {} 帧 · 轨道 {} 条 · 对上 {} · 对不上 {} 个 {:?}",
+            "[glb]   动画 {}: {} 帧 · .ani 轨道 {} 条 · 对上 {} · 对不上 {} 个 {:?} · 重定基后写出 {} 关节 × 3 通道 · TRS 往返超差 {}",
             a.name,
             a.frames,
             a.tracks,
             a.matched_tracks,
             a.unmatched_tracks.len(),
             a.unmatched_tracks,
+            a.exported_tracks,
+            a.trs_mismatch_frames,
         );
     }
 }
@@ -1112,12 +1259,16 @@ mod tests {
         // child 局部 = B_child · B_root⁻¹ = (0,−2,0) − (−1,0,0) = (1,−2,0)、无旋转
         assert_eq!(doc["nodes"][2]["translation"], json!([1.0, -2.0, 0.0]));
         assert_eq!(doc["nodes"][2]["rotation"], json!([0.0, 0.0, 0.0, 1.0]));
-        // 动画：root 对上（3 通道），ghost 对不上（0 通道）→ extras 记账
+        // 动画（重定基后）：**全部关节**（root + child = 2 根）各写 3 通道 = 6，
+        // 不止 `.ani` 对上名的那条（root）；ghost 对不上骨名，照旧进 extras 记账。
+        // 本例两条轨道都是恒等局姿，重定基出的局部 == node rest 局部（frame0 恒等）。
         let anims = doc["animations"].as_array().unwrap();
         assert_eq!(anims.len(), 1);
-        assert_eq!(anims[0]["channels"].as_array().unwrap().len(), 3);
+        assert_eq!(anims[0]["channels"].as_array().unwrap().len(), 6);
         let extras = &doc["asset"]["extras"]["rig"];
         assert_eq!(extras["animations"][0]["unmatchedTracks"], json!(["ghost"]));
+        assert_eq!(extras["animations"][0]["exportedTracks"], json!(2));
+        assert_eq!(extras["animations"][0]["trsMismatchFrames"], json!(0));
         assert_eq!(extras["bonesWithoutBind"], json!([]));
         // 权重四情形（`pose::unify_weights`）：
         // 顶点 0 = root 0.25 + child 0.75，Σ=1 → Normalized；

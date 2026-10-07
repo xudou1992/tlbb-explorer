@@ -29,8 +29,13 @@ pub struct MeshBoneLines {
 
 /// 按名字或编号取出网格原文。查找顺序与 `AppData::mesh_geometry` 一致
 /// （先编号，没有再按路径、补 `.mesh`），这里要的是字节本身，好交给
-/// `parse_hierarchy`，所以不走几何解析。
-fn mesh_bytes(app: &AppData, requested: &str, hash: Option<&str>) -> Result<(String, Vec<u8>), String> {
+/// `parse_hierarchy`，所以不走几何解析。`anim_pose` 摆姿势也要同一份字节，
+/// 复用这一个定位，别让两条命令各自猜路径。
+pub(crate) fn mesh_bytes(
+    app: &AppData,
+    requested: &str,
+    hash: Option<&str>,
+) -> Result<(String, Vec<u8>), String> {
     let input = requested.trim();
     let label = if input.is_empty() { "这个网格" } else { input };
     let key = match hash.map(str::trim).filter(|s| !s.is_empty()).and_then(unhex) {

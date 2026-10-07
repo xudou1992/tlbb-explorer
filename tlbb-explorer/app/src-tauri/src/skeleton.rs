@@ -157,7 +157,8 @@ fn track_moves(rot: &[[f32; 4]], pos: &[[f32; 3]]) -> bool {
 
 /// 这一组登记了哪些 `.mesh`（完整路径，按路径排序，清单 hub 那份排第一）。
 /// 只认组内登记的成员：特效页那次教训在先，按目录挑会挑到兄弟目录的网格。
-fn mesh_paths(con: &Connection, gid: i64, hub: &str, dir: &str) -> Vec<String> {
+/// `anim_pose` 也要这份列表（mesh 参数空时取第一份），pub(crate) 复用。
+pub(crate) fn mesh_paths(con: &Connection, gid: i64, hub: &str, dir: &str) -> Vec<String> {
     let mut v: Vec<String> = match con.prepare(
         "SELECT coalesce(r.path,'') FROM amembers m JOIN resources r ON r.hash = m.hash \
          WHERE m.gid = ?1 AND r.ext = '.mesh' ORDER BY r.path",

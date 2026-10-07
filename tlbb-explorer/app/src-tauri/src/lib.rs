@@ -2,6 +2,7 @@
 //! hand back a view model, and never let the frontend ask for a path or a byte range —
 //! the shell decides what to read, and only ever read-only.
 
+mod anim_pose;
 mod browse;
 mod data;
 mod effect;
@@ -200,6 +201,7 @@ pub fn run() {
             gap::catalog_gap,
             skeleton::skeleton_view,
             skeleton::animation_view,
+            anim_pose::anim_pose,
             effect::effect_view,
             material::material_view,
             texture_warm::texture_warm_status,

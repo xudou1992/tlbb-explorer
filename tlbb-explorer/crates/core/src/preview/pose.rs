@@ -354,6 +354,49 @@ pub fn skin_palette(
         .collect()
 }
 
+/// 逐动作 frame0 重锚的蒙皮调色板（v0.5.0 播放锚，2026-10-07 裁决）。
+///
+/// 就是 [`skin_palette`] 换一个锚：
+///
+/// ```text
+/// palette_i(t) = world_i(0)⁻¹ · world_i(t)
+/// ```
+///
+/// `bind` 参数传这条动作自己的第 0 帧世界矩阵（[`pose_frame`] 取 frame 0），
+/// 而不是 `.mesh` 的存储绑定。命令层与导出侧调这一个函数，**不许在调用点
+/// 手写复合**——锚是裁决过的口径，散写迟早分叉。
+///
+/// # 为什么播放锚不是 .mesh 的 bind（证据档案 `.scratch/ani_axis/锚点判定_20261007.md`）
+///
+/// `.ani` 的第 0 帧骨架与 `.mesh` 的 bind 骨架**不同源**（frame0≠bind，中位
+/// |Δt| 1.92、角差 115.9°）。研究班对主样本（yifu_001，781 顶点）做了
+/// 四种锚 × 15 条动作的全量蒙皮比对（档案 §一表）：
+///
+/// * **裸 bind 锚不能播**：15/15 条动作撕裂（帧均位移 0.84~1.76、全局最大 ≈3.8）；
+/// * **逐动作 frame0 锚 15/15 全胜、无一例外**（idle 族残差 0.14~0.26 是真实
+///   动作幅度；2 帧的 dead 只有 0.002——它本来就不动）；
+/// * 全局单锚（拿 idle01 的 frame0 锚播全部动作）对 walk/run/idle02/dead
+///   明显变差（walk 0.672/2.512 vs 0.142/0.806）——**锚必须逐动作取**。
+///
+/// **静止渲染维持 bind 锚不动**（档案 §四第 1 条）：`bind_worlds` + `skin_palette`
+/// 的老路是静态口径，本函数只管播放。
+///
+/// # `bind` 参数是通用的「锚参数」
+///
+/// [`skin_palette`] 的第一个参数从来不是 `.mesh` 专属：传 [`bind_worlds`] 的
+/// 输出就是 bind 锚，传 frame0 世界就是 frame0 锚。`frame == 0` 时
+/// `palette ≈ 单位阵`（同一副矩阵自己逆自己，f32 舍入 ~1e-6），蒙皮把顶点
+/// 原样送回——闸门 `crates/core/tests/pose_reanchor.rs` 的 frame0 恒等式盯着。
+///
+/// 必须如实标注的未证项（档案 §四）：运动的**绝对朝向**未证（锚定保证动作
+/// 连贯，不保证与游戏画面逐帧对齐）；半程动作（walk/run 等 6 条）的相位
+/// 未证（第 0 帧渲染为基准姿态，引擎里可能是半程起步）；帧率刻度含义未证。
+pub fn reanchored_palette(h: &SkeletonHierarchy, anim: &Anim, frame: usize) -> Option<Vec<[f32; 16]>> {
+    let anchor = pose_frame(h, anim, 0);
+    let world = pose_frame(h, anim, frame);
+    skin_palette(h, &anchor, &world)
+}
+
 /// glTF 给每个顶点的骨骼影响槽位数（导出与播放共用这一个常量，不许各写一份）。
 pub const MAX_INFLUENCES: usize = 4;
 

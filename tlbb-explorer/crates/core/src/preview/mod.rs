@@ -12,6 +12,7 @@ pub mod effect;
 pub mod geometry;
 pub mod image;
 pub mod pose;
+pub mod rest;
 pub mod scene;
 pub mod summary;
 pub mod uvfit;
@@ -25,6 +26,7 @@ pub use geometry::{
     MeshGeometry, MeshLayout, Node, SkeletonHierarchy, SocketEntry, SkinInfluence,
 };
 pub use image::{png_bytes, scale_rgba, write_png};
+pub use rest::{rebuild_bind_positions, RestRebuild, RestSource, RestStats};
 pub use scene::{is_empty_grid, known_version, parse_scene, SceneError, SceneGrid, SceneInstance};
 pub use summary::{
     anim_summary, dedup_names, material_slots, mdl_summary, mesh_summary, parse_envelope,

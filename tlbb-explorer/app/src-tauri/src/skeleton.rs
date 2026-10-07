@@ -17,12 +17,18 @@
 //! 蒙皮权重**已解**——2026-09-30 实测在 `.mesh` 里，按骨组织成「影响顶点表」
 //! （见 `preview::SkinInfluence`）；此前写的「权重不在 .mesh」是按「每顶点 4 影响」
 //! 那一种编码穷举出来的，判早了。帧率刻度的含义仍未证。
+//!
+//! **无 96B 记录骨的位置（2026-10-07 起）**：从同组第一条 `.ani` 的骨架静态区
+//! **反解**（`preview::rest`；研究班证据 `.scratch/ani_axis/锚点判定_20261007.md`）。
+//! 反解值是推导值：运行时对有记录的骨逐骨自检（旋转/平移命中率 ≥2/3 才整体采用，
+//! 另有镜像、解剖逐骨对账），来源在 `missing` 注记里如实标注；自检不过或取不到
+//! `.ani` 时维持 `pos = None`，宁缺毋假。
 
 use rusqlite::{Connection, OpenFlags};
 use serde::Serialize;
 use tlbb_core::jpak::Pak;
 use tlbb_core::payload;
-use tlbb_core::preview::{bone_count, parse_ani, parse_hierarchy, parse_nodes};
+use tlbb_core::preview::{bone_count, parse_ani, parse_hierarchy, parse_nodes, rest_poses};
 
 use crate::inspector::{inspect, roots};
 
@@ -35,6 +41,11 @@ pub struct BoneRow {
     /// （`mesh_bones`）同一函数同一口径——存储末行是逆矩阵的平移，不是骨位
     /// （2026-10-06 翻案，见 `pose::bind_worlds`）。`None` = 这根骨在 `.mesh` 里
     /// 没有 96B 记录（或矩阵坏得求不出逆），不编坐标。
+    ///
+    /// **2026-10-07 起例外**：无记录骨的位置可以从同组 `.ani` 的骨架静态区
+    /// **反解**（`preview::rest`，运行时自检命中率 ≥2/3 才采用）——这部分是
+    /// **推导值**，来源写在 `missing` 注记里，与存储记录不混称。反解不出/自检
+    /// 不过的骨仍为 `None`。
     pub pos: Option<[f32; 3]>,
     /// 基向量长度（等比缩放）；1.0 附近是正常单位。
     pub scale: Option<f32>,
@@ -225,6 +236,7 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
     let mut with_skin = 0usize;
     let mut touched = 0usize;
     let mut note = String::new();
+    let mut hier_opt: Option<tlbb_core::preview::SkeletonHierarchy> = None;
     let mut parent_of: std::collections::HashMap<String, Option<String>> = Default::default();
     // 挂接的 (骨名, 父骨名) 按文件序留着：HashMap 迭代序不定，补行的顺序要稳定。
     let mut chain_rows: Vec<(String, Option<String>)> = Vec::new();
@@ -239,6 +251,7 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
                     parent_of.insert(b.name.clone(), pname.clone());
                     chain_rows.push((b.name.clone(), pname));
                 }
+                hier_opt = Some(hier);
             }
             let got = parse_nodes(&raw);
             nodes = got
@@ -275,11 +288,19 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
 
     let mut animations = Vec::new();
     let mut roster: Vec<String> = Vec::new();
+    // 同组第一条能解出静态区的 `.ani`（静态区跨动作共享，任取一条）：无 96B 记录
+    // 骨的位置重建就吃它（`preview::rest`，2026-10-07 解穿）。
+    let mut rest_input: Option<(tlbb_core::preview::Anim, Vec<tlbb_core::preview::Rest>)> = None;
     for p in anim_paths(&con, &mesh_path) {
         let name = p.rsplit('/').next().unwrap_or("").to_string();
         let Some((h, pak)) = locate(&con, &p) else { continue };
         let Some(raw) = decode(&mut paks, &root, &card_of(&pak), h) else { continue };
         let Some(a) = parse_ani(&raw) else { continue };
+        if rest_input.is_none() {
+            if let Some(r) = rest_poses(&raw) {
+                rest_input = Some((a.clone(), r));
+            }
+        }
         if roster.is_empty() {
             // 第一条动作的轨道名单就是这具骨架的骨序：声明 46 根、`.mesh` 只给 32 条矩阵，
             // 差的那些骨**名字在这里有**，不并进来就等于界面上看不见。
@@ -354,6 +375,55 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
             });
         }
     }
+    // ---- 静态区反解（2026-10-07 解穿，`preview::rest`）----
+    //
+    // 无 96B 记录的骨（主样本 16 根）过去 pos 全是 None、骨线是断点。现在从同组
+    // 第一条 `.ani` 的骨架静态区反解补上。三条纪律落在这里：
+    // 1. 反解值是**推导值不是存储值**：只有 `pos` 原本为 None 的行会被填，
+    //    有记录的骨一律维持存储口径（存储 = 权威）；
+    // 2. 自检不过就整体不采用（rebuild 回 None 或 0 填充），文案如实说明；
+    // 3. 反解的语义写进 missing 注记，不和存储记录混称。
+    let mut rest_filled = 0usize;
+    let mut rest_unresolved = 0usize;
+    let mut rest_refused = false;
+    let stored_pos = nodes.iter().filter(|n| n.pos.is_some()).count();
+    if let (Some(hier), Some((anim, rests))) = (hier_opt.as_ref(), rest_input.as_ref()) {
+        match tlbb_core::preview::rest::rebuild_bind_positions(hier, anim, rests) {
+            Some(rb) => {
+                let index: std::collections::HashMap<&str, usize> = hier
+                    .bones
+                    .iter()
+                    .enumerate()
+                    .map(|(i, b)| (b.name.as_str(), i))
+                    .collect();
+                for row in &mut nodes {
+                    if row.pos.is_some() {
+                        continue;
+                    }
+                    if let Some(&j) = index.get(row.name.as_str()) {
+                        if let Some(p) = rb.positions[j] {
+                            row.pos = Some(p);
+                            rest_filled += 1;
+                        }
+                    }
+                }
+                rest_unresolved = rb.stats.unresolved;
+                eprintln!(
+                    "骨架页静态区反解：干净 {}/旋转命中 {}/平移命中 {} · 反解 {} 顺推 {} 未解 {} 镜像 {}/{}",
+                    rb.stats.clean_bones,
+                    rb.stats.rotation_hits,
+                    rb.stats.translation_hits,
+                    rb.stats.solved,
+                    rb.stats.fallback,
+                    rb.stats.unresolved,
+                    rb.stats.mirror_matched,
+                    rb.stats.mirror_checked
+                );
+            }
+            None => rest_refused = true,
+        }
+    }
+
     let mut missing = Vec::new();
     if chain {
         missing.push(
@@ -378,7 +448,20 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
         missing.push("帧率刻度（样本恒 40.0）到底是每秒 tick 还是别的，未证——所以不换算成秒".to_string());
     }
     let 带矩阵 = nodes.iter().filter(|n| n.pos.is_some()).count();
-    if declared > 带矩阵 {
+    if rest_filled > 0 {
+        // 反解发生了：文案跟着数据走——哪些是存储、哪些是推导、哪些仍缺，一句说清。
+        missing.push(format!(
+            "{declared} 根骨里只有 {stored_pos} 根在 `.mesh` 里有绑定矩阵：{rest_filled} 根的位置\
+             是从 `.ani` 骨架静态区反解的**推导值**（对有记录的骨逐骨自检，命中率 ≥2/3 才采用；\
+             静态区只能重建显示用的绑定姿态，不是播放锚）。"
+        ));
+        if rest_unresolved > 0 {
+            missing.push(format!(
+                "还有 {rest_unresolved} 根无记录骨反解不出来（轨道平移本身在动的骨不作 bind 偏移用、\
+                 或镜像/解剖对账不过），保持没有坐标。"
+            ));
+        }
+    } else if declared > 带矩阵 {
         missing.push(if chain {
             format!(
                 "{declared} 根骨里只有 {带矩阵} 根在 `.mesh` 里有绑定矩阵：其余 {} 根只有名字，位置不在节点表里。",
@@ -392,6 +475,13 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
                 declared - 带矩阵
             )
         });
+        if rest_refused {
+            missing.push(
+                "同组动作的骨架静态区也试过反解这些骨的位置，但自检没过（静态区语义与这副骨架的\
+                 存储记录对不上），宁缺毋假，保持没有坐标。"
+                    .to_string(),
+            );
+        }
     }
 
     Ok(SkeletonReply {
@@ -586,12 +676,20 @@ mod tests {
             rep.declared
         );
         assert_eq!(rep.nodes[0].name, "bip01", "第一行该是 .ani 骨序的第一根");
+        // 2026-10-07 静态区反解：32 根有 96B 记录 + 15 根从静态区反解
+        //（16 根无记录骨里 footsteps 的轨道平移会动，不作 bind 偏移，保持 None）
         let 有矩阵 = rep.nodes.iter().filter(|n| n.pos.is_some()).count();
-        assert_eq!(有矩阵, 32, "带矩阵的骨数变了要说清为什么");
+        assert_eq!(有矩阵, 47, "带坐标的骨数变了要说清为什么（32 存储 + 15 反解）");
         assert_eq!(
             rep.nodes.iter().filter(|n| n.source == "mesh").count(),
             2,
             "origin/top 这两根只有 .mesh 记录、没有动画轨道，该标成 mesh"
+        );
+        // 反解是推导值：注记必须如实标注来源与自检，不和存储记录混称
+        assert!(
+            rep.missing.iter().any(|m| m.contains("静态区") && m.contains("推导值")),
+            "反解补位要说清是推导值：{:?}",
+            rep.missing
         );
         assert!(rep
             .nodes
@@ -665,10 +763,15 @@ mod tests {
         );
         // chain=true 时树要真的带上：根骨 root=true 且与挂接对得上；根 `000` 没有
         // .ani 轨道、也没有 96B 记录，它该是从挂接补进来的行（source="chain"）。
+        // 位置则来自静态区反解（经 bip01 反解，bip01 轨道常量为 0 → 根在模型原点）。
         let yroot = yifu.nodes.iter().find(|n| n.root).expect("有挂接就该有一根根骨");
         assert_eq!(yroot.name, "000", "这具骨架的根是客户端原文 000");
         assert_eq!(yroot.source, "chain", "根不在 .ani 轨道名单里，该从挂接补进来");
-        assert!(yroot.pos.is_none(), "根没有 96B 记录，不许编坐标");
+        let root_pos = yroot.pos.expect("根的位置该从静态区反解出来");
+        assert!(
+            root_pos.iter().all(|v| v.abs() < 1e-3),
+            "根应反解在模型原点附近，实际 {root_pos:?}"
+        );
         let bip01 = yifu.nodes.iter().find(|n| n.name == "bip01").expect("bip01 该在骨表里");
         assert_eq!(bip01.parent.as_deref(), Some("000"), "bip01 挂在根下");
         // 表格 pos 口径（2026-10-06 翻案 edd0b08）：存储 96B 是世界绑定矩阵的逆，
@@ -727,12 +830,40 @@ mod tests {
             .expect("toe0 该在骨表里");
         let ty = toe.pos.expect("toe0 有 96B 记录")[1];
         assert!((ty - 0.140).abs() < 0.02, "脚趾该站在解剖高度 y≈0.140，实际 {ty}");
-        let spine1 = yifu
+        // 2026-10-07 静态区反解：spine1 过去 pos=None（16 根无记录骨之一），现在
+        // 从静态区反解补上——头颈链的 y 要自下而上单调（站立解剖高度），
+        // 与 core 闸门 rest_rebuild 同源（spine1 1.475 / neck 1.795 / head 2.092）。
+        let y_of = |name: &str| {
+            yifu
+                .nodes
+                .iter()
+                .find(|n| n.name == name)
+                .unwrap_or_else(|| panic!("{name} 该在骨表里"))
+                .pos
+                .unwrap_or_else(|| panic!("{name} 该有反解位置"))
+                [1]
+        };
+        let (pelvis_y, spine1_y, neck_y, head_y) = (
+            y_of("bip01_pelvis"),
+            y_of("bip01_spine1"),
+            y_of("bip01_neck"),
+            y_of("bip01_head"),
+        );
+        assert!(
+            pelvis_y < spine1_y && spine1_y < neck_y && neck_y < head_y,
+            "头颈链应自下而上单调：{pelvis_y} < {spine1_y} < {neck_y} < {head_y}"
+        );
+        assert!(
+            (1.95..=2.20).contains(&head_y),
+            "head 该反解在颅底高度（网格顶 2.240），实际 {head_y}"
+        );
+        // footsteps 的轨道平移本身会动（root motion），反解不出，保持 None：宁缺毋假
+        let footsteps = yifu
             .nodes
             .iter()
-            .find(|n| n.name == "bip01_spine1")
-            .expect("spine1 该在骨表里");
-        assert!(spine1.pos.is_none(), "没有 96B 记录的骨保持 None，不编坐标");
+            .find(|n| n.name == "bip01_footsteps")
+            .expect("footsteps 该在骨表里");
+        assert!(footsteps.pos.is_none(), "轨道平移非常量的骨不许硬给坐标");
         // 已证的东西要报得出、且自洽。这一页只列组里第一份网格，份与份带不带
         // 影响顶点表不一样（实测：yifu_001 有 26 根、shoutao_001 一根都没有），
         // 所以这里只核自洽性；「26 根 / 权重逐顶点加起来 ≈1」那条量级判据在 core 闸门里。

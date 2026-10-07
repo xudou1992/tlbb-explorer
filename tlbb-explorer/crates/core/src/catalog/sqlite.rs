@@ -679,6 +679,24 @@ impl Catalog {
         found.map(|h| hash_of(&h)).transpose()
     }
 
+    /// 骨架静态区反解（`preview::rest`）要用的同组动作：`<网格目录>/ani/` 下的
+    /// 第一条 `.ani`（按名排序取一；静态区跨动作共享，任取一条即可）。
+    /// 没有动作文件的组返回 `None`——调用方维持「无动画」的现状，不算错。
+    pub fn first_ani_in(&self, dir: &str) -> Result<Option<(u64, String)>> {
+        if dir.trim().is_empty() {
+            return Ok(None);
+        }
+        match self.con.query_row(
+            "SELECT hash, name FROM resources WHERE dir = ?1 AND ext = '.ani' ORDER BY name LIMIT 1",
+            [&dir],
+            |r| Ok((r.get::<_, String>(0)?, r.get::<_, String>(1)?)),
+        ) {
+            Ok((h, name)) => Ok(Some((hash_of(&h).unwrap_or(0), name))),
+            Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
+            Err(e) => Err(Error::Sql(e.to_string())),
+        }
+    }
+
     pub fn by_type(&self, rtype: &str, limit: usize) -> Result<Vec<Asset>> {        let sql = format!("SELECT {ASSET_COLS} FROM resources WHERE type = ?1 ORDER BY hash LIMIT ?2");
         let lim = limit.min(i64::MAX as usize) as i64;
         self.rows(&sql, &[&rtype, &lim], Asset::from_row)

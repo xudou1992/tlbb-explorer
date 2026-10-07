@@ -352,6 +352,9 @@ em.na { color: var(--muted); font-style: normal; }
 .mesh-hint { position: absolute; right: 10px; bottom: 8px; color: var(--faint); font-size: 11px; pointer-events: none; }
 .mesh-tech { margin-top: 9px; }
 .mesh-tech summary { color: var(--faint); font-size: 12px; cursor: pointer; }
+/* 动作页画布下的播放行：只是把按钮和「参考速度」排成一排，不出新样式 */
+.anim-play { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.anim-play .dim { white-space: nowrap; }
 
 .d-sec.folded .mesh-head,
 .d-sec.folded .mesh-hint { display: none; }

@@ -4,13 +4,15 @@
 // 那边有 node --test 盯着（app/tests/detailState.test.js）。
 // 这里刻意不做任何业务判断：判断留在能测的地方。
 
-import { el } from "./ui.js";
+import { el, errText, num, chips } from "./ui.js";
 import * as api from "./api.js";
 import { state } from "./state.js";
 import { makeSeq } from "./lib/seq.js";
 import { empty, loading, failed, notReady, loaded, isNotReadyMsg } from "./lib/detailState.js";
 import { titleHtml } from "./lib/wording.js";
 import { showMeshes, hideMeshes, applyTexture } from "./mesh.js";
+import { MeshViewer } from "./mesh-viewer.js";
+import { makePoseGate, poseNote, nextFrame, PLAY_STEP_MS, clampFrame } from "./lib/animPose.js";
 import { texBlock } from "./lib/textureState.js";
 import {
   initTabs,
@@ -101,6 +103,7 @@ function clearTabPanes() {
   clearAnimation();
   animReply = null;
   animFrame = 0;
+  poseReset();
   clearEffect();
   fxReply = null;
   clearMaterial();
@@ -123,6 +126,7 @@ export async function showDetail(gid, retried = 0) {
     animFrame = 0;
     clearSkeleton();
     clearAnimation();
+    poseReset(); // 预览与在途状态跟着资产走：旧怪的姿势一格都不许留给新怪
     clearEffect();
     clearMaterial();
   }
@@ -210,6 +214,8 @@ async function loadAnimation(gid, file) {
     animReply = v;
     animFrame = 0;
     repaintAnim();
+    poseAnimChanged(); // 换了关键帧：旧动作摆出来的回包与攒帧全部作废
+    poseEnsure();      // 预览跟着新动作就位；画布还没建的这一刻补建
   } catch (e) {
     if (my !== animSeq || state.selected !== gid) return;
     animReply = null;
@@ -225,15 +231,281 @@ function initAnim() {
   el("animFrame").addEventListener("input", (ev) => {
     animFrame = Number(ev && ev.target ? ev.target.value : 0);
     repaintAnim();
+    poseCursor(); // 游标动 → 摆这一帧；连动时 gate 只保留最新，不排队积压
   });
   el("animOnlyChanged").addEventListener("change", repaintAnim);
+  el("animPlay").addEventListener("click", () => setPlaying(!playing));
   // 点开才取数：一条动作约 0.6 秒，不该压在每次选资产的路径上
   onTabOpen((name) => {
     if (!state.selected) return;
-    if (name === "animation" && !animReply) loadAnimation(state.selected, "");
+    if (name === "animation") {
+      if (!animReply) loadAnimation(state.selected, "");
+      poseEnsure(); // animReply 已在时直接就位；viewer 只在此刻建——tab 隐藏时画布量到 0 宽
+    } else {
+      setPlaying(false); // 切走 tab 自动暂停：看不见的预览没理由继续占着后端
+    }
     if (name === "effect" && !fxReply) loadEffect(state.selected, "");
     if (name === "material" && !mtlReply) loadMaterial(state.selected, "");
   });
+}
+
+// ---- 动作页 3D 预览：anim_pose 逐帧回蒙皮顶点，MeshViewer.setPose 摆姿势 ----
+//
+// 判断都在 lib/animPose.js（在途闸门 / 注记去重 / 播放步进）与 mesh-viewer 的
+// setPose 校验里，这里只管取数、接线与降级：任何一步失败都写成画布下的
+// 一行字，不抛、不挡关键帧表格与游标——那是这一页早就有的本事。
+const poseGate = makePoseGate();
+const poseSeq = makeSeq();
+let poseViewer = null;
+/// 该组网格路径清单（skeleton_view 回包的 meshes），按组缓存；切资产即失效。
+let poseMeshGid = 0;
+let poseMeshes = [];
+let poseListBusy = false;
+/// 当前摆着的网格路径（客户端原文）。后端自动挑的那次由回包的 mesh 字段告知。
+let poseMeshPath = "";
+let poseMeshLoaded = false;
+let poseNoteShown = "";
+/// 播放：定时步进游标。PLAY_STEP_MS 只是参考速度——帧率刻度含义未证，
+/// 不许当成「游戏就是 25fps」写进任何文案。
+let playTimer = 0;
+let playing = false;
+
+function setPlaying(on) {
+  if (on === playing) return;
+  playing = on;
+  const b = el("animPlay");
+  b.textContent = on ? "暂停" : "播放";
+  b.setAttribute("aria-label", on ? "暂停" : "播放");
+  if (on) {
+    if (!animReply) {
+      setPlaying(false); // 没有关键帧可播：按钮如实退回「播放」
+      return;
+    }
+    playTimer = setInterval(() => playStep(), PLAY_STEP_MS);
+    playStep(); // 点播放立刻走一步，不等第一个间隔
+  } else if (playTimer) {
+    clearInterval(playTimer);
+    playTimer = 0;
+  }
+}
+
+function playStep() {
+  if (!animReply || !state.selected) {
+    setPlaying(false);
+    return;
+  }
+  animFrame = nextFrame(animFrame, animReply.frames);
+  el("animFrame").value = String(animFrame); // 游标与画面同步：拖回去就从那里接着播
+  repaintAnim();
+  poseCursor();
+}
+
+function paintPoseMeshChips() {
+  if (poseMeshes.length < 2) {
+    el("animMeshPick").innerHTML = "";
+    return;
+  }
+  chips(
+    el("animMeshPick"),
+    poseMeshes.map((m) => ({ value: m, label: m.replace(/\.mesh$/i, "") })),
+    poseMeshPath,
+    (m) => loadPoseMesh(state.selected, m),
+  );
+}
+
+/// 预览总入口：viewer 建一次、网格清单按组取一次、网格就位后摆当前帧。
+/// 谁触发都行（点开 tab / 动作回包落地 / 换动作筹码），每步都有
+/// 「已就位就跳过」的闸，重复调用不会重复取数。
+function poseEnsure() {
+  if (!animReply || !state.selected) return;
+  if (!poseViewer) {
+    try {
+      poseViewer = new MeshViewer(el("animCanvas"));
+    } catch (e) {
+      poseViewer = null;
+      poseBreak(`3D 预览起不来：${errText(e)}`);
+      return;
+    }
+  }
+  el("animPoseBox").hidden = false;
+  poseViewer.draw(); // 顺带把视口量对：tab 重新可见时画布尺寸可能变过
+  ensurePoseMeshes(state.selected);
+}
+
+function ensurePoseMeshes(gid) {
+  if (poseMeshGid === gid) {
+    pickPoseMesh(gid);
+    return;
+  }
+  if (poseListBusy) return; // 清单已在途：等它落地自己接下面的流程
+  poseListBusy = true;
+  api
+    .skeletonView(gid)
+    .then((v) => {
+      poseListBusy = false;
+      if (state.selected !== gid) return; // 迟到的清单不进缓存
+      poseMeshes = (v && v.meshes) || [];
+      poseMeshGid = gid;
+      paintPoseMeshChips();
+      pickPoseMesh(gid);
+    })
+    .catch((e) => {
+      poseListBusy = false;
+      if (state.selected !== gid) return;
+      poseBreak(`这套动作暂时摆不出来：${errText(e)}`);
+    });
+}
+
+function pickPoseMesh(gid) {
+  if (!animReply || state.selected !== gid) return;
+  if (poseMeshLoaded) {
+    poseCursor(); // 几何已在缓冲里（换动作回到这里就是这个分支）：只补当前帧
+    return;
+  }
+  const want = poseMeshPath || (poseMeshes.length ? poseMeshes[0] : "");
+  if (want) loadPoseMesh(gid, want);
+  else poseAutoPick(gid); // 清单是空的：让后端自己挑，回包带实际用的路径
+}
+
+/// 后端自动挑网格的那一路：mesh 传空，回包的 mesh 字段是客户端原文，
+/// 必须显示在 meta 行——不能让人猜画的是哪一份。
+async function poseAutoPick(gid) {
+  const my = poseSeq.next();
+  try {
+    const rep = await api.animPose(gid, animReply.file, null, clampFrame(animFrame, animReply.frames));
+    if (poseSeq.isStale(my) || state.selected !== gid || !animReply) return;
+    if (!rep || !rep.mesh) {
+      poseBreak("这一组没找到能摆的网格。");
+      return;
+    }
+    poseMeshPath = rep.mesh;
+    paintPoseMeshChips();
+    await loadPoseMesh(gid, rep.mesh);
+  } catch (e) {
+    if (poseSeq.isStale(my) || state.selected !== gid) return;
+    poseBreak(`预览没摆出来：${errText(e)}`);
+  }
+}
+
+async function loadPoseMesh(gid, path) {
+  const my = poseSeq.next(); // 换网格：旧网格在途的 pose 回包连几何都对不上了，一并作废
+  poseMeshLoaded = false;
+  try {
+    const data = await api.meshData(path, null); // hash 传 null：后端按路径找
+    if (poseSeq.isStale(my) || state.selected !== gid) return;
+    try {
+      poseViewer.load(data, null); // 骨线是网格页绑定姿态的事，预览不摆它
+    } catch (e) {
+      poseBreak(`预览没摆出来：${errText(e)}`);
+      return;
+    }
+    poseMeshPath = path;
+    poseMeshLoaded = true;
+    el("animStage").hidden = false;
+    el("animPoseMeta").textContent = `${path} · ${num(data.vertexCount)} 个顶点`;
+    poseCursor();
+  } catch (e) {
+    if (poseSeq.isStale(my) || state.selected !== gid) return;
+    poseBreak(`预览没摆出来：${errText(e)}`); // 空画布会让人以为渲染坏了，收掉、给一行话
+  }
+}
+
+/// 当前帧要摆出来。游标 input、播放步进、网格/动作就位都汇到这一处。
+function poseCursor() {
+  if (!poseMeshLoaded || !animReply || !state.selected) return;
+  poseRequest(clampFrame(animFrame, animReply.frames));
+}
+
+async function poseRequest(frame) {
+  const issued = poseGate.request(frame);
+  if (issued == null) return; // 已有在途：gate 记下最新想看的帧，回包落地自动补
+  const gid = state.selected;
+  const file = animReply.file;
+  const mesh = poseMeshPath;
+  const my = poseSeq.next();
+  try {
+    const rep = await api.animPose(gid, file, mesh, issued);
+    // 陈旧回包一律丢：资产 / 动作 / 网格任何一个换了，这包顶点都画不得
+    const fresh =
+      !poseSeq.isStale(my) && state.selected === gid && animReply && animReply.file === file && poseMeshPath === mesh;
+    if (fresh) applyPoseReply(rep);
+  } catch (e) {
+    const fresh =
+      !poseSeq.isStale(my) && state.selected === gid && animReply && animReply.file === file && poseMeshPath === mesh;
+    if (fresh) poseFail(e);
+  } finally {
+    // 这一位放出来了。在途期间游标若又动过，把攒下的**最新**一帧补上——
+    // 补发按「现在」的资产/动作/网格取参，不看这个请求出生时的世界。
+    const follow = poseGate.settled();
+    if (follow != null && animReply && poseMeshLoaded && state.selected) poseRequest(follow);
+  }
+}
+
+function applyPoseReply(rep) {
+  const err = el("animPoseErr");
+  err.hidden = true;
+  err.textContent = "";
+  if (!rep || !Array.isArray(rep.positions)) {
+    poseFailLine("这一帧没摆出来：回包里没有顶点。");
+    return;
+  }
+  if (!poseViewer.setPose(rep.positions)) {
+    // setPose 校验过顶点数与坐标才动缓冲：被拒了就把话带给用户，不假装摆上了
+    poseFailLine("这一帧没摆出来：顶点对不上这份网格。");
+    return;
+  }
+  const note = poseNote(rep.notes, poseNoteShown);
+  if (note != null) {
+    poseNoteShown = note;
+    el("animPoseNote").textContent = note;
+    el("animPoseNote").hidden = !note;
+  }
+}
+
+function poseFailLine(msg) {
+  const err = el("animPoseErr");
+  err.hidden = false;
+  err.textContent = msg;
+}
+
+/// 一帧的失败：画布保着上一帧的画面（有就比空白强），错误写在画布下。
+function poseFail(e) {
+  poseFailLine(`这一帧没摆出来：${errText(e)}`);
+}
+
+/// 预览整体废了（viewer 起不来 / 清单或几何取不到）：画布收掉、一行说明顶上，
+/// 表格与游标照常——它们不依赖画布。
+function poseBreak(msg) {
+  el("animStage").hidden = true;
+  poseFailLine(msg);
+}
+
+/// 换动作：pose 的回包与攒帧是按那条动作摆的，全部作废（网格几何可以留用）。
+function poseAnimChanged() {
+  poseSeq.next();
+  poseGate.reset();
+}
+
+/// 切资产 / 清页：预览整块收摊。viewer 留着（WebGL 上下文建一次是一份家底），
+/// 但画布藏起来——上一只怪的最后一帧还在缓冲里，亮着就是拿旧图冒充新资产。
+function poseReset() {
+  setPlaying(false);
+  poseSeq.next();
+  poseGate.reset();
+  poseMeshGid = 0;
+  poseMeshes = [];
+  poseListBusy = false;
+  poseMeshPath = "";
+  poseMeshLoaded = false;
+  poseNoteShown = "";
+  el("animPoseBox").hidden = true;
+  el("animMeshPick").innerHTML = "";
+  el("animPoseMeta").textContent = "";
+  el("animStage").hidden = false;
+  el("animPoseErr").hidden = true;
+  el("animPoseErr").textContent = "";
+  el("animPoseNote").hidden = true;
+  el("animPoseNote").textContent = "";
 }
 
 /// 特效页：.pu 的材质链与各类类名。没有 .pu 的组后端会给原因，原样转述。

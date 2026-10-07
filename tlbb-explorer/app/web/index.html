@@ -243,12 +243,31 @@
             </div>
 
             <!-- 面板：动作。整条动作的关键帧一次取回，拖游标本地切帧。
-                 没有蒙皮权重，所以这里看的是数字，不是模型在动。 -->
+                 画布用 anim_pose 回来的蒙皮顶点把网格按这条动作摆出来；
+                 摆不出来时表格与游标照常，原因写在画布下。 -->
             <div class="tabpane" data-pane="animation" hidden>
               <section class="d-sec">
                 <h3>动作</h3>
                 <p id="animSum" class="lead"></p>
                 <div class="chips" id="animPick"></div>
+                <div id="animPoseBox" hidden>
+                  <div class="mesh-head">
+                    <p id="animPoseMeta" class="dim"></p>
+                    <div class="chips" id="animMeshPick"></div>
+                  </div>
+                  <div class="mesh-stage" id="animStage">
+                    <canvas id="animCanvas" aria-label="动作预览"></canvas>
+                    <p class="mesh-hint">按住拖动旋转 · 滚轮远近 · 双击回到正面</p>
+                  </div>
+                  <div class="mesh-head">
+                    <span class="anim-play">
+                      <button type="button" id="animPlay" class="mini" aria-label="播放">播放</button>
+                      <span class="dim" id="animPlayHint" title="动画帧率刻度的含义还没证实，这是预览用的参考节奏，不是游戏帧率">参考速度</span>
+                    </span>
+                    <p class="dim" id="animPoseErr" hidden></p>
+                  </div>
+                  <p class="dim" id="animPoseNote" hidden></p>
+                </div>
                 <label class="field">
                   <span>第几帧</span>
                   <input id="animFrame" type="range" min="0" max="0" step="1" value="0" aria-label="帧游标" />

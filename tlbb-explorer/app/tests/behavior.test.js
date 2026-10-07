@@ -76,6 +76,12 @@ class Element {
   closest() {
     return new Element();
   }
+  setAttribute(n, v) {
+    (this.attrs ??= {})[n] = String(v);
+  }
+  getAttribute(n) {
+    return (this.attrs || {})[n] ?? null;
+  }
 }
 
 /// 加载 entry 及其相对依赖：mock 里的路径换成假导出，expose 往真文件尾部追加 export。
@@ -106,6 +112,9 @@ async function sandbox(entry, mock = {}, expose = {}) {
     localStorage: { getItem: () => null, setItem() {} },
     setTimeout: () => 0,
     clearTimeout() {},
+    // 播放预览用得到：替身不给真定时器，测试里直接手动步进（见动作页的用例）
+    setInterval: () => 0,
+    clearInterval() {},
     IntersectionObserver: class {
       observe() {}
       disconnect() {}
@@ -454,7 +463,7 @@ test("动作页：点开才取数，拖游标只重画不再打后端", async ()
   // 桩里的 setTimeout 不会真的排程，只能用微任务把 async 链抽干
   for (let i = 0; i < 8; i++) await Promise.resolve();
   assert.equal(calls, 1, "点开动作页才取数");
-  assert.ok(detail.el("animSum").textContent.includes("还不能跟着动"), `导语要说清现在看的是数据：${detail.el("animSum").textContent}`);
+  assert.ok(detail.el("animSum").textContent.includes("画布把顶点按这条动作摆出来"), `导语要说清画布摆的是哪路顶点：${detail.el("animSum").textContent}`);
   assert.ok(detail.el("animTable").innerHTML.includes("第 1 / 3 帧"), `帧数注记该从第 1 帧起：${detail.el("animTable").innerHTML.slice(0, 160)}`);
   assert.ok(detail.el("animTable").innerHTML.includes("没有骨在动"), "第 1 帧相对自己没变化");
   const slider = detail.el("animFrame");
@@ -764,4 +773,231 @@ test("骨架页：读出挂接才加「挂在谁」列，补进行与有矩阵�
   const html2 = panels.el("skelTable").innerHTML;
   assert.ok(!html2.includes("挂在谁"), `没挂接就不该有这一列：${html2.slice(0, 200)}`);
   assert.ok(!panels.el("skelSum").textContent.includes("谁挨着谁"), "导语同理，没读出挂接就不补那句");
+});
+
+// ---------------------------------------------------------------------------
+// 动作页 3D 预览（anim_pose）：接线、在途闸门、播放、降级、切资产清状态。
+// viewer 用替身——WebGL 在 node 里开不了，这里钉的是 detail.js 的时序，
+// setPose 自己的校验（顶点数/有限数）由 mesh-viewer 的实现与网格页测试盯着。
+// ---------------------------------------------------------------------------
+
+const ANIM_REP = {
+  file: "a_walk.ani",
+  files: ["a_walk.ani", "a_run.ani"],
+  bones: 2,
+  frames: 3,
+  tick: 40,
+  moving: 1,
+  tracks: [
+    { bone: "bip01",
+      rotations: [[1, 0, 0, 0], [1, 0, 0, 0], [0.5, 0.5, 0, 0.707]],
+      positions: [[0, 0, 0], [0, 0, 0], [0, 1, 0]], scales: [1, 1, 1] },
+    { bone: "still",
+      rotations: [[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0]],
+      positions: [[0, 0, 0], [0, 0, 0], [0, 0, 0]], scales: [1, 1, 1] },
+  ],
+  missing: [],
+};
+
+/// 一份合格的 anim_pose 回包（契约见命令包装处的注释：camelCase、positions 同序）。
+const poseReply = (mesh, frame, extra = {}) => ({
+  mesh,
+  anim: "a_walk.ani",
+  frame,
+  frames: 3,
+  vertexCount: 4,
+  positions: [[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
+  notes: ["锚定口径：顶点按这条动作的第 1 帧对齐。"],
+  ...extra,
+});
+
+/// 把第 frame 帧那张在途请求从队列里取走（resolve 一次就作废，别重复拿）。
+function take(deferred, frame) {
+  const i = deferred.findIndex((d) => d.frame === frame);
+  assert.ok(i >= 0, `没有第 ${frame} 帧的在途 pose 请求（现有：${deferred.map((d) => d.frame)}）`);
+  return deferred.splice(i, 1)[0];
+}
+
+async function poseSandbox(expose = "") {
+  const poseCalls = [];
+  const meshDataCalls = [];
+  const deferred = [];
+  const viewers = [];
+  class FakeViewer {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.loads = [];
+      this.poses = [];
+      viewers.push(this);
+    }
+    load(data, bones) {
+      this.loads.push({ data, bones });
+    }
+    setPose(p) {
+      this.poses.push(p);
+      return true;
+    }
+    draw() {}
+    stop() {}
+  }
+  const detail = await sandbox("detail.js", {
+    "mesh.js": meshMock,
+    "mesh-viewer.js": { MeshViewer: FakeViewer },
+    "api.js": {
+      cardDetail: async () => fixtures.DETAIL_A,
+      assetInspect: async () => fixtures.INSPECT_A,
+      skeletonView: async (gid) =>
+        gid === 245
+          ? { mesh: "a_yifu.mesh", meshes: ["a_yifu.mesh", "a_shoutao.mesh"], declared: 0, nodes: [], animations: [], missing: [], note: "" }
+          : { mesh: "b_only.mesh", meshes: ["b_only.mesh"], declared: 0, nodes: [], animations: [], missing: [], note: "" },
+      meshData: async (name, hash) => {
+        meshDataCalls.push({ name, hash });
+        return { path: name, vertexCount: 4, faceCount: 2, buffer: "", hasNormals: false, hasUvs: false };
+      },
+      animationView: async () => ANIM_REP,
+      animPose: async (gid, anim, mesh, frame) => {
+        poseCalls.push({ gid, anim, mesh, frame });
+        return new Promise((resolve) => deferred.push({ gid, mesh, frame, resolve }));
+      },
+    },
+  }, expose ? { "detail.js": expose } : {});
+  const drain = async (n = 14) => {
+    for (let i = 0; i < n; i++) await Promise.resolve();
+  };
+  return { detail, poseCalls, meshDataCalls, deferred, viewers, drain };
+}
+
+test("动作页 3D 预览：游标→pose 参数正确、在途只留最新、切资产后陈旧回包丢弃", async () => {
+  const { detail, poseCalls, deferred, viewers, drain } = await poseSandbox();
+  await detail.module.showDetail(245);
+  await drain();
+  assert.equal(poseCalls.length, 0, "没点开动作页不该问 pose");
+  detail.get("panels.js").showTabPane("animation");
+  await drain();
+  assert.deepEqual(
+    poseCalls,
+    [{ gid: 245, anim: "a_walk.ani", mesh: "a_yifu.mesh", frame: 0 }],
+    "首帧 pose 的参数：组号 / 动作文件 / 默认第一份网格 / 第 0 帧",
+  );
+  const viewer = viewers[0];
+  assert.ok(viewer, "预览 viewer 该建出来");
+  assert.equal(viewer.loads.length, 1, "几何取一次");
+  assert.equal(viewer.loads[0].bones, null, "动作预览不摆骨线——那是网格页绑定姿态的事");
+  assert.equal(detail.el("animPoseBox").hidden, false, "画布块该露出来");
+  take(deferred, 0).resolve(poseReply("a_yifu.mesh", 0));
+  await drain();
+  assert.equal(viewer.poses.length, 1, "第 0 帧的顶点要摆进画布");
+  assert.ok(detail.el("animPoseNote").textContent.includes("锚定口径"), `注记行取回包 notes 的第一条：${detail.el("animPoseNote").textContent}`);
+  // 游标连动：在途时只保留最新一帧，不排队积压
+  const slider = detail.el("animFrame");
+  const move = (v) => {
+    slider.value = v;
+    for (const f of slider.events.input || []) f({ target: slider });
+  };
+  move("2");
+  move("1");
+  await drain();
+  assert.equal(poseCalls.length, 2, "在途期间游标再动不该叠出第二个请求");
+  take(deferred, 2).resolve(poseReply("a_yifu.mesh", 2));
+  await drain();
+  assert.deepEqual(poseCalls.map((c) => c.frame), [0, 2, 1], "回包落地后补发的必须是攒下的最新帧");
+  take(deferred, 1).resolve(poseReply("a_yifu.mesh", 1));
+  await drain();
+  assert.equal(viewer.poses.length, 3);
+  // 资产切走：在途回包必须被丢，预览收摊，不许把旧怪的姿势或错误留给新怪
+  move("2");
+  await detail.module.showDetail(999);
+  assert.equal(detail.el("animPoseBox").hidden, true, "切资产立刻收掉预览");
+  take(deferred, 2).resolve(poseReply("a_yifu.mesh", 2));
+  await drain();
+  assert.equal(viewer.poses.length, 3, "陈旧回包不得再进画布");
+  assert.equal(detail.el("animPoseErr").hidden, true, "被丢的回包也不该冒出错误行");
+});
+
+test("动作页 3D 预览：播放步进到尾回卷、暂停恢复、切走 tab 自动停", async () => {
+  const { detail, poseCalls, deferred, drain } = await poseSandbox("\nexport { playStep, setPlaying };");
+  await detail.module.showDetail(245);
+  await drain();
+  detail.get("panels.js").showTabPane("animation");
+  await drain();
+  take(deferred, 0).resolve(poseReply("a_yifu.mesh", 0));
+  await drain();
+  const btn = detail.el("animPlay");
+  // 按钮的初始文案/可读名是 index.html 的静态属性，替身 DOM 不含它，按源码钉
+  const html = fs.readFileSync(path.join(web, "index.html"), "utf8");
+  assert.match(html, /<button type="button" id="animPlay" class="mini" aria-label="播放">播放<\/button>/, "播放按钮初始态：文案与可读名都是「播放」");
+  assert.match(html, /<canvas id="animCanvas" aria-label="动作预览"><\/canvas>/, "画布要带「动作预览」的可读名");
+  assert.match(html, /id="animPlayHint"[^>]*>参考速度</, "按钮旁要有「参考速度」小字");
+  assert.ok(!/25\s*fps/.test(html), "帧率刻度含义未证，不许把 25fps 当真值写进页面");
+  detail.module.setPlaying(true);
+  assert.equal(btn.textContent, "暂停", "播放中按钮要说「暂停」");
+  assert.equal(btn.getAttribute("aria-label"), "暂停");
+  assert.equal(detail.el("animFrame").value, "1", "点播放立刻走一步");
+  // 替身定时器不跑，手动步进；每步都同步游标值并把当前帧交给 pose
+  take(deferred, 1).resolve(poseReply("a_yifu.mesh", 1));
+  await drain();
+  detail.module.playStep();
+  assert.equal(detail.el("animFrame").value, "2");
+  take(deferred, 2).resolve(poseReply("a_yifu.mesh", 2));
+  await drain();
+  detail.module.playStep();
+  assert.equal(detail.el("animFrame").value, "0", "到尾要回卷，别停在最后一帧");
+  assert.deepEqual(poseCalls.map((c) => c.frame), [0, 1, 2, 0], "每步都要把当前帧交给 pose");
+  detail.module.setPlaying(false);
+  assert.equal(btn.textContent, "播放", "再点一次回到「播放」");
+  assert.equal(btn.getAttribute("aria-label"), "播放");
+  // 切走 tab 自动暂停
+  detail.module.setPlaying(true);
+  assert.equal(btn.textContent, "暂停");
+  detail.get("panels.js").showTabPane("skeleton");
+  assert.equal(btn.textContent, "播放", "切走 tab 该自动暂停");
+  assert.equal(btn.getAttribute("aria-label"), "播放");
+});
+
+test("动作页 3D 预览：部件筹码换网格、坏回包降级成一行话、切资产清网格缓存", async () => {
+  const { detail, poseCalls, meshDataCalls, deferred, viewers, drain } = await poseSandbox();
+  await detail.module.showDetail(245);
+  await drain();
+  detail.get("panels.js").showTabPane("animation");
+  await drain();
+  assert.deepEqual(meshDataCalls[0], { name: "a_yifu.mesh", hash: null }, "取几何按路径找，hash 传 null");
+  take(deferred, 0).resolve(poseReply("a_yifu.mesh", 0));
+  await drain();
+  // 坏回包：没有顶点 → 画布下一行人话，关键帧表格与游标照常
+  const slider = detail.el("animFrame");
+  const move = (v) => {
+    slider.value = v;
+    for (const f of slider.events.input || []) f({ target: slider });
+  };
+  move("1");
+  take(deferred, 1).resolve({ mesh: "a_yifu.mesh", anim: "a_walk.ani", frame: 1, frames: 3, notes: [] });
+  await drain();
+  assert.equal(detail.el("animPoseErr").hidden, false, "坏回包的错误行要露出来");
+  assert.ok(detail.el("animPoseErr").textContent.includes("这一帧没摆出来"), `坏回包要说人话：${detail.el("animPoseErr").textContent}`);
+  // 好回包来了把错误行收掉
+  move("2");
+  take(deferred, 2).resolve(poseReply("a_yifu.mesh", 2));
+  await drain();
+  assert.equal(detail.el("animPoseErr").hidden, true, "摆出来之后错误行要收掉");
+  // 部件筹码：点哪份就取哪份的几何、摆哪份的顶点
+  const pick = detail.el("animMeshPick");
+  assert.equal(pick.children.length, 2, "两份网格该给两颗筹码");
+  pick.children[1].onclick();
+  await drain();
+  assert.deepEqual(meshDataCalls[meshDataCalls.length - 1], { name: "a_shoutao.mesh", hash: null }, "点这份就要这份的几何");
+  take(deferred, 2).resolve(poseReply("a_shoutao.mesh", 2));
+  await drain();
+  assert.deepEqual(
+    poseCalls[poseCalls.length - 1],
+    { gid: 245, anim: "a_walk.ani", mesh: "a_shoutao.mesh", frame: 2 },
+    "换网格后摆的是当前帧",
+  );
+  assert.equal(viewers[0].loads.length, 2, "换网格要重新 load 几何");
+  // 切资产：网格清单缓存失效——新资产的清单与几何都按新的组号取
+  await detail.module.showDetail(999);
+  detail.get("panels.js").showTabPane("animation");
+  await drain();
+  assert.deepEqual(meshDataCalls[meshDataCalls.length - 1], { name: "b_only.mesh", hash: null }, "切资产后网格缓存必须失效");
+  assert.equal(detail.el("animMeshPick").children.length, 0, "只有一份网格不摆筹码");
+  assert.ok(detail.el("animPoseMeta").textContent.includes("b_only.mesh"), `meta 行要写实际用的网格（客户端原文）：${detail.el("animPoseMeta").textContent}`);
 });

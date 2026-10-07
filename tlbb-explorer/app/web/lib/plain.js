@@ -28,8 +28,8 @@ export function animationLead(rep) {
   if (!rep || !rep.tracks || !rep.tracks.length) return "这条动作没读到关键帧数据。";
   const bones = rep.bones ?? rep.tracks.length;
   return (
-    `这条动作有 ${rep.frames} 帧、${bones} 根骨头参加。拖动滑杆可以一帧一帧看每根骨头摆在哪` +
-    `——现在看的是数据，画面上的模型还不能跟着动。`
+    `这条动作有 ${rep.frames} 帧、${bones} 根骨头参加。拖动滑杆可以一帧一帧看每根骨头摆在哪，` +
+    `画布把顶点按这条动作摆出来；静止形状仍是网格的绑定姿态。`
   );
 }
 

@@ -59,7 +59,7 @@ test("骨架导语：位置全读出来时不写差额，没读出来时直说",
   assert.ok(无.includes("还没读出来"), 无);
 });
 
-test("动作导语：帧数、骨数、「还不能跟着动」都要在", () => {
+test("动作导语：帧数、骨数、画布摆的是哪路顶点都要在", () => {
   const s = animationLead({
     file: "a_walk.ani",
     bones: 2,
@@ -69,7 +69,10 @@ test("动作导语：帧数、骨数、「还不能跟着动」都要在", () =>
   });
   assert.ok(s.includes("21 帧"), s);
   assert.ok(s.includes("2 根骨头"), s);
-  assert.ok(s.includes("还不能跟着动"), s);
+  assert.ok(s.includes("画布把顶点按这条动作摆出来"), s);
+  assert.ok(s.includes("静止形状仍是网格的绑定姿态"), s);
+  // 画布摆的是真算的顶点，但「和游戏画面一致」这种话不许写——口径没证。
+  assert.ok(!s.includes("和游戏画面一致") && !s.includes("与游戏画面一致"), s);
   for (const w of 黑话) assert.ok(!s.includes(w), `导语里不许出现「${w}」：${s}`);
   assert.equal(animationLead({ tracks: [] }), "这条动作没读到关键帧数据。");
 });

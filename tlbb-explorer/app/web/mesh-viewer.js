@@ -389,6 +389,34 @@ export class MeshViewer {
     this.draw();
   }
 
+  /// 把「按某帧动作摆好的顶点」写进现有位置缓冲（动作页蒙皮预览专用）。
+  /// 只在单网格路径可用：多实例的几何住在池里，那是地图的静态形状，不该被逐帧改写。
+  ///
+  /// 数据不合格（长度对不上 / 坐标不是有限数）静默拒绝并回 false——蒙皮复合出了
+  /// NaN 时画布顶多停在上一帧的姿势，绝不能把坏数据灌进 GPU 画出一个鬼影。
+  /// 只用 bufferSubData 改内容，不建新缓冲：游标一拖就是一次调用，每帧
+  /// bufferData 等于把 STATIC_DRAW 当垃圾桶用。
+  setPose(positions) {
+    if (!this.mesh || this.inst) return false;
+    if (!Array.isArray(positions) || positions.length !== this.mesh.vertexCount) return false;
+    for (const p of positions) {
+      if (!Array.isArray(p) || p.length !== 3) return false;
+      for (let i = 0; i < 3; i++) if (!Number.isFinite(p[i])) return false;
+    }
+    const flat = new Float32Array(positions.length * 3);
+    let o = 0;
+    for (const p of positions) {
+      flat[o++] = p[0];
+      flat[o++] = p[1];
+      flat[o++] = p[2];
+    }
+    const gl = this.gl;
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.buf.pos);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, flat);
+    this.draw();
+    return true;
+  }
+
   /// bones 可选。不传、空表、或线段里没有可画的点时，画面与只传网格时一致。
   load(data, bones) {
     const gl = this.gl;
@@ -415,7 +443,9 @@ export class MeshViewer {
     for (const b of [tmp.pos, tmp.nrm, tmp.idx, tmp.uv]) if (b) gl.deleteBuffer(b);
 
     this.unloadPool(); // 从多实例切回单网格：地图的几何池该收掉了
-    this.mesh = viewOf(geo, data);
+    // vertexCount 原本不在 viewOf 的产出里（那是单/多实例共用的口径函数），
+    // 蒙皮预览的 setPose 要拿它核对回包顶点数——加在这里不动共享口径。
+    this.mesh = { ...viewOf(geo, data), vertexCount: geo.vertexCount };
     this.inst = null;
     this.pickBound = null;
     // 单网格的"家"就是它自己的局部盒（跟扩展前一样）。这里不走实例那套

@@ -485,10 +485,17 @@ impl AppData {
                 if !label.to_ascii_lowercase().ends_with(".mesh") {
                     candidates.push(format!("{label}.mesh"));
                 }
-                candidates
-                    .iter()
-                    .find_map(|path| self.q(|c| c.hash_by_path(path)))
-                    .ok_or_else(|| format!("资源清单里没有找到网格文件：{label}"))?
+                match candidates.iter().find_map(|path| self.q(|c| c.hash_by_path(path))) {
+                    Some(h) => h,
+                    // 精确路径全落空时的尾部名兜底：骨架页的部件名单（`skeleton_view`
+                    // 的 `meshes` 字段）给的就是尾部文件名，动作页整组装载拿它直接当
+                    // 路径用会全部落空。只对不含 `/` 的入参兜底——给了全路径还找不到
+                    // 就是真没有，拿末段去撞会撞到别人家的同名文件。
+                    None if !label.contains('/') => self
+                        .q(|c| c.hash_by_tail(label))
+                        .ok_or_else(|| format!("资源清单里没有找到网格文件：{label}（同名多处或没有，传完整路径或 hash）"))?,
+                    None => return Err(format!("资源清单里没有找到网格文件：{label}")),
+                }
             }
         };
         let asset = self

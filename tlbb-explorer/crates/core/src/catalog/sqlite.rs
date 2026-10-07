@@ -626,6 +626,30 @@ impl Catalog {
         found.map(|h| hash_of(&h)).transpose()
     }
 
+    /// 按路径的**尾部文件名**找资源（骨架页的部件名单、chips 显示给的就是这个形状）。
+    /// 尾部名不是路径：同名多份说明有歧义，回 `None` 让调用方拿全路径或 hash 再来，
+    /// 绝不替调用方挑一个；名字里的 `%`/`_` 按字面匹配（先转义），不然 `a_b` 会撞上 `xayb`。
+    pub fn hash_by_tail(&self, name: &str) -> Result<Option<u64>> {
+        let mut esc = String::with_capacity(name.len());
+        for c in name.chars() {
+            match c {
+                '\\' => esc.push_str("\\\\"),
+                '%' => esc.push_str("\\%"),
+                '_' => esc.push_str("\\_"),
+                c => esc.push(c),
+            }
+        }
+        let hits = self.rows(
+            "SELECT hash FROM resources WHERE path LIKE '%/' || ?1 ESCAPE '\\'",
+            &[&esc],
+            |r| r.get::<_, String>(0),
+        )?;
+        if hits.len() != 1 {
+            return Ok(None); // 0 份是没有；2 份是有歧义——同一句 None，不猜
+        }
+        hash_of(&hits[0]).map(Some)
+    }
+
     /// 有哪些地图（按 `.scene` 格子文件数排序的目录清单）。
     ///
     /// 口径：**有至少一个格子文件的目录**，不是"客户端承认存在的地图全集"——

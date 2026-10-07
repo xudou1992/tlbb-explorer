@@ -763,4 +763,50 @@ mod tests {
         let msg = parts_skeleton_mismatch(&[("a.mesh", &a), ("e.mesh", &e)]).unwrap();
         assert!(msg.contains("没有同名骨"), "{msg}");
     }
+
+    /// 尾部文件名兜底（2026-10-07 验收现场抓的 bug）：骨架页 `meshes` 字段给的是
+    /// 尾部名，动作页整组装载拿它调 `mesh_data`——精确路径匹配全落空，整组摆不了。
+    /// 修后：尾部名解析与全路径解析必须是同一份几何；查不到的错误话术不变。
+    #[test]
+    fn 尾部文件名与全路径解析到同一份网格() {
+        let (root, db) = roots();
+        if !root.join("data.pak").is_file() || !db.is_file() {
+            eprintln!("跳过：本机没有客户端或资源清单");
+            return;
+        }
+        let app = AppData::open(&root, &db).expect("工作台数据");
+        let con = open_db(&db).expect("清单");
+        let gid: i64 = con
+            .query_row(
+                "SELECT id FROM agroups WHERE stem = 'w1351_monster_xiyuqiezei'",
+                [],
+                |r| r.get(0),
+            )
+            .expect("这只怪应在清单里");
+        let hub: String = con
+            .query_row("SELECT coalesce(hub_path,'') FROM agroups WHERE id = ?1", [gid], |r| {
+                r.get(0)
+            })
+            .unwrap_or_default();
+        let insp = inspect(gid).expect("组详情");
+        let full = mesh_paths(&con, gid, &hub, &insp.dir)
+            .into_iter()
+            .find(|p| p.ends_with("yifu_001.mesh"))
+            .expect("这份网格应在组里");
+        let tail = full.rsplit('/').next().unwrap_or("").to_string();
+        assert!(tail.contains('.'));
+        assert!(!tail.contains('/'));
+
+        let (p_full, g_full) = app.mesh_geometry(&full, None).expect("全路径");
+        let (p_tail, g_tail) = app.mesh_geometry(&tail, None).expect("尾部名兜底");
+        assert_eq!(p_full, p_tail, "两种入参解析到同一条路径");
+        assert_eq!(g_full.vertex_count, g_tail.vertex_count, "同一份几何");
+        assert_eq!(g_full.positions, g_tail.positions, "顶点一字不差");
+
+        // 带路径分隔符的入参不走兜底：找不到就直说找不到。
+        let bad = app.mesh_geometry("data/没有这份.mesh", None);
+        let msg = bad.expect_err("假路径要报错");
+        assert!(msg.contains("没有找到网格文件"), "{msg}");
+        assert!(!msg.contains("同名多处"), "全路径失败不该提尾部名兜底：{msg}");
+    }
 }

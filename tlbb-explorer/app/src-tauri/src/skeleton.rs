@@ -4,11 +4,15 @@
 //! 一行字「骨架节点 36 个」。数据解出来了却没地方看，等于没做完（v0.4.4 补的票）。
 //!
 //! 这里只报**已被闸门证明过的东西**：
-//! - 节点：`.mesh` 尾部 96 字节记录 = 名字 + 绑定矩阵（D3DX 行向量，末行是绑定位移）
+//! - 节点：`.mesh` 尾部 96 字节记录 = 名字 + 矩阵（D3DX 行向量）。存储矩阵是
+//!   **世界绑定矩阵的逆**（2026-10-06 翻案，见 `pose::bind_worlds`）：表格 `pos`
+//!   是求逆后的真实骨位，不是存储矩阵的末行——末行那套会把骨架放平在地上
 //! - 声明骨骼数：`.mesh` 头部 `0x110` 的 u32（与同组 `.ani` 轨道数一致，有闸门）
 //! - 动作：每条 `.ani` 的骨骼数 / 帧数 / 帧率刻度 / 会动的骨数
 //!
-//! 没证的东西一律写进 `missing`，不猜：**父骨链未解**（所以画不出骨架连线，只能列点）。
+//! 父骨链**已解**（`parse_hierarchy`：孩子名单的并，不是父索引字段）。回包里
+//! `chain` 为真时每根骨带 `parent`（根的 `root` 为真）。没读出挂接时 `chain` 为假，
+//! 不编父子。画面上还不能跟着动：动作第 0 帧和网格绑定姿势不是同一副。
 //! 蒙皮权重**已解**——2026-09-30 实测在 `.mesh` 里，按骨组织成「影响顶点表」
 //! （见 `preview::SkinInfluence`）；此前写的「权重不在 .mesh」是按「每顶点 4 影响」
 //! 那一种编码穷举出来的，判早了。帧率刻度的含义仍未证。
@@ -17,7 +21,7 @@ use rusqlite::{Connection, OpenFlags};
 use serde::Serialize;
 use tlbb_core::jpak::Pak;
 use tlbb_core::payload;
-use tlbb_core::preview::{bone_count, parse_ani, parse_nodes};
+use tlbb_core::preview::{bone_count, parse_ani, parse_hierarchy, parse_nodes};
 
 use crate::inspector::{inspect, roots};
 
@@ -26,7 +30,10 @@ use crate::inspector::{inspect, roots};
 pub struct BoneRow {
     /// 客户端原文骨名，不翻译不编造。
     pub name: String,
-    /// 绑定位移（模型坐标）：矩阵末行 (tx,ty,tz)。`None` = 这根骨在 `.mesh` 里没有记录。
+    /// 绑定姿态的骨位（模型坐标）：存储矩阵**求逆后**第 4 行的平移，与 3D 骨线
+    /// （`mesh_bones`）同一函数同一口径——存储末行是逆矩阵的平移，不是骨位
+    /// （2026-10-06 翻案，见 `pose::bind_worlds`）。`None` = 这根骨在 `.mesh` 里
+    /// 没有 96B 记录（或矩阵坏得求不出逆），不编坐标。
     pub pos: Option<[f32; 3]>,
     /// 基向量长度（等比缩放）；1.0 附近是正常单位。
     pub scale: Option<f32>,
@@ -34,6 +41,10 @@ pub struct BoneRow {
     pub source: String,
     /// 这根骨影响多少个顶点（0 = 这条记录后面没带影响表，根骨就是这样）。
     pub skin: usize,
+    /// 父骨的客户端原文名。没读出挂接、或不在这棵树里时为 `None`（不要当成根）。
+    pub parent: Option<String>,
+    /// 这根骨是这棵树的根。只有 `chain == true` 且父为空时为真。
+    pub root: bool,
 }
 
 #[derive(Serialize)]
@@ -60,6 +71,8 @@ pub struct SkeletonReply {
     pub skin_bones: usize,
     /// 所有骨的（顶点-骨）绑定对总数——不是顶点数，一个顶点可以被几根骨同时影响。
     pub skin_pairs: usize,
+    /// `parse_hierarchy` 成功。为假时 `nodes[].parent` 一律是空，不编树。
+    pub chain: bool,
     pub animations: Vec<AnimRow>,
     /// 一份文件里没认出节点记录时给的原因，人话。
     pub note: String,
@@ -210,21 +223,39 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
     let mut with_skin = 0usize;
     let mut touched = 0usize;
     let mut note = String::new();
+    let mut parent_of: std::collections::HashMap<String, Option<String>> = Default::default();
+    // 挂接的 (骨名, 父骨名) 按文件序留着：HashMap 迭代序不定，补行的顺序要稳定。
+    let mut chain_rows: Vec<(String, Option<String>)> = Vec::new();
+    let mut chain = false;
     if let Some((h, pak)) = locate(&con, &mesh_path) {
         if let Some(raw) = decode(&mut paks, &root, &card_of(&pak), h) {
             declared = bone_count(&raw).unwrap_or(0);
+            if let Some(hier) = parse_hierarchy(&raw) {
+                chain = true;
+                for b in &hier.bones {
+                    let pname = b.parent.and_then(|i| hier.bones.get(i).map(|p| p.name.clone()));
+                    parent_of.insert(b.name.clone(), pname.clone());
+                    chain_rows.push((b.name.clone(), pname));
+                }
+            }
             let got = parse_nodes(&raw);
             nodes = got
                 .iter()
                 .map(|nd| BoneRow {
                     name: nd.name.clone(),
-                    pos: Some([nd.bind[12], nd.bind[13], nd.bind[14]]),
+                    // 口径（2026-10-06 翻案 edd0b08，见 pose::bind_worlds）：存储 96B
+                    // 是世界绑定矩阵的逆，求逆后第 4 行才是骨位。这条数学就是
+                    // mesh_bones 对带记录的骨的做法（bind_position_of_stored），
+                    // 同屏的表格与 3D 连线必须同源。
+                    pos: crate::mesh_bones::bind_position_of_stored(&nd.bind),
                     scale: Some(
                         (nd.bind[0] * nd.bind[0] + nd.bind[1] * nd.bind[1] + nd.bind[2] * nd.bind[2])
                             .sqrt(),
                     ),
                     skin: nd.skin.as_ref().map_or(0, |s| s.vertices.len()),
                     source: "mesh".to_string(),
+                    parent: None,
+                    root: false,
                 })
                 .collect();
             with_skin = nodes.iter().filter(|n| n.skin > 0).count();
@@ -278,6 +309,8 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
                     scale: None,
                     skin: 0,
                     source: "ani".to_string(),
+                    parent: None,
+                    root: false,
                 }),
             }
         }
@@ -286,14 +319,51 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
         }
         nodes = rows;
     }
-    let mut missing = vec![
-        "父骨链未解：只知道每根骨在模型里的位置，不知道谁挂谁，所以这里画不出骨架连线，只能列点".to_string(),
-    ];
+    for n in &mut nodes {
+        let hit = parent_of.get(&n.name).or_else(|| {
+            parent_of
+                .iter()
+                .find(|(k, _)| k.eq_ignore_ascii_case(&n.name))
+                .map(|(_, p)| p)
+        });
+        if let Some(p) = hit {
+            n.root = p.is_none();
+            // 父骨存在但名字是空的：不算根，也不把空串当名字发给界面（渲染成「查不到」）。
+            n.parent = p.clone().filter(|s| !s.is_empty());
+        }
+    }
+    // 挂接里有、骨表里还没有的名字（常见是根 `000`）补进行，不然「挂在谁」指向表外。
+    // 按文件（DFS）序补，不按 HashMap 迭代序——同一份网格两次回包的行序要一致。
+    if chain {
+        let extras: Vec<(String, Option<String>)> = chain_rows
+            .iter()
+            .filter(|(name, _)| !nodes.iter().any(|n| n.name.eq_ignore_ascii_case(name)))
+            .cloned()
+            .collect();
+        for (name, parent) in extras {
+            nodes.push(BoneRow {
+                name,
+                pos: None,
+                scale: None,
+                skin: 0,
+                source: "chain".to_string(),
+                parent: parent.clone().filter(|s| !s.is_empty()),
+                root: parent.is_none(),
+            });
+        }
+    }
+    let mut missing = Vec::new();
+    if chain {
+        missing.push(
+            "模型还不会跟着动：动作第 0 帧的骨架和网格里的绑定骨架不是同一副姿势，播出来会撕开。骨头谁挂谁已经读出来了。"
+                .to_string(),
+        );
+    } else {
+        missing.push("这份网格没读出骨头谁挂谁".to_string());
+    }
     if with_skin > 0 {
         missing.push(format!(
-            "播放还差的就是这条父骨链：这份网格的权重已经按骨读出（{} 根骨、{} 个顶点对），\
-             可逐骨变换要沿父链相乘，链没解出来，模型还是不能跟着摆姿势",
-            with_skin, touched
+            "这份网格的权重已经按骨读出（{with_skin} 根骨、{touched} 个顶点对）。起始姿势对不上，模型还是不能跟着摆姿势"
         ));
     } else {
         missing.push(
@@ -307,12 +377,19 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
     }
     let 带矩阵 = nodes.iter().filter(|n| n.pos.is_some()).count();
     if declared > 带矩阵 {
-        missing.push(format!(
-            "{declared} 根骨里只有 {带矩阵} 根在 `.mesh` 里有绑定矩阵：其余 {} 根的名字在 `.ani` 的轨道名单里，\
-             矩阵不在节点表里——它们在这份文件里以名字挂在别的记录后面（一张 32 字节步长的名单），\
-             那张名单哪几条算子骨还没对上",
-            declared - 带矩阵
-        ));
+        missing.push(if chain {
+            format!(
+                "{declared} 根骨里只有 {带矩阵} 根在 `.mesh` 里有绑定矩阵：其余 {} 根只有名字，位置不在节点表里。",
+                declared - 带矩阵
+            )
+        } else {
+            format!(
+                "{declared} 根骨里只有 {带矩阵} 根在 `.mesh` 里有绑定矩阵：其余 {} 根的名字在 `.ani` 的轨道名单里，\
+                 矩阵不在节点表里——它们在这份文件里以名字挂在别的记录后面（一张 32 字节步长的名单），\
+                 这份网格没读出谁挂谁",
+                declared - 带矩阵
+            )
+        });
     }
 
     Ok(SkeletonReply {
@@ -322,6 +399,7 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
         nodes,
         skin_bones: with_skin,
         skin_pairs: touched,
+        chain,
         animations,
         note,
         missing,
@@ -425,6 +503,10 @@ pub fn anim_view_run(gid: i64, want: &str) -> Result<AnimReply, String> {
         .ok_or_else(|| format!("清单里找不到 {pick} 的完整路径"))?;
     let (h, pak) = locate(&con, &full).ok_or_else(|| format!("{pick} 在容器里没有对应记录"))?;
     let mut paks: std::collections::HashMap<String, Pak> = Default::default();
+    let mesh_chain = locate(&con, &mesh_path)
+        .and_then(|(mh, mpak)| decode(&mut paks, &root, &card_of(&mpak), mh))
+        .and_then(|raw| parse_hierarchy(&raw))
+        .is_some();
     let raw = decode(&mut paks, &root, &card_of(&pak), h)
         .ok_or_else(|| format!("{pick} 的字节解不出来（容器读得出记录，解码失败）"))?;
     let a = parse_ani(&raw).ok_or_else(|| format!("{pick} 不按已知的 .ani 布局排布"))?;
@@ -435,8 +517,14 @@ pub fn anim_view_run(gid: i64, want: &str) -> Result<AnimReply, String> {
         .count();
     let unnamed = a.tracks.iter().filter(|t| t.bone.is_empty()).count();
     let mut missing = vec![
-        "父骨链未解：这里列的是每根骨自己的旋转与位移，摆不出整具骨架怎么动".to_string(),
-        "模型还不会跟着动：权重在 .mesh 的影响顶点表里，但父骨链未解，逐骨变换相乘不起来".to_string(),
+        if mesh_chain {
+            "这里列的是每根骨自己的旋转与位移。骨头谁挂谁已经从网格读出来了，但动作第 0 帧和网格里的绑定姿势不是同一副，所以模型还不会跟着动。"
+                .to_string()
+        } else {
+            "这份网格没读出骨头谁挂谁，所以这里只能列每根骨自己的旋转与位移。".to_string()
+        },
+        "模型还不会跟着动：权重在 .mesh 的影响顶点表里。不播是因为起始姿势对不上，不是因为权重没读出来。"
+            .to_string(),
         format!("帧率刻度 {} 的含义未证（每秒 tick？总时长×40？），界面不换算成秒", a.tick),
     ];
     if unnamed > 0 {
@@ -516,8 +604,22 @@ mod tests {
             "动作轨道数应等于声明骨骼数：{:?}",
             rep.animations.iter().map(|a| (a.file.clone(), a.bones)).collect::<Vec<_>>()
         );
-        // 没证的东西必须写在回包里，界面才不用自己编
-        assert!(rep.missing.iter().any(|m| m.contains("父骨链")));
+        // 挂接读出来了要带在回包里；读不出就写明，不许再写「父骨链未解」
+        if rep.chain {
+            assert!(
+                rep.missing.iter().any(|m| m.contains("已经读出来了")),
+                "解出挂接却没说：{:?}",
+                rep.missing
+            );
+            assert!(rep.nodes.iter().any(|n| n.root), "有挂接就该有一根根骨");
+        } else {
+            assert!(
+                rep.missing.iter().any(|m| m.contains("没读出骨头谁挂谁")),
+                "没读出挂接要写明：{:?}",
+                rep.missing
+            );
+        }
+        assert!(!rep.missing.iter().any(|m| m.contains("父骨链未解")), "{:?}", rep.missing);
         assert!(rep.missing.iter().any(|m| m.contains("权重")));
         // 一组多份网格：选择条要给全，换一份看的是另一份的数据
         assert!(
@@ -548,6 +650,87 @@ mod tests {
             "衣服那份该报得出读出了多少根：{:?}",
             yifu.missing
         );
+        assert!(yifu.chain, "衣服那份应解出骨头谁挂谁");
+        let pelvis = yifu
+            .nodes
+            .iter()
+            .find(|n| n.name.to_ascii_lowercase().contains("pelvis"))
+            .expect("衣服那份应有 pelvis");
+        assert!(
+            pelvis.parent.as_deref().is_some_and(|p| !p.is_empty()),
+            "pelvis 应挂在父骨上，实际 {:?}",
+            pelvis.parent
+        );
+        // chain=true 时树要真的带上：根骨 root=true 且与挂接对得上；根 `000` 没有
+        // .ani 轨道、也没有 96B 记录，它该是从挂接补进来的行（source="chain"）。
+        let yroot = yifu.nodes.iter().find(|n| n.root).expect("有挂接就该有一根根骨");
+        assert_eq!(yroot.name, "000", "这具骨架的根是客户端原文 000");
+        assert_eq!(yroot.source, "chain", "根不在 .ani 轨道名单里，该从挂接补进来");
+        assert!(yroot.pos.is_none(), "根没有 96B 记录，不许编坐标");
+        let bip01 = yifu.nodes.iter().find(|n| n.name == "bip01").expect("bip01 该在骨表里");
+        assert_eq!(bip01.parent.as_deref(), Some("000"), "bip01 挂在根下");
+        // 表格 pos 口径（2026-10-06 翻案 edd0b08）：存储 96B 是世界绑定矩阵的逆，
+        // 求逆后第 4 行才是骨位——逐条记录独立复算，不许再是存储末行。
+        let yifu_path: String = con
+            .query_row(
+                "SELECT path FROM resources WHERE path LIKE '%/w1351_monster_xiyuqiezei_yifu_001.mesh' \
+                 AND stored > 0 LIMIT 1",
+                [],
+                |r| r.get(0),
+            )
+            .expect("衣服那份网格在清单里");
+        let (mh, mpak) = locate(&con, &yifu_path).expect("衣服那份网格在容器里");
+        let mut mesh_paks: std::collections::HashMap<String, Pak> = Default::default();
+        let mraw = decode(&mut mesh_paks, &root, &card_of(&mpak), mh).expect("网格字节解得出来");
+        use tlbb_core::preview::pose::mat_inverse_affine;
+        let mut checked = 0usize;
+        for nd in parse_nodes(&mraw) {
+            let inv = mat_inverse_affine(&nd.bind).expect("节点矩阵可逆");
+            let row = yifu
+                .nodes
+                .iter()
+                .find(|n| n.name == nd.name)
+                .unwrap_or_else(|| panic!("骨表里该有记录 {}", nd.name));
+            assert_eq!(
+                row.pos,
+                Some([inv[12], inv[13], inv[14]]),
+                "{} 的表格 pos 不是求逆后的骨位",
+                nd.name
+            );
+            checked += 1;
+        }
+        assert!(checked >= 30, "逐条复算的节点太少：{checked}");
+        // 表格与 3D 骨线同屏（骨架页表格 + 灰模连线），两处坐标必须同源：
+        // 骨架树上有矩阵的骨，表格 pos 要与 mesh_bones 的连线端点一字不差。
+        let hier = parse_hierarchy(&mraw).expect("衣服那份应解出挂接");
+        for (b, p) in hier
+            .bones
+            .iter()
+            .zip(crate::mesh_bones::bind_positions(&hier))
+        {
+            let Some(p) = p else { continue };
+            let row = yifu
+                .nodes
+                .iter()
+                .find(|n| n.name == b.name)
+                .unwrap_or_else(|| panic!("骨表里该有骨 {}", b.name));
+            assert_eq!(row.pos, Some(p), "{} 表格与骨线两处坐标不同源", b.name);
+        }
+        // 求逆前后的数字要区分得开（不然这条闸门没有分辨力）：脚趾要站在
+        // 解剖高度 y≈0.140（pose::bind_worlds 记录的实测值），存储末行是躺平的。
+        let toe = yifu
+            .nodes
+            .iter()
+            .find(|n| n.name == "bip01_l_toe0")
+            .expect("toe0 该在骨表里");
+        let ty = toe.pos.expect("toe0 有 96B 记录")[1];
+        assert!((ty - 0.140).abs() < 0.02, "脚趾该站在解剖高度 y≈0.140，实际 {ty}");
+        let spine1 = yifu
+            .nodes
+            .iter()
+            .find(|n| n.name == "bip01_spine1")
+            .expect("spine1 该在骨表里");
+        assert!(spine1.pos.is_none(), "没有 96B 记录的骨保持 None，不编坐标");
         // 已证的东西要报得出、且自洽。这一页只列组里第一份网格，份与份带不带
         // 影响顶点表不一样（实测：yifu_001 有 26 根、shoutao_001 一根都没有），
         // 所以这里只核自洽性；「26 根 / 权重逐顶点加起来 ≈1」那条量级判据在 core 闸门里。
@@ -600,7 +783,12 @@ mod tests {
             assert_eq!(t.positions.len(), rep.frames, "{} 的位移帧数不齐", t.bone);
             assert_eq!(t.scales.len(), rep.frames, "{} 的缩放帧数不齐", t.bone);
         }
-        assert!(rep.missing.iter().any(|m| m.contains("父骨链")));
+        assert!(
+            rep.missing.iter().any(|m| m.contains("还不会跟着动")),
+            "要说清为什么还不能动：{:?}",
+            rep.missing
+        );
+        assert!(!rep.missing.iter().any(|m| m.contains("父骨链未解")), "{:?}", rep.missing);
         assert!(rep.missing.iter().any(|m| m.contains("权重")));
         assert!(rep.missing.iter().any(|m| m.contains("帧率刻度")));
         let second = rep

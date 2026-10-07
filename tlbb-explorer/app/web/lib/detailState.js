@@ -297,13 +297,13 @@ export function absencesOf(insp, card) {
       ),
   );
   if (skeNames.size)
-    out.push(abs("骨骼", "unknown", `找到 ${skeNames.size} 个骨骼文件；但顶点权重还没解出来，现在只能看形状、不能摆姿势`));
+    out.push(abs("骨骼", "unknown", `找到 ${skeNames.size} 个骨骼文件。顶点跟着哪根骨头走、骨头谁挂谁，都已经读出来了。画面上还不能摆姿势。`));
   else if (ofRole("skeleton").length) out.push(abs("骨骼", "missing", `记了 ${ofRole("skeleton").length} 个骨骼，但客户端未含这些文件`));
   else out.push(abs("骨骼", "missing", "这组里没有骨骼文件（清单里也没给它记过骨骼）"));
 
   // 动画
   const animNames = (insp.anims || []).length;
-  if (animNames) out.push(abs("动画", "unknown", `读到 ${animNames} 个动作名字；关键帧格式还没解出来，所以放不了`));
+  if (animNames) out.push(abs("动画", "unknown", `读到 ${animNames} 个动作。每一帧骨头怎么转已经读出来了。画面上的模型还不能跟着动。`));
   else if (ofRole("animation").length) out.push(abs("动画", "missing", `记了 ${ofRole("animation").length} 个动作，但清单里读不出名字`));
   else out.push(abs("动画", "missing", "这组里没有动作文件"));
 

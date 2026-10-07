@@ -5,8 +5,12 @@
 //! ——Blender 脚本、别的查看器、或者只是想看看某根骨第 12 帧朝哪儿。
 //!
 //! 导出的同时把**没解出来的东西显式写进文件**（`missing` 字段）：
-//! 蒙皮权重在 `influences` 里（按骨组织的影响顶点表）；父骨链未知，所以节点仍是平铺的，
-//! 没有 `parent`，也没有 `weights`。拿到它的人不必猜少了不少什么。
+//! 蒙皮权重在 `influences` 里（按骨组织的影响顶点表）。父骨链在 `parentChain`：
+//! `parse_hierarchy` 解出时是骨名到父骨名的列表（根的父为 null，名字用客户端原文），
+//! 解不出则为 null，并在 `missing` 里写明这份没读出挂接、不编树。
+//! 节点表仍是平铺的，不在每条节点上另挂 `parent`。节点的 `bindPosition` 是
+//! 存储矩阵**求逆后**的真实骨位（存储矩阵是世界绑定矩阵的逆，2026-10-06 翻案，
+//! 见 `preview::pose::bind_worlds`）；原始矩阵原样在 `bind` 里。
 //!
 //! 只读纪律：db 只读、pak 只读，只写 `--out` 指定的文件。
 //!
@@ -23,7 +27,7 @@ use rusqlite::{Connection, OpenFlags};
 use serde_json::json;
 use tlbb_core::jpak::Pak;
 use tlbb_core::payload;
-use tlbb_core::preview::{bone_count, parse_ani, parse_nodes};
+use tlbb_core::preview::{bone_count, parse_ani, parse_hierarchy, parse_nodes, SkeletonHierarchy};
 
 /// 在清单里按「文件名结尾」找一条资源，返回 (hash, 所在容器)。
 /// 用 `like '%/<name>'` 精确到路径分隔符，避免 `xxx.mesh` 撞进 `xxx.mesh2`。
@@ -155,15 +159,37 @@ fn r16(v: &[f32; 16]) -> Vec<f32> {
     v.iter().map(|x| r6(*x)).collect()
 }
 
+/// 父链导出。解出时是骨名 → 父骨名（根的父为 null，名字是客户端原文）；
+/// 没解出时值为 null，另一半是写进 `missing` 的说明——不编一棵树。
+fn parent_chain_fields(h: Option<&SkeletonHierarchy>) -> (serde_json::Value, Option<&'static str>) {
+    let Some(h) = h else {
+        return (serde_json::Value::Null, Some("这份没读出挂接，不编一棵树"));
+    };
+    let rows = h
+        .bones
+        .iter()
+        .map(|b| {
+            let parent = b.parent.map(|i| h.bones[i].name.clone());
+            json!({
+                "name": b.name,
+                "parent": parent,
+            })
+        })
+        .collect::<Vec<_>>();
+    (json!(rows), None)
+}
+
 /// 组一份骨架 + 动作的导出体。
 fn build(root: &Path, con: &Connection, mesh: Option<&str>, anis: &[String]) -> serde_json::Value {
     let mut paks: BTreeMap<String, Pak> = BTreeMap::new();
     let mut nodes = json!([]);
     let mut mesh_file = String::new();
     let mut declared = serde_json::Value::Null;
+    let mut hierarchy: Option<SkeletonHierarchy> = None;
     if let Some(m) = mesh {
         if let Some((h, pak)) = locate(con, m) {
             if let Some(raw) = bytes_of(root, &mut paks, h, &pak) {
+                hierarchy = parse_hierarchy(&raw);
                 let got = parse_nodes(&raw);
                 if !got.is_empty() {
                     mesh_file = m.to_string();
@@ -173,10 +199,16 @@ fn build(root: &Path, con: &Connection, mesh: Option<&str>, anis: &[String]) -> 
                         .map(|nd| {
                             let mut o = json!({
                                 "name": nd.name,
-                                // 行主序 4×4；前三行基向量，第四行 (tx,ty,tz,1) 是绑定位移
+                                // 行主序 4×4 存储矩阵，未加工。它本身是**世界绑定矩阵
+                                // 的逆**（2026-10-06 翻案，见 preview::pose::bind_worlds）：
+                                // 求逆后第 4 行的平移才是骨位，bindPosition 给的是它，
+                                // 不是存储矩阵的末行（末行那套骨架是躺平的）。
                                 "bind": r16(&nd.bind),
-                                "bindPosition": r3([nd.bind[12], nd.bind[13], nd.bind[14]]),
                             });
+                            // 求逆失败（数据坏了）就不放这个键——不拿存储末行凑数。
+                            if let Some(b) = tlbb_core::preview::pose::mat_inverse_affine(&nd.bind) {
+                                o["bindPosition"] = json!(r3([b[12], b[13], b[14]]));
+                            }
                             // 蒙皮权重：按骨组织的影响顶点表，没有就不放这个键（不摆空数组）
                             if let Some(sk) = &nd.skin {
                                 o["influences"] = json!({
@@ -210,25 +242,31 @@ fn build(root: &Path, con: &Connection, mesh: Option<&str>, anis: &[String]) -> 
             })).collect::<Vec<_>>(),
         }));
     }
+    let (parent_chain, parent_miss) = parent_chain_fields(hierarchy.as_ref());
+    let mut missing = json!({
+        "tickMeaning": "帧率刻度（样本恒 40.0）到底是每秒 tick 还是别的，未证",
+        "skinPerPart": "影响顶点表按份算：同一只怪的衣服那份有 26 根、手套那份一根都没有，所以 nodes 为空或 influences 缺失不代表模型不跟骨走，要换一份网格再看",
+        "meshNodesPartial": "mesh 只认出部分骨的节点记录（声明 46 根骨，认出 30 多条）：有些骨的名字后面不跟矩阵。真实骨位（存储矩阵求逆后的平移）只在这些记录里有"
+    });
+    if let Some(msg) = parent_miss {
+        missing["parentChain"] = json!(msg);
+    }
     json!({
         "mesh": if mesh_file.is_empty() { serde_json::Value::Null } else { json!(mesh_file) },
         "declaredBones": declared,
         "nodes": nodes,
         "animations": animations,
-        "missing": {
-            "parentChain": "父骨链未解：96 字节节点记录里没有父索引槽位；记录后面那些 32 字节名单里，bip01_spine 之后确实跟着 spine1/l_thigh/r_thigh（看着像子骨），但同一份里另有一些名单以「别的骨的名字×2」开头，归属还没定死。也试过拿 bind_i = local_i ∘ bind_父 反解（脚本 .scratch/parent_from_bind.py）：残差最小 0.77，不成立——.ani 第 0 帧已经是姿势而不是绑定态，这个判据本身就不该成立",
-            "tickMeaning": "帧率刻度（样本恒 40.0）到底是每秒 tick 还是别的，未证",
-            "skinPerPart": "影响顶点表按份算：同一只怪的衣服那份有 26 根、手套那份一根都没有，所以 nodes 为空或 influences 缺失不代表模型不跟骨走，要换一份网格再看",
-            "meshNodesPartial": "mesh 只认出部分骨的节点记录（声明 46 根骨，认出 30 多条）：有些骨的名字后面不跟矩阵。绑定位移只在这些记录里有"
-        },
+        "parentChain": parent_chain,
+        "missing": missing,
         "provenance": {
-            "nodeRecord": "96B = char[32] 名字 + f32[16] 绑定矩阵（D3DX 行向量：末行 tx,ty,tz,1）",
+            "nodeRecord": "96B = char[32] 名字 + f32[16] 矩阵（D3DX 行向量）。存储矩阵是世界绑定矩阵的逆（B = S⁻¹，2026-10-06 翻案，见 preview::pose::bind_worlds）：bindPosition 是求逆后第 4 行的平移（真实骨位）；存储矩阵的末行 (tx,ty,tz,1) 是逆矩阵的平移，不是骨位，别直接拿去摆骨架",
             "influences": "蒙皮权重在 .mesh：每条 96B 骨记录之后跟 [u32 顶点数 N][N 个顶点号（严格递增）][N 个权重 f32]，是按骨组织的稀疏表，不是每顶点 4 影响的定长表（2026-09-30 实测，闸门 preview::geometry::node_tests::skin_influences_sum_to_one_per_vertex）",
             "restRecord": ".ani 骨架区 60B/骨 = +12 绑定旋转（每条单位长）；+48 那三个浮点用途未证，没往这份导出里放",
             "trackRecord": "每骨每帧 = f32×4 旋转 + f32×3 位移 + f32 缩放",
             "boneCountField": ".mesh 头部 0x110 处的 u32 = 骨骼根数，与该模型 .ani 的轨道数一致",
             "animationsMatched": "动作按「同目录的 ani/ 子目录」整批配给网格：一只怪的部件网格共用一组动作是对的，但一个目录里放多只互不相关的模型时，每份网格都会拿到该目录的全部动作——批量导出时若 nodes 为 0（静态网格没有骨架节点），这批动作多半不属于它",
-            "generator": "skel_dump (tlbb-core preview::{parse_nodes, parse_ani, bone_count})"
+            "parentChain": "父链来自尾部各条目孩子名单的并：解出时 parentChain 是骨名到父骨名的列表（根的父为 null，名字用客户端原文），没读出挂接时为 null",
+            "generator": "skel_dump (tlbb-core preview::{parse_nodes, parse_ani, bone_count, parse_hierarchy})"
         }
     })
 }
@@ -353,7 +391,7 @@ fn main() {
             first["frames"].as_u64().unwrap_or(0)
         );
     }
-    println!("  蒙皮权重在 influences 里；未解项写进 missing 字段（父骨链 / 帧率刻度 / 按份算的表）");
+    println!("  蒙皮权重在 influences；父骨链在 parentChain；其余未解项在 missing");
 }
 
 #[cfg(test)]
@@ -413,7 +451,8 @@ mod tests {
             "权重已解，不许还挂在 missing 里"
         );
         assert!(v["provenance"]["influences"].is_string(), "出处要写清");
-        // 绑定位移是真的在骨架空间里：左右同名骨必须只差一根轴的符号
+        // 左右镜像对在翻案后的口径（存储值求逆）下同样成立：求逆保持镜像。
+        // 左右同名骨只差一根轴的符号，读歪一个字段就断。
         let mut pairs = 0;
         for nd in nodes.iter() {
             let nm = nd["name"].as_str().unwrap();
@@ -435,6 +474,32 @@ mod tests {
             pairs += 1;
         }
         assert!(pairs >= 4, "镜像对太少（{pairs}），这份导出的绑定位移没被验到");
+        // 口径钉住（2026-10-06 翻案）：bindPosition 是存储矩阵求逆后的骨位，
+        // 不是存储末行——两种读法必须区分得开，脚趾要站在解剖高度上。
+        let pelvis = nodes
+            .iter()
+            .find(|nd| nd["name"].as_str() == Some("bip01_pelvis"))
+            .expect("pelvis 在节点表里");
+        let stored: Vec<f64> = pelvis["bind"].as_array().unwrap()[12..15]
+            .iter()
+            .map(|v| v.as_f64().unwrap())
+            .collect();
+        let pos: Vec<f64> = pelvis["bindPosition"]
+            .as_array()
+            .expect("pelvis 的矩阵求得出逆")
+            .iter()
+            .map(|v| v.as_f64().unwrap())
+            .collect();
+        assert!(
+            stored.iter().zip(&pos).any(|(a, b)| (a - b).abs() > 1e-3),
+            "pelvis 的存储末行与求逆骨位居然一样，这条钉子没有分辨力：{stored:?} vs {pos:?}"
+        );
+        let toe = nodes
+            .iter()
+            .find(|nd| nd["name"].as_str() == Some("bip01_l_toe0"))
+            .expect("toe0 在节点表里");
+        let ty = toe["bindPosition"][1].as_f64().expect("toe0 的 y");
+        assert!((ty - 0.140).abs() < 0.02, "脚趾该站在解剖高度 y≈0.140（求逆后骨位），实际 {ty}");
         let anims = v["animations"].as_array().expect("动作数组");
         assert!(!anims.is_empty(), "一条动作都没导出来");
         let a0 = &anims[0];
@@ -447,8 +512,48 @@ mod tests {
             assert_eq!(t["rotations"].as_array().unwrap().len(), frames);
             assert_eq!(t["positions"].as_array().unwrap().len(), frames);
         }
+        // 父链已解：骨名到父骨名，根的父为 null；不许再写成「未解」，也不许改名
+        let chain = v["parentChain"].as_array().expect("主样本应解出父链");
+        assert_eq!(chain.len(), declared, "父链应覆盖头部声明的每一根骨");
+        let mut names = std::collections::BTreeSet::new();
+        let mut roots = 0usize;
+        for row in chain {
+            let name = row["name"].as_str().expect("骨名");
+            assert!(names.insert(name.to_string()), "骨名重复：{name}");
+            if row["parent"].is_null() {
+                roots += 1;
+                assert_eq!(name, "000", "唯一根应是客户端原文 000");
+            } else {
+                assert!(row["parent"].is_string(), "{name} 的父应是骨名");
+            }
+        }
+        assert_eq!(roots, 1, "应是单根");
+        for row in chain {
+            if let Some(p) = row["parent"].as_str() {
+                assert!(names.contains(p), "{} 的父 {p} 不在链上", row["name"].as_str().unwrap());
+            }
+        }
+        let parent_of = |n: &str| {
+            chain
+                .iter()
+                .find(|r| r["name"].as_str() == Some(n))
+                .unwrap_or_else(|| panic!("链上该有 {n}"))["parent"]
+                .as_str()
+        };
+        assert_eq!(parent_of("bip01"), Some("000"));
+        assert_eq!(parent_of("bip01_pelvis"), Some("bip01"));
+        assert_eq!(parent_of("bip01_l_thigh"), Some("bip01_spine"));
+        assert!(
+            v["missing"].get("parentChain").is_none(),
+            "父链已解，不许还挂在 missing 里"
+        );
+        let prov = v["provenance"]["parentChain"].as_str().expect("出处要写清父链");
+        assert!(prov.contains("孩子名单"), "出处应说明父链来自孩子名单的并：{prov}");
+        let dumped = v.to_string();
+        assert!(!dumped.contains("父骨链未解"), "过时的「未解」说明不该再出现");
+        assert!(!dumped.contains("父索引"), "不该再写父索引字段不存在");
         // 没解出来的东西必须写在文件里，不能让人自己发现
-        assert!(v["missing"]["parentChain"].is_string());
+        assert!(v["missing"]["tickMeaning"].is_string());
         assert!(v["provenance"]["boneCountField"].is_string());
         eprintln!(
             "导出：{mesh} · 声明 {declared} 骨 · mesh 节点 {} 条（左右镜像对 {pairs} 对）· 动作 {} 条（第一条 {bones} 骨 {frames} 帧）",
@@ -508,8 +613,52 @@ mod tests {
         );
         assert!(v["nodes"].as_array().unwrap().is_empty(), "没给 mesh 就不该有节点");
         assert!(v["mesh"].is_null());
+        assert!(v["parentChain"].is_null(), "没给网格就不该编父骨链");
+        let msg = v["missing"]["parentChain"].as_str().expect("没读出挂接要写明");
+        assert!(msg.contains("没读出挂接"), "{msg}");
+        assert!(msg.contains("不编"), "{msg}");
+        assert!(!msg.contains("父索引"), "{msg}");
         let anims = v["animations"].as_array().unwrap();
         assert_eq!(anims.len(), 1, "应当正好导出一条动作");
         assert_eq!(anims[0]["file"].as_str(), Some("w1351_monster_xiyuqiezei_run.ani"));
+    }
+
+    /// 父链形状：解出是骨名对父骨名，根为 null；没解出是 null 加一句说明，不编树。
+    #[test]
+    fn parent_chain_is_name_pairs_or_an_explicit_miss() {
+        use tlbb_core::preview::BoneNode;
+
+        let h = SkeletonHierarchy {
+            bones: vec![
+                BoneNode {
+                    name: "000".into(),
+                    parent: None,
+                    bind: None,
+                    children: vec![1],
+                },
+                BoneNode {
+                    name: "bip01_spine".into(),
+                    parent: Some(0),
+                    bind: None,
+                    children: vec![],
+                },
+            ],
+            sockets: vec![],
+        };
+        let (chain, miss) = parent_chain_fields(Some(&h));
+        assert!(miss.is_none());
+        let rows = chain.as_array().expect("结构化列表");
+        assert_eq!(rows.len(), 2);
+        assert_eq!(rows[0]["name"].as_str(), Some("000"));
+        assert!(rows[0]["parent"].is_null());
+        assert_eq!(rows[1]["name"].as_str(), Some("bip01_spine"));
+        assert_eq!(rows[1]["parent"].as_str(), Some("000"));
+
+        let (chain, miss) = parent_chain_fields(None);
+        assert!(chain.is_null(), "没读出挂接时不编树");
+        let msg = miss.expect("要写明没读出");
+        assert!(msg.contains("没读出挂接"), "{msg}");
+        assert!(!msg.contains("父索引"), "{msg}");
+        assert!(!msg.contains("父骨链未解"), "{msg}");
     }
 }

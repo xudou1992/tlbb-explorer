@@ -31,6 +31,22 @@ test("骨架导语：数字齐全、说清还差什么，术语不许出现", ()
   for (const w of 黑话) assert.ok(!s.includes(w), `导语里不许出现「${w}」：${s}`);
 });
 
+test("骨架导语：挂接读出来了才补一句，没有这个字段时一字不多", () => {
+  const base = {
+    declared: 2,
+    nodes: [
+      { name: "a", pos: [0, 0, 0] },
+      { name: "b", pos: [1, 0, 0] },
+    ],
+  };
+  const 无 = skeletonLead(base);
+  assert.ok(!无.includes("谁挨着谁"), 无);
+  const 有 = skeletonLead({ ...base, chain: true });
+  assert.ok(有.startsWith(无), "没挂接时的句子必须原样留着");
+  assert.ok(有.includes("骨头谁挨着谁也读出来了。"), 有);
+  for (const w of 黑话) assert.ok(!有.includes(w), `导语里不许出现「${w}」：${有}`);
+});
+
 test("骨架导语：位置全读出来时不写差额，没读出来时直说", () => {
   const 全 = skeletonLead({
     declared: 12,

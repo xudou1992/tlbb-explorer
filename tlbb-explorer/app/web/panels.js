@@ -121,7 +121,9 @@ export function paintSkeleton(v, onPick) {
     `骨架来自 ${v.mesh}：${v.declared} 根骨全列在这里，其中 ${带矩阵} 根在 .mesh 里有绑定位移` +
     (v.skin_bones
       ? `；其中 ${v.skin_bones} 根带影响顶点表，一共 ${v.skin_pairs} 个（顶点-骨）对。`
-      : "。这份网格没有影响顶点表。");
+      : "。这份网格没有影响顶点表。") +
+    (v.chain ? "挂接已经按客户端的孩子名单读出。" : "");
+  const showLink = nodes.some((n) => (typeof n.parent === "string" && n.parent) || n.root === true);
   if ((v.meshes || []).length > 1) {
     chips(
       el("skelPick"),
@@ -134,17 +136,23 @@ export function paintSkeleton(v, onPick) {
     "每根骨头搭在哪",
     `${nodes.length} 行`,
     `<p class="dim">${esc(dense)}</p>` +
-      `<table class="hl-table"><thead><tr><th>骨名</th><th>X</th><th>Y</th><th>Z</th><th>缩放</th><th>影响顶点</th></tr></thead><tbody>${nodes
-        .map(
-          (n) =>
-            `<tr><td>${esc(n.name)}</td>` +
+      `<table class="hl-table"><thead><tr><th>骨名</th>${
+        showLink ? "<th>挂在谁</th>" : ""
+      }<th>X</th><th>Y</th><th>Z</th><th>缩放</th><th>影响顶点</th></tr></thead><tbody>${nodes
+        .map((n) => {
+          const link = !showLink
+            ? ""
+            : `<td>${n.parent ? esc(n.parent) : n.root ? "这是根" : "—"}</td>`;
+          return (
+            `<tr><td>${esc(n.name)}</td>${link}` +
             (n.pos
               ? `<td class="n">${fx(n.pos[0])}</td><td class="n">${fx(n.pos[1])}</td><td class="n">${fx(
                   n.pos[2],
                 )}</td><td class="n">${fx(n.scale)}</td>`
               : `<td class="dim" colspan="4">矩阵不在 .mesh 里</td>`) +
-            `<td class="n">${n.skin ? num(n.skin) : "—"}</td></tr>`,
-        )
+            `<td class="n">${n.skin ? num(n.skin) : "—"}</td></tr>`
+          );
+        })
         .join("")}</tbody></table>`,
   );
   if (anims.length) {

@@ -12,6 +12,7 @@
 // 矩阵约定、包围盒、点选反投影这些纯数学在 lib/instanceMath.js 里，有 node --test。
 
 import { validateMesh } from "./lib/meshLayout.js";
+import { boneLineVertices } from "./lib/boneLines.js";
 import * as im from "./lib/instanceMath.js";
 
 const VS = `
@@ -64,6 +65,23 @@ void main() {
   vec3 base = mix(vec3(0.62, 0.65, 0.69), texture2D(uTex, vUv).rgb, uUseTex);
   vec3 col = base * (0.32 + 0.68 * d) + rim;
   gl_FragColor = vec4(col, 1.0);
+}`;
+
+// 骨头连线单独一条程序。灰模那对 VS/FS 的数字不动：没传骨头时这条程序不会被 use。
+// 骨在网格体积里面，开着深度测试会被灰模挡住，绑定姿态的线就看不见。
+// 只在画线这一下关掉深度，画完立刻恢复。
+const BONE_VS = `
+attribute vec3 aPosition;
+uniform mat4 uModelView;
+uniform mat4 uProjection;
+void main() {
+  gl_Position = uProjection * uModelView * vec4(aPosition, 1.0);
+}`;
+
+const BONE_FS = `
+precision mediump float;
+void main() {
+  gl_FragColor = vec4(0.93, 0.62, 0.22, 1.0);
 }`;
 
 // 视场角。抽成常量是因为 draw() 用它投影、pickAt 用它反投影——
@@ -240,6 +258,14 @@ export class MeshViewer {
     // 绘制路径（drawSingle 的 texReady 分支拿不到 buf.uv，套贴图永远无效）。
     this.buf = { pos: gl.createBuffer(), nrm: gl.createBuffer(), idx: gl.createBuffer(), uv: gl.createBuffer() };
 
+    // 连线程序起不来就只少画线，灰模照旧。构造函数不能因为这条附加层抛掉整个预览。
+    this.lineProg = null;
+    this.lineAt = -1;
+    this.lineUn = null;
+    this.boneBuf = null;
+    this.boneCount = 0;
+    this.prepareBoneLines(gl);
+
     // 多实例路径的几何池：每个**不同网格**一份缓冲，在 loadInstances 里上传一次。
     // 绝不每帧 bufferData，也绝不为每个实例建一个 buffer——后者在几千实例下是
     // 几千个 GL 对象 + 每帧几千次 bind，纯属自我惩罚。
@@ -302,6 +328,7 @@ export class MeshViewer {
       this.inst = null;
       this.pool = [];
       this.pickBound = null;
+      this.boneCount = 0;
       if (this.onlost) this.onlost();
     });
   }
@@ -362,7 +389,8 @@ export class MeshViewer {
     this.draw();
   }
 
-  load(data) {
+  /// bones 可选。不传、空表、或线段里没有可画的点时，画面与只传网格时一致。
+  load(data, bones) {
     const gl = this.gl;
     // 长度与偏移由 lib/meshLayout.js 统一校验（有 node --test 盯着）：
     // 声明和实际字节数不符时必须拒绝，绝不能把错数据画得像个模型。
@@ -395,14 +423,22 @@ export class MeshViewer {
     // 让人以为单网格也支持变换。
     this.applyFrame({ center: this.mesh.center, size: this.mesh.size });
     this.trackAllocation();
+    // 线段上传失败只是不画线。网格已经进了缓冲，不能让这一步把灰模一起拆掉。
+    try {
+      this.setBoneLines(bones);
+    } catch {
+      this.boneCount = 0;
+    }
     this.syncViewport();
     this.draw(); // 先画定一帧：窗口没聚焦时 rAF 会被挂起，否则首帧要等很久
   }
 
-  /// 几何池整体换新/清空都从这里走，保证三个缓冲一个不漏。
+  /// 几何池整体换新/清空都从这里走，保证四个缓冲一个不漏。
+  /// uv 也在池里（带贴图坐标的网格每份一个），漏了它就是每次换图漏一批 GL 对象；
+  /// 没有 UV 的网格这里存的是 null，deleteBuffer 对 null 是空操作。
   unloadPool() {
     const gl = this.gl;
-    for (const p of this.pool) for (const b of [p.buf.pos, p.buf.nrm, p.buf.idx]) gl.deleteBuffer(b);
+    for (const p of this.pool) for (const b of [p.buf.pos, p.buf.nrm, p.buf.idx, p.buf.uv]) gl.deleteBuffer(b);
     this.pool = [];
   }
 
@@ -453,7 +489,8 @@ export class MeshViewer {
       }
     } catch (e) {
       // 建到一半失败：把已经建好的几个删掉，旧池原封不动继续用。
-      for (const p of fresh) for (const b of [p.buf.pos, p.buf.nrm, p.buf.idx]) gl.deleteBuffer(b);
+      // uv 段可能没建（无 UV 的网格里它是 null），deleteBuffer 对 null 是空操作。
+      for (const p of fresh) for (const b of [p.buf.pos, p.buf.nrm, p.buf.idx, p.buf.uv]) gl.deleteBuffer(b);
       throw e;
     }
     this.unloadPool();
@@ -467,6 +504,7 @@ export class MeshViewer {
     this.bounds = instancedBounds(fresh, this.inst);
     this.pickBound = instancedPickBounds(fresh, this.inst);
     this.mesh = null;
+    this.setBoneLines(null);
     this.applyFrame(this.bounds);
     this.trackAllocation();
     this.syncViewport();
@@ -521,13 +559,81 @@ export class MeshViewer {
 
     const aspect = this.canvas.width / Math.max(1, this.canvas.height);
     this.aspect = aspect;
+    const proj = mat4.perspective(FOV, aspect, this.near, this.far);
     gl.useProgram(this.prog);
-    gl.uniformMatrix4fv(this.un.pj, false, mat4.perspective(FOV, aspect, this.near, this.far));
+    gl.uniformMatrix4fv(this.un.pj, false, proj);
     gl.uniformMatrix4fv(this.un.mv, false, mv);
 
     if (this.inst) this.drawInstanced();
-    else this.drawSingle();
+    else {
+      this.drawSingle();
+      this.drawBoneLines(mv, proj);
+    }
     return !settled;
+  }
+
+  /// 绑定姿态的线段。没有可画的点时立刻返回，不改程序、不改深度。
+  /// 坐标已经是模型空间里的点，套用这一帧灰模用的同一套模型视图和投影。
+  setBoneLines(payload) {
+    this.boneCount = 0;
+    if (!this.lineProg || !this.boneBuf) return;
+    const pairs = boneLineVertices(payload);
+    if (!pairs.length) return;
+    const data = new Float32Array(pairs.length * 6);
+    let o = 0;
+    for (const [a, b] of pairs) {
+      data[o++] = a[0];
+      data[o++] = a[1];
+      data[o++] = a[2];
+      data[o++] = b[0];
+      data[o++] = b[1];
+      data[o++] = b[2];
+    }
+    const gl = this.gl;
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.boneBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    this.boneCount = pairs.length * 2;
+  }
+
+  drawBoneLines(mv, proj) {
+    if (!this.boneCount || !this.lineProg || !this.boneBuf || this.lineAt < 0) return;
+    const gl = this.gl;
+    gl.useProgram(this.lineProg);
+    gl.uniformMatrix4fv(this.lineUn.mv, false, mv);
+    gl.uniformMatrix4fv(this.lineUn.pj, false, proj);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.boneBuf);
+    gl.enableVertexAttribArray(this.lineAt);
+    gl.vertexAttribPointer(this.lineAt, 3, gl.FLOAT, false, 0, 0);
+    gl.disable(gl.DEPTH_TEST);
+    gl.drawArrays(gl.LINES, 0, this.boneCount);
+    gl.enable(gl.DEPTH_TEST);
+  }
+
+  prepareBoneLines(gl) {
+    let prog = null;
+    try {
+      prog = gl.createProgram();
+      gl.attachShader(prog, compile(gl, gl.VERTEX_SHADER, BONE_VS));
+      gl.attachShader(prog, compile(gl, gl.FRAGMENT_SHADER, BONE_FS));
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+        throw new Error(gl.getProgramInfoLog(prog) || "骨头连线着色器链接失败");
+      }
+      this.lineProg = prog;
+      this.lineAt = gl.getAttribLocation(prog, "aPosition");
+      this.lineUn = {
+        mv: gl.getUniformLocation(prog, "uModelView"),
+        pj: gl.getUniformLocation(prog, "uProjection"),
+      };
+      this.boneBuf = gl.createBuffer();
+    } catch {
+      if (prog) gl.deleteProgram(prog);
+      this.lineProg = null;
+      this.lineAt = -1;
+      this.lineUn = null;
+      this.boneBuf = null;
+      this.boneCount = 0;
+    }
   }
 
   /// 单网格：与扩展前逐位一致——uUseInst=0，走缓冲里原样的顶点。
@@ -612,8 +718,10 @@ export class MeshViewer {
     this.stop();
     const gl = this.gl;
     for (const b of Object.values(this.buf)) gl.deleteBuffer(b);
+    if (this.boneBuf) gl.deleteBuffer(this.boneBuf);
     this.unloadPool();
     gl.deleteProgram(this.prog);
+    if (this.lineProg) gl.deleteProgram(this.lineProg);
     this.mesh = null;
     this.inst = null;
     this.pickBound = null;

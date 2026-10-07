@@ -490,8 +490,8 @@ pub fn browse_preview(pak_name: String, hash: String) -> Result<BrowsePreview, S
                         "会动的骨 {moving} 根（其余各帧旋转相同）· 骨名读到 {named} 条"
                     ));
                     info.push(
-                        "还不能播放：绑定位移与蒙皮权重都在 .mesh 里（权重是按骨组织的影响顶点表），\
-                         缺的只有父骨链——不知道谁挂谁，逐骨变换就没法相乘"
+                        "还不能播放：骨头谁挂谁、每帧怎么转、蒙皮权重都已经读出来了；\
+                         不播是因为动作的起始姿势和网格里的绑定姿势对不上，播出来会撕开"
                             .into(),
                     );
                     Ok(BrowsePreview {

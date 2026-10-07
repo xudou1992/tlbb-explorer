@@ -11,6 +11,7 @@ mod map_view;
 mod mdl_view;
 mod model;
 mod mesh_view;
+mod mesh_bones;
 mod present;
 mod texture_override;
 mod gap;
@@ -188,6 +189,7 @@ pub fn run() {
             inspector::asset_list,
             inspector::asset_inspect,
             mesh_view::mesh_data,
+            mesh_bones::mesh_bone_lines,
             mesh_view::group_mesh_outline,
             map_view::map_list,
             map_view::map_scene,

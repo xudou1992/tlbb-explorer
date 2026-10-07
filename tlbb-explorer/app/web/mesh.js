@@ -86,6 +86,14 @@ async function pick(k) {
     return;
   }
   if (seq.isStale(my)) return; // 已经切到别的模型了
+  // 骨头是绑定姿态上的附加线。取不到、解不出、空表都不挡灰模，也不另开错误。
+  let bones = null;
+  try {
+    bones = await api.meshBoneLines(m.name, m.hash);
+  } catch {
+    bones = null;
+  }
+  if (seq.isStale(my)) return;
   let v;
   try {
     v = ensure();
@@ -99,7 +107,7 @@ async function pick(k) {
     status("显卡上下文被系统收回了，重新点一下这个模型就能再看。");
   };
   try {
-    v.load(data);
+    v.load(data, bones);
   } catch (e) {
     // 缓冲长度对不上是数据/契约问题，别把锅甩给显卡。
     foldStage();

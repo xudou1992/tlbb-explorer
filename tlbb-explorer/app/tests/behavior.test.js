@@ -717,3 +717,51 @@ test("换资产要立刻清空骨架/动作/特效三页，不许留着上一件
   assert.ok(!detail.el("skelTable").innerHTML.includes("aaa_only_in_A"), "B 不许带着 A 的骨名");
   assert.ok(detail.el("skelSum").textContent.includes("没有网格文件"), `B 该带上自己的原因：${detail.el("skelSum").textContent}`);
 });
+
+// 「挂在谁」这一列（2026-10-05 父骨链解出后加的）。要钉住三件事：
+// 列整列有或整列无（看回包里有没有 parent/root，不许摆半列空「—」）；
+// 挂在谁写在骨名旁边、指向父骨原文名；链上补进来的行（source="chain"、矩阵不在
+// .mesh 里）的 colspan 只许盖住数值四列，多盖一格就是把「影响顶点」顶串。
+test("骨架页：读出挂接才加「挂在谁」列，补进行与有矩阵的行各归各位", async () => {
+  const panels = await sandbox("panels.js");
+  const 链 = {
+    mesh: "a_yifu.mesh", meshes: ["a_yifu.mesh"], declared: 4,
+    skin_bones: 1, skin_pairs: 71, chain: true, animations: [], missing: [],
+    nodes: [
+      { name: "bip01", pos: null, scale: null, skin: 0, source: "ani", parent: null, root: true },
+      { name: "bip01_pelvis", pos: [0.05, 0, -1.09], scale: 1, skin: 71, source: "mesh+ani", parent: "bip01", root: false },
+      { name: "body_center", pos: null, scale: null, skin: 0, source: "chain", parent: "bip01_pelvis", root: false },
+    ],
+  };
+  panels.module.paintSkeleton(链, noop);
+  const html = panels.el("skelTable").innerHTML;
+  assert.ok(html.includes("<th>挂在谁</th>"), `有挂接就得有这一列：${html.slice(0, 200)}`);
+  assert.ok(html.includes("<td>bip01_pelvis</td><td>bip01</td>"), "挂在谁要紧跟骨名，指向父骨原文名");
+  assert.ok(html.includes(">这是根<"), "根骨要说它是根，不许留破折号");
+  assert.ok(
+    html.includes('<td>body_center</td><td>bip01_pelvis</td><td class="dim" colspan="4">矩阵不在 .mesh 里</td>'),
+    "链上补进来的行要带着挂接，且 colspan 只盖数值四列",
+  );
+  assert.ok(panels.el("skelSum").textContent.includes("谁挨着谁"), "导语也要跟着 chain 翻出那句人话");
+  // 列对齐：每行按 colspan 展开后的格数都得等于表头列数，哪一行串了列就是这条不过
+  const 行 = [...html.matchAll(/<tr>([\s\S]*?)<\/tr>/g)].map((m) => m[1]);
+  assert.ok(行.length >= 2, "表头加骨行至少两行，正则没吃到说明 HTML 变了");
+  const cols = 行[0].match(/<th>/g).length;
+  for (const r of 行.slice(1)) {
+    const n = [...r.matchAll(/<td([^>]*)>/g)].reduce((a, [, attrs]) => {
+      const span = attrs.match(/colspan="(\d+)"/);
+      return a + (span ? Number(span[1]) : 1);
+    }, 0);
+    assert.equal(n, cols, `这一行按 colspan 展开后 ${n} 格，对不上表头 ${cols} 列：${r}`);
+  }
+  // 没读出挂接的回包（老格式 / 静态网格）：一字不多，别摆一列破折号充数
+  const 无链 = {
+    mesh: "b.mesh", meshes: ["b.mesh"], declared: 1, skin_bones: 0, skin_pairs: 0,
+    chain: false, animations: [], missing: [],
+    nodes: [{ name: "bone001", pos: [1, 2, 3], scale: 1, skin: 0, parent: null, root: false }],
+  };
+  panels.module.paintSkeleton(无链, noop);
+  const html2 = panels.el("skelTable").innerHTML;
+  assert.ok(!html2.includes("挂在谁"), `没挂接就不该有这一列：${html2.slice(0, 200)}`);
+  assert.ok(!panels.el("skelSum").textContent.includes("谁挨着谁"), "导语同理，没读出挂接就不补那句");
+});

@@ -548,7 +548,10 @@ export class MeshViewer {
       gl.bufferData(gl.ARRAY_BUFFER, geo.uvs, gl.STATIC_DRAW);
     }
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buf.idx);
-    gl.bufferData(gl.ARRAY_BUFFER, geo.indices, gl.STATIC_DRAW);
+    // 目标必须是 ELEMENT：上一行刚把 ELEMENT 绑到 this.buf.idx，这里却写 ARRAY_BUFFER
+    // 的话，索引字节会灌进当时还绑着的 UV 槽位、索引缓冲永远空着——drawElements 每帧
+    // 报 1282、灰模一个三角形都出不来（e98f449 引入、2026-10-07 验收现场抓的回归）。
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, geo.indices, gl.STATIC_DRAW);
     for (const b of [tmp.pos, tmp.nrm, tmp.idx, tmp.uv]) if (b) gl.deleteBuffer(b);
 
     this.unloadPool(); // 从多实例切回单网格：地图的几何池该收掉了

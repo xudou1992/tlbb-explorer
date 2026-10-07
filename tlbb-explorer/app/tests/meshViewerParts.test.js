@@ -7,6 +7,7 @@
 // 「反向验红」的锚也在这里：把 setPartPose 的长度/坐标校验改松，这个文件先红。
 
 import test from "node:test";
+import { readFileSync } from "node:fs";
 import assert from "node:assert/strict";
 import { MeshViewer, partsUnionBounds } from "../web/mesh-viewer.js";
 
@@ -102,4 +103,22 @@ test("partsUnionBounds：脏件跳过、全脏兜底，绝不拿 NaN 凑盒子",
   assert.equal(fallback.size, 1);
   assert.deepEqual(partsUnionBounds(undefined).size, 1, "入参不是数组不抛");
   assert.deepEqual(partsUnionBounds("脏输入").center, [0, 0, 0]);
+});
+
+test("load() 的换仓段：索引数据必须进 ELEMENT 槽位（源码钉）", () => {
+  // WebGL 在 node 里跑不了，但 e98f449 把 bufferData 的目标常量从 ELEMENT 改成
+  // ARRAY_BUFFER 后灰模静默消失（索引字节灌进 UV 槽位、索引缓冲永远空、每帧
+  // 1282），直到 2026-10-07 验收才有人肉眼撞见——GL 状态写错目标只能靠源码钉住。
+  const src = readFileSync(new URL("../web/mesh-viewer.js", import.meta.url), "utf8");
+  const seq = (body, bind, upload, tag) => {
+    const at = body.indexOf(bind);
+    assert.ok(at >= 0, tag + "：应有这一对调用：" + bind);
+    const next = body.indexOf("gl.bufferData(", at);
+    assert.ok(body.slice(next, next + 60).includes(upload), tag + "：紧跟的 bufferData 目标必须是 " + upload);
+  };
+  const load = src.slice(src.indexOf("load(data, bones)"), src.indexOf("unloadPool()", src.indexOf("load(data, bones)")));
+  seq(load, "bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buf.idx)", "gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, geo.indices", "load 换仓段");
+  // 上传入口 uploadMesh 同理（两条路径共用）。
+  const up = src.slice(src.indexOf("function uploadMesh"), src.indexOf("function viewOf"));
+  seq(up, "bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buf.idx)", "gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices", "uploadMesh");
 });

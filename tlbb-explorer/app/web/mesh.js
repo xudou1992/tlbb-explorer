@@ -37,6 +37,14 @@ function ensure() {
   return viewer;
 }
 
+/// 详情可以停在别的标签加载，画布在隐藏状态下量到的是 1x1；切回预览标签时
+/// 调这一下重新量视口并补一帧，不然网格永远停在 1 像素里（2026-10-07 验收现场）。
+export function remesh() {
+  if (!viewer) return;
+  viewer.resize();
+  viewer.draw();
+}
+
 /// 把立体区收成一行：没有画面可看时（无网格 / 取数失败 / 数据对不上），
 /// 380px 的空盒子只是占屏，收起来让原因文字自己说话。
 function foldStage() {

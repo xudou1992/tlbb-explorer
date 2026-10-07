@@ -145,7 +145,7 @@ async function sandbox(entry, mock = {}, expose = {}) {
 }
 
 const noop = () => {};
-const meshMock = { showMeshes: noop, hideMeshes: noop, applyTexture: () => true };
+const meshMock = { showMeshes: noop, hideMeshes: noop, applyTexture: () => true, remesh: noop };
 
 // 详情用的两份夹具直接从 detailState 的用例里借，免得两处夹具各写各的。
 const fixtureSource = fs.readFileSync(path.join(here, "detailState.test.js"), "utf8");

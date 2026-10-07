@@ -10,7 +10,7 @@ import { state } from "./state.js";
 import { makeSeq } from "./lib/seq.js";
 import { empty, loading, failed, notReady, loaded, isNotReadyMsg } from "./lib/detailState.js";
 import { titleHtml } from "./lib/wording.js";
-import { showMeshes, hideMeshes, applyTexture } from "./mesh.js";
+import { showMeshes, hideMeshes, applyTexture, remesh } from "./mesh.js";
 import { MeshViewer } from "./mesh-viewer.js";
 import {
   makePoseGate,
@@ -258,6 +258,7 @@ function initAnim() {
     }
     if (name === "effect" && !fxReply) loadEffect(state.selected, "");
     if (name === "material" && !mtlReply) loadMaterial(state.selected, "");
+    if (name === "preview") remesh(); // 详情停在别的标签加载过：画布量的是隐藏时的 1x1，回来要重量
   });
 }
 

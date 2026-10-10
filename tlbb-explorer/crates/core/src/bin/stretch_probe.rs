@@ -110,6 +110,37 @@ fn rsweep(
     }
 }
 
+/// 逐骨查「这一帧的调色板还是不是刚体」：3×3 与正交的偏离、|det−1|、三轴缩放。
+///
+/// 为什么要单独查：两端主贡献骨是**同一根骨**的边也被拉开了（wave21 实测占残差的
+/// 17~43%）。一根骨的变换若是刚体，同骨两顶点之间的距离**不可能**变——所以要么
+/// 调色板带了缩放（`.ani` 的 scale 通道 / 占位复合），要么尺子本身坏了。
+fn bone_rigidity(h: &tlbb_core::preview::SkeletonHierarchy, pal: &[[f32; 16]]) {
+    let mut rows = Vec::new();
+    for (i, m) in pal.iter().enumerate() {
+        let col = |c: usize| [m[c], m[4 + c], m[8 + c]];
+        let len = |v: [f32; 3]| (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
+        let (c0, c1, c2) = (col(0), col(1), col(2));
+        let (l0, l1, l2) = (len(c0), len(c1), len(c2));
+        let dot = |a: [f32; 3], b: [f32; 3]| a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+        let ortho = dot(c0, c1).abs().max(dot(c1, c2).abs()).max(dot(c0, c2).abs());
+        let skew = (l0 - 1.0).abs().max((l1 - 1.0).abs()).max((l2 - 1.0).abs());
+        let det = (c0[0] * (c1[1] * c2[2] - c1[2] * c2[1])
+            - c0[1] * (c1[0] * c2[2] - c1[2] * c2[0])
+            + c0[2] * (c1[0] * c2[1] - c1[1] * c2[0]))
+            .abs();
+        rows.push((skew.max(ortho), h.bones[i].name.clone(), l0, l1, l2, ortho, det));
+    }
+    rows.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap());
+    println!("骨 | 三轴长度 | 最大不正交 | |det|（按「离刚体最远」排序，前 10）");
+    for (worst, name, l0, l1, l2, ortho, det) in rows.iter().take(10) {
+        let _ = worst;
+        println!("{name} | {l0:.4} {l1:.4} {l2:.4} | {ortho:.4} | {det:.4}");
+    }
+    let n_rigid = rows.iter().filter(|r| r.0 < 1e-3).count();
+    println!("刚体骨（偏离 <1e-3）：{n_rigid} / {} 根", rows.len());
+}
+
 fn main() {
     let argv: Vec<String> = std::env::args().collect();
     let mesh = arg(&argv, "mesh").expect("要带 --mesh=<路径>");
@@ -166,6 +197,16 @@ fn main() {
 
     if argv.iter().any(|a| a == "--rsweep") {
         rsweep(&h, &a, &nodes, &g.positions, &g.indices, &anchor);
+        return;
+    }
+    if argv.iter().any(|a| a == "--rigid") {
+        let f: usize = arg(&argv, "frame")
+            .map(|s| s.to_string_lossy().parse().unwrap_or(0))
+            .unwrap_or(0);
+        let world = pose::pose_frame(&h, &a, f);
+        let pal = pose::skin_palette(&h, &anchor, &world).expect("调色板");
+        println!("第 {f} 帧 · frame0 锚的调色板刚体性");
+        bone_rigidity(&h, &pal);
         return;
     }
     println!("帧 | frame0 锚(现口径) | bind 锚 | bind 锚+静态区补位   （超1.5 边数 / 超2 / 最大倍数）");

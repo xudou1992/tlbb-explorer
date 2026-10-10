@@ -994,6 +994,12 @@ pub fn parse_hierarchy(raw: &[u8]) -> Option<SkeletonHierarchy> {
     hierarchy_try(raw).ok()
 }
 
+/// 找尾部起点时的**探测步长**。普查里「没有候选起点」那 171 份（曹霜一族的部件）
+/// 名字段落在 `2 mod 4` 上——整段尾部相对文件头错开 2 字节，按 4 步长扫永远看不见起点。
+/// 步长只影响「找候选」，不影响判据：走通仍要恰好读到 EOF、条目数 == 声明数、
+/// 单根、无环、孩子名全对得上。
+const ALIGN_PROBE: usize = 2;
+
 /// [`parse_hierarchy`] 的带原因版本：**判据一条不改**，只把「为什么解不出」带出来。
 /// 普查（`bin/hier_census.rs`）要靠它给解不出的文件分桶——361 份全报一个 `None`
 /// 就没法知道该去修哪一族。
@@ -1018,7 +1024,7 @@ pub fn hierarchy_try(raw: &[u8]) -> Result<SkeletonHierarchy, &'static str> {
                 }
                 i += NODE_RECORD;
             }
-            None => i += 4,
+            None => i += ALIGN_PROBE,
         }
     }
     // 变体起点：[u32 -1][名字×2]（标志后紧跟两个 32B 名字段）。
@@ -1032,7 +1038,7 @@ pub fn hierarchy_try(raw: &[u8]) -> Result<SkeletonHierarchy, &'static str> {
                 }
             }
         }
-        i += 4;
+        i += ALIGN_PROBE;
     }
     if starts.is_empty() && variant_starts.is_empty() {
         return Err("没有候选起点（既无 origin 记录，也无 -1 根条目）");
@@ -1132,7 +1138,7 @@ fn tail_walk_ok(raw: &[u8], vc: usize) -> bool {
             i += NODE_RECORD;
             continue;
         }
-        i += 4;
+        i += ALIGN_PROBE;
     }
     let mut i = 0usize;
     while i + 4 + 2 * NAME_FIELD <= raw.len() {
@@ -1145,7 +1151,7 @@ fn tail_walk_ok(raw: &[u8], vc: usize) -> bool {
                 }
             }
         }
-        i += 4;
+        i += ALIGN_PROBE;
     }
     false
 }

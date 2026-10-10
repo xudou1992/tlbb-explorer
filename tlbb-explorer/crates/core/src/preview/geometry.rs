@@ -1088,6 +1088,31 @@ pub struct StuckPoint {
     pub declared: usize,
 }
 
+/// 只把尾部条目段吐出来（`(条目名, 孩子名…)`），**不做任何树判定**。
+/// 普查诊断用：`hierarchy_try` 在「不是单根」那一步就整体 `None`，
+/// 而那 17 份到底是几棵并列子树、还是孩子名单读串了，得先看条目本身。
+/// 判据不在这条路上，这条路也不产出任何界面数据。
+pub fn tail_entries(raw: &[u8]) -> Option<Vec<(String, Vec<String>)>> {
+    let vc = vertex_count(raw);
+    let declared = bone_count(raw)?;
+    let (starts, variants) = tail_starts(raw);
+    for start in starts.into_iter().chain(variants) {
+        if let Some((entries, _)) = tail_walk(raw, start, vc) {
+            if entries.len() == declared {
+                return Some(
+                    entries
+                        .iter()
+                        .map(|e| {
+                            (e.name.clone(), e.children.iter().map(|(c, _)| c.clone()).collect())
+                        })
+                        .collect(),
+                );
+            }
+        }
+    }
+    None
+}
+
 /// 解尾部整段，给出父骨链。判据不满足就 `None`——不猜、不补。
 /// 判据与失败原因见 [`hierarchy_try`]（这一层只是把原因抹掉）。
 pub fn parse_hierarchy(raw: &[u8]) -> Option<SkeletonHierarchy> {

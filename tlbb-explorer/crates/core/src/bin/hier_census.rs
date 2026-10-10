@@ -12,7 +12,9 @@
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
-use tlbb_core::preview::{bone_count, hierarchy_stuck, hierarchy_try, parse_mesh};
+use tlbb_core::preview::{
+    bone_count, hierarchy_stuck, hierarchy_try, parse_mesh, tail_entries,
+};
 
 fn arg(argv: &[String], name: &str) -> Option<String> {
     let want = format!("--{name}=");
@@ -117,6 +119,50 @@ fn stuck_probe(files: &[PathBuf]) {
     println!("WROTE {txt} · 卡住 {n} 份");
 }
 
+/// `--forest`：「不是单根」那族到底长什么样——列每份的根名与每棵子树的大小。
+/// 只诊断，不参与判定。
+fn forest_probe(files: &[PathBuf]) {
+    let mut out = Vec::new();
+    let mut n = 0usize;
+    let mut hist: std::collections::BTreeMap<usize, usize> = std::collections::BTreeMap::new();
+    for f in files {
+        let Ok(raw) = std::fs::read(f) else { continue };
+        if bone_count(&raw).unwrap_or(0) == 0 {
+            continue;
+        }
+        if let Ok(_) = hierarchy_try(&raw) {
+            continue;
+        }
+        let Some(entries) = tail_entries(&raw) else { continue };
+        let mut listed: std::collections::HashSet<String> = std::collections::HashSet::new();
+        for (_, kids) in &entries {
+            for k in kids {
+                listed.insert(k.to_ascii_lowercase());
+            }
+        }
+        let roots: Vec<String> = entries
+            .iter()
+            .filter(|(n, _)| !listed.contains(&n.to_ascii_lowercase()))
+            .map(|(n, _)| n.clone())
+            .collect();
+        if roots.len() < 2 {
+            continue; // 不是这一族
+        }
+        n += 1;
+        *hist.entry(roots.len()).or_default() += 1;
+        out.push(format!(
+            "{}  根 {} 个: {}",
+            f.to_string_lossy().replace('\\', "/"),
+            roots.len(),
+            roots.join(", ")
+        ));
+    }
+    out.insert(0, format!("多根份数 {n} · 根数分布 {hist:?}"));
+    let txt = r"D:\TLGL\.scratch\hier_forest.txt";
+    let _ = std::fs::write(txt, out.join("\n"));
+    println!("WROTE {txt} · 多根 {n} 份");
+}
+
 fn main() {
     let argv: Vec<String> = std::env::args().collect();
     let tree = arg(&argv, "tree").unwrap_or_else(|| r"D:\TLGL\.scratch\out\tree".to_string());
@@ -127,6 +173,10 @@ fn main() {
 
     if argv.iter().any(|a| a == "--stuck") {
         stuck_probe(&files);
+        return;
+    }
+    if argv.iter().any(|a| a == "--forest") {
+        forest_probe(&files);
         return;
     }
 

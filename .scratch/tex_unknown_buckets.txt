@@ -1,0 +1,18 @@
+行 2818 · stats: {"total": 2818, "withUv": 2376, "candidates": 23680, "graded": {"high": 2070, "mid": 284, "low": 14, "unknown": 450}, "gradedV2": {"high": 1560, "mid": 386, "low": 57, "unknown": 815}, "elapsedSec": 199.6, "thresholds": {"highScore": 6, "highCoverage": 0.3, "midScore": 3, "lowScore": 1.2}}
+字段: ['coverage', 'graded', 'gradedV2', 'hasUv', 'mesh', 'topAdjusted', 'topScore']
+
+=== gradedV2 == unknown 的 815 份，按原因分桶 ===
+
+① 网格没有 UV 流: 442 份
+   例 cj_byjt.mesh                                         hasUv False 候选 None topScore None adj None cover 0.0
+   例 w1351_boss_aihu_yifu_001.mesh                        hasUv False 候选 None topScore None adj None cover 0.0
+   例 w1351_boss_huoyanlaohu.mesh                          hasUv False 候选 None topScore None adj None cover None
+
+② 有 UV，但候选贴图 0 个: 373 份
+   例 _w1351_boss_sysz_langying_shoutao_001.mesh           hasUv True 候选 None topScore 2120.98 adj 1.1 cover 0.8983
+   例 _w1351_boss_sysz_langying_yifu_001.mesh              hasUv True 候选 None topScore 2152.052 adj 1.103 cover 0.8958
+   例 decal.mesh                                           hasUv True 候选 None topScore 3902.606 adj 1.0 cover 1.0
+
+unknown 里 topAdjusted 分布：n=365 p50=1.06 p90=1.148 max=1.193
+  ≥3.0（若按 v1 的 mid 线本该是 mid 以上）的: 0
+topScore ≥6 但 gradedV2=unknown 的: 365 份 ← adjusted 把高分刷掉的那批

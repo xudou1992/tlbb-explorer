@@ -13,7 +13,8 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use tlbb_core::preview::{
-    bone_count, hierarchy_forest, hierarchy_stuck, hierarchy_try, parse_mesh, tail_entries,
+    bone_count, hierarchy_forest, hierarchy_stuck, hierarchy_try, parse_ani, parse_mesh,
+    tail_entries,
 };
 
 fn arg(argv: &[String], name: &str) -> Option<String> {
@@ -174,6 +175,86 @@ fn forest_probe(files: &[PathBuf]) {
     println!("WROTE {txt} · 多根 {n} 份 · 森林口径多解出 {gained} 份（仍解不出 {still}）");
 }
 
+/// `--corroborate`：拿**另一个文件**当旁证。
+///
+/// 判据放宽（矩阵三轴允许不等长、行列两向都判）之后，光看「闸门没破」不够——
+/// 同一个 `.mesh` 里能互相印证的结构有限，于是用同目录的 `.ani`：
+/// 它的每条轨道都带骨名，那是**独立解出来的另一份容器记录**。
+/// 若 `.ani` 出现的骨名不在这份网格的父骨链里，说明链少了骨（走段吃错东西的征状）。
+fn corroborate(files: &[PathBuf]) {
+    let mut checked = 0usize;
+    let mut with_ani = 0usize;
+    let mut clean = 0usize;
+    let mut bad: Vec<(String, usize, Vec<String>)> = Vec::new();
+    for f in files {
+        let Ok(raw) = std::fs::read(f) else { continue };
+        if bone_count(&raw).unwrap_or(0) == 0 {
+            continue;
+        }
+        let Ok(h) = hierarchy_try(&raw) else { continue };
+        let tree: std::collections::HashSet<String> =
+            h.bones.iter().map(|b| b.name.to_ascii_lowercase()).collect();
+        checked += 1;
+        // .ani 不在网格自己目录下，而在同级 `ani/` 子目录（解出来的目录树实测形状：
+        // `.../w1351_boss_sangtugong/ani/*.ani` 与 `.../model/<x>/*.mesh`）。
+        let mut dirs: Vec<PathBuf> = Vec::new();
+        if let Some(d) = f.parent() {
+            dirs.push(d.to_path_buf());
+            dirs.push(d.join("ani"));
+            if let Some(g) = d.parent() {
+                dirs.push(g.join("ani"));
+            }
+        }
+        let mut anis: Vec<PathBuf> = Vec::new();
+        for d in dirs {
+            if let Ok(rd) = std::fs::read_dir(&d) {
+                anis.extend(rd.flatten().map(|e| e.path()));
+            }
+        }
+        anis.sort();
+        let mut miss: Vec<String> = Vec::new();
+        let mut hit_ani = false;
+        for ap in anis {
+            if ap.extension().and_then(|x| x.to_str()) != Some("ani") {
+                continue;
+            }
+            let Ok(ab) = std::fs::read(&ap) else { continue };
+            let Some(a) = parse_ani(&ab) else { continue };
+            hit_ani = true;
+            for t in &a.tracks {
+                if !tree.contains(&t.bone.to_ascii_lowercase()) && t.bone.len() > 2 {
+                    miss.push(t.bone.clone());
+                }
+            }
+            break;
+        }
+        if !hit_ani {
+            continue;
+        }
+        with_ani += 1;
+        miss.sort();
+        miss.dedup();
+        if miss.is_empty() {
+            clean += 1;
+        } else {
+            bad.push((f.display().to_string(), miss.len(), miss.iter().take(4).cloned().collect()));
+        }
+    }
+    bad.sort_by_key(|b| std::cmp::Reverse(b.1));
+    println!(
+        "父骨链解出且同目录有可读 .ani 的份数 {with_ani}（树解出总数 {checked}）：
+           .ani 骨名全在链里 = {clean} · 有缺 = {} （缺得最多的前 12 份）",
+        bad.len()
+    );
+    for (p, n, names) in bad.iter().take(12) {
+        println!(
+            "   缺 {n:>3} 根  {}  例 {}",
+            p.replace(std::path::MAIN_SEPARATOR, "/"),
+            names.join(", ")
+        );
+    }
+}
+
 fn main() {
     let argv: Vec<String> = std::env::args().collect();
     let tree = arg(&argv, "tree").unwrap_or_else(|| r"D:\TLGL\.scratch\out\tree".to_string());
@@ -184,6 +265,10 @@ fn main() {
 
     if argv.iter().any(|a| a == "--stuck") {
         stuck_probe(&files);
+        return;
+    }
+    if argv.iter().any(|a| a == "--corroborate") {
+        corroborate(&files);
         return;
     }
     if argv.iter().any(|a| a == "--forest") {

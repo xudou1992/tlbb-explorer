@@ -185,6 +185,7 @@ fn corroborate(files: &[PathBuf]) {
     let mut checked = 0usize;
     let mut with_ani = 0usize;
     let mut clean = 0usize;
+    let mut group_ok = 0usize;
     let mut bad: Vec<(String, usize, Vec<String>)> = Vec::new();
     for f in files {
         let Ok(raw) = std::fs::read(f) else { continue };
@@ -236,15 +237,44 @@ fn corroborate(files: &[PathBuf]) {
         miss.dedup();
         if miss.is_empty() {
             clean += 1;
+            continue;
+        }
+        // 一条 `.ani` 驱动的是**整组网格拼起来的骨架**（2026-10-10 实测：`zhaotianshi`
+        // 部件链 118 根 + 动作另 59 根 = 177，与「主网格 ∪ 四份部件」的 177 根逐数对上）。
+        // 所以报缺之后必须再拿同目录全部网格的并集判一次——只对一份部件网格就报「缺骨」，
+        // 是对照对象拿错了，不是父骨链解错。
+        let mut union = tree.clone();
+        if let Some(d) = f.parent() {
+            if let Ok(rd) = std::fs::read_dir(d) {
+                for e in rd.flatten() {
+                    let q = e.path();
+                    if q.extension().and_then(|x| x.to_str()) != Some("mesh") || q == *f {
+                        continue;
+                    }
+                    let Ok(rb) = std::fs::read(&q) else { continue };
+                    if let Ok(h2) = hierarchy_try(&rb) {
+                        union.extend(h2.bones.iter().map(|b| b.name.to_ascii_lowercase()));
+                    }
+                }
+            }
+        }
+        if miss.iter().all(|m| union.contains(&m.to_ascii_lowercase())) {
+            group_ok += 1;
         } else {
-            bad.push((f.display().to_string(), miss.len(), miss.iter().take(4).cloned().collect()));
+            let left: Vec<String> = miss
+                .iter()
+                .filter(|m| !union.contains(&m.to_ascii_lowercase()))
+                .cloned()
+                .collect();
+            bad.push((f.display().to_string(), left.len(), left.iter().take(4).cloned().collect()));
         }
     }
     bad.sort_by_key(|b| std::cmp::Reverse(b.1));
     println!(
         "父骨链解出且同目录有可读 .ani 的份数 {with_ani}（树解出总数 {checked}）：
-           .ani 骨名全在链里 = {clean} · 有缺 = {} （缺得最多的前 12 份）",
-        bad.len()
+           .ani 骨名全在这一份的链里 = {clean} · 单份有缺 {bad_n} 份，
+           其中拿**同目录全部网格的并集**再判就对上的 = {group_ok} 份 · 并集仍对不上 = {} 份",
+        bad.len(), bad_n = with_ani - clean
     );
     for (p, n, names) in bad.iter().take(12) {
         println!(

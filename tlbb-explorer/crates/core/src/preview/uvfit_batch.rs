@@ -43,10 +43,28 @@ use crate::preview::parse_geometry;
 // （托底修正后的聚合分）。v2 的分布整体左移（黑底爆炸值被托回 0..30 区间），
 // 这组阈值**没有按 v2 重新校准**——先落数据再看要不要调。
 // high 要同时过分数线和覆盖率线（覆盖率太低的「高分」多半是 UV 岛太小的假阳性）。
+//
+// 2026-10-10 把两套刻度的分布量出来了（`.scratch/tex_threshold_scale.py`，2,368 份有分）：
+// 阈值 6/3/1.2 在 **raw** 上覆盖 91.8% / 99.4% / 100%——几乎不设防（这就是 v1
+// `high 2070` 的来源：黑底贴图岛外方差≈0，`inside_var/4` 直接上千）；
+// 落在 **adjusted** 上覆盖 70.3% / 82.2% / 84.6%，是有区分度的。
+// adjusted 自身 p50 = 10.2、p90 = 53.9 ⇒ 沿用同三个数**方向偏松、不是偏严**。
+// 重标要连 `grade` 的闸门与界面文案一起改，不许只动数字。
 const HIGH_SCORE: f64 = 6.0;
 const HIGH_COVER: f64 = 0.3;
 const MID_SCORE: f64 = 3.0;
 const LOW_SCORE: f64 = 1.2;
+
+/// 「度量退化」判据：UV 几乎铺满整张贴图时，岛外没剩下多少像素，
+/// `corrected = inside_var / (outside_var + 4)` 的分子分母趋于同源，比值卡在 1 附近——
+/// **这不是「分数低」，是这个度量在该件上没有信息**，界面不该把它与分不够混说。
+///
+/// 阈值来自 2026-10-10 的对照实测（`.scratch/tex_unknown_buckets.py`）：
+/// adjusted < 1.3 的那 388 份 coverage p50 = 0.928、68% 的 coverage ≥0.9；
+/// 其余 1,980 份 coverage p50 = 0.737、只有 6% ≥0.9。两个条件一起用是为了
+/// 不把「岛内确实平」误标成退化。
+const DEGENERATE_ADJ: f64 = 1.3;
+const DEGENERATE_COVER: f64 = 0.9;
 
 /// 一次批量评分的全部输入。`limit`/`shards` 为 0 时取默认（不限 / 自动并行度）。
 #[derive(Clone, Debug)]
@@ -121,6 +139,22 @@ fn grade(top_score: Option<f64>, coverage: f64, _has_uv: bool) -> &'static str {
         "low"
     } else {
         "unknown"
+    }
+}
+
+/// `unknown` 的四分法（写进 `stats.unknownSplit`）。
+/// 掺在一个 `unknown` 里会让人以为「815 份都能靠更深的兜底救回来」，
+/// 实测其中 442 份连 UV 都没有、365 份是度量本身在该件上没有信息（见常量注释）。
+fn unknown_cause(r: &Row) -> &'static str {
+    if !r.has_uv {
+        return "noUv";
+    }
+    match r.top_adjusted {
+        None => "noCandidateScore",
+        Some(a) if a < DEGENERATE_ADJ && r.coverage.unwrap_or(0.0) >= DEGENERATE_COVER => {
+            "degenerate"
+        }
+        _ => "lowSignal",
     }
 }
 
@@ -411,6 +445,11 @@ fn write_manifest(
 ) -> Result<(), String> {
     let mut graded = [("high", 0usize), ("mid", 0), ("low", 0), ("unknown", 0)];
     let mut graded_v2 = [("high", 0usize), ("mid", 0), ("low", 0), ("unknown", 0)];
+    // unknown 不是一回事，掺在一起会把「还能靠试贴分辨的份数」虚报。
+    // 分法与阈值见 [`DEGENERATE_ADJ`] 上方注释（2026-10-10 实测）。
+    let mut no_uv = 0usize;
+    let mut degenerate = 0usize;
+    let mut no_score = 0usize;
     let mut with_uv = 0usize;
     let mut cand_total = 0usize;
     let mut manifest = String::new();
@@ -420,6 +459,14 @@ fn write_manifest(
         };
         if r.has_uv {
             with_uv += 1;
+        }
+        if r.graded_v2 == "unknown" {
+            match unknown_cause(r) {
+                "noUv" => no_uv += 1,
+                "degenerate" => degenerate += 1,
+                "noCandidateScore" => no_score += 1,
+                _ => {}
+            }
         }
         cand_total += r.candidates;
         graded.iter_mut().find(|(g, _)| *g == r.graded).ok_or("未知分级")?.1 += 1;
@@ -436,12 +483,22 @@ fn write_manifest(
         ));
     }
     manifest.push_str(&format!(
-        "{{\"total\":{},\"withUv\":{},\"candidates\":{},\"graded\":{{\"high\":{},\"mid\":{},\"low\":{},\"unknown\":{}}},\"gradedV2\":{{\"high\":{},\"mid\":{},\"low\":{},\"unknown\":{}}},\"elapsedSec\":{elapsed:.1},\"thresholds\":{{\"highScore\":{HIGH_SCORE},\"highCoverage\":{HIGH_COVER},\"midScore\":{MID_SCORE},\"lowScore\":{LOW_SCORE}}}}}\n",
+        "{{\"total\":{},\"withUv\":{},\"candidates\":{},\"graded\":{{\"high\":{},\"mid\":{},\"low\":{},\"unknown\":{}}},\"gradedV2\":{{\"high\":{},\"mid\":{},\"low\":{},\"unknown\":{}}},\"unknownSplit\":{{\"noUv\":{},\"degenerate\":{},\"noCandidateScore\":{},\"lowSignal\":{}}},\"tryableByUv\":{},\"elapsedSec\":{elapsed:.1},\"thresholds\":{{\"highScore\":{HIGH_SCORE},\"highCoverage\":{HIGH_COVER},\"midScore\":{MID_SCORE},\"lowScore\":{LOW_SCORE},\"degenerateAdjusted\":{DEGENERATE_ADJ},\"degenerateCoverage\":{DEGENERATE_COVER}}}}}\n",
         jobs.len(),
         with_uv,
         cand_total,
         graded[0].1, graded[1].1, graded[2].1, graded[3].1,
         graded_v2[0].1, graded_v2[1].1, graded_v2[2].1, graded_v2[3].1,
+        no_uv,
+        degenerate,
+        no_score,
+        // 剩下的 unknown 才是「有信号但分数不够」——那才是阈值能商量的部分。
+        graded_v2[3].1.saturating_sub(no_uv + degenerate + no_score),
+        // 能靠试贴分辨的份数：去掉没 UV 的、度量退化的、没算出候选分的。
+        jobs.len()
+            .saturating_sub(no_uv)
+            .saturating_sub(degenerate)
+            .saturating_sub(no_score),
     ));
     std::fs::create_dir_all(out).map_err(|e| format!("建输出目录失败：{e}"))?;
     std::fs::write(out.join("manifest.json"), manifest).map_err(|e| format!("写 manifest 失败：{e}"))
@@ -531,6 +588,34 @@ mod tests {
         assert_eq!(grade(Some(1.5), 0.0, true), "low");
         assert_eq!(grade(Some(0.2), 0.0, true), "unknown");
         assert_eq!(grade(None, 0.0, false), "unknown", "几何都拿不到也是 unknown");
+    }
+
+    fn row(has_uv: bool, coverage: Option<f64>, adj: Option<f64>) -> Row {
+        Row {
+            mesh: "x.mesh".to_string(),
+            has_uv,
+            coverage,
+            top_score: adj,
+            graded: "unknown",
+            top_adjusted: adj,
+            graded_v2: "unknown",
+            candidates: if adj.is_some() { 5 } else { 0 },
+        }
+    }
+
+    /// `unknown` 的四分法：没 UV / 度量退化 / 没算出候选分 / 真的分不够，各归各的。
+    /// 退化的判据要**两个条件同时**：adjusted 贴着 1 **且** UV 几乎铺满整图——
+    /// 只满足一半（岛内确实平但 UV 只占一小块）不能算退化。
+    #[test]
+    fn unknown_分得清是没_uv_度量退化还是分不够() {
+        assert_eq!(unknown_cause(&row(false, None, None)), "noUv");
+        assert_eq!(unknown_cause(&row(true, Some(0.95), Some(1.02))), "degenerate");
+        assert_eq!(unknown_cause(&row(true, Some(1.0), Some(1.19))), "degenerate");
+        assert_eq!(unknown_cause(&row(true, Some(0.3), None)), "noCandidateScore");
+        // 分低但 UV 只占一小块：是「比出来了、候选不对路」，不是度量没信息。
+        assert_eq!(unknown_cause(&row(true, Some(0.2), Some(1.05))), "lowSignal");
+        // 铺满整图但 adjusted 明显大于 1：有对比，按分不够算。
+        assert_eq!(unknown_cause(&row(true, Some(0.95), Some(1.5))), "lowSignal");
     }
 
     /// 「没量过」和「量到 0」在 manifest 里必须是两样东西：null 与 0.0000。

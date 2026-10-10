@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<!-- 外部查看器验收台（不是交付物）：蒙皮与动画完全交给 three.js 自己算
+     （GLTFLoader + AnimationMixer + SkinnedMesh CPU 蒙皮），不加任何 rebind 补丁。
+     用法：view.html?asset=/path.glb&bones=0&view=front
+     载入后 window.__ready 为真，再由 CDP 调 __measure / __shot。 -->
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<style>
+  html,body{margin:0;height:100%;background:#14161a;overflow:hidden;font-family:monospace}
+  #hud{position:fixed;left:0;bottom:0;right:0;color:#9fb3c8;font-size:11px;white-space:pre;background:rgba(10,12,15,.72);padding:4px 8px}
+</style>
+<script type="importmap">
+{"imports":{
+  "three":"/web-viewer/node_modules/three/build/three.module.js",
+  "three/addons/":"/web-viewer/node_modules/three/examples/jsm/"
+}}
+</script>
+</head>
+<body>
+<div id="hud">载入中…</div>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+
+const q = new URLSearchParams(location.search);
+const asset = q.get('asset');
+const view = q.get('view') ?? 'front';
+
+const renderer = new THREE.WebGLRenderer({antialias: true, preserveDrawingBuffer: true});
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x14161a);
+const camera = new THREE.PerspectiveCamera(38, innerWidth / innerHeight, 0.01, 400);
+scene.add(new THREE.HemisphereLight(0xdfe6ee, 0x30343a, 1.15));
+const key = new THREE.DirectionalLight(0xffffff, 1.5);
+key.position.set(3, 4, 5);
+scene.add(key);
+scene.add(new THREE.GridHelper(4, 8, 0x3a4048, 0x24292f));
+
+const hud = document.getElementById('hud');
+const fail = (msg) => {
+  window.__error = msg;
+  window.__ready = true;
+  hud.textContent = '加载失败：' + msg;
+};
+
+new GLTFLoader().load(asset, (gltf) => {
+  const root = gltf.scene;
+  scene.add(root);
+  root.updateMatrixWorld(true);
+
+  const skinned = [], verts = new Set(), joints = new Set();
+  root.traverse((o) => {
+    if (o.isBone) joints.add(o.name);
+    if (!o.isSkinnedMesh && !o.isMesh) return;
+    const g = o.geometry;
+    if (g?.getAttribute('position')) {
+      if (o.isSkinnedMesh) skinned.push(o);
+      const p = g.getAttribute('position');
+      for (let i = 0; i < p.count; i++) verts.add(o.uuid + ':' + i);
+    }
+    o.material = new THREE.MeshStandardMaterial({color: 0xb9c2cc, roughness: .8, metalness: 0});
+  });
+  if (!skinned.length) return fail('这份产物里没有 SkinnedMesh');
+
+  // 包围盒一律用 three 自己的路径量：SkinnedMesh.computeBoundingBox 会在 CPU 上
+  // 按 skeleton.boneInverses × bone.matrixWorld 逐顶点点出来，跟 GPU 蒙皮同一套码。
+  const union = () => {
+    const box = new THREE.Box3();
+    root.updateMatrixWorld(true);
+    for (const m of skinned) {
+      m.computeBoundingBox();
+      if (m.boundingBox) box.union(m.boundingBox.clone().applyMatrix4(m.matrixWorld));
+    }
+    return box;
+  };
+  const num = (n) => +n.toFixed(4);
+  const pack = (b) => b.isEmpty() ? null : [...b.min.toArray(), ...b.max.toArray()].map(num);
+
+  const bindBox = union();
+  const center = bindBox.getCenter(new THREE.Vector3());
+  const radius = Math.max(.4, bindBox.getSize(new THREE.Vector3()).length() / 2);
+  const dist = radius * 3.1;
+  const pos = {
+    front: new THREE.Vector3(0, radius * .35, dist),
+    back: new THREE.Vector3(0, radius * .35, -dist),
+    side: new THREE.Vector3(dist, radius * .35, 0),
+    three: new THREE.Vector3(dist * .7, radius * .4, dist * .7),
+    top: new THREE.Vector3(0, dist, .001),
+  }[view] ?? new THREE.Vector3(0, radius * .35, dist);
+  camera.position.copy(pos);
+  camera.lookAt(center);
+
+  if (q.get('bones') === '1') scene.add(new THREE.SkeletonHelper(root));
+
+  const mixer = new THREE.AnimationMixer(root);
+  const clips = gltf.animations || [];
+  const act = new Map();
+  for (const c of clips) {
+    const a = mixer.clipAction(c);
+    a.play();
+    a.paused = true;
+    act.set(c.name, a);
+  }
+
+  const frameCount = (c) => {
+    let n = 0;
+    for (const tr of c.tracks) n = Math.max(n, tr.getValueSize ? Math.round(tr.times.length) : 0);
+    return n;
+  };
+
+  /// 停在某条动作的某一秒。paused 的 action 在 mixer._update 里权重为 0，
+  /// setTime 不会把姿态写进 bone.matrixWorld——必须真的 playing，且只留这一条，
+  /// 否则多条动作同时加权会被 three 混成平均姿态。
+  const seek = (name, t) => {
+    const c = clips.find((x) => x.name === name);
+    if (!c) return false;
+    for (const [k, a] of act) {
+      if (k === name) { a.stop(); a.play(); a.paused = false; } else { a.stop(); }
+    }
+    mixer.setTime(Math.min(t, c.duration));
+    root.updateMatrixWorld(true);
+    return true;
+  };
+
+  /// 这条动作实际的关键帧时刻（three 从通道 times 里拿，不猜帧率）。
+  window.__keyTimes = (name) => {
+    const c = clips.find((x) => x.name === name);
+    if (!c) return null;
+    const s = new Set();
+    for (const tr of c.tracks) for (let i = 0; i < tr.times.length; i++) s.add(+tr.times[i].toFixed(4));
+    return [...s].sort((a, b) => a - b);
+  };
+
+  /// 逐顶点报告：谁被拉走了、拉走它的那根骨在做什么。
+  /// 顶点位置走 three 自己的 SkinnedMesh.getVertexPosition（与 GPU 同一套蒙皮）。
+  window.__vertexReport = (name, t) => {
+    if (!seek(name, t)) return {error: '没有这条动作'};
+    const span = bindBox.getSize(new THREE.Vector3()).length();
+    const byJoint = new Map();
+    let torn = 0, total = 0, rootFilled = 0, tornRootFilled = 0;
+    const v = new THREE.Vector3(), bind = new THREE.Vector3();
+    for (const mesh of skinned) {
+      const g = mesh.geometry;
+      const pos = g.getAttribute('position');
+      const idx = g.getAttribute('skinIndex');
+      const wgt = g.getAttribute('skinWeight');
+      const invBind = mesh.skeleton.boneInverses;
+      for (let i = 0; i < pos.count; i++) {
+        total++;
+        bind.fromBufferAttribute(pos, i);
+        mesh.getVertexPosition(i, v);
+        let sum = 0, best = -1, bestW = 0;
+        const js = [];
+        for (let k = 0; k < 4; k++) {
+          const w = wgt.getComponent(i, k);
+          sum += w;
+          if (w > 0) {
+            const ji = mesh.skeleton.bones[idx.getX(i, k)].name;
+            js.push(ji);
+            if (w > bestW) { bestW = w; best = ji; }
+          }
+        }
+        const isRootFill = Math.abs(sum - wgt.getComponent(i, 0)) < 1e-6 && wgt.getX(i) > .999;
+        if (isRootFill) rootFilled++;
+        const d = v.distanceTo(bind);
+        if (d > span * .3) {
+          torn++;
+          if (isRootFill) tornRootFilled++;
+          const key = best ?? '(无权重)';
+          const e = byJoint.get(key) ?? {joint: key, torn: 0, maxD: 0, bones: 0, sample: []};
+          e.torn++;
+          e.maxD = Math.max(e.maxD, +d.toFixed(3));
+          if (e.sample.length < 3) e.sample.push(js.join('+'));
+          byJoint.set(key, e);
+        }
+        void invBind;
+      }
+    }
+    const rows = [...byJoint.values()].sort((a, b) => b.torn - a.torn).slice(0, 14);
+    return {span: +span.toFixed(3), total, torn, rootFilled, tornRootFilled, byJoint: rows};
+  };
+
+  /// 逐骨：这一帧的蒙皮矩阵相对 bind 走了多远、有没有把长度放大。
+  window.__boneReport = (name, t) => {
+    if (!seek(name, t)) return {error: '没有这条动作'};
+    const seen = new Map();
+    for (const mesh of skinned) {
+      mesh.skeleton.bones.forEach((b, i) => {
+        if (seen.has(b.name)) return;
+        const m = new THREE.Matrix4().multiplyMatrices(b.matrixWorld, mesh.skeleton.boneInverses[i]);
+        const p = new THREE.Vector3().setFromMatrixPosition(m);
+        const s = new THREE.Vector3(), q = new THREE.Quaternion(), sc = new THREE.Vector3();
+        m.decompose(s, q, sc);
+        seen.set(b.name, {
+          bone: b.name,
+          disp: +p.length().toFixed(3),
+          scale: +sc.length().toFixed(3),
+          angle: +(2 * Math.acos(Math.min(1, Math.abs(q.w))) * 57.3).toFixed(1),
+        });
+      });
+    }
+    return [...seen.values()].sort((a, b) => b.disp - a.disp).slice(0, 12);
+  };
+
+  /// 撕不撕看**边长**，不看位移：正常摆动也会把顶点搬走，撕裂是把同一个面上的
+  /// 两个相邻顶点拉开距离。逐三角形三条边各量一次 bind vs 这一帧，报倍数。
+  window.__stretch = (name, t) => {
+    if (!seek(name, t)) return {error: '没有这条动作'};
+    const P = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()];
+    const B = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()];
+    let edges = 0, over2 = 0, over1_5 = 0, maxRatio = 0, rootVerts = 0;
+    const byJoint = new Map(), mixed = new Map();
+    for (const mesh of skinned) {
+      const g = mesh.geometry;
+      const pos = g.getAttribute('position');
+      const sidx = g.getAttribute('skinIndex');
+      const swgt = g.getAttribute('skinWeight');
+      // 「挂根」= 这个顶点的全部权重都压在骨架根关节上（导出器把没有影响顶点表的
+      // 顶点差额挂根骨，见 gltf.rs 的 rootFillNote）。
+      const bones = mesh.skeleton.bones;
+      const root = bones.findIndex((b) => !bones.includes(b.parent));
+      const rootFill = new Set();
+      for (let i = 0; i < pos.count; i++) {
+        let sum = 0, onRoot = 0;
+        for (let k = 0; k < 4; k++) {
+          const w = swgt.getComponent(i, k);
+          sum += w;
+          if (sidx.getX(i, k) === root) onRoot += w;
+        }
+        if (root >= 0 && sum > 0 && Math.abs(onRoot - sum) < 1e-6) { rootFill.add(i); rootVerts++; }
+      }
+      const order = g.index ? g.index.array : null;
+      const tri = order ? order.length / 3 : Math.floor(pos.count / 3);
+      for (let f = 0; f < tri; f++) {
+        const ix = order ? [order[f * 3], order[f * 3 + 1], order[f * 3 + 2]] : [f * 3, f * 3 + 1, f * 3 + 2];
+        for (let k = 0; k < 3; k++) {
+          mesh.getVertexPosition(ix[k], P[k]);
+          B[k].fromBufferAttribute(pos, ix[k]);
+        }
+        for (const [u, v] of [[0, 1], [1, 2], [2, 0]]) {
+          const len0 = B[u].distanceTo(B[v]);
+          if (len0 < 1e-4) continue;
+          edges++;
+          const ratio = P[u].distanceTo(P[v]) / len0;
+          if (ratio > 1.5) {
+            over1_5++;
+            const ru = rootFill.has(ix[u]) ? 1 : 0, rv = rootFill.has(ix[v]) ? 1 : 0;
+            const kind = ru && rv ? '两端都挂根' : ru + rv ? '一端挂根' : '都不挂根';
+            mixed.set(kind, (mixed.get(kind) ?? 0) + 1);
+          }
+          if (ratio > 2) {
+            over2++;
+            const j = mesh.skeleton.bones[sidx.getX(ix[v], 0)].name;
+            byJoint.set(j, (byJoint.get(j) ?? 0) + 1);
+          }
+          if (ratio > maxRatio) maxRatio = ratio;
+        }
+      }
+    }
+    return {
+      edges, over1_5, over2, rootVerts,
+      maxRatio: +maxRatio.toFixed(2),
+      split: Object.fromEntries(mixed),
+      topJoints: [...byJoint].sort((x, y) => y[1] - x[1]).slice(0, 6),
+    };
+  };
+
+  window.__measure = (name, times) => {
+    const c = clips.find((x) => x.name === name);
+    if (!c) return {error: '没有这条动作: ' + name};
+    const span = bindBox.getSize(new THREE.Vector3()).length();
+    const rows = [];
+    for (const t of times) {
+      seek(name, t);
+      const b = union();
+      const s = b.getSize(new THREE.Vector3()).length();
+      // 相对 bind：包围盒中心漂了多少、体积涨到 bind 的几倍。撕开时这两项会炸。
+      const drift = b.getCenter(new THREE.Vector3()).distanceTo(center) / span;
+      rows.push({t: num(t), box: pack(b), grow: num(s / span), drift: num(drift)});
+    }
+    return {clip: name, duration: num(c.duration), bindSpan: num(span), rows};
+  };
+
+  window.__shot = (name, t) => {
+    const ok = seek(name, t);
+    window.__lastBox = pack(union());
+    renderer.render(scene, camera);
+    return ok;
+  };
+
+  /// 按「这条动作自身的时长」取分数位置，省掉调用方去猜时长（时长是 three 从
+  /// 轨道时间算出来的，不是 .ani 里那个未证的 tick）。
+  window.__shotFrac = (name, frac) => {
+    const c = clips.find((x) => x.name === name);
+    if (!c) return null;
+    return window.__shot(name, +(frac * c.duration).toFixed(3));
+  };
+
+  window.__rest = () => {
+    for (const a of act.values()) a.stop();
+    root.updateMatrixWorld(true);
+    renderer.render(scene, camera);
+    return pack(bindBox);
+  };
+
+  window.__ready = true;
+  window.__info = {
+    asset, skinnedMeshes: skinned.length, verts: verts.size, joints: joints.size,
+    view, box: pack(bindBox),
+    clips: clips.map((c) => ({name: c.name, dur: num(c.duration), keys: frameCount(c)})),
+  };
+  // HUD 只留一行：整份 info 铺成上百行会把画面整个盖住（截图时吃过这个亏）。
+  hud.textContent = q.get('quiet') === '1' ? '' :
+    `${skinned.length} 蒙皮网格 · ${verts.size} 顶点 · ${joints.size} 关节 · ${clips.length} 条动作`;
+}, undefined, (e) => fail(String(e?.message ?? e)));
+</script>
+</body>
+</html>

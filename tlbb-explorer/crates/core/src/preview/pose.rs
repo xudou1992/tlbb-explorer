@@ -544,6 +544,62 @@ pub fn posed_vertices(
     Some(out)
 }
 
+/// 一份蒙皮结果相对 bind 的**边长拉伸**统计——判「撕不撕」的那把尺。
+///
+/// 为什么不用顶点位移：正常摆动本来就在搬顶点，位移小只说明「整体没飞」。
+/// **同一个三角形面上的相邻顶点被拉开距离**才是皮肤撕开，所以逐条边量
+/// 「这一帧的长度 ÷ bind 的长度」。`over15`/`over20` 是超 1.5 倍与超 2 倍的边数，
+/// `max_ratio` 是最长的那一条。
+///
+/// 2026-10-09 用它把「frame0 锚不撕」这条口径判红：主样本 idle01 中途
+/// 351/2,538 条边超 1.5 倍（最大 6.67 倍）、walk 445 条（最大 24.09 倍），
+/// 而 app 与 three.js 外部查看器量出来是同一串数字。证据
+/// `.scratch/glb_ext/验收_外部查看器_20261009.md`。
+#[derive(Debug, Clone, Copy, Default)]
+pub struct Stretch {
+    pub edges: usize,
+    pub over15: usize,
+    pub over20: usize,
+    pub max_ratio: f64,
+}
+
+pub fn edge_stretch(bind: &[[f32; 3]], posed: &[[f32; 3]], indices: &[u16]) -> Stretch {
+    let dist = |a: [f32; 3], b: [f32; 3]| -> f64 {
+        let d = [(a[0] - b[0]) as f64, (a[1] - b[1]) as f64, (a[2] - b[2]) as f64];
+        (d[0] * d[0] + d[1] * d[1] + d[2] * d[2]).sqrt()
+    };
+    let mut s = Stretch::default();
+    for tri in indices.chunks(3) {
+        if tri.len() != 3 {
+            continue;
+        }
+        let v = [tri[0] as usize, tri[1] as usize, tri[2] as usize];
+        for k in 0..3 {
+            let (a, b) = (v[k], v[(k + 1) % 3]);
+            let (Some(p0), Some(q0), Some(p1)) = (bind.get(a), bind.get(b), posed.get(a)) else {
+                continue;
+            };
+            let Some(q1) = posed.get(b) else { continue };
+            let l0 = dist(*p0, *q0);
+            if l0 < 1e-4 {
+                continue; // 退化边不参加（0 长度除不动，也不算撕）
+            }
+            let r = dist(*p1, *q1) / l0;
+            s.edges += 1;
+            if r > 1.5 {
+                s.over15 += 1;
+            }
+            if r > 2.0 {
+                s.over20 += 1;
+            }
+            if r > s.max_ratio {
+                s.max_ratio = r;
+            }
+        }
+    }
+    s
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

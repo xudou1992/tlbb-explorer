@@ -147,3 +147,21 @@ test("有候选榜时不提批量试贴这件事（榜都出来了，那句话�
   const b = texBlock({ texSlots: [SLOT_A], textureCandidates: [GROUP] }, { pending: 500 });
   assert.ok(!b.slotsHtml.includes("批量试贴"), b.slotsHtml);
 });
+
+test("多只网格各出一份榜：每份都要摆出来，按钮回指自己那份", () => {
+  const g2 = { ...GROUP_V2, mesh: "b.mesh", candidates: [CAND_V2(3, 1.4, F)] };
+  const b = texBlock({ texSlots: [SLOT_A, SLOT_B], textureCandidates: [GROUP_V2, g2] });
+  assert.equal((b.candHtml.match(/class="tex-group"/g) || []).length, 2, b.candHtml);
+  assert.ok(b.candHtml.includes("第 2 / 2 份榜 · 网格 b.mesh"), b.candHtml);
+  assert.ok(b.note.includes("这一组有 2 只网格"), b.note);
+  assert.equal((b.candHtml.match(/tex-slot-pick/g) || []).length, 2, "每份榜各有一个确认下拉");
+  assert.ok(b.candHtml.includes('id="texSlotPick"'), "第一份沿用旧 id，老链路不破");
+  assert.equal((b.candHtml.match(/data-gi="1" data-idx/g) || []).length, 2, "第二份的两颗按钮要带 gi");
+});
+
+test("只有一份榜时话术不变：不提份数，网格名照旧写在说明里", () => {
+  const b = texBlock({ texSlots: [SLOT_A], textureCandidates: [GROUP_V2] });
+  assert.ok(!b.note.includes("份榜"), b.note);
+  assert.ok(b.note.includes("按网格 a.mesh 的离线试贴排序"), b.note);
+  assert.ok(!b.candHtml.includes("第 1 / 1"), b.candHtml);
+});

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>贴图试贴 · 多份榜渲染检查</title>
+<link rel="stylesheet" href="/tlbb-explorer/app/web/style.css">
+</head>
+<body>
+<section class="panel" id="secTex">
+  <h3>贴图</h3>
+  <p class="dim" id="texNote"></p>
+  <div id="texSlots"></div>
+  <div id="texCand"></div>
+</section>
+<script type="module">
+import { texBlock } from "/tlbb-explorer/app/web/lib/textureState.js";
+
+const F = { uvFit: 0.18, alphaFit: 0.9, sizeFit: 1, blackBias: true, whiteBias: false, meanColor: [60, 60, 60] };
+const cand = (i, adj) => ({ hash: `ee000000000000${i}0`, w: 512, h: 512, codec: "BC3", mips: 10,
+  score: 70 + i, adjustedScore: adj, factors: F, png: "" });
+
+const reply = {
+  texSlots: [
+    { name: "w1351_nan_yifu.tga", cfgPath: "data/source/player/w1351_nan/w1351_nan_yifu.tga", overrideHash: null },
+    { name: "w1351_nan_shoutao.tga", cfgPath: "data/source/player/w1351_nan/w1351_nan_shoutao.tga", overrideHash: null },
+  ],
+  textureCandidates: [
+    { mesh: "w1351_nan_yifu_001.mesh", pool: 1650, state: "candidates", source: "batch", ranked: true,
+      candidates: [cand(1, 3.2), cand(2, 2.4), cand(3, 1.9)] },
+    { mesh: "w1351_nan_shoutao_001.mesh", pool: 1650, state: "candidates", source: "batch", ranked: true,
+      candidates: [cand(4, 2.8), cand(5, 1.4)] },
+  ],
+};
+
+const b = texBlock(reply, { pending: 0, running: false });
+document.getElementById("texNote").textContent = b.note;
+document.getElementById("texSlots").innerHTML = b.slotsHtml;
+document.getElementById("texCand").innerHTML = b.candHtml;
+window.__ready = {
+  groups: document.querySelectorAll("#texCand .tex-group").length,
+  pickers: document.querySelectorAll("#texCand .tex-slot-pick").length,
+  gi: Array.from(document.querySelectorAll("#texCand button")).map((x) => x.dataset.gi).join(","),
+  cards: document.querySelectorAll("#texCand .tex-cand").length,
+};
+</script>
+</body>
+</html>

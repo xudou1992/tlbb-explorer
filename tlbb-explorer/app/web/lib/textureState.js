@@ -65,14 +65,19 @@ function scoreLine(c) {
 /// 全库批量缓存（source=batch）候选不带内嵌 PNG：img 不给 src，只摆占位框并标记
 /// data-need-png + data-hash，由 detail.js 按编号现解——数据里没有的图不编造，
 /// 现解失败也保持占位。旧缓存自带 data URL，照旧直接嵌。
-export function texCandidatesHtml(group, slots = []) {
+/// `gi`/`gn` 是这只网格在第几份榜、共几份：一只怪常有多个网格，每份都要摆出来，
+/// 只铺第一份等于让人工确认剩下几只时无从下手。按钮带 data-gi 回指自己的榜。
+export function texCandidatesHtml(group, slots = [], gi = 0, gn = 1) {
   if (!group || !Array.isArray(group.candidates) || !group.candidates.length) return "";
   const openSlots = slots.filter((s) => !s.overrideHash);
   const pick = openSlots.length
-    ? `<label class="dim">确认到槽位：<select id="texSlotPick">` +
+    ? `<label class="dim">确认到槽位：<select class="tex-slot-pick"${gi === 0 ? ` id="texSlotPick"` : ""}>` +
       openSlots.map((s) => `<option value="${esc(s.name)}">${esc(s.name)}</option>`).join("") +
       `</select></label>`
     : `<span class="dim">所有槽位都已确认（撤销后可重选）</span>`;
+  const head = gn > 1
+    ? `<p class="dim">第 ${gi + 1} / ${gn} 份榜 · 网格 ${esc(group.mesh)}</p>`
+    : "";
   const cards = group.candidates.map((c, i) => {
     const img = c.png
       ? `<img src="${esc(c.png)}" alt="候选贴图 ${i + 1}">`
@@ -82,11 +87,11 @@ export function texCandidatesHtml(group, slots = []) {
       ${img}
       <figcaption>候选 ${i + 1} · ${esc(c.w)}×${esc(c.h)} ${esc(c.codec)} · ${esc(c.mips)} 级 mip<br>
       ${scoreLine(c)}<br>${factorLine(c)}</figcaption>
-      <button type="button" data-act="try" data-idx="${i}">套上看看</button>
-      <button type="button" data-act="confirm" data-idx="${i}">确认这张</button>
+      <button type="button" data-act="try" data-gi="${gi}" data-idx="${i}">套上看看</button>
+      <button type="button" data-act="confirm" data-gi="${gi}" data-idx="${i}">确认这张</button>
     </figure>`;
   });
-  return `${pick}<div class="tex-grid">${cards.join("")}</div>`;
+  return `<div class="tex-group" data-gi="${gi}">${head}${pick}<div class="tex-grid">${cards.join("")}</div></div>`;
 }
 
 /// 后台批量试贴的入口状态（texture_warm_status 回包）。只在「这只网格还没有
@@ -117,12 +122,13 @@ export function texBlock(reply, warm = null) {
   // 排序依据这句话跟着后端口径走（group.ranked）：综合分怎么算、什么时候才重排，
   // 规则在 Rust 那边，前端照着它写的说，免得改了公式而这句话还在说「按 UV 排」。
   const basis = group && group.ranked ? "UV 贴合 × 尺寸 × 透明边界的综合分" : "UV 岛内外方差比";
+  const many = groups.length > 1 ? `这一组有 ${groups.length} 只网格，各出一份榜（` : "按网格 " + esc(group?.mesh) + " 的离线试贴排序（";
   const note = group
-    ? `按网格 ${esc(group.mesh)} 的离线试贴排序（${basis}） · 从 ${group.pool} 张匿名贴图中选出 · 全部未确认`
+    ? `${many}${basis}） · 从 ${group.pool} 张匿名贴图中选出 · 全部未确认`
     : `引用了 ${slots.length} 张贴图，包里都没对上文件；离线试贴还没跑，下面只是名字清单，不是候选榜`;
   return {
     slotsHtml: texSlotsHtml(slots, Boolean(group)) + (group ? "" : warmControl(warm)),
-    candHtml: texCandidatesHtml(group, slots),
+    candHtml: groups.map((g, i) => texCandidatesHtml(g, slots, i, groups.length)).join(""),
     note,
     confirmed,
     total: slots.length,

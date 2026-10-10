@@ -877,7 +877,8 @@ el("secTex").addEventListener("click", async (e) => {
     return;
   }
   if (!texReply) return;
-  const group = (texReply.textureCandidates || [])[0];
+  const groups = texReply.textureCandidates || [];
+  const group = groups[Number(b.dataset.gi)];
   const slots = texReply.texSlots || [];
   if (b.dataset.act === "try") {
     const c = group && group.candidates[Number(b.dataset.idx)];
@@ -885,7 +886,7 @@ el("secTex").addEventListener("click", async (e) => {
     return;
   }
   if (b.dataset.act === "confirm") {
-    const pick = el("texSlotPick");
+    const pick = b.closest(".tex-group")?.querySelector(".tex-slot-pick");
     const slot = (pick && slots.find((s) => s.name === pick.value)) || slots.find((s) => !s.overrideHash);
     const c = group && group.candidates[Number(b.dataset.idx)];
     if (!slot || !c) return;

@@ -284,6 +284,13 @@ test("后台批量试贴的接线不能被拆：没有候选榜时那颗按钮�
   assert.match(src, /api\s*\.\s*textureWarmStatus|\.textureWarmStatus\(\)/, "打开详情时要问一次还差多少只");
 });
 
+test("多份榜的按钮要认得自己那份：取榜靠 data-gi，下拉在自己那份里找", async () => {
+  const src = fs.readFileSync(path.join(web, "detail.js"), "utf8");
+  assert.match(src, /groups\[Number\(b\.dataset\.gi\)\]/, "按钮不能再一律用第一份榜");
+  assert.ok(!/textureCandidates \|\| \[\]\)\[0\]/.test(src), "旧的第一份硬取要清掉");
+  assert.match(src, /closest\("\.tex-group"\)[\s\S]{0,40}tex-slot-pick/, "确认下拉要在按钮所在的那份榜里找");
+});
+
 test("容器与清单的缺口必须自己说出来（不能让用户以为客户端里没这个文件）", async () => {
   const src = fs.readFileSync(path.join(web, "health.js"), "utf8");
   assert.match(src, /id="gapSec"/, "摘要里要有那一节的位置");

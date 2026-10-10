@@ -715,11 +715,12 @@ fn tail_u32(raw: &[u8], at: usize) -> Option<u32> {
 }
 
 /// 96B 记录：名字 + 绑定矩阵（判据与 `read_node` 一致，只是不读影响表）。
-fn tail_record_at(raw: &[u8], at: usize) -> Option<(&str, [f32; 16])> {
-    let name = tail_name_at(raw, at)?;
+/// 一张 4×4 仿射矩阵（D3DX 行主序）：全有限且 <1e7、`m[15]==1`、
+/// 前三行两两垂直且长度彼此相差 <5%。`tail_record_at` 与尾部前奏共用这一份。
+fn tail_matrix_at(raw: &[u8], at: usize) -> Option<[f32; 16]> {
     let mut m = [0f32; 16];
     for k in 0..16 {
-        m[k] = tail_f32(raw, at + 32 + k * 4)?;
+        m[k] = tail_f32(raw, at + k * 4)?;
     }
     if !m.iter().all(|v| v.is_finite() && v.abs() < 1e7) || (m[15] - 1.0).abs() > 1e-3 {
         return None;
@@ -739,6 +740,12 @@ fn tail_record_at(raw: &[u8], at: usize) -> Option<(&str, [f32; 16])> {
             }
         }
     }
+    Some(m)
+}
+
+fn tail_record_at(raw: &[u8], at: usize) -> Option<(&str, [f32; 16])> {
+    let name = tail_name_at(raw, at)?;
+    let m = tail_matrix_at(raw, at + 32)?;
     Some((name, m))
 }
 

@@ -784,25 +784,36 @@ fn tail_is_mat64(raw: &[u8], at: usize) -> bool {
     if m[3].abs() > 1e-3 || m[7].abs() > 1e-3 || m[11].abs() > 1e-3 || (m[15] - 1.0).abs() > 1e-3 {
         return false;
     }
-    let rows = [&m[0..3], &m[4..7], &m[8..11]];
-    let lens: [f32; 3] = rows.map(|r| r.iter().map(|v| v * v).sum::<f32>().sqrt());
-    // 三轴长度**允许彼此不等**：骨头上带非均匀缩放时矩阵就是这样（2026-10-10 实测：
-    // 166 份「真卡半路」的卡点全是 Y 轴长 1.5 这类带缩放矩阵，旧判据「三轴长度差 ≤5%」
-    // 把它们当噪声，走段在此断掉）。放开的只有这一条——正交性改成**归一后**判，
-    // w 列 (0,0,0,1)、有限性、条目数 == 声明数、树合法、恰好落在 EOF 全部照旧。
-    if lens.iter().any(|l| *l < 1e-3 || *l > 1e4) {
-        return false;
-    }
-    let unit: [[f32; 3]; 3] = std::array::from_fn(|i| std::array::from_fn(|t| rows[i][t] / lens[i]));
-    for i in 0..3 {
-        for k in i + 1..3 {
-            let d: f32 = (0..3).map(|t| unit[i][t] * unit[k][t]).sum();
-            if d.abs() > 1e-2 {
-                return false;
-            }
+    // 三轴：**归一后互相正交**即算仿射，长度**允许彼此不等**（骨上带非均匀缩放）。
+    // 更关键的是缩放与旋转的先后：`S·R` 的正交轴在**行**上，`R·S` 的正交轴在**列**上，
+    // 两种客户端都发得出来。2026-10-10 实测：158 份「真卡半路」的卡点全是列向那一种
+    // （按行读两点积 -0.307 / -0.073，按列读三个点积全是 0.0000，轴长 1.493/1/1）。
+    // 所以两个朝向各判一次。w 列 (0,0,0,1)、有限性、条目数 == 声明数、树合法、
+    // 恰好落在 EOF ——这些一条都没放。
+    let axes = |col: bool| -> [[f32; 3]; 3] {
+        std::array::from_fn(|i| {
+            std::array::from_fn(|t| {
+                if col {
+                    m[t * 4 + i]
+                } else {
+                    m[i * 4 + t]
+                }
+            })
+        })
+    };
+    (0..2).any(|c| {
+        let v = axes(c == 1);
+        let lens = v.map(|a| a.iter().map(|x| x * x).sum::<f32>().sqrt());
+        if lens.iter().any(|l| !(1e-3..=1e4).contains(l)) {
+            return false;
         }
-    }
-    true
+        let unit: [[f32; 3]; 3] = std::array::from_fn(|i| std::array::from_fn(|t| v[i][t] / lens[i]));
+        (0..3).all(|i| {
+            (i + 1..3).all(|k| {
+                (0..3).map(|t| unit[i][t] * unit[k][t]).sum::<f32>().abs() <= 1e-2
+            })
+        })
+    })
 }
 
 /// 影响顶点表 `[u32 N][N×u32 顶点][N×f32 权重]`；N=0 是合法的空表（只占 4 字节）。
@@ -1322,6 +1333,25 @@ mod tests {
         let mut tiny = ok;
         tiny[0] = 1e-6; // 轴长带外
         assert!(!tail_is_mat64(&bytes(&tiny), 0), "退化轴长仍该拒");
+
+        // 轴在**列**上的 `R·S`（缩放旋在轴前）：Z 轴 45° 旋转 + X 轴 2 倍缩放。
+        // 按行读两轴点积 = -1.5（不正交），按列读全是 0 —— 实测 158 份卡半路的文件
+        // 卡点上摆的就是这一形。
+        let (c, s) = (0.70710678f32, 0.70710678f32);
+        let mut col = [0f32; 16];
+        col[0] = 2.0 * c;
+        col[1] = s;
+        col[4] = -2.0 * s;
+        col[5] = c;
+        col[10] = 1.0;
+        col[12] = 0.5;
+        col[15] = 1.0;
+        assert!(tail_is_mat64(&bytes(&col), 0), "缩放旋在轴后（轴在列上）的仿射也该认");
+
+        // 两个朝向都不正交的仍是噪声：行、列都掺进同样的斜切
+        let mut shear = col;
+        shear[1] = 3.0; // 破坏列向正交，同时行向本来就不正交
+        assert!(!tail_is_mat64(&bytes(&shear), 0), "两向都不正交的不许认");
     }
 
     /// 森林口径**只**放开「恰好一个根」这一条，其余判据两种口径下都得照旧拦。

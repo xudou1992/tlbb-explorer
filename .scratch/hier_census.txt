@@ -1,0 +1,22 @@
+树 D:\TLGL\.scratch\out\tree
+.mesh 总数 7996 · 读不出 0 · 无骨架声明(0x110=0/读不出) 5300 · 解出 2549
+解不出合计 147
+
+【尾部走不通（没有任何起点能读到文件末尾）】 127 份 · 平均声明骨 60.9 · 平均大小 152981.07874015748 B · 有 origin 记录 63 · 有 -1 标志 127 · 网格本身解不出 0
+   D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_ani_model_pets_xuanhaima_idle02_h001/w1351_ani_model_pets_xuanhaima_idle02_h001.mesh (声明 2)
+   D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_model_baiheliangchi_h001/w1351_model_baiheliangchi_h001.mesh (声明 10)
+   D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_model_bird_lf001/w1351_model_bird_lf001.mesh (声明 134)
+   D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_model_chuangjue_h001/w1351_model_chuangjue_h001.mesh (声明 45)
+   D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_model_fasheqi_h001/w1351_model_fasheqi_h001.mesh (声明 2)
+   D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_model_gb_long_h001/w1351_model_gb_long_h001.mesh (声明 55)
+
+【不是单根】 19 份 · 平均声明骨 62.0 · 平均大小 449761.05263157893 B · 有 origin 记录 1 · 有 -1 标志 19 · 网格本身解不出 0
+   D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_ani_model_qixiayingri_jian_c01/w1351_ani_model_qixiayingri_jian_c01.mesh (声明 15)
+   D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_model_bell_h002/w1351_model_bell_h002.mesh (声明 69)
+   D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_model_cloud_h002/w1351_model_cloud_h002.mesh (声明 43)
+   D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_model_em_nan_jt_posui_ani_x01/w1351_model_em_nan_jt_posui_ani_x01.mesh (声明 30)
+   D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_model_fazhen_ani_lf001/w1351_model_fazhen_ani_lf001.mesh (声明 50)
+   D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_model_glass_ani_lf001/w1351_model_glass_ani_lf001.mesh (声明 55)
+
+【有孩子被列了两次】 1 份 · 平均声明骨 149.0 · 平均大小 312216 B · 有 origin 记录 0 · 有 -1 标志 1 · 网格本身解不出 0
+   D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_new_npc_dingchunqiu/w1351_new_npc_dingchunqiu.mesh (声明 149)

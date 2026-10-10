@@ -22,7 +22,7 @@ pub use anim::{parse_ani, rest_poses, Anim, Rest, Track};
 pub use effect::{parse_pu, Effect, EffectNames, PuRecord};
 
 pub use geometry::{
-    bone_count, node_names, parse_geometry, parse_hierarchy, parse_mesh, parse_nodes, BoneNode,
+    bone_count, hierarchy_try, node_names, parse_geometry, parse_hierarchy, parse_mesh, parse_nodes, BoneNode,
     MeshGeometry, MeshLayout, Node, SkeletonHierarchy, SocketEntry, SkinInfluence,
 };
 pub use image::{png_bytes, scale_rgba, write_png};

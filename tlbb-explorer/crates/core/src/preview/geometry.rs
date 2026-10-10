@@ -988,9 +988,15 @@ fn tail_walk(raw: &[u8], start: usize, vc: usize) -> Option<(Vec<TailEntry>, Vec
     Some((entries, sockets))
 }
 
-/// 解尾部整段，给出父骨链。判据不满足（条目数 ≠ 头部声明数、孩子名对不上、
-/// 多根、有环、有孩子被列两次、最后不恰好落在文件尾）就整体返回 `None`——
-/// 不猜、不补。
+/// 解尾部整段，给出父骨链。判据不满足就 `None`——不猜、不补。
+/// 判据与失败原因见 [`hierarchy_try`]（这一层只是把原因抹掉）。
+pub fn parse_hierarchy(raw: &[u8]) -> Option<SkeletonHierarchy> {
+    hierarchy_try(raw).ok()
+}
+
+/// [`parse_hierarchy`] 的带原因版本：**判据一条不改**，只把「为什么解不出」带出来。
+/// 普查（`bin/hier_census.rs`）要靠它给解不出的文件分桶——361 份全报一个 `None`
+/// 就没法知道该去修哪一族。
 ///
 /// 候选起点分两档，按序试，第一个「走到 EOF 且条目数 == 声明数」的胜出：
 /// 1. 名字叫 `origin` 的 96B 记录——多数文件尾部以 origin/top 前奏开头；
@@ -999,8 +1005,8 @@ fn tail_walk(raw: &[u8], start: usize, vc: usize) -> Option<(Vec<TailEntry>, Vec
 ///    尾部直接以根条目开始——`[u32 0xFFFFFFFF][名字×2 相同]`。-1 恰是根条目
 ///    的标志位；浮点流里的 NaN 位型要再凑出「两个相同的合法名字」才能成为
 ///    误报，而走不通/条目数对不上/树不合法照样整体拒绝。
-pub fn parse_hierarchy(raw: &[u8]) -> Option<SkeletonHierarchy> {
-    let declared = bone_count(raw)?;
+pub fn hierarchy_try(raw: &[u8]) -> Result<SkeletonHierarchy, &'static str> {
+    let declared = bone_count(raw).ok_or("没有声明骨数（0x110 读不出）")?;
     let vc = vertex_count(raw);
     let mut starts = Vec::new();
     let mut i = 0usize;
@@ -1028,6 +1034,9 @@ pub fn parse_hierarchy(raw: &[u8]) -> Option<SkeletonHierarchy> {
         }
         i += 4;
     }
+    if starts.is_empty() && variant_starts.is_empty() {
+        return Err("没有候选起点（既无 origin 记录，也无 -1 根条目）");
+    }
     let mut walked = None;
     for start in starts.into_iter().chain(variant_starts) {
         if let Some(got) = tail_walk(raw, start, vc) {
@@ -1037,27 +1046,38 @@ pub fn parse_hierarchy(raw: &[u8]) -> Option<SkeletonHierarchy> {
             }
         }
     }
-    let (entries, sockets) = walked?;
+    let (entries, sockets) = match walked {
+        Some(g) => g,
+        None => {
+            return Err(if tail_walk_ok(raw, vc) {
+                "走到了 EOF，但条目数 != 声明骨数"
+            } else {
+                "尾部走不通（没有任何起点能读到文件末尾）"
+            })
+        }
+    };
     let mut index = std::collections::HashMap::with_capacity(entries.len());
     entries.iter().enumerate().for_each(|(i, e)| {
         index.insert(e.name.as_str(), i);
     });
     if index.len() != entries.len() {
-        return None; // 名字重复
+        return Err("条目里有重名");
     }
     // 父链：每个非根条目必须恰好被列一次；孩子名必须能对上条目。
     let mut parent = vec![None::<usize>; entries.len()];
     for (i, e) in entries.iter().enumerate() {
         for (cn, _) in &e.children {
-            let j = *index.get(cn.as_str())?;
+            let Some(&j) = index.get(cn.as_str()) else {
+                return Err("孩子名单里有对不上条目的名字");
+            };
             if parent[j].is_some() {
-                return None; // 被列两次
+                return Err("有孩子被列了两次");
             }
             parent[j] = Some(i);
         }
     }
     if parent.iter().filter(|p| p.is_none()).count() != 1 {
-        return None; // 不是单根
+        return Err("不是单根");
     }
     // 无环：从每个节点向上走，重见自己即断。
     for i in 0..entries.len() {
@@ -1065,7 +1085,7 @@ pub fn parse_hierarchy(raw: &[u8]) -> Option<SkeletonHierarchy> {
         let mut cur = Some(i);
         while let Some(c) = cur {
             if !seen.insert(c) {
-                return None; // 环
+                return Err("父链有环");
             }
             cur = parent[c];
         }
@@ -1096,7 +1116,38 @@ pub fn parse_hierarchy(raw: &[u8]) -> Option<SkeletonHierarchy> {
                 .collect(),
         })
         .collect();
-    Some(SkeletonHierarchy { bones, sockets })
+    Ok(SkeletonHierarchy { bones, sockets })
+}
+
+/// 普查分桶用：有没有任何起点能**走到 EOF**（不看条目数）。
+/// 与 `hierarchy_try` 用同一个 `tail_walk`，只是不卡条数——用来把
+/// 「走不通」与「走通了但条数不对」两类分开，判据本身不受影响。
+fn tail_walk_ok(raw: &[u8], vc: usize) -> bool {
+    let mut i = 0usize;
+    while i + NODE_RECORD <= raw.len() {
+        if let Some((nm, _)) = tail_record_at(raw, i) {
+            if nm == "origin" && tail_walk(raw, i, vc).is_some() {
+                return true;
+            }
+            i += NODE_RECORD;
+            continue;
+        }
+        i += 4;
+    }
+    let mut i = 0usize;
+    while i + 4 + 2 * NAME_FIELD <= raw.len() {
+        if tail_u32(raw, i) == Some(u32::MAX) {
+            if let Some(nm) = tail_name_at(raw, i + 4) {
+                if tail_name_at(raw, i + 4 + NAME_FIELD) == Some(nm)
+                    && tail_walk(raw, i, vc).is_some()
+                {
+                    return true;
+                }
+            }
+        }
+        i += 4;
+    }
+    false
 }
 
 #[cfg(test)]

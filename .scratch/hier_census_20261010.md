@@ -96,3 +96,34 @@ CARGO_TARGET_DIR=/d/TLGL/.scratch/rc3 cargo build --release --jobs 1 --offline -
 /d/TLGL/.scratch/rc3/release/hier_census.exe --tree="D:\TLGL\.scratch\out\tree"
 # → .scratch/hier_census.txt（人话表） / .json（分桶聚合） / .tsv（逐份明细）
 ```
+
+## 186 份「尾部走不通」再切一刀：卡点探针（同日下班前）
+
+`hierarchy_stuck` + `hier_census --stuck` 把卡点报出来（`tail_walk` 拆成
+`tail_walk_trace` 带出停下的偏移，起点扫描抽成 `tail_starts` 三处共用——
+**判据一字未动**，全库计数仍是 2,492 / 204，lib 95 / bone_hierarchy 6 /
+hamigua_tail 7 / glb_skin_export 6 / rest_rebuild 3 全绿）。
+
+**分成两族，性质不同**：
+
+| 子族 | 份数 | 读数 |
+|---|---|---|
+| **条目全吃下、卡在尾部附加段** | **18** | `eaten == declared`，距 EOF 292~1,257 B。同族文件卡点签名重复：kongmo 四份都是 292 B / 头 `0xbba39676`；mhsn 五份都是 964 B；`0xbea92c1c` 三份 |
+| **真卡在半路** | **168** | 吃掉条数分布：0 条 2、1-2 条 8、3-9 条 34、10-29 条 100、30+ 条 24。卡点头 4 字节 top3：`0xbc3b8198`×19、`0x3fac1506`×16、`0x3f800000`×14（后两个是合法浮点位型，`0x3f800000` 就是 1.0f） |
+
+### 已证伪：那 18 份的尾巴不是「再来一段 96B 记录」
+
+292 = 4+3×96、964 = 4+10×96 看着太像 `[u32 n][n 条 96B 记录]`，直接按 96 网格 dump 了两份
+（`w1351_model_kongmo_001` / `w1351_model_mhsn_nvsd01`，脚本 `.scratch/hier_tail_dump.py`）：
+**格点上基本认不出合法名字**（kongmo 三格全 None；mhsn 十格里只有 0x134cc 一处 `'ip01_Head'`
+碎片，且矩阵不合格）。所以那条假设划掉。有意思的两点留着当线索：
+`'ip01_Head'` 这种**大写挂点别名**出现在距 EOF 496 B 处，说明尾巴里确实有挂点表；
+mhsn 那份最后一格（距 EOF 112 B）读出来是 `(0.063, −0.998, 0)` 的单位向量形状。
+
+### 下一刀（别从 168 那族开头）
+
+先啃 18 份那族：条数已经对上了，只差**认得尾巴那一段是什么**——比 168 族「条目本身就吃不下」
+近得多。做法：拿 kongmo 四份（同一签名、只差 0 字节）与 mhsn 五份各做逐字节差分，
+把 292 B / 964 B 两段的内部结构切出来；判据仍要「整段恰好落到 EOF」。
+168 族那 14 份卡在 `0x3f800000`（1.0f）上的，像是**矩阵块的开头**被当成了条目边界——
+值得单独看 3~4 份的卡点前后 192 字节。

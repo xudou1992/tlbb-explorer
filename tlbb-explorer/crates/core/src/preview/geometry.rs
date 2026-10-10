@@ -962,6 +962,17 @@ fn tail_sockets_at(raw: &[u8], at: usize) -> Option<(Vec<SocketEntry>, usize)> {
 /// 从 `start`（origin 记录）走到 EOF：前奏记录 + 条目 × N + 挂点段。
 /// 任何一段对不上、最后不恰好落在文件尾，都算失败。
 fn tail_walk(raw: &[u8], start: usize, vc: usize) -> Option<(Vec<TailEntry>, Vec<SocketEntry>)> {
+    tail_walk_trace(raw, start, vc).0
+}
+
+/// 同一个走法，但把**停在哪个偏移**带出来（走通时就是 `raw.len()`）。
+/// 普查要靠它回答「有 origin 起点却走不通」那 186 份到底卡在哪一步——
+/// 判据、步长、分支顺序与 `tail_walk` 一字不差（`tail_walk` 就是它的 `.0`）。
+fn tail_walk_trace(
+    raw: &[u8],
+    start: usize,
+    vc: usize,
+) -> (Option<(Vec<TailEntry>, Vec<SocketEntry>)>, usize) {
     let mut p = start;
     let mut entries = Vec::new();
     let mut sockets = Vec::new();
@@ -980,12 +991,94 @@ fn tail_walk(raw: &[u8], start: usize, vc: usize) -> Option<(Vec<TailEntry>, Vec
             p = np;
             break;
         }
-        return None;
+        return (None, p);
     }
     if p != raw.len() {
-        return None;
+        return (None, p);
     }
-    Some((entries, sockets))
+    (Some((entries, sockets)), p)
+}
+
+/// 尾部起点候选：`(origin 记录起点, -1 根条目起点)`。
+/// 三处消费（`hierarchy_try` / `tail_walk_ok` / [`hierarchy_stuck`]）共用一份，
+/// 免得探测步长改了一处漏两处。
+fn tail_starts(raw: &[u8]) -> (Vec<usize>, Vec<usize>) {
+    let mut starts = Vec::new();
+    let mut i = 0usize;
+    while i + NODE_RECORD <= raw.len() {
+        match tail_record_at(raw, i) {
+            Some((nm, _)) => {
+                if nm == "origin" {
+                    starts.push(i);
+                }
+                i += NODE_RECORD;
+            }
+            None => i += ALIGN_PROBE,
+        }
+    }
+    // 变体起点：[u32 -1][名字×2]（标志后紧跟两个 32B 名字段）。
+    let mut variant_starts = Vec::new();
+    let mut i = 0usize;
+    while i + 4 + 2 * NAME_FIELD <= raw.len() {
+        if tail_u32(raw, i) == Some(u32::MAX) {
+            if let Some(nm) = tail_name_at(raw, i + 4) {
+                if tail_name_at(raw, i + 4 + NAME_FIELD) == Some(nm) {
+                    variant_starts.push(i);
+                }
+            }
+        }
+        i += ALIGN_PROBE;
+    }
+    (starts, variant_starts)
+}
+
+/// 「走不通」的卡点：所有候选起点里**走得最远**的那一个，停在哪个偏移、
+/// 之前吃下了几条条目。只给普查/探针用，不参与任何判定。
+pub fn hierarchy_stuck(raw: &[u8]) -> Option<StuckPoint> {
+    let vc = vertex_count(raw);
+    let (starts, variants) = tail_starts(raw);
+    let declared = bone_count(raw)?;
+    let mut best: Option<StuckPoint> = None;
+    for start in starts.into_iter().chain(variants) {
+        let (got, stopped) = tail_walk_trace(raw, start, vc);
+        let eaten = match &got {
+            Some((e, _)) => e.len(),
+            None => {
+                // 卡住时没返回条目数，重走一遍数一下——探针路径，不在乎多花一次。
+                let mut n = 0usize;
+                let mut p = start;
+                while p < raw.len() {
+                    if let Some((_, np)) = tail_try_entry(raw, p, vc) {
+                        n += 1;
+                        p = np;
+                        continue;
+                    }
+                    if tail_record_at(raw, p).is_some() {
+                        p += NODE_RECORD;
+                        continue;
+                    }
+                    break;
+                }
+                n
+            }
+        };
+        let cand = StuckPoint { start, stopped, eaten, declared };
+        best = Some(match best {
+            None => cand,
+            Some(b) if cand.stopped > b.stopped => cand,
+            Some(b) => b,
+        });
+    }
+    best
+}
+
+/// [`hierarchy_stuck`] 的产物：起点、卡点、卡点前吃下的条目数、头部声明骨数。
+#[derive(Debug, Clone, Copy)]
+pub struct StuckPoint {
+    pub start: usize,
+    pub stopped: usize,
+    pub eaten: usize,
+    pub declared: usize,
 }
 
 /// 解尾部整段，给出父骨链。判据不满足就 `None`——不猜、不补。
@@ -1014,32 +1107,7 @@ const ALIGN_PROBE: usize = 2;
 pub fn hierarchy_try(raw: &[u8]) -> Result<SkeletonHierarchy, &'static str> {
     let declared = bone_count(raw).ok_or("没有声明骨数（0x110 读不出）")?;
     let vc = vertex_count(raw);
-    let mut starts = Vec::new();
-    let mut i = 0usize;
-    while i + NODE_RECORD <= raw.len() {
-        match tail_record_at(raw, i) {
-            Some((nm, _)) => {
-                if nm == "origin" {
-                    starts.push(i);
-                }
-                i += NODE_RECORD;
-            }
-            None => i += ALIGN_PROBE,
-        }
-    }
-    // 变体起点：[u32 -1][名字×2]（标志后紧跟两个 32B 名字段）。
-    let mut variant_starts = Vec::new();
-    let mut i = 0usize;
-    while i + 4 + 2 * NAME_FIELD <= raw.len() {
-        if tail_u32(raw, i) == Some(u32::MAX) {
-            if let Some(nm) = tail_name_at(raw, i + 4) {
-                if tail_name_at(raw, i + 4 + NAME_FIELD) == Some(nm) {
-                    variant_starts.push(i);
-                }
-            }
-        }
-        i += ALIGN_PROBE;
-    }
+    let (starts, variant_starts) = tail_starts(raw);
     if starts.is_empty() && variant_starts.is_empty() {
         return Err("没有候选起点（既无 origin 记录，也无 -1 根条目）");
     }
@@ -1129,31 +1197,11 @@ pub fn hierarchy_try(raw: &[u8]) -> Result<SkeletonHierarchy, &'static str> {
 /// 与 `hierarchy_try` 用同一个 `tail_walk`，只是不卡条数——用来把
 /// 「走不通」与「走通了但条数不对」两类分开，判据本身不受影响。
 fn tail_walk_ok(raw: &[u8], vc: usize) -> bool {
-    let mut i = 0usize;
-    while i + NODE_RECORD <= raw.len() {
-        if let Some((nm, _)) = tail_record_at(raw, i) {
-            if nm == "origin" && tail_walk(raw, i, vc).is_some() {
-                return true;
-            }
-            i += NODE_RECORD;
-            continue;
-        }
-        i += ALIGN_PROBE;
-    }
-    let mut i = 0usize;
-    while i + 4 + 2 * NAME_FIELD <= raw.len() {
-        if tail_u32(raw, i) == Some(u32::MAX) {
-            if let Some(nm) = tail_name_at(raw, i + 4) {
-                if tail_name_at(raw, i + 4 + NAME_FIELD) == Some(nm)
-                    && tail_walk(raw, i, vc).is_some()
-                {
-                    return true;
-                }
-            }
-        }
-        i += ALIGN_PROBE;
-    }
-    false
+    let (starts, variants) = tail_starts(raw);
+    starts
+        .into_iter()
+        .chain(variants)
+        .any(|s| tail_walk(raw, s, vc).is_some())
 }
 
 #[cfg(test)]

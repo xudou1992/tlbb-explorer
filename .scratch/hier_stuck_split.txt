@@ -1,0 +1,49 @@
+解析到 186 行
+条目全吃下、卡在尾部附加段: 18 份    真卡在半路: 168 份
+
+== 18 份「条目已齐」：卡点距 EOF 多远 ==
+  w1351_model_mhsn_nvsd01.mesh                             条目 42/42 距EOF    964 B 头 0xb28c77b1 .w.....6...?..
+  w1351_model_mhsn_nvhuan01.mesh                           条目 42/42 距EOF    964 B 头 0xb28c77b1 .w.....6...?..
+  w1351_model_mhsn_nvdd01.mesh                             条目 43/43 距EOF    964 B 头 0xb37f69c2 .i.....6...?..
+  w1351_model_chuangjue_h001.mesh                          条目 45/45 距EOF   1257 B 头 0xbb3a22d6 .":...|.i. ...
+  w1351_model_mhsn_nandd01.mesh                            条目 40/40 距EOF    964 B 头 0xbe191138 8.....}..F.5..
+  w1351_model_mhsn_nvshan01.mesh                           条目 43/43 距EOF    964 B 头 0xb37f69c2 .i.....6...?..
+  w1351_model_qunmoluanwu_h001.mesh                        条目 31/31 距EOF   1124 B 头 0x361d0000 ...6..F.......
+  w1351_monster_shifuniao.mesh                             条目 58/58 距EOF    948 B 头 0x344bfad1 ..K4z......?..
+  w1351_pets_wugui_b0_yifu_001.mesh                        条目 21/21 距EOF   1065 B 头 0x3eae54eb .T.>Q.....p...
+  w1351_npc_hanshizhong_yifu_001.mesh                      条目 23/23 距EOF    969 B 头 0xbea92c1c .,..{\q?..3=..
+  w1351_model_yuexiaxun_dizi_lf001.mesh                    条目 5/5 距EOF    484 B 头 0xc6094c62 bL..ks..qe....
+  w1351_npc_hanshizhong_lian_001.mesh                      条目 23/23 距EOF    681 B 头 0xbea92c1c .,..{\q?..3=..
+  w1351_npc_liuzhongfu_xiezi_001.mesh                      条目 23/23 距EOF    681 B 头 0xbea92c1c .,..{\q?..3=..
+  w1351_model_fasheqi_h001.mesh                            条目 2/2 距EOF    948 B 头 0x411ffed6 ...A...=......
+  w1351_model_kongmo_001.mesh                              条目 4/4 距EOF    292 B 头 0xbba39676 v.../...{..6..
+  w1351_model_kongmo_002.mesh                              条目 4/4 距EOF    292 B 头 0xbba39676 v.../...{..6..
+  w1351_model_kongmo_003.mesh                              条目 4/4 距EOF    292 B 头 0xbba39676 v.../...{..6..
+  w1351_model_kongmo_rlsz.mesh                             条目 4/4 距EOF    292 B 头 0xbba39676 v.../...{..6..
+
+== 168 份「真卡半路」：吃掉条数分布 ==
+{'1-2': 8, '3-9': 34, '0 条': 2, '30+': 24, '10-29': 100}
+
+  头 4 字节签名 top10:
+    19 × 0xbc3b8198
+    16 × 0x3fac1506
+    14 × 0x3f800000
+    10 × 0x00000000
+     6 × 0x0000004e
+     6 × 0x3c41d78a
+     5 × 0x0000004d
+     5 × 0xbf12fcf7
+     4 × 0xb3607a7c
+     3 × 0xbc5b35eb
+
+  样本:
+   w1351_model_baiheliangchi_h001.mesh                  条目 1/10 卡在 0xfa8 头 0x00000000 .......?......
+   w1351_model_bird_lf001.mesh                          条目 7/134 卡在 0x28894 头 0x45b0ffc4 ...EV..ET..D..
+   w1351_model_gb_long_h001.mesh                        条目 0/55 卡在 0xff4c 头 0xffffffff ....000.......
+   w1351_model_gbnan_long_h002.mesh                     条目 0/55 卡在 0xff4c 头 0xffffffff ....000.......
+   w1351_model_hxw_stone_h01.mesh                       条目 1/60 卡在 0x354d4 头 0xc3960cb3 .....AnD..$B..
+   w1351_model_jingji_l_h01.mesh                        条目 2/51 卡在 0x33348 头 0x3ea365aa .e.>...?.$.<..
+   w1351_model_pets_tgtx_c004.mesh                      条目 2/15 卡在 0x2d5e8 头 0x408aa3b5 ...@~..@[.6...
+   w1351_model_pmf_s012.mesh                            条目 1/19 卡在 0x5f41c 头 0xbf7fffff .....I.....4..
+   w1351_model_tianwaifeixian_h001.mesh                 条目 1/10 卡在 0xfa8 头 0x00000000 .......?......
+   w1351_model_ymg01_jt02_h003.mesh                     条目 5/135 卡在 0x29cec 头 0x0000026b k.......;...<.

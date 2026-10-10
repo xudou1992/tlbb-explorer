@@ -12,7 +12,7 @@
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
-use tlbb_core::preview::{bone_count, hierarchy_try, parse_mesh};
+use tlbb_core::preview::{bone_count, hierarchy_stuck, hierarchy_try, parse_mesh};
 
 fn arg(argv: &[String], name: &str) -> Option<String> {
     let want = format!("--{name}=");
@@ -66,6 +66,57 @@ fn has_root_flag(raw: &[u8]) -> bool {
     raw.windows(4).any(|w| w == [0xFF, 0xFF, 0xFF, 0xFF])
 }
 
+/// `--stuck`：对「尾部走不通」那族报卡点。判据不参与，纯诊断。
+/// 看点两个：卡之前吃下几条条目（`eaten` vs `declared`），以及**卡点处头 4 字节**
+/// 是什么——同一族文件会撞在同一个签名上，那就是没认出的块型的入口。
+fn stuck_probe(files: &[PathBuf]) {
+    use std::collections::BTreeMap;
+    let mut sig: BTreeMap<String, usize> = BTreeMap::new();
+    let mut rows = Vec::new();
+    let mut n = 0usize;
+    for f in files {
+        let Ok(raw) = std::fs::read(f) else { continue };
+        if bone_count(&raw).unwrap_or(0) == 0 {
+            continue;
+        }
+        if hierarchy_try(&raw).is_ok() {
+            continue;
+        }
+        let Some(s) = hierarchy_stuck(&raw) else { continue };
+        if s.stopped >= raw.len() {
+            continue; // 走到 EOF 了，是条数不对那一族，不是卡住
+        }
+        n += 1;
+        let w = u32::from_le_bytes([raw[s.stopped], raw[s.stopped + 1], raw[s.stopped + 2], raw[s.stopped + 3]]);
+        let ascii: String = raw[s.stopped..(s.stopped + 16).min(raw.len())]
+            .iter()
+            .map(|&c| if (0x20..0x7f).contains(&c) { (c as char).to_string() } else { ".".to_string() })
+            .collect();
+        *sig.entry(format!("{w:#010x} {ascii}")).or_default() += 1;
+        rows.push(format!(
+            "{}\t起点 {:#x}\t卡在 {:#x}\t吃了 {}/{} 条\t头 4 字节 {:#010x}\t{ascii}",
+            f.to_string_lossy().replace('\\', "/"),
+            s.start,
+            s.stopped,
+            s.eaten,
+            s.declared,
+            w
+        ));
+    }
+    let mut out = vec![format!("卡住的份数 {n}")];
+    out.push("卡点签名 top15：".to_string());
+    let mut top: Vec<(&String, &usize)> = sig.iter().collect();
+    top.sort_by(|a, b| b.1.cmp(a.1));
+    for (k, v) in top.iter().take(15) {
+        out.push(format!("  {v:>4} × {k}"));
+    }
+    out.push(String::new());
+    out.extend(rows);
+    let txt = r"D:\TLGL\.scratch\hier_stuck.txt";
+    let _ = std::fs::write(txt, out.join("\n"));
+    println!("WROTE {txt} · 卡住 {n} 份");
+}
+
 fn main() {
     let argv: Vec<String> = std::env::args().collect();
     let tree = arg(&argv, "tree").unwrap_or_else(|| r"D:\TLGL\.scratch\out\tree".to_string());
@@ -73,6 +124,11 @@ fn main() {
     let mut files = Vec::new();
     walk(Path::new(&tree), &mut files);
     files.sort();
+
+    if argv.iter().any(|a| a == "--stuck") {
+        stuck_probe(&files);
+        return;
+    }
 
     let mut buckets: BTreeMap<String, Bucket> = BTreeMap::new();
     let (mut ok, mut no_bones, mut unreadable, mut total) = (0usize, 0usize, 0usize, 0usize);

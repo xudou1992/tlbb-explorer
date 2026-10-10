@@ -786,14 +786,17 @@ fn tail_is_mat64(raw: &[u8], at: usize) -> bool {
     }
     let rows = [&m[0..3], &m[4..7], &m[8..11]];
     let lens: [f32; 3] = rows.map(|r| r.iter().map(|v| v * v).sum::<f32>().sqrt());
-    let mn = lens.iter().cloned().fold(f32::INFINITY, f32::min);
-    let mx = lens.iter().cloned().fold(0f32, f32::max);
-    if mn <= 1e-4 || mx / mn > 1.05 {
+    // 三轴长度**允许彼此不等**：骨头上带非均匀缩放时矩阵就是这样（2026-10-10 实测：
+    // 166 份「真卡半路」的卡点全是 Y 轴长 1.5 这类带缩放矩阵，旧判据「三轴长度差 ≤5%」
+    // 把它们当噪声，走段在此断掉）。放开的只有这一条——正交性改成**归一后**判，
+    // w 列 (0,0,0,1)、有限性、条目数 == 声明数、树合法、恰好落在 EOF 全部照旧。
+    if lens.iter().any(|l| *l < 1e-3 || *l > 1e4) {
         return false;
     }
+    let unit: [[f32; 3]; 3] = std::array::from_fn(|i| std::array::from_fn(|t| rows[i][t] / lens[i]));
     for i in 0..3 {
         for k in i + 1..3 {
-            let d: f32 = (0..3).map(|t| rows[i][t] * rows[k][t]).sum();
+            let d: f32 = (0..3).map(|t| unit[i][t] * unit[k][t]).sum();
             if d.abs() > 1e-2 {
                 return false;
             }
@@ -1287,6 +1290,38 @@ mod tests {
             own_bind: None,
             children: children.iter().map(|c| (c.to_string(), None)).collect(),
         }
+    }
+
+    /// 矩阵判据的正反两面：**非均匀缩放的合法仿射要认**（旧判据按「三轴长度差 ≤5%」
+    /// 把它当噪声，166 份卡半路里有 7 份是这一形），**不正交 / w 列不对的仍不许认**
+    /// （那是浮点噪声的形状，认了就等于往走段里放水）。
+    #[test]
+    fn scaled_affine_counts_but_non_orthogonal_noise_does_not() {
+        let bytes = |m: &[f32; 16]| -> Vec<u8> { m.iter().flat_map(|f| f.to_le_bytes()).collect() };
+        let mut ok = [0f32; 16];
+        ok[0] = 2.0; // X 轴带 2 倍缩放
+        ok[5] = 1.0;
+        ok[10] = 1.0;
+        ok[12] = 1.5;
+        ok[13] = -0.25;
+        ok[15] = 1.0;
+        assert!(tail_is_mat64(&bytes(&ok), 0), "三轴正交但长度不等的仿射该认");
+
+        let mut skew = [0f32; 16];
+        skew[0] = 1.0;
+        skew[4] = 1.0;
+        skew[5] = 1.0; // 与 X 轴同向：不正交
+        skew[10] = 1.0;
+        skew[15] = 1.0;
+        assert!(!tail_is_mat64(&bytes(&skew), 0), "两轴不同向的噪声不许认");
+
+        let mut badw = ok;
+        badw[3] = 0.5; // w 列必须 (0,0,0,1)
+        assert!(!tail_is_mat64(&bytes(&badw), 0), "w 列不对的不许认");
+
+        let mut tiny = ok;
+        tiny[0] = 1e-6; // 轴长带外
+        assert!(!tail_is_mat64(&bytes(&tiny), 0), "退化轴长仍该拒");
     }
 
     /// 森林口径**只**放开「恰好一个根」这一条，其余判据两种口径下都得照旧拦。

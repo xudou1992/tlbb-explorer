@@ -186,7 +186,7 @@ fn corroborate(files: &[PathBuf]) {
     let mut with_ani = 0usize;
     let mut clean = 0usize;
     let mut group_ok = 0usize;
-    let mut bad: Vec<(String, usize, Vec<String>)> = Vec::new();
+    let mut bad: Vec<(String, usize, String)> = Vec::new();
     for f in files {
         let Ok(raw) = std::fs::read(f) else { continue };
         if bone_count(&raw).unwrap_or(0) == 0 {
@@ -215,6 +215,10 @@ fn corroborate(files: &[PathBuf]) {
         anis.sort();
         let mut miss: Vec<String> = Vec::new();
         let mut hit_ani = false;
+        // `.ani` 自己声明的骨数与实际轨道数：用来分清「链少解了骨」与
+        // 「动作本来就驱动一副比网格更大的骨架（动画专用骨）」——两者症状一样，结论完全不同。
+        let mut ani_bones = 0usize;
+        let mut ani_tracks = 0usize;
         for ap in anis {
             if ap.extension().and_then(|x| x.to_str()) != Some("ani") {
                 continue;
@@ -222,6 +226,8 @@ fn corroborate(files: &[PathBuf]) {
             let Ok(ab) = std::fs::read(&ap) else { continue };
             let Some(a) = parse_ani(&ab) else { continue };
             hit_ani = true;
+            ani_bones = a.bones;
+            ani_tracks = a.tracks.len();
             for t in &a.tracks {
                 if !tree.contains(&t.bone.to_ascii_lowercase()) && t.bone.len() > 2 {
                     miss.push(t.bone.clone());
@@ -266,7 +272,15 @@ fn corroborate(files: &[PathBuf]) {
                 .filter(|m| !union.contains(&m.to_ascii_lowercase()))
                 .cloned()
                 .collect();
-            bad.push((f.display().to_string(), left.len(), left.iter().take(4).cloned().collect()));
+            let sample = left.iter().take(3).cloned().collect::<Vec<_>>().join(", ");
+            bad.push((
+                f.display().to_string(),
+                left.len(),
+                format!(
+                    "ani 声明 {ani_bones} 骨 / 轨道 {ani_tracks} 条，这份链 {} 根，并集仍缺：{sample}",
+                    tree.len()
+                ),
+            ));
         }
     }
     bad.sort_by_key(|b| std::cmp::Reverse(b.1));
@@ -276,12 +290,8 @@ fn corroborate(files: &[PathBuf]) {
            其中拿**同目录全部网格的并集**再判就对上的 = {group_ok} 份 · 并集仍对不上 = {} 份",
         bad.len(), bad_n = with_ani - clean
     );
-    for (p, n, names) in bad.iter().take(12) {
-        println!(
-            "   缺 {n:>3} 根  {}  例 {}",
-            p.replace(std::path::MAIN_SEPARATOR, "/"),
-            names.join(", ")
-        );
+    for (p, n, note) in bad.iter().take(12) {
+        println!("   缺 {n:>3} 根  {}  {}", p.replace(std::path::MAIN_SEPARATOR, "/"), note);
     }
 }
 

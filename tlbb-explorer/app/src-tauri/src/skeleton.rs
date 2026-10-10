@@ -28,7 +28,9 @@ use rusqlite::{Connection, OpenFlags};
 use serde::Serialize;
 use tlbb_core::jpak::Pak;
 use tlbb_core::payload;
-use tlbb_core::preview::{bone_count, parse_ani, parse_hierarchy, parse_nodes, rest_poses};
+use tlbb_core::preview::{
+    bone_count, parse_ani, parse_forest, parse_hierarchy, parse_nodes, rest_poses,
+};
 
 use crate::inspector::{inspect, roots};
 
@@ -83,7 +85,8 @@ pub struct SkeletonReply {
     pub skin_bones: usize,
     /// 所有骨的（顶点-骨）绑定对总数——不是顶点数，一个顶点可以被几根骨同时影响。
     pub skin_pairs: usize,
-    /// `parse_hierarchy` 成功。为假时 `nodes[].parent` 一律是空，不编树。
+    /// 父链解出来了（骨架页用**允许森林**的 `parse_forest`）。为假时 `nodes[].parent`
+    /// 一律是空，不编树。几棵并列时在 `note` 里说清，导出/播放仍按单根。
     pub chain: bool,
     pub animations: Vec<AnimRow>,
     /// 一份文件里没认出节点记录时给的原因，人话。
@@ -244,8 +247,18 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
     if let Some((h, pak)) = locate(&con, &mesh_path) {
         if let Some(raw) = decode(&mut paks, &root, &card_of(&pak), h) {
             declared = bone_count(&raw).unwrap_or(0);
-            if let Some(hier) = parse_hierarchy(&raw) {
+            // 骨架页走**允许森林**口径（2026-10-10）：父链判据一条不少，只放开「恰好一个根」。
+            // 碎片/挂点类网格本来就是几棵并列的树，以前整体解不出，这一页就全空。
+            // 导出与播放仍按单根（`parse_hierarchy`）——那边的重定基与锚都定义在单根上。
+            if let Some(hier) = parse_forest(&raw) {
                 chain = true;
+                let roots = hier.bones.iter().filter(|b| b.parent.is_none()).count();
+                if roots > 1 {
+                    note = format!(
+                        "这只有 {roots} 根并列的骨（碎片/挂点类），父链照原样画；\
+                         导出与播放还不支持多根，那两条路仍按单根判。"
+                    );
+                }
                 for b in &hier.bones {
                     let pname = b.parent.and_then(|i| hier.bones.get(i).map(|p| p.name.clone()));
                     parent_of.insert(b.name.clone(), pname.clone());

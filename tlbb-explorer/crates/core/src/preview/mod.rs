@@ -22,9 +22,9 @@ pub use anim::{parse_ani, rest_poses, Anim, Rest, Track};
 pub use effect::{parse_pu, Effect, EffectNames, PuRecord};
 
 pub use geometry::{
-    bone_count, hierarchy_stuck, hierarchy_try, node_names, tail_entries, parse_geometry, parse_hierarchy,
-    parse_mesh, parse_nodes, BoneNode, MeshGeometry, MeshLayout, Node, SkeletonHierarchy,
-    SocketEntry, SkinInfluence, StuckPoint,
+    bone_count, hierarchy_forest, hierarchy_stuck, hierarchy_try, node_names, parse_forest,
+    root_count, tail_entries, parse_geometry, parse_hierarchy, parse_mesh, parse_nodes, BoneNode,
+    MeshGeometry, MeshLayout, Node, SkeletonHierarchy, SocketEntry, SkinInfluence, StuckPoint,
 };
 pub use image::{png_bytes, scale_rgba, write_png};
 pub use rest::{rebuild_bind_positions, RestRebuild, RestSource, RestStats};

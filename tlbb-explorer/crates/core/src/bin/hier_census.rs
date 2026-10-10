@@ -13,7 +13,7 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use tlbb_core::preview::{
-    bone_count, hierarchy_stuck, hierarchy_try, parse_mesh, tail_entries,
+    bone_count, hierarchy_forest, hierarchy_stuck, hierarchy_try, parse_mesh, tail_entries,
 };
 
 fn arg(argv: &[String], name: &str) -> Option<String> {
@@ -124,6 +124,10 @@ fn stuck_probe(files: &[PathBuf]) {
 fn forest_probe(files: &[PathBuf]) {
     let mut out = Vec::new();
     let mut n = 0usize;
+    // 真验证：放开森林之后，这些文件里有多少**真的**被 `hierarchy_forest` 解出来了
+    // （不是靠本函数自己的启发式数根）。
+    let mut gained = 0usize;
+    let mut still = 0usize;
     let mut hist: std::collections::BTreeMap<usize, usize> = std::collections::BTreeMap::new();
     for f in files {
         let Ok(raw) = std::fs::read(f) else { continue };
@@ -132,6 +136,11 @@ fn forest_probe(files: &[PathBuf]) {
         }
         if let Ok(_) = hierarchy_try(&raw) {
             continue;
+        }
+        if hierarchy_forest(&raw).is_ok() {
+            gained += 1;
+        } else {
+            still += 1;
         }
         let Some(entries) = tail_entries(&raw) else { continue };
         let mut listed: std::collections::HashSet<String> = std::collections::HashSet::new();
@@ -157,10 +166,12 @@ fn forest_probe(files: &[PathBuf]) {
             roots.join(", ")
         ));
     }
-    out.insert(0, format!("多根份数 {n} · 根数分布 {hist:?}"));
+    out.insert(0, format!(
+        "多根份数 {n} · 根数分布 {hist:?} · 森林口径实际多解出 {gained} 份（其余 {still} 份仍解不出）"
+    ));
     let txt = r"D:\TLGL\.scratch\hier_forest.txt";
     let _ = std::fs::write(txt, out.join("\n"));
-    println!("WROTE {txt} · 多根 {n} 份");
+    println!("WROTE {txt} · 多根 {n} 份 · 森林口径多解出 {gained} 份（仍解不出 {still}）");
 }
 
 fn main() {

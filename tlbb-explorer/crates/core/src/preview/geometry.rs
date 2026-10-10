@@ -1137,6 +1137,34 @@ const ALIGN_PROBE: usize = 2;
 ///    的标志位；浮点流里的 NaN 位型要再凑出「两个相同的合法名字」才能成为
 ///    误报，而走不通/条目数对不上/树不合法照样整体拒绝。
 pub fn hierarchy_try(raw: &[u8]) -> Result<SkeletonHierarchy, &'static str> {
+    hierarchy_impl(raw, false)
+}
+
+/// [`hierarchy_try`] 的**允许森林**版本：尾部判据一条不少（走通 EOF、条目数 == 声明数、
+/// 不重名、孩子名对得上、无环、没有孩子被列两次），只放开「恰好一个根」这一条。
+///
+/// 为什么只给显示用：`BoneNode.parent` 是 `Option`，多根在数据结构里本来就表达得了；
+/// 但导出与播放的重定基（`W' = B·A⁻¹·W`）和 frame0 锚都按**单根**定义，
+/// 拿森林去导 GLB 等于假装那个假设还在。所以 [`crate::export`] 与 `mesh2glb`
+/// 继续用 [`parse_hierarchy`]，只有骨架页可以调这个函数，并且必须把「几根并列」说出来。
+pub fn hierarchy_forest(raw: &[u8]) -> Result<SkeletonHierarchy, &'static str> {
+    hierarchy_impl(raw, true)
+}
+
+/// [`hierarchy_forest`] 的 `Option` 壳，与 [`parse_hierarchy`] 同口径。
+pub fn parse_forest(raw: &[u8]) -> Option<SkeletonHierarchy> {
+    hierarchy_forest(raw).ok()
+}
+
+/// 数一下这份骨架有几个根（0 或解不出时 `None`）。给界面说实话用，不参与判定。
+pub fn root_count(raw: &[u8]) -> Option<usize> {
+    match hierarchy_impl(raw, true) {
+        Ok(h) => Some(h.bones.iter().filter(|b| b.parent.is_none()).count()),
+        Err(_) => None,
+    }
+}
+
+fn hierarchy_impl(raw: &[u8], allow_forest: bool) -> Result<SkeletonHierarchy, &'static str> {
     let declared = bone_count(raw).ok_or("没有声明骨数（0x110 读不出）")?;
     let vc = vertex_count(raw);
     let (starts, variant_starts) = tail_starts(raw);
@@ -1162,6 +1190,15 @@ pub fn hierarchy_try(raw: &[u8]) -> Result<SkeletonHierarchy, &'static str> {
             })
         }
     };
+    tree_from_entries(&entries, sockets, allow_forest)
+}
+
+/// 条目段 → 父链。判定顺序与原因文案保持原样；`allow_forest` 只影响根数那一条。
+fn tree_from_entries(
+    entries: &[TailEntry],
+    sockets: Vec<SocketEntry>,
+    allow_forest: bool,
+) -> Result<SkeletonHierarchy, &'static str> {
     let mut index = std::collections::HashMap::with_capacity(entries.len());
     entries.iter().enumerate().for_each(|(i, e)| {
         index.insert(e.name.as_str(), i);
@@ -1182,7 +1219,11 @@ pub fn hierarchy_try(raw: &[u8]) -> Result<SkeletonHierarchy, &'static str> {
             parent[j] = Some(i);
         }
     }
-    if parent.iter().filter(|p| p.is_none()).count() != 1 {
+    let roots = parent.iter().filter(|p| p.is_none()).count();
+    if roots == 0 {
+        return Err("一个根都没有（每个条目都被列过一次）");
+    }
+    if roots != 1 && !allow_forest {
         return Err("不是单根");
     }
     // 无环：从每个节点向上走，重见自己即断。
@@ -1198,7 +1239,7 @@ pub fn hierarchy_try(raw: &[u8]) -> Result<SkeletonHierarchy, &'static str> {
     }
     // 绑定矩阵：条目自带的记录优先，否则用「父条目孩子名单里那条记录」的。
     let mut binds: Vec<Option<[f32; 16]>> = entries.iter().map(|e| e.own_bind).collect();
-    for e in &entries {
+    for e in entries {
         for (cn, cb) in &e.children {
             if let Some(m) = cb {
                 let j = index[cn.as_str()];
@@ -1239,6 +1280,45 @@ fn tail_walk_ok(raw: &[u8], vc: usize) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn entry(name: &str, children: &[&str]) -> TailEntry {
+        TailEntry {
+            name: name.into(),
+            own_bind: None,
+            children: children.iter().map(|c| (c.to_string(), None)).collect(),
+        }
+    }
+
+    /// 森林口径**只**放开「恰好一个根」这一条，其余判据两种口径下都得照旧拦。
+    #[test]
+    fn forest_policy_only_relaxes_the_root_count() {
+        let two_roots = [entry("bone_a", &[]), entry("bone_b", &[])];
+        assert_eq!(
+            tree_from_entries(&two_roots, vec![], false).err(),
+            Some("不是单根"),
+            "单根口径必须照旧拒绝——导出与播放按单根定义"
+        );
+        let got = tree_from_entries(&two_roots, vec![], true).expect("森林口径应解出两根");
+        assert_eq!(got.bones.len(), 2);
+        assert!(got.bones.iter().all(|b| b.parent.is_none()), "两根都该是根");
+
+        let dup = [entry("r", &["k"]), entry("r2", &["k"]), entry("k", &[])];
+        assert_eq!(
+            tree_from_entries(&dup, vec![], true).err(),
+            Some("有孩子被列了两次")
+        );
+        let bad = [entry("a", &["nope"])];
+        assert_eq!(
+            tree_from_entries(&bad, vec![], true).err(),
+            Some("孩子名单里有对不上条目的名字")
+        );
+        let loop2 = [entry("a", &["b"]), entry("b", &["a"])];
+        assert_eq!(
+            tree_from_entries(&loop2, vec![], true).err(),
+            Some("一个根都没有（每个条目都被列过一次）"),
+            "互指成环在森林口径下也要被拒——它不是「多根」"
+        );
+    }
 
     /// 按已验证布局拼一个最小 mesh：4 顶点 / 2 面 / 1 子网格的双三角形平面。
     /// 0x118 头 + 位置 48B + 法线 48B + UV 32B + [u32 面数] + 索引 12B = 424B。

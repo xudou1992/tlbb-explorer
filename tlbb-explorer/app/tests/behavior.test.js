@@ -1202,3 +1202,11 @@ test("动作页 3D 预览：整组几何全取不到 → 回退单件路径（�
   await drain();
   assert.equal(viewer.poses.length, 1, "回退路径照常摆帧");
 });
+
+test("候选缩略图：解的进度与失败原因要写在卡面上，不许只挂在 title 里", async () => {
+  const src = fs.readFileSync(path.join(web, "detail.js"), "utf8");
+  assert.match(src, /这张解不出来：/, "失败原因要上卡面");
+  assert.match(src, /正在解第 \$\{i \+ 1\} \/ \$\{imgs\.length\} 张/, "解的过程要说第几张");
+  assert.ok(!/catch \{\s*img\.title = "缩略图没读出来";\s*\}/.test(src), "只挂 title 的旧写法要清掉");
+  assert.match(src, /ph\.remove\(\)/, "解出来占位条要撤掉，别和图并排留着");
+});

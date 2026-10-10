@@ -178,3 +178,12 @@ test("岛外无对比要单独说：榜首无对比时提示别照着确认，�
   assert.ok(!texCandidatesHtml({ ...g, candidates: [{ ...nc(1, 0), outsideVar: undefined }] }, [])
     .includes("岛外无对比"), "旧缓存没量过 ≠ 无对比");
 });
+
+test("批量候选卡必须有看得见的占位：一行说明 + 按编号可寻；带内嵌图的卡不摆占位", () => {
+  const g = { mesh: "p.mesh", pool: 1650, state: "candidates", source: "batch", ranked: true,
+    candidates: [CAND_V2(1, 2.0, F), { ...CAND_V2(2, 1.5, F), png: "data:image/png;base64,AA" }] };
+  const html = texCandidatesHtml(g, []);
+  assert.equal((html.match(/class="tex-ph"/g) || []).length, 1, "只有还没图的那张摆占位");
+  assert.ok(html.includes('data-ph-for="ee00000000000001"'), html);
+  assert.ok(html.includes("缩略图要现解"), html);
+});

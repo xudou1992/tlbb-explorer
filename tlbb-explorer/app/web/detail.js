@@ -848,21 +848,35 @@ async function loadCandidatePngs() {
     return null;
   };
   const imgs = Array.from(el("texCand").querySelectorAll("img[data-need-png]"));
-  for (const img of imgs) {
+  // 占位条与它那张图同处一个 figure：按 data-ph-for=hash 找，找不到就算了（旧缓存）。
+  const phOf = (img) =>
+    img.parentElement?.querySelector(`[data-ph-for="${CSS.escape(img.dataset.hash)}"]`) || null;
+  const note = el("texNote");
+  const baseNote = note.textContent;
+  for (const [i, img] of imgs.entries()) {
     if (!img.isConnected || texReply !== reply) return; // 已被下一轮 paint 换掉
+    const ph = phOf(img);
+    if (ph) ph.textContent = `正在解第 ${i + 1} / ${imgs.length} 张…`;
     try {
       const png = await api.candidatePng(img.dataset.hash);
       if (!img.isConnected || texReply !== reply) return;
       if (png) {
         img.src = png;
+        if (ph) ph.remove();
         const c = byHash(img.dataset.hash);
         if (c && !c.png) c.png = png;
-      } else {
+      } else if (ph) {
+        ph.textContent = "这张解不出来：容器里没有它";
         img.title = "缩略图没读出来";
       }
-    } catch {
+    } catch (e) {
+      // 原因写上卡面：只挂在 title 里等于没说，用户只会看到一格空。
+      if (ph) ph.textContent = `这张解不出来：${String((e && e.message) || e)}`;
       img.title = "缩略图没读出来";
     }
+  }
+  if (note.textContent === baseNote && imgs.length) {
+    note.textContent = `${baseNote} · 候选缩略图 ${imgs.length} 张已逐张现解（每张要开一次容器）`;
   }
 }
 

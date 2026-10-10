@@ -528,6 +528,14 @@ em.na { color: var(--muted); font-style: normal; }
   border: 1px solid var(--line); border-radius: var(--radius); background: var(--stage);
 }
 .tex-cand figcaption { color: var(--muted); font-size: 11.5px; line-height: 1.5; }
+/* 批量缓存的候选要先现解才有色：图没来之前卡面必须有看得见的底纹框和一行说明。
+   只放一张没有 src 的 img，浏览器画的是破图角——人看到的就是「贴图呢」。 */
+.tex-ph {
+  display: block; min-height: 118px; padding: 8px; box-sizing: border-box;
+  border: 1px dashed var(--line); border-radius: var(--radius); background: var(--stage);
+  color: var(--muted); font-size: 11.5px; line-height: 1.5;
+}
+.tex-cand img[data-need-png]:not([src]) { display: none; }
 .tex-cand figcaption b { color: var(--teal-deep); }
 /* v2 因子证据行：一行小字 + 平均色色点。色点只是「这张整体什么色调」的凭据，
    不给它加边框以外的任何强调，免得看着像结论标记。 */

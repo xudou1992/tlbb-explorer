@@ -91,9 +91,14 @@ export function texCandidatesHtml(group, slots = [], gi = 0, gn = 1) {
     ? `<p class="dim">榜首那张的岛外像素方差是 0：这份榜只排得出「谁更忙」，排不出「谁贴合」，别照着它确认。</p>`
     : "";
   const cards = group.candidates.map((c, i) => {
+    // 批量缓存的候选不带内嵌图：卡面必须先有一个**看得见**的占位（一行说明字 +
+    // 底纹框），不能只放一张没有 src 的 img——浏览器那会儿画的是破图角，
+    // 用户看到的就是「贴图呢」。占位文字由 detail.js 逐张更新（正在解 / 解不出来原因），
+    // 解出来就整条撤掉换成图。
     const img = c.png
       ? `<img src="${esc(c.png)}" alt="候选贴图 ${i + 1}">`
-      : `<img alt="候选贴图 ${i + 1}" data-need-png="1" data-hash="${esc(c.hash)}">`;
+      : `<span class="tex-ph" data-ph-for="${esc(c.hash)}">缩略图要现解，解出来自动填在这儿</span>
+         <img alt="候选贴图 ${i + 1}" data-need-png="1" data-hash="${esc(c.hash)}">`;
     return `
     <figure class="tex-cand">
       ${img}

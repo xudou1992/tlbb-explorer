@@ -2816,4 +2816,4 @@
 {"mesh":"w1355_pvpcaiji_yu.mesh","hasUv":true,"coverage":0.6078,"topScore":8.689,"graded":"high","topAdjusted":8.689,"gradedV2":"high"}
 {"mesh":"w1356_pvpcaiji_jing.mesh","hasUv":true,"coverage":0.6078,"topScore":8.689,"graded":"high","topAdjusted":8.689,"gradedV2":"high"}
 {"mesh":"xingshoucun_jt.mesh","hasUv":true,"coverage":1.0000,"topScore":3902.606,"graded":"high","topAdjusted":1.000,"gradedV2":"unknown"}
-{"total":2818,"withUv":2376,"candidates":23680,"graded":{"high":2070,"mid":284,"low":14,"unknown":450},"gradedV2":{"high":1560,"mid":386,"low":57,"unknown":815},"elapsedSec":199.6,"thresholds":{"highScore":6,"highCoverage":0.3,"midScore":3,"lowScore":1.2}}
+{"total":2818,"withUv":2376,"candidates":23680,"graded":{"high":2070,"mid":284,"low":14,"unknown":450},"gradedV2":{"high":1560,"mid":386,"low":57,"unknown":815},"unknownSplit":{"noUv":442,"degenerate":263,"noCandidateScore":8,"lowSignal":102},"tryableByUv":2105,"elapsedSec":108.4,"thresholds":{"highScore":6,"highCoverage":0.3,"midScore":3,"lowScore":1.2,"degenerateAdjusted":1.3,"degenerateCoverage":0.9}}

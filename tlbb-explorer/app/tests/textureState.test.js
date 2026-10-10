@@ -187,3 +187,15 @@ test("批量候选卡必须有看得见的占位：一行说明 + 按编号可�
   assert.ok(html.includes('data-ph-for="ee00000000000001"'), html);
   assert.ok(html.includes("缩略图要现解"), html);
 });
+
+test("区分度那一行：榜首出现次数写上卡面，只有通吃型（≥50）才追加劝退", () => {
+  const withCount = (n) => texCandidatesHtml({ mesh: "q.mesh", pool: 1650, state: "candidates",
+    source: "batch", ranked: true,
+    candidates: [{ ...CAND_V2(1, 9.9, F), alsoFirstFor: n }] }, []);
+  assert.ok(withCount(260).includes("260 只模型的榜首出现过"), "要报数");
+  assert.ok(withCount(260).includes("说明得很少"), "通吃型要劝退");
+  assert.ok(withCount(3).includes("3 只模型的榜首出现过"));
+  assert.ok(!withCount(3).includes("说明得很少"), "少量重复是正常现象，不许说成可疑");
+  assert.ok(!texCandidatesHtml({ mesh: "q.mesh", pool: 1, state: "candidates", ranked: false,
+    candidates: [CAND_V2(1, 2, F)] }, []).includes("榜首出现过"), "取不到就不提");
+});

@@ -68,6 +68,18 @@ function scoreLine(c) {
   return `${adj}系统评分 ${Number(c.score).toFixed(1)}（<b>未确认</b>）${nc}`;
 }
 
+/// 区分度那一行：这张贴图在多少只模型的榜首出现过。
+///
+/// 全库实测榜首只来自 147 张贴图、其中一张当了 260 只模型的第一名——不写这一行，
+/// 人会把「通吃型冠军」当成专为这只模型挑出来的那张。只有 ≥50 才追加那句劝退：
+/// 少量重复是正常现象（同一张通用纹样确实会被多只模型用到），不许把正常说成可疑。
+function spreadLine(c) {
+  const n = Number(c.alsoFirstFor);
+  if (!Number.isFinite(n) || n <= 0) return "";
+  const warn = n >= 50 ? "——它对这只模型说明得很少" : "";
+  return `<br><span class="dim">这张在 ${esc(n)} 只模型的榜首出现过${warn}</span>`;
+}
+
 /// 候选卡：图 + 特征证据 + 两颗按钮。分数只作排序参考，必须写「未确认」。
 /// 措辞原则（用户裁定）：这是系统排出来的指标分，不许写成「UV 对齐分」暗示正确率。
 /// 全库批量缓存（source=batch）候选不带内嵌 PNG：img 不给 src，只摆占位框并标记
@@ -103,7 +115,7 @@ export function texCandidatesHtml(group, slots = [], gi = 0, gn = 1) {
     <figure class="tex-cand">
       ${img}
       <figcaption>候选 ${i + 1} · ${esc(c.w)}×${esc(c.h)} ${esc(c.codec)} · ${esc(c.mips)} 级 mip<br>
-      ${scoreLine(c)}<br>${factorLine(c)}</figcaption>
+      ${scoreLine(c)}<br>${factorLine(c)}${spreadLine(c)}</figcaption>
       <button type="button" data-act="try" data-gi="${gi}" data-idx="${i}">套上看看</button>
       <button type="button" data-act="confirm" data-gi="${gi}" data-idx="${i}">确认这张</button>
     </figure>`;

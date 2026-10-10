@@ -66,6 +66,12 @@ pub struct TexCand {
     pub adjusted_score: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub factors: Option<TexFactors>,
+    /// 这张贴图在**多少只模型**的榜上排过第一（区分度）。全库实测：2,368 只模型的榜首
+    /// 只来自 147 张贴图，其中一张当了 260 只的第一名——这种「通吃型冠军」对眼前这只
+    /// 模型几乎不提供信息，但卡面看不出来。数一次缓存目录就有，不需要任何人工标注。
+    /// 旧离线缓存不在批量结果目录里，取不到就是 None（前端对 None 只字不提）。
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub also_first_for: Option<usize>,
     /// 256² PNG data URL，给「套上看看」直接包到模型上。
     pub png: String,
 }
@@ -176,6 +182,7 @@ fn parse_candidates(v: &serde_json::Value) -> Vec<TexCand> {
                 outside_var: f_of(c, "outsideVar"),
                 adjusted_score: f_of(c, "adjustedScore"),
                 factors: factors_of(c),
+                also_first_for: None,
                 png: c.get("png").and_then(|x| x.as_str()).unwrap_or_default().into(),
             });
         }
@@ -208,6 +215,46 @@ pub fn ranked_by_adjusted(cands: &[TexCand]) -> bool {
     cands.len() > 1 && cands.iter().all(|c| c.adjusted_score.is_some())
 }
 
+/// 进程内缓存：`<root> → (每张贴图当过多少次榜首)`。
+/// 扫一次 2,818 个结果文件，所以只算一次；root 变了要重算（测试与换库都会走到这条）。
+static FIRST_PLACES: std::sync::Mutex<Option<(PathBuf, HashMap<String, usize>)>> =
+    std::sync::Mutex::new(None);
+
+fn first_place_counts(root: &Path) -> HashMap<String, usize> {
+    let mut g = match FIRST_PLACES.lock() {
+        Ok(g) => g,
+        Err(p) => p.into_inner(),
+    };
+    if let Some((r, m)) = g.as_ref().filter(|(r, _)| r == root) {
+        return m.clone();
+    }
+    let m = scan_first_places(root);
+    *g = Some((root.to_path_buf(), m.clone()));
+    m
+}
+
+/// 数榜首：口径与前端看到的**一致**——先 `parse_candidates` + `rank`（综合分降序），
+/// 再取第一名。直接读缓存里的第一条是错的：那是方差比顺序，榜出栈前会重排。
+fn scan_first_places(root: &Path) -> HashMap<String, usize> {
+    let dir = root.join(".scratch/uvfit_batch/results");
+    let Ok(rd) = std::fs::read_dir(&dir) else {
+        return HashMap::new();
+    };
+    let mut out: HashMap<String, usize> = HashMap::new();
+    for e in rd.flatten() {
+        let p = e.path();
+        if p.extension().and_then(|x| x.to_str()) != Some("json") {
+            continue;
+        }
+        let Ok(raw) = std::fs::read(&p) else { continue };
+        let Ok(v) = serde_json::from_slice::<serde_json::Value>(&raw) else { continue };
+        if let Some(c) = rank(parse_candidates(&v)).first() {
+            *out.entry(c.hash.clone()).or_default() += 1;
+        }
+    }
+    out
+}
+
 /// 读 uvfit 候选缓存：每组网格一份，找不到就是没有（🔴，不编造）。
 /// 两级来源：`.scratch/texture_candidates/<stem>.json`（旧离线缓存，内嵌 PNG）优先；
 /// 没有才回退 `.scratch/uvfit_batch/results/<stem>.json`（全库批量缓存，只有元数据
@@ -238,7 +285,14 @@ pub fn load_candidate_groups(root: &Path, members: &[(String, String, bool)]) ->
         let Ok(v) = serde_json::from_slice::<serde_json::Value>(&raw) else {
             continue;
         };
-        let candidates = rank(parse_candidates(&v));
+        let counts = first_place_counts(root);
+        let candidates: Vec<TexCand> = rank(parse_candidates(&v))
+            .into_iter()
+            .map(|mut c| {
+                c.also_first_for = counts.get(&c.hash).copied();
+                c
+            })
+            .collect();
         let ranked = ranked_by_adjusted(&candidates);
         if candidates.is_empty() {
             continue;
@@ -710,3 +764,21 @@ mod tests {
         assert!(mesh_override_png_sync(&root, &db, "随手一个字符串").expect("查询不该失败").is_none());
     }
 }
+
+    /// 榜首计数必须按**界面看到的顺序**（综合分降序）数，不是缓存里的方差比顺序。
+    /// 数错口径 = 给错信息：方差比第一名往往正是那种「岛外无对比」的图。
+    #[test]
+    fn first_place_counts_follow_the_ui_ranking_not_cache_order() {
+        let dir = std::env::temp_dir().join(format!("tlbb_first_{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        let res = dir.join(".scratch/uvfit_batch/results");
+        std::fs::create_dir_all(&res).expect("建临时目录");
+        let body = r#"{"mesh":"m.mesh","pool":10,"candidates":[
+            {"hash":"aaaa000000000001","w":512,"h":512,"codec":"BC3","mips":10,"score":900.0,"adjustedScore":1.2,"outsideVar":0.0},
+            {"hash":"aaaa000000000002","w":512,"h":512,"codec":"BC3","mips":10,"score":10.0,"adjustedScore":80.0,"outsideVar":3.0}]}"#;
+        std::fs::write(res.join("m.json"), body).expect("写临时缓存");
+        let m = scan_first_places(&dir);
+        assert_eq!(m.get("aaaa000000000002"), Some(&1), "榜首要按综合分重排后的第一名数");
+        assert_eq!(m.get("aaaa000000000001"), None, "方差比第一名不该被算成榜首");
+        let _ = std::fs::remove_dir_all(&dir);
+    }

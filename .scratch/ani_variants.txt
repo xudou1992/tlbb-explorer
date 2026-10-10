@@ -1,0 +1,11 @@
+份数 11234（跳过 0）
+魔数: {'MIN2': 11199, 'MIN3': 35}
+0x98 版式选择子: {13: 11233, 1: 1}
+(魔数, 版式) 前 12: {('MIN2', 13): 11198, ('MIN3', 13): 35, ('MIN2', 1): 1}
+我们的 32B 轨道口径: {'尾区收口合理': 9450, '尾区不收口': 1784}
+
+('MIN2', 13) 共 11198 份 · 例 data/source/npc/changjingdaoju/w1351_caiji_bosijihao_01/ani/w1351_caiji_bosijihao_01_idle01.ani 骨2 帧41 tick40.0 size3030 tail406
+('MIN3', 13) 共 35 份 · 例 data/source/npc/model/w1351_model_glass_ani_lf001/ani/w1351_model_glass_ani_lf001_idle01.ani 骨55 帧40 tick33.3333 size52480 tail-17920
+('MIN2', 1) 共 1 份 · 例 data/source/npc/model/w1351_model_yingjichyangkong_h02/ani/w1351_model_yingjichyangkong_h02_idle.ani 骨1980 帧96 tick33.3333 size4570042 tail-1512518
+
+明细 → .scratch/ani_variants.json

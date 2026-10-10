@@ -1,0 +1,18 @@
+普查前失败 361 · 现在失败 204 · 新拿下 157
+按文件名对上清单的 157 条路径（清单里同名多份会多算），对不上 0
+涉及的资产组: 147
+其中带 .ani 的组: 145
+
+样例 12 组（stem / 组目录 / .ani 数 / .mesh 数）:
+  w1351_boss_banshandaoren                     data/source/npc/quest/w1351_boss_banshandaoren ani 15 mesh 1
+  w1351_boss_caoshuang                         data/source/npc/quest/w1351_boss_caoshuang ani 15 mesh 6
+  w1351_boss_guansheng                         data/source/npc/quest/w1351_boss_guansheng ani 19 mesh 2
+  w1351_boss_huyanzhuo                         data/source/npc/quest/w1351_boss_huyanzhuo ani 15 mesh 1
+  w1351_boss_jiumozhi                          data/source/npc/quest/w1351_boss_jiumozhi ani 15 mesh 1
+  w1351_boss_qinboqi                           data/source/npc/quest/w1351_boss_qinboqi ani 13 mesh 3
+  w1351_boss_qinhuangzhipo                     data/source/npc/quest/w1351_boss_qinhuangzhipo ani 15 mesh 2
+  w1351_boss_renpingsheng                      data/source/npc/quest/w1351_boss_renpingsheng ani 16 mesh 3
+  w1351_boss_shuifeitouling                    data/source/npc/quest/w1351_boss_shuifeitouling ani 14 mesh 2
+  w1351_boss_sunmeimei                         data/source/npc/quest/w1351_boss_sunmeimei ani 15 mesh 2
+  w1351_boss_xinyeerniang01                    data/source/npc/quest/w1351_boss_xinyeerniang01 ani 16 mesh 1
+  w1351_boss_xinyeerniang02                    data/source/npc/quest/w1351_boss_xinyeerniang02 ani  1 mesh 2

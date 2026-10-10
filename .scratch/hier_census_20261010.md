@@ -171,3 +171,23 @@ IDA 会话开着，找法：`sub_140136890("mesh", …)` 那类类型注册（`.
 顺着注册点找 `.mesh` 的读取函数。
 挂点数是 1 不是 4 这条独立成立（kongmo 的 `tx…`→`Bone001` 只一条），
 但**先别改 `tail_try_sockets`**：这 18 份卡在 160 字节前奏上，socket 计数改了也到不了那一步。
+
+## 这 157 份值多少：147 个资产组拿到骨架树，**jiumozhi 就是其中之一**
+
+按文件名对回 `resources.db`（只读）：157 份全部对上（对不上 0 份），
+涉及 **147 个资产组**，其中 **145 组带 `.ani` 动作文件**（`.scratch/hier_157_value.txt`）。
+
+**交接 §4 第 2 条点名的 `w1351_boss_jiumozhi` 就在这 157 份里**，实核：
+
+```
+skel_dump --name w1351_boss_jiumozhi
+  父链 77 条（000 → bip01 → {footsteps, pelvis} → spine → spine1 → neck → head
+  → bone004 → bone008 / bone005；neck → l_clavicle …），动作 15 条，节点记录 0 个
+```
+
+⇒ 「`.ani` 77 骨 15 条俱全但 `.mesh` 骨架表解出 0 节点」这条**结案**：不是 jiumozhi 特殊，
+是它属于尾部错开 2 字节那一族。
+
+⚠ 但**别把这条写成「jiumozhi 能播了」**：它父链有了、**绑定记录与权重仍然 0**
+（`missing` 里 `meshNodesPartial`/`skinPerPart` 都在）。这 147 组界面上能看见的是
+「骨头谁挂谁 + 动作表」，不是骨位与蒙皮。

@@ -16,8 +16,8 @@
 import { texBlock } from "/tlbb-explorer/app/web/lib/textureState.js";
 
 const F = { uvFit: 0.18, alphaFit: 0.9, sizeFit: 1, blackBias: true, whiteBias: false, meanColor: [60, 60, 60] };
-const cand = (i, adj) => ({ hash: `ee000000000000${i}0`, w: 512, h: 512, codec: "BC3", mips: 10,
-  score: 70 + i, adjustedScore: adj, factors: F, png: "" });
+const cand = (i, adj, ov) => ({ hash: `ee000000000000${i}0`, w: 512, h: 512, codec: "BC3", mips: 10,
+  score: 70 + i, adjustedScore: adj, factors: F, outsideVar: ov, png: "" });
 
 const reply = {
   texSlots: [
@@ -26,9 +26,9 @@ const reply = {
   ],
   textureCandidates: [
     { mesh: "w1351_nan_yifu_001.mesh", pool: 1650, state: "candidates", source: "batch", ranked: true,
-      candidates: [cand(1, 3.2), cand(2, 2.4), cand(3, 1.9)] },
+      candidates: [cand(1, 3.2, 0), cand(2, 2.4, 0), cand(3, 1.9, 240)] },
     { mesh: "w1351_nan_shoutao_001.mesh", pool: 1650, state: "candidates", source: "batch", ranked: true,
-      candidates: [cand(4, 2.8), cand(5, 1.4)] },
+      candidates: [cand(4, 2.8, 310), cand(5, 1.4, 180)] },
   ],
 };
 

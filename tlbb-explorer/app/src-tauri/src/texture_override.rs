@@ -54,6 +54,12 @@ pub struct TexCand {
     pub mips: u32,
     /// uvfit 岛内外方差比。特征指标，不是归属概率——前端必须写明「未确认」。
     pub score: f64,
+    /// 岛外像素的颜色方差（评分的分母原料：`score = insideVar / (outsideVar + 4)`）。
+    /// **0 意味着 UV 岛外没有可比像素**——这时 score 退化成「这张图自己有多忙」，
+    /// 排出来的先后说明不了归属。批量缓存必带；旧离线缓存没这个字段就是 None，
+    /// 前端对 None 只字不提（「没量过」不是「有对比」）。
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub outside_var: Option<f64>,
     /// v2 排序分（评分 × 尺寸/alpha 因子）。批量缓存没写这个字段就是 None——
     /// 「没读到」和「0 分」是两件事，前端据此决定摆不摆证据行。
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -167,6 +173,7 @@ fn parse_candidates(v: &serde_json::Value) -> Vec<TexCand> {
                 codec: c.get("codec").and_then(|x| x.as_str()).unwrap_or_default().into(),
                 mips: c.get("mips").and_then(|x| x.as_u64()).unwrap_or(0) as u32,
                 score: c.get("score").and_then(|x| x.as_f64()).unwrap_or(0.0),
+                outside_var: f_of(c, "outsideVar"),
                 adjusted_score: f_of(c, "adjustedScore"),
                 factors: factors_of(c),
                 png: c.get("png").and_then(|x| x.as_str()).unwrap_or_default().into(),
@@ -445,6 +452,25 @@ mod tests {
 
     fn value(json: &str) -> serde_json::Value {
         serde_json::from_str(json).expect("测试里的 JSON 应能解析")
+    }
+
+    /// `score = insideVar / (outsideVar + 4)`：岛外方差为 0 时这个比只剩「这张图自己有多忙」，
+    /// 排不出归属。前端要靠这个数说话，所以「量出 0」和「旧缓存没量」必须是两个值。
+    #[test]
+    fn outside_var_distinguishes_zero_from_missing() {
+        let v = value(
+            r#"{"candidates":[
+              {"hash":"cc00000000000001","w":512,"h":512,"codec":"BC3","mips":10,
+               "insideVar":11529.8,"outsideVar":0.0,"score":2882.45},
+              {"hash":"cc00000000000002","w":512,"h":512,"codec":"BC3","mips":10,
+               "insideVar":900.0,"outsideVar":240.0,"score":3.2},
+              {"hash":"cc00000000000003","w":512,"h":512,"codec":"BC3","mips":10,"score":90.0}
+            ]}"#,
+        );
+        let got = parse_candidates(&v);
+        assert_eq!(got[0].outside_var, Some(0.0), "岛外方差 0 要原样带出来");
+        assert_eq!(got[1].outside_var, Some(240.0));
+        assert_eq!(got[2].outside_var, None, "旧缓存没这个字段是「没量过」，不是 0");
     }
 
     /// v2 批量缓存：因子与综合分要一路带到前端——那是「凭什么排前面」的唯一凭据。

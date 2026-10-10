@@ -165,3 +165,16 @@ test("只有一份榜时话术不变：不提份数，网格名照旧写在说�
   assert.ok(b.note.includes("按网格 a.mesh 的离线试贴排序"), b.note);
   assert.ok(!b.candHtml.includes("第 1 / 1"), b.candHtml);
 });
+
+test("岛外无对比要单独说：榜首无对比时提示别照着确认，卡片上标出来", () => {
+  const nc = (i, ov) => ({ hash: `dd0000000000000${i}`, w: 512, h: 512, codec: "BC3", mips: 10,
+    score: 2882.4, adjustedScore: 1.1, factors: F, outsideVar: ov, png: "" });
+  const g = { mesh: "nc.mesh", pool: 1650, state: "candidates", source: "batch", ranked: true,
+    candidates: [nc(1, 0), nc(2, 240)] };
+  const html = texCandidatesHtml(g, []);
+  assert.ok(html.includes("岛外像素方差是 0"), html);
+  assert.equal((html.match(/岛外无对比/g) || []).length, 1, "只在那张无对比的卡上标");
+  assert.ok(!texCandidatesHtml({ ...g, candidates: [nc(2, 240)] }, []).includes("岛外无对比"), "有对比就不提");
+  assert.ok(!texCandidatesHtml({ ...g, candidates: [{ ...nc(1, 0), outsideVar: undefined }] }, [])
+    .includes("岛外无对比"), "旧缓存没量过 ≠ 无对比");
+});

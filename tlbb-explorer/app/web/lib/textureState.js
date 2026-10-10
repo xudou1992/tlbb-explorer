@@ -53,11 +53,19 @@ function factorLine(c) {
   return `<span class="tex-facts dim">${esc(bits.join(" · "))}</span>${swatch}`;
 }
 
+/// 岛外方差 = 0 时 `score = insideVar / (outsideVar + 4)` 退化成「这张图自己有多忙」，
+/// 榜的先后不再有任何「贴合」含义。旧缓存没这个字段（undefined）不算无对比——
+/// 「没量过」不能写成「有对比」，也不能反过来。
+function noContrast(c) {
+  return c && c.outsideVar === 0;
+}
+
 /// 一行分数：有综合分就两个都写（综合分是排序依据，方差比是它的原料）；
 /// 只有方差分（旧缓存）就只写方差分——不拿缺的那项凑数。
 function scoreLine(c) {
   const adj = Number.isFinite(c.adjustedScore) ? `综合分 ${Number(c.adjustedScore).toFixed(2)} · ` : "";
-  return `${adj}系统评分 ${Number(c.score).toFixed(1)}（<b>未确认</b>）`;
+  const nc = noContrast(c) ? " · 岛外无对比" : "";
+  return `${adj}系统评分 ${Number(c.score).toFixed(1)}（<b>未确认</b>）${nc}`;
 }
 
 /// 候选卡：图 + 特征证据 + 两颗按钮。分数只作排序参考，必须写「未确认」。
@@ -78,6 +86,10 @@ export function texCandidatesHtml(group, slots = [], gi = 0, gn = 1) {
   const head = gn > 1
     ? `<p class="dim">第 ${gi + 1} / ${gn} 份榜 · 网格 ${esc(group.mesh)}</p>`
     : "";
+  // 榜首没了对比度，整份榜的含义就变了——这句话必须跟在人眼前，不能只写在卡片脚注里。
+  const warn = noContrast(group.candidates[0])
+    ? `<p class="dim">榜首那张的岛外像素方差是 0：这份榜只排得出「谁更忙」，排不出「谁贴合」，别照着它确认。</p>`
+    : "";
   const cards = group.candidates.map((c, i) => {
     const img = c.png
       ? `<img src="${esc(c.png)}" alt="候选贴图 ${i + 1}">`
@@ -91,7 +103,7 @@ export function texCandidatesHtml(group, slots = [], gi = 0, gn = 1) {
       <button type="button" data-act="confirm" data-gi="${gi}" data-idx="${i}">确认这张</button>
     </figure>`;
   });
-  return `<div class="tex-group" data-gi="${gi}">${head}${pick}<div class="tex-grid">${cards.join("")}</div></div>`;
+  return `<div class="tex-group" data-gi="${gi}">${head}${warn}${pick}<div class="tex-grid">${cards.join("")}</div></div>`;
 }
 
 /// 后台批量试贴的入口状态（texture_warm_status 回包）。只在「这只网格还没有

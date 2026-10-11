@@ -298,8 +298,16 @@ test("确认不许改标到别的槽位，重刷要回到这一栏自己的资�
     "「选不中就写第一条未确认」那条兜底必须清掉——真窗口里它把标注写到了别人身上");
   assert.match(src, /confirmTarget\(slots,/, "确认目标只由 confirmTarget 判，对不上就什么都不写");
   assert.match(src, /texGid = state\.selected/, "铺这一栏时把资产号记下来");
-  assert.equal((src.match(/showDetail\(texGid \|\| state\.selected\)/g) || []).length, 2,
-    "确认与撤销都重刷铺着的那只资产（两处都要，漏一处就是撤销看不见结果）");
+  // 口径 2026-10-11 改过一次：确认原本也走整页重刷（两处），实测一次重刷 2.8 秒、
+  // 20 张缩略图与 2 张分布图全部重解，连着标十几条就是十几次闪回灰框。
+  // 现在确认原地改清单，只有撤销还整页重刷（它要把槽位还回下拉）。
+  assert.equal((src.match(/showDetail\(texGid \|\| state\.selected\)/g) || []).length, 1,
+    "只剩撤销走整页重刷；确认再改成重刷就是退回去");
+  const seg = src.slice(src.indexOf('act === "confirm"'), src.indexOf('act === "clear"'));
+  assert.match(seg, /slot\.overrideHash = c\.hash/, "确认要立刻把这条标成已确认（内存里那份清单）");
+  assert.match(seg, /texSlotsHtml\(slots/, "确认只重画槽位清单");
+  assert.ok(!/showDetail\(/.test(seg), "确认不许再整页重刷——2.8 秒的重画是标注吞吐的大头");
+  assert.ok(/act === "confirm"[\s\S]*textureOverrideSet/.test(src), "确认这条链仍然真写覆盖表");
 });
 
 test("容器与清单的缺口必须自己说出来（不能让用户以为客户端里没这个文件）", async () => {

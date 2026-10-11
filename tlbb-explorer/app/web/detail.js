@@ -25,7 +25,7 @@ import {
   matchPartPoses,
   sameNameList,
 } from "./lib/animPose.js";
-import { texBlock, trialPick, uvMapHtml, confirmTarget } from "./lib/textureState.js";
+import { texBlock, trialPick, uvMapHtml, confirmTarget, texSlotsHtml } from "./lib/textureState.js";
 import {
   initTabs,
   showTabPane,
@@ -966,10 +966,28 @@ el("secTex").addEventListener("click", async (e) => {
       return;
     }
     const slot = chosen.slot;
-    const c = group && group.candidates[Number(b.dataset.idx)];
+    const idx = Number(b.dataset.idx);
+    const c = group && group.candidates[idx];
     if (!c) return;
     await api.textureOverrideSet(slot.name, slot.cfgPath, c.hash, "uvfit v1 人工确认");
-    showDetail(texGid || state.selected);
+    // 只重画槽位清单，不整页重刷：实测一次 showDetail 要 2.8 秒（20 张缩略图 + 2 张
+    // 分布图全得重解一遍），而人在做的事是「连着标十几条」——每标一条闪回灰框、
+    // 滚动位置丢一次，就没人标得下去了。撤销那条路保持整页重刷：它要把槽位还回下拉，
+    // 那是偶尔才做一次的動作，慢一点换来的一定是状态干净。
+    slot.overrideHash = c.hash;
+    el("texSlots").innerHTML = texSlotsHtml(slots, Boolean(texReply));
+    for (const g of el("texCand").querySelectorAll(".tex-group")) {
+      const sel = g.querySelector(".tex-slot-pick");
+      if (!sel) continue;
+      const opt = Array.from(sel.options).find((o) => o.value === slot.name);
+      if (opt) sel.removeChild(opt);
+      if (!sel.options.length) {
+        const lab = sel.closest("label");
+        if (lab) lab.outerHTML = `<span class="dim">所有槽位都已确认（撤销后可重选）</span>`;
+      }
+    }
+    el("texNote").textContent =
+      `已记进覆盖表：${slot.name} ← 第 ${idx + 1} 张（榜和图都不重画，接着标下一条）`;
     return;
   }
   if (b.dataset.act === "clear") {

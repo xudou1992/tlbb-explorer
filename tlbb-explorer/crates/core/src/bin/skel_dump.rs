@@ -369,13 +369,21 @@ fn main() {
             std::process::exit(2);
         }
         (None, Some(n)) => {
-            let mf = resolve_mesh(&con, n.trim_end_matches(".mesh"));
-            let anis = mf
-                .as_deref()
-                .and_then(|m| path_of(&con, m))
-                .map(|p| anim_names_for(&con, &p))
-                .unwrap_or_default();
-            (mf, anis)
+            let stem = n.trim_end_matches(".mesh");
+            // 16 位十六进制就当 hash 直接用作网格身份：`.mdl` 的 model-part 清单里那些**匿名部件**
+            // 在清单里没有路径，按名字永远查不到（10-11 的并集只能取到一份部件，缺的骨就这么丢了）。
+            // 这条只多开一扇门，`locate` 与解析路径都不变。
+            if stem.len() == 16 && stem.chars().all(|c| c.is_ascii_hexdigit()) {
+                (Some(stem.to_string()), Vec::new())
+            } else {
+                let mf = resolve_mesh(&con, stem);
+                let anis = mf
+                    .as_deref()
+                    .and_then(|m| path_of(&con, m))
+                    .map(|p| anim_names_for(&con, &p))
+                    .unwrap_or_default();
+                (mf, anis)
+            }
         }
         (None, None) => {
             eprintln!("用法：skel_dump [--root DIR] [--name 模型名 | --ani x.ani | --batch 路径片段 [--limit N]] [--out DIR]");

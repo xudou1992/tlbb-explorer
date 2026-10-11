@@ -91,7 +91,7 @@ bases = sorted({re.sub(r"_b\d+.*$", "_b0", d) for d in var if re.search(r"_b\d",
 rows = []
 failed = []
 for base in bases:
-    paths0 = [str(r[0]) for (r,) in con.execute(
+    paths0 = [str(r) for (r,) in con.execute(
                   "select path from resources where path like ? and path like ?",
                   ("%/" + base + "/%", "%.mesh"))]
     meshes = []

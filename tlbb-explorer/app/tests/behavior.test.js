@@ -310,6 +310,17 @@ test("确认不许改标到别的槽位，重刷要回到这一栏自己的资�
   assert.ok(/act === "confirm"[\s\S]*textureOverrideSet/.test(src), "确认这条链仍然真写覆盖表");
 });
 
+test("确认之后当场套上确认的那张，不许还挂着「未确认」那句", async () => {
+  const src = fs.readFileSync(path.join(web, "detail.js"), "utf8");
+  const seg = src.slice(src.indexOf('act === "confirm"'), src.indexOf('act === "clear"'));
+  assert.match(seg, /api\.meshTextureOverride\(group\.mesh\)/,
+    "要按这份榜自己的网格名去问确认层，不是拿界面上随便哪个名字");
+  assert.match(seg, /applyTexture\(r\.png\)/, "后端给了图就当场套上");
+  assert.match(seg, /已套用人工确认的贴图/, "标题那句得换掉——10-11 实测点完确认仍写着未确认");
+  assert.match(seg, /split\(" · 已套试贴"\)\[0\]/, "先剥掉旧的试贴那句，两句并排就是自相矛盾");
+  assert.match(seg, /解不出来/, "图解不出来要承认，不装作套上了");
+});
+
 test("容器与清单的缺口必须自己说出来（不能让用户以为客户端里没这个文件）", async () => {
   const src = fs.readFileSync(path.join(web, "health.js"), "utf8");
   assert.match(src, /id="gapSec"/, "摘要里要有那一节的位置");

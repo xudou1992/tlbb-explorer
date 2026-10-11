@@ -988,6 +988,23 @@ el("secTex").addEventListener("click", async (e) => {
     }
     el("texNote").textContent =
       `已记进覆盖表：${slot.name} ← 第 ${idx + 1} 张（榜和图都不重画，接着标下一条）`;
+    // 确认的成果得当场看得见。上一版只把槽位清单画成 🟢，模型身上仍是那张未确认的试贴，
+    // 人点完会以为"没生效"——实测要重开一次模型才换上（10-11 真窗口撞到的）。
+    // 所以这里按这份榜自己的网格名问一次确认层：有就直接套上，并把「未确认」那句换掉。
+    if (api.meshTextureOverride) {
+      try {
+        const r = await api.meshTextureOverride(group.mesh);
+        if (r && r.png && applyTexture(r.png)) {
+          const base = el("meshMeta").textContent
+            .split(" · 已套试贴")[0].split(" · 没套试贴")[0].split(" · 已套用人工确认")[0];
+          el("meshMeta").textContent = `${base} · 已套用人工确认的贴图（${r.slot}）`;
+        }
+      } catch {
+        // 确认的贴图解不出来就别装作套上了：留着原来那句，让说明行说清发生了什么。
+        el("texNote").textContent =
+          `已记进覆盖表：${slot.name} ← 第 ${idx + 1} 张，但那张图现在解不出来，模型上还是原来的样子`;
+      }
+    }
     return;
   }
   if (b.dataset.act === "clear") {

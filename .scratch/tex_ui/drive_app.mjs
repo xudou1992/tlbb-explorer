@@ -77,7 +77,9 @@ const state = await ev(`JSON.stringify({
   withImg: document.querySelectorAll('#texCand img[src]').length,
   ph: [...document.querySelectorAll('#texCand .tex-ph')].map(s=>s.textContent).slice(0,3),
   spread: [...document.querySelectorAll('#texCand .dim')].map(s=>s.textContent).filter(t=>t.includes('榜首出现过')).slice(0,3),
-  gl: (()=>{const c=document.querySelector('#meshCv,canvas'); return c? c.width+'x'+c.height : 'no canvas';})(),
+  uvImgs: document.querySelectorAll('#texCand .tex-uvmap img').length,
+  uvText: [...document.querySelectorAll('#texCand .tex-uvmap .dim')].map(d=>d.textContent.trim().slice(0,64)),
+  uvSlots: [...document.querySelectorAll('#texCand [data-uvmap-for]')].map(d=>(d.dataset.uvmapFor||'')+'→'+(d.textContent||'').trim().slice(0,26)),
 })`);
 console.log('状态：', state);
 const shot = await send('Page.captureScreenshot', { format: 'png' });

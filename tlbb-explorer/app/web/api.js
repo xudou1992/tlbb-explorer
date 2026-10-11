@@ -45,6 +45,9 @@ export const textureOverrideSet = (slotName, cfgPath, hash, note) =>
   call("texture_override_set", { slotName, cfgPath: cfgPath || null, hash, note: note || "" });
 export const textureOverrideClear = (slotName, cfgPath) =>
   call("texture_override_clear", { slotName, cfgPath: cfgPath || null });
+/// UV 岛分布图：这只网格的 UV 铺在 [0,1]² 的哪些格子上（亮=岛内，暗=岛外）。
+/// 没有 UV 或清单查不到就回 null，前端整块不出现——不摆空图。
+export const uvMap = (name) => call("uv_map_png", { name });
 /// 批量候选的按需缩略图：全库批量缓存只存元数据，卡片先摆占位，再按候选自带的
 /// 编号现解一张 256px 图。读不到如实回 null / 报错，前端保持占位。
 /// 按编号、不按「第几名」：榜单出栈前会按综合分重排，名次从此不等于缓存里的

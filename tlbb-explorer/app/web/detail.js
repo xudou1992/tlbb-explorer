@@ -25,7 +25,7 @@ import {
   matchPartPoses,
   sameNameList,
 } from "./lib/animPose.js";
-import { texBlock, trialPick } from "./lib/textureState.js";
+import { texBlock, trialPick, uvMapHtml } from "./lib/textureState.js";
 import {
   initTabs,
   showTabPane,
@@ -784,6 +784,7 @@ function paintTex(insp) {
   el("texCand").innerHTML = block.candHtml;
   el("texNote").textContent = block.note;
   loadCandidatePngs();
+  loadUvMaps();
 }
 
 /// 问一次后台批量试贴的状态。数不出来（没有桌面端 / 后端没这条命令）就保持
@@ -858,6 +859,27 @@ async function loadSkeleton(gid, mesh) {
     if (skelSeq !== gid || state.selected !== gid) return;
     // 「这一组没有网格」是常态而不是故障，措辞跟着后端原话走
     paintSkeleton({ nodes: [], animations: [], missing: [], note: String((e && e.message) || e) });
+  }
+}
+
+/// 每份榜顶上取一张 UV 岛分布图。为什么值得多这几枪：榜的分数全靠「岛内 vs 岛外」，
+/// 而岛外有多少格子是看不见的——铺满整张的网格（覆盖率≈1）那份榜其实没有对比依据。
+/// 取不到就写「没有 UV / 没读到」，不摆空图框。
+async function loadUvMaps() {
+  if (!api.uvMap) return;
+  const reply = texReply;
+  const slots = Array.from(el("texCand").querySelectorAll("[data-uvmap-for]"));
+  for (const box of slots) {
+    if (!box.isConnected || texReply !== reply) return;
+    try {
+      const m = await api.uvMap(box.dataset.uvmapFor);
+      if (!box.isConnected || texReply !== reply) return;
+      box.innerHTML = m && m.png
+        ? uvMapHtml(m)
+        : `<span class="dim">这只网格没有 UV，画不出岛分布图</span>`;
+    } catch {
+      if (box.isConnected) box.innerHTML = `<span class="dim">岛分布图没读到</span>`;
+    }
   }
 }
 

@@ -120,7 +120,9 @@ export function texCandidatesHtml(group, slots = [], gi = 0, gn = 1) {
       <button type="button" data-act="confirm" data-gi="${gi}" data-idx="${i}">确认这张</button>
     </figure>`;
   });
-  return `<div class="tex-group" data-gi="${gi}">${head}${warn}${pick}<div class="tex-grid">${cards.join("")}</div></div>`;
+  return `<div class="tex-group" data-gi="${gi}">${head}${warn}` +
+    `<div class="tex-uvmap-slot" data-uvmap-for="${esc(group.mesh)}"></div>` +
+    `${pick}<div class="tex-grid">${cards.join("")}</div></div>`;
 }
 
 /// 立体预览自动试贴的取舍：**只有说得出「凭什么试这张」才套**。
@@ -138,6 +140,20 @@ export function trialPick(group) {
     return { skip: `榜首综合分 ${adj.toFixed(2)} 低于 1.3，分数说明不了贴合` };
   }
   return { candidate: c };
+}
+
+/// UV 岛分布图那一格：图 + 覆盖率。覆盖率≈1 时补一句「岛外没有像素可比」——
+/// 这就是「这份榜没有对比依据」的实物，比只写一个数字 1.000 说得清楚。
+export function uvMapHtml(map) {
+  if (!map || !map.png) return "";
+  const cov = Number(map.coverage);
+  const pct = Number.isFinite(cov) ? Math.round(cov * 100) : null;
+  const tail = pct === null ? "" : pct >= 99
+    ? ` · 覆盖率 ${pct}%：整张都铺了 UV，岛外没有像素可比`
+    : ` · 覆盖率 ${pct}%（暗处是岛外，评分的对比就来自这些格子）`;
+  const faces = Number.isFinite(Number(map.faces)) ? ` · ${esc(map.faces)} 面` : "";
+  return `<div class="tex-uvmap"><img src="${esc(map.png)}" alt="UV 岛分布图">` +
+    `<span class="dim">这只网格的 UV 岛分布${esc(tail)}${faces}</span></div>`;
 }
 
 /// 后台批量试贴的入口状态（texture_warm_status 回包）。只在「这只网格还没有

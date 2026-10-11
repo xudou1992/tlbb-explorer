@@ -199,6 +199,7 @@ pub fn run() {
             texture_override::texture_override_clear,
             texture_override::mesh_override_png,
             texture_override::candidate_png,
+            texture_override::uv_map_png,
             gap::catalog_gap,
             skeleton::skeleton_view,
             skeleton::animation_view,

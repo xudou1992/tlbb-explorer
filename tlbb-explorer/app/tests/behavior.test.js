@@ -1221,3 +1221,11 @@ test("自动试贴的接线不能被拆：🟢 优先、无提供者不套、原
   assert.match(mesh, /已套试贴：.*（未确认/, "套上必须写明未确认");
   assert.match(mesh, /没套试贴：\$\{t\.skip\}/, "不套也要把原因说出来，不能静默留灰模");
 });
+
+test("UV 岛分布图的接线不能被拆：每份榜顶上都要有一格，取不到说取不到", async () => {
+  const src = fs.readFileSync(path.join(web, "detail.js"), "utf8");
+  assert.match(src, /async function loadUvMaps\(\)/, "取图函数要在");
+  assert.match(src, /api\.uvMap\(box\.dataset\.uvmapFor\)/, "按榜上的网格名逐份取");
+  assert.match(src, /没有 UV，画不出岛分布图/, "没 UV 要说明，不能留空格子");
+  assert.match(src, /loadUvMaps\(\);/, "铺完榜就要取图");
+});

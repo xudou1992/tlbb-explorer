@@ -790,3 +790,66 @@ mod tests {
         assert_eq!(m.get("aaaa000000000001"), None, "方差比第一名不该被算成榜首");
         let _ = std::fs::remove_dir_all(&dir);
     }
+
+/// UV 岛分布图：把这只网格的 UV 铺在 [0,1]² 的哪些格子上画成一张 256×256 的图
+/// （亮 = 岛内，暗 = 岛外）。
+///
+/// 为什么值得占一个命令位：评分是「岛内方差 / (岛外方差 + 4)」，而覆盖率≈1 的网格
+/// **岛外一个像素都没有**——这种榜的分数没有任何对比含义，光看「覆盖率 1.000」
+/// 人感觉不到（实测 `w1351_model_fasheqi_h001` 铺满整张，榜首是一张山峰特效图）。
+/// 画出来就看得见了。它不新造任何判断：mask 就是评分时算过的同一份。
+/// 没有 UV、或清单里查不到这份网格 → 回 `None`（前端整块不出现，不摆空图）。
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UvMapPng {
+    pub png: String,
+    pub coverage: f64,
+    pub faces: usize,
+}
+
+#[tauri::command]
+pub async fn uv_map_png(name: String) -> Result<Option<UvMapPng>, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let (root, db) = crate::inspector::roots();
+        let con = Connection::open_with_flags(
+            &db,
+            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+        )
+        .map_err(|e| format!("只读打开资源清单失败：{e}"))?;
+        let tail = name
+            .rsplit(['/', std::path::MAIN_SEPARATOR])
+            .next()
+            .unwrap_or(&name)
+            .trim()
+            .to_string();
+        let file = if tail.to_ascii_lowercase().ends_with(".mesh") {
+            tail
+        } else {
+            format!("{tail}.mesh")
+        };
+        let Some(hash) = tlbb_core::preview::mesh_hash(&con, &file) else {
+            return Ok(None);
+        };
+        let (bytes, rtype) = fetch_raw(&root, &db, hash)?;
+        if rtype != "mesh" && rtype != "geom" {
+            return Err(format!("这个文件不是网格（它属于 {rtype} 那类），画不出 UV 岛"));
+        }
+        let Ok(geo) = tlbb_core::preview::parse_geometry(&bytes) else {
+            return Ok(None);
+        };
+        if geo.uvs.is_empty() {
+            return Ok(None); // 无 UV：本来就没有岛分布可画
+        }
+        let (mask, faces) = tlbb_core::preview::build_mask(&geo.uvs, &geo.indices);
+        let cov_px = tlbb_core::preview::covered(&mask);
+        let coverage = cov_px as f64 / (tlbb_core::preview::GRID * tlbb_core::preview::GRID) as f64;
+        let png = tlbb_core::preview::mask_png(&mask)?;
+        Ok(Some(UvMapPng {
+            png: format!("data:image/png;base64,{}", crate::inspector::b64(&png)),
+            coverage,
+            faces,
+        }))
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}

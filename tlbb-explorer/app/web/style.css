@@ -536,6 +536,11 @@ em.na { color: var(--muted); font-style: normal; }
   color: var(--muted); font-size: 11.5px; line-height: 1.5;
 }
 .tex-cand img[data-need-png]:not([src]) { display: none; }
+/* UV 岛分布图：小图 + 一行说明，摆在每份榜的顶上，跟候选卡并列但不抢位置。 */
+.tex-uvmap { display: flex; gap: 8px; align-items: center; margin: 4px 0 8px; }
+.tex-uvmap img { width: 96px; height: 96px; object-fit: contain; border: 1px solid var(--line);
+  border-radius: var(--radius); background: var(--stage); }
+.tex-uvmap .dim { font-size: 11.5px; line-height: 1.5; overflow-wrap: anywhere; }
 .tex-cand figcaption b { color: var(--teal-deep); }
 /* v2 因子证据行：一行小字 + 平均色色点。色点只是「这张整体什么色调」的凭据，
    不给它加边框以外的任何强调，免得看着像结论标记。 */

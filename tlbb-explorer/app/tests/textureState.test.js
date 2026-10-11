@@ -2,7 +2,7 @@
 // 没跑过试贴时槽位只能是 ⬜ 名字清单——🟡 是候选专用，名字清单不许冒用。
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { texBlock, texSlotsHtml, texCandidatesHtml, trialPick } from "../web/lib/textureState.js";
+import { texBlock, texSlotsHtml, texCandidatesHtml, trialPick, uvMapHtml } from "../web/lib/textureState.js";
 
 const SLOT_A = { name: "a_yifu_001.tga", cfgPath: "data/source/npc/x/texture/a_yifu_001.tga", overrideHash: null };
 const SLOT_B = { name: "a_shoutao_001.tga", cfgPath: "data/source/npc/x/texture/a_shoutao_001.tga", overrideHash: null };
@@ -214,4 +214,13 @@ test("有榜就摆「退回灰模」那颗按钮，并说清立体预览上可�
   const b = texBlock({ texSlots: [SLOT_A], textureCandidates: [GROUP_V2] });
   assert.ok(b.candHtml.includes('data-act="clearTrial"'), b.candHtml);
   assert.ok(b.candHtml.includes("不是客户端认定的那张"), b.candHtml);
+});
+
+test("UV 岛分布图：覆盖率≈1 要说清「岛外没有像素可比」，没图就不摆格", () => {
+  const ok = uvMapHtml({ png: "data:image/png;base64,AA", coverage: 1.0, faces: 80 });
+  assert.ok(ok.includes("整张都铺了 UV，岛外没有像素可比"), ok);
+  assert.ok(ok.includes("80 面"), ok);
+  assert.ok(uvMapHtml({ png: "data:image/png;base64,AA", coverage: 0.678, faces: 666 }).includes("暗处是岛外"), "有岛外要说对比来源");
+  assert.equal(uvMapHtml(null), "");
+  assert.equal(uvMapHtml({ coverage: 0.5 }), "", "没有 png 就不摆空图框");
 });

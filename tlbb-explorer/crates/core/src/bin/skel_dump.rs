@@ -31,7 +31,28 @@ use tlbb_core::preview::{bone_count, parse_ani, parse_hierarchy, parse_nodes, Sk
 
 /// 在清单里按「文件名结尾」找一条资源，返回 (hash, 所在容器)。
 /// 用 `like '%/<name>'` 精确到路径分隔符，避免 `xxx.mesh` 撞进 `xxx.mesh2`。
+///
+/// 传进来的若是 16 位十六进制，就**当 hash 直接查**：清单里 `path` 为 NULL 的匿名件
+/// 按名字永远查不到，而 2026-10-11 数出来的那 2,995 条变体 `.ani` 全在这一类里
+/// （身份在 `.scratch/cfg_named_sidecar.json`，键就是 hash）。
 fn locate(con: &Connection, name: &str) -> Option<(u64, String)> {
+    let trimmed = name.trim();
+    if trimmed.len() == 16 && trimmed.chars().all(|c| c.is_ascii_hexdigit()) {
+        let mut stmt = con
+            .prepare(
+                "SELECT hash, coalesce(pak,'') FROM resources \
+                 WHERE lower(hash) = lower(?1) AND stored > 0 LIMIT 1",
+            )
+            .ok()?;
+        return stmt
+            .query_row([trimmed], |r| {
+                let hex: String = r.get(0)?;
+                let pak: String = r.get(1)?;
+                Ok((hex, pak))
+            })
+            .ok()
+            .and_then(|(hex, pak)| u64::from_str_radix(&hex, 16).ok().map(|h| (h, pak)));
+    }
     let mut stmt = con
         .prepare("SELECT hash, coalesce(pak,'') FROM resources WHERE path LIKE ?1 AND stored > 0 LIMIT 1")
         .ok()?;

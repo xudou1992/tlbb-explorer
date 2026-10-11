@@ -29,8 +29,21 @@ await sleep(2500);
 await ev(`(async()=>{const b=[...document.querySelectorAll('input')].find(i=>/搜|过滤|找/.test(i.placeholder||'')||i.type==='search');
   if(!b)return; b.focus(); b.value=${JSON.stringify(WANT)}; b.dispatchEvent(new Event('input',{bubbles:true})); await new Promise(r=>setTimeout(r,3000));})()`);
 await sleep(2500);
+// 搜索框必须按 id 打：资产页那个是 #q，浏览页还有一个 treeFilter（筛的是目录树）。
+// 之前用 placeholder/正则「找第一个像搜索框的」，两次都打到 treeFilter 上——列表根本没筛，
+// 于是「找不到目标就点第一行」把我们带到别的资产上，白跑三轮。
+console.log('填搜索框：', await ev(`(async()=>{
+  const b=document.getElementById('q');
+  if(!b) return '没有 #q（资产页没起来？）：现存 input = '+[...document.querySelectorAll('input')].map(i=>i.id||i.type).join(',');
+  b.focus(); b.value=${JSON.stringify(WANT)}; b.dispatchEvent(new Event('input',{bubbles:true}));
+  await new Promise(r=>setTimeout(r,4500));
+  const rs=[...document.querySelectorAll('.row-item')];
+  const hit=rs.findIndex(r=>(r.textContent||'').includes(${JSON.stringify(WANT)}));
+  return '行数 '+rs.length+' · 目标在第 '+hit+' 行 · 第一行='+(rs[0]?.textContent||'').trim().slice(0,26);})()`));
+await sleep(1200);
 console.log('点行：', await ev(`(()=>{const rs=[...document.querySelectorAll('.row-item')];
-  const hit=rs.find(r=>(r.textContent||'').includes(${JSON.stringify(WANT)}))||rs[0]; hit.click(); return hit.textContent.trim().slice(0,34);})()`));
+  const hit=rs.find(r=>(r.textContent||'').includes(${JSON.stringify(WANT)}));
+  if(!hit) return '★列表里没有目标行，停手不点第一行'; hit.click(); return hit.textContent.trim().slice(0,34);})()`));
 await sleep(9000);
 console.log('每份榜：', await ev(`JSON.stringify([...document.querySelectorAll('#texCand .tex-group')].map(g=>({
   榜:g.dataset.gi,

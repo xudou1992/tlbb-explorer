@@ -35,6 +35,6 @@ pub use summary::{
     MeshSummary, ResourceView, SlotSummary, TexSummary, ViewBody,
 };
 pub use uvfit::{
-    build_mask, covered, decode_pool, island_variance, mdl_mesh_names, mesh_hash, open_paks,
-    query_pool, rasterize, score_pool, Cand, PakSet, PoolRow, PoolTex, GRID,
+    build_mask, covered, decode_pool, island_variance, mask_png, mdl_mesh_names, mesh_hash,
+    open_paks, query_pool, rasterize, score_pool, Cand, PakSet, PoolRow, PoolTex, GRID,
 };

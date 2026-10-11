@@ -327,7 +327,9 @@ fn now_ts() -> u64 {
 /// WebP 原样 / 容器直出），只是长边 256——候选卡要看得清纹样，160 太糊。不能直接
 /// 复用是因为那边的帮手是私有的、本次只许改本文件；口径一字不差：解不出如实报错，
 /// 绝不拿别的图顶。
-fn decode_candidate_png(root: &Path, db: &Path, hash: u64) -> Result<(&'static str, Vec<u8>), String> {
+/// 按 hash 取**原始字节**与该行的类型：清单定位 → 开那一个 pak → 找记录 → 解码容器。
+/// `decode_candidate_png` 与 UV 岛分布图共用这一条，两边不可能出现「一个取得到一个取不到」。
+fn fetch_raw(root: &Path, db: &Path, hash: u64) -> Result<(Vec<u8>, String), String> {
     let con = Connection::open_with_flags(
         db,
         OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
@@ -350,9 +352,15 @@ fn decode_candidate_png(root: &Path, db: &Path, hash: u64) -> Result<(&'static s
         .or_else(|| recs.iter().find(|r| r.hash == hash))
         .ok_or_else(|| "容器索引里没有这条记录".to_string())?;
     let dec = payload::decode(&pak, rec).map_err(|e| format!("取字节失败：{e}"))?;
+    Ok((dec.bytes, rtype))
+}
+
+/// 把一张贴图/图片资源解成缩略图（长边 256）或原样字节。
+fn decode_candidate_png(root: &Path, db: &Path, hash: u64) -> Result<(&'static str, Vec<u8>), String> {
+    let (bytes, rtype) = fetch_raw(root, db, hash)?;
     match rtype.as_str() {
         "texture" => {
-            let t = jmt1::decode(&dec.bytes).map_err(|e| format!("JMT1 解码失败：{e}"))?;
+            let t = jmt1::decode(&bytes).map_err(|e| format!("JMT1 解码失败：{e}"))?;
             if let Some(w) = &t.webp {
                 return Ok(("image/webp", w.clone()));
             }
@@ -364,9 +372,9 @@ fn decode_candidate_png(root: &Path, db: &Path, hash: u64) -> Result<(&'static s
                 png_bytes(w as u16, h as u16, &scaled, true).map_err(|e| format!("编码 PNG 失败：{e}"))?;
             Ok(("image/png", png))
         }
-        "webp" => Ok(("image/webp", dec.bytes)),
-        "jpeg" => Ok(("image/jpeg", dec.bytes)),
-        "png" => Ok(("image/png", dec.bytes)),
+        "webp" => Ok(("image/webp", bytes)),
+        "jpeg" => Ok(("image/jpeg", bytes)),
+        "png" => Ok(("image/png", bytes)),
         other => Err(format!(
             "这个文件不是图片（它属于 {other} 那类内部文件），所以出不了图"
         )),

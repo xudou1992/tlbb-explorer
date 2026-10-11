@@ -712,6 +712,24 @@ pub fn build_mask(uvs: &[[f32; 2]], indices: &[u16]) -> (Vec<u8>, usize) {
     (mask, tris)
 }
 
+/// 把 UV 岛 mask 画成一张 `GRID×GRID` 的图：有 UV 覆盖的格子亮、岛外暗。
+///
+/// 为什么要它：「岛内外无对比」是一句抽象话，而这张图让人一眼看见这只模型的 UV
+/// 到底铺在哪、铺了多少（覆盖率就写在标题里）。它不参与任何评分，只是把已经算过的
+/// mask 显示出来——不新造任何判断。上下按 mask 原序，未做翻转。
+pub fn mask_png(mask: &[u8]) -> Result<Vec<u8>, String> {
+    let mut rgba = vec![0u8; GRID * GRID * 4];
+    for (i, &m) in mask.iter().take(GRID * GRID).enumerate() {
+        let v = if m == 1 { 235 } else { 26 };
+        let o = i * 4;
+        rgba[o] = v;
+        rgba[o + 1] = v;
+        rgba[o + 2] = v;
+        rgba[o + 3] = 255;
+    }
+    crate::preview::png_bytes(GRID as u16, GRID as u16, &rgba, true)
+}
+
 /// mask 里被岛覆盖的像素数。
 pub fn covered(mask: &[u8]) -> usize {
     mask.iter().filter(|&&m| m == 1).count()

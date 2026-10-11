@@ -120,6 +120,12 @@ impl PathMap {
     pub fn pair_count(&self) -> usize {
         self.pairs
     }
+
+    /// 全部「裸名→全路径」映射（键是**已小写**的裸名）。
+    /// 只给普查与 sidecar 生成用——它不改变任何判定，读到的还是同一张表。
+    pub fn iter(&self) -> impl Iterator<Item = (&String, &String)> {
+        self.map.iter()
+    }
 }
 
 fn try_strtab(raw: &[u8], off: usize) -> Option<PathMap> {

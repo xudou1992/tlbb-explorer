@@ -38,7 +38,17 @@ console.log('点行：', await ev(`(()=>{const rs=[...document.querySelectorAll(
   return hit.textContent.trim().slice(0,30);})()`));
 await sleep(8000);
 console.log('锚点：', await ev(`JSON.stringify({on:(document.querySelector('.row-item.on')||{}).dataset?.gid, 资产:(document.getElementById('dName')?.textContent||'').trim().slice(0,26), 槽位数:document.querySelectorAll('#texSlots li').length})`));
-console.log('清空记录，标一条：', await ev(`(window.__calls.length=0, document.querySelector('#texCand .tex-group button[data-act="confirm"][data-idx="0"]') ? '点了' : (document.querySelector('#texCand .tex-group button[data-act="confirm"][data-idx="0"]'), '没有确认按钮'))`));
+// 上一版这行写坏了：`(A ? '点了' : B)` 只测了元素存在性，从头到尾没 .click()，
+// 所以「标一条 → 撤销」那条链根本没走，覆盖表全程空的、面板也没长 🟢。改成真的点。
+console.log('清空记录，标一条：', await ev(`(()=>{
+  window.__calls.length = 0;
+  const b = document.querySelector('#texCand .tex-group button[data-act="confirm"][data-idx="0"]');
+  if (!b) return '没有确认按钮';
+  const sel = document.querySelector('#texCand .tex-group .tex-slot-pick');
+  const target = sel ? sel.value : '（没有下拉，会走拒绝分支）';
+  b.click();
+  return '点了确认，槽位下拉当前值 = ' + target;}
+)()`));
 await sleep(4000);
 console.log('标完之后调用：', await ev(`JSON.stringify(window.__calls.map(c=>({cmd:c.cmd,gid:c.gid,资产:c.资产})))`));
 console.log('清空记录，撤销：', await ev(`(()=>{window.__calls.length=0;const b=document.querySelector('#texSlots button[data-act="clear"]');

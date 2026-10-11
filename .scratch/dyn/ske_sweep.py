@@ -28,12 +28,17 @@ def strings_of_jbcf(raw):
     import struct
     if len(raw) < 32 or raw[:4] != b"JBCF":
         return None
-    for off in list(range(16, min(len(raw) - 16, 2_000_000), 4)):
+    # 只认字符串表（id=85）。上一版允许 86，而 86 就是根 chunk 自己——
+    # 从 off=16 起扫必然先撞上它，把根头当表读，名单全是乱码（229 那个判决就是这么来的）。
+    root_size = struct.unpack_from("<I", raw, 20)[0]
+    first = 16 + 8 + ((root_size + 7) // 8) * 8
+    offs = [first] + list(range(16, min(len(raw) - 16, 2_000_000), 4))
+    for off in offs:
         try:
             sid, size, flag, count = struct.unpack_from("<4I", raw, off)
         except struct.error:
             continue
-        if count == 0 or count > 400000 or sid not in (84, 85, 86):
+        if count == 0 or count > 400000 or sid != 85:
             continue
         desc, chars = off + 16, off + 16 + 8 * count
         if chars > len(raw):

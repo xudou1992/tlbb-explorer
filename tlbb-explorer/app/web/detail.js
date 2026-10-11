@@ -25,7 +25,7 @@ import {
   matchPartPoses,
   sameNameList,
 } from "./lib/animPose.js";
-import { texBlock, trialPick, uvMapHtml } from "./lib/textureState.js";
+import { texBlock, trialPick, uvMapHtml, confirmTarget } from "./lib/textureState.js";
 import {
   initTabs,
   showTabPane,
@@ -773,9 +773,15 @@ async function loadMaterial(gid, file) {
 // 而「没有榜」恰恰是要提示「后台还没跑完」的那一路——那时也得能重画这一栏。
 let texSource = null;
 let warmStatus = null;
+/// 这一栏当前铺的是哪一只资产的榜。确认/撤销之后要重刷**这一只**，
+/// 不是 `state.selected`——真窗口里撞到过：两次点击之间 state.selected 已经被
+/// 别处改走（列表重画、别的驱动点了别的行），照 state.selected 重刷会让人
+/// 刚标完就看不见自己那条 🟢。
+let texGid = 0;
 
 function paintTex(insp) {
   texSource = insp;
+  texGid = state.selected;
   const block = texBlock(insp, warmStatus);
   texReply = block ? insp : null;
   el("secTex").hidden = !block;
@@ -954,16 +960,21 @@ el("secTex").addEventListener("click", async (e) => {
   }
   if (b.dataset.act === "confirm") {
     const pick = b.closest(".tex-group")?.querySelector(".tex-slot-pick");
-    const slot = (pick && slots.find((s) => s.name === pick.value)) || slots.find((s) => !s.overrideHash);
+    const chosen = confirmTarget(slots, pick ? pick.value : null);
+    if (chosen.reason) {
+      el("texNote").textContent = chosen.reason;
+      return;
+    }
+    const slot = chosen.slot;
     const c = group && group.candidates[Number(b.dataset.idx)];
-    if (!slot || !c) return;
+    if (!c) return;
     await api.textureOverrideSet(slot.name, slot.cfgPath, c.hash, "uvfit v1 人工确认");
-    showDetail(state.selected);
+    showDetail(texGid || state.selected);
     return;
   }
   if (b.dataset.act === "clear") {
     await api.textureOverrideClear(b.dataset.slot, b.dataset.cfg);
-    showDetail(state.selected);
+    showDetail(texGid || state.selected);
   }
 });
 

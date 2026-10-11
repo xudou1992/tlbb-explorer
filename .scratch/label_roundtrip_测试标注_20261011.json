@@ -1,0 +1,9 @@
+{
+  "overrides": {
+    "cfg:data/source/npc/quest/w1351_zuoqi_guchengfeisha/texture/w1351_zuoqi_guchengfeisha_pbr.tga": {
+      "hash": "131cb3ac85381eb3",
+      "note": "uvfit v1 人工确认",
+      "ts": 1791704469
+    }
+  }
+}

@@ -292,6 +292,16 @@ test("多份榜的按钮要认得自己那份：取榜靠 data-gi，下拉在自
   assert.match(src, /closest\("\.tex-group"\)[\s\S]{0,40}tex-slot-pick/, "确认下拉要在按钮所在的那份榜里找");
 });
 
+test("确认不许改标到别的槽位，重刷要回到这一栏自己的资产", async () => {
+  const src = fs.readFileSync(path.join(web, "detail.js"), "utf8");
+  assert.ok(!/slots\.find\(\(s\) => !s\.overrideHash\)/.test(src),
+    "「选不中就写第一条未确认」那条兜底必须清掉——真窗口里它把标注写到了别人身上");
+  assert.match(src, /confirmTarget\(slots,/, "确认目标只由 confirmTarget 判，对不上就什么都不写");
+  assert.match(src, /texGid = state\.selected/, "铺这一栏时把资产号记下来");
+  assert.equal((src.match(/showDetail\(texGid \|\| state\.selected\)/g) || []).length, 2,
+    "确认与撤销都重刷铺着的那只资产（两处都要，漏一处就是撤销看不见结果）");
+});
+
 test("容器与清单的缺口必须自己说出来（不能让用户以为客户端里没这个文件）", async () => {
   const src = fs.readFileSync(path.join(web, "health.js"), "utf8");
   assert.match(src, /id="gapSec"/, "摘要里要有那一节的位置");

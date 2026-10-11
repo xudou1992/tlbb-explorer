@@ -80,6 +80,23 @@ function spreadLine(c) {
   return `<br><span class="dim">这张在 ${esc(n)} 只模型的榜首出现过${warn}</span>`;
 }
 
+/// 确认该写进哪一条槽位。**只认下拉当前选中的那条**，选不中就不写。
+///
+/// 旧写法是 `|| slots.find(s => !s.overrideHash)`：下拉值对不上时（列表刚重画、
+/// 槽位换了人、脚本塞进去的野值）静默改标到「第一条未确认」——人以为标在自己
+/// 看着的那一格，实际标到了别的槽。覆盖表是贴图线唯一的标准答案来源，
+/// 一条错标比一条没标更贵，所以这里宁可回一句原因、什么都不写。
+export function confirmTarget(slots, pickValue) {
+  const open = (Array.isArray(slots) ? slots : []).filter((s) => s && !s.overrideHash);
+  if (!open.length) return { reason: "这一组的槽位都已经确认过了；要改，先在槽位清单里撤销那一条。" };
+  if (!pickValue) return { reason: "没选中槽位，这次什么都没写。" };
+  const hit = open.find((s) => s.name === pickValue);
+  if (!hit) {
+    return { reason: `槽位下拉里的「${pickValue}」已经不在清单上了，这次什么都没写——重新选一条槽位再点确认。` };
+  }
+  return { slot: hit };
+}
+
 /// 候选卡：图 + 特征证据 + 两颗按钮。分数只作排序参考，必须写「未确认」。
 /// 措辞原则（用户裁定）：这是系统排出来的指标分，不许写成「UV 对齐分」暗示正确率。
 /// 全库批量缓存（source=batch）候选不带内嵌 PNG：img 不给 src，只摆占位框并标记

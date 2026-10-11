@@ -2,7 +2,7 @@
 // 没跑过试贴时槽位只能是 ⬜ 名字清单——🟡 是候选专用，名字清单不许冒用。
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { texBlock, texSlotsHtml, texCandidatesHtml, trialPick, uvMapHtml } from "../web/lib/textureState.js";
+import { texBlock, texSlotsHtml, texCandidatesHtml, trialPick, uvMapHtml, confirmTarget } from "../web/lib/textureState.js";
 
 const SLOT_A = { name: "a_yifu_001.tga", cfgPath: "data/source/npc/x/texture/a_yifu_001.tga", overrideHash: null };
 const SLOT_B = { name: "a_shoutao_001.tga", cfgPath: "data/source/npc/x/texture/a_shoutao_001.tga", overrideHash: null };
@@ -223,4 +223,19 @@ test("UV 岛分布图：覆盖率≈1 要说清「岛外没有像素可比」，
   assert.ok(uvMapHtml({ png: "data:image/png;base64,AA", coverage: 0.678, faces: 666 }).includes("暗处是岛外"), "有岛外要说对比来源");
   assert.equal(uvMapHtml(null), "");
   assert.equal(uvMapHtml({ coverage: 0.5 }), "", "没有 png 就不摆空图框");
+});
+
+// 2026-10-11 真窗口撞到的：下拉里塞了个不在清单上的值，旧写法 `|| slots.find(s=>!s.overrideHash)`
+// 把标注静默写到了**另一条槽位**上（我选的槽没写进去，第一条未确认的反倒变 🟢）。
+// 覆盖表是贴图线唯一的标准答案来源，标错一条比少标一条贵得多。
+test("确认不许改标到别的槽位，选不中就什么都不写", () => {
+  assert.equal(confirmTarget([SLOT_A, SLOT_B], SLOT_B.name).slot, SLOT_B, "选中谁就写谁");
+  const miss = confirmTarget([SLOT_A, SLOT_B], "不在这儿的野值.tga");
+  assert.equal(miss.slot, undefined, "对不上不该返回任何槽位");
+  assert.ok(miss.reason.includes("什么都没写"), miss.reason);
+  assert.equal(confirmTarget([SLOT_A, SLOT_B], null).slot, undefined, "没选槽位也不该乱写");
+  const done = confirmTarget([{ ...SLOT_A, overrideHash: "aa" }, { ...SLOT_B, overrideHash: "bb" }], SLOT_A.name);
+  assert.equal(done.slot, undefined, "全确认了要说明为什么点不动");
+  assert.ok(done.reason.includes("撤销"), done.reason);
+  assert.ok(confirmTarget([], SLOT_A.name).reason, "空清单也要给原因，不是静默 return");
 });

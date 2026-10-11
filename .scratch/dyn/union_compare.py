@@ -89,11 +89,19 @@ for h, p in side.items():
 
 bases = sorted({re.sub(r"_b\d+.*$", "_b0", d) for d in var if re.search(r"_b\d", d)})[:FAMILIES]
 rows = []
+failed = []
 for base in bases:
-    meshes = [str(r[0]).replace("\\", "/").split("/")[-1][:-5]
-              for (r,) in con.execute(
+    paths0 = [str(r[0]) for (r,) in con.execute(
                   "select path from resources where path like ? and path like ?",
                   ("%/" + base + "/%", "%.mesh"))]
+    meshes = []
+    for s in paths0:
+        nm = s.replace("\\", "/").split("/")[-1]
+        nm = nm[:-5] if nm.lower().endswith(".mesh") else nm
+        if nm.strip():
+            meshes.append(nm)
+        else:
+            print("  × 路径切完是空名，跳过：", repr(s))
     union, per = set(), []
     for m in meshes:
         f = dump_mesh(m)
@@ -102,6 +110,11 @@ for base in bases:
         ns = names_from(f)
         per.append((m, len(ns)))
         union |= set(ns)
+    if not meshes or not union:
+        # 空集不许冒充骨架：上一版就是并集恒 0，把 12 条动画全判成「对不上」。
+        print(f"  本体 {base} 取样失败（网格 {len(meshes)} 份 · 并集 {len(union)} 根）——这一族不进比较")
+        failed.append(base)
+        continue
     kids = [d for d in var if re.sub(r"_b\d+.*$", "_b0", d) == base]
     for d in kids[:1]:
         for h, fn in var[d][:2]:
@@ -127,4 +140,6 @@ for r in rows:
     for m in r["miss_sample"]:
         allmiss[m] = allmiss.get(m, 0) + 1
 print("   最常见「并集里也没有」的骨名：", sorted(allmiss.items(), key=lambda kv: -kv[1])[:8])
+print("   取样失败被剔除的族：", failed or "没有")
+print("   注：只有 union>0 的族才进入上面的计数；并集为 0 一律算取样失败，不算「对不上」。")
 (O / "union_compare.json").write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")

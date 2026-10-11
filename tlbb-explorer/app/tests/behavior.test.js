@@ -145,7 +145,8 @@ async function sandbox(entry, mock = {}, expose = {}) {
 }
 
 const noop = () => {};
-const meshMock = { showMeshes: noop, hideMeshes: noop, applyTexture: () => true, remesh: noop };
+const meshMock = { showMeshes: noop, hideMeshes: noop, applyTexture: () => true, remesh: noop,
+  setTrialProvider: noop, clearMeshTexture: () => true };
 
 // 详情用的两份夹具直接从 detailState 的用例里借，免得两处夹具各写各的。
 const fixtureSource = fs.readFileSync(path.join(here, "detailState.test.js"), "utf8");
@@ -1209,4 +1210,14 @@ test("候选缩略图：解的进度与失败原因要写在卡面上，不许�
   assert.match(src, /正在解第 \$\{i \+ 1\} \/ \$\{imgs\.length\} 张/, "解的过程要说第几张");
   assert.ok(!/catch \{\s*img\.title = "缩略图没读出来";\s*\}/.test(src), "只挂 title 的旧写法要清掉");
   assert.match(src, /ph\.remove\(\)/, "解出来占位条要撤掉，别和图并排留着");
+});
+
+test("自动试贴的接线不能被拆：🟢 优先、无提供者不套、原因要上标题", async () => {
+  const src = fs.readFileSync(path.join(web, "detail.js"), "utf8");
+  const mesh = fs.readFileSync(path.join(web, "mesh.js"), "utf8");
+  assert.match(src, /setTrialProvider\(async \(name\) =>/, "详情页要注册试贴提供者");
+  assert.match(src, /trialPick\(g\)/, "套不套由纯函数判，不在接线里写规则");
+  assert.match(mesh, /if \(applied \|\| !trialProvider\) return;/, "有 🟢 确认或没提供者就到此为止");
+  assert.match(mesh, /已套试贴：.*（未确认/, "套上必须写明未确认");
+  assert.match(mesh, /没套试贴：\$\{t\.skip\}/, "不套也要把原因说出来，不能静默留灰模");
 });

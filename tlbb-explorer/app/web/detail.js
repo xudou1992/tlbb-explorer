@@ -10,7 +10,7 @@ import { state } from "./state.js";
 import { makeSeq } from "./lib/seq.js";
 import { empty, loading, failed, notReady, loaded, isNotReadyMsg } from "./lib/detailState.js";
 import { titleHtml } from "./lib/wording.js";
-import { showMeshes, hideMeshes, applyTexture, remesh } from "./mesh.js";
+import { showMeshes, hideMeshes, applyTexture, remesh, setTrialProvider, clearMeshTexture } from "./mesh.js";
 import { MeshViewer } from "./mesh-viewer.js";
 import {
   makePoseGate,
@@ -25,7 +25,7 @@ import {
   matchPartPoses,
   sameNameList,
 } from "./lib/animPose.js";
-import { texBlock } from "./lib/textureState.js";
+import { texBlock, trialPick } from "./lib/textureState.js";
 import {
   initTabs,
   showTabPane,
@@ -800,6 +800,30 @@ function refreshWarm() {
 }
 refreshWarm();
 
+/// 立体预览的自动试贴：这只网格没有 🟢 确认记录时，把这份榜的第一名套上去看效果，
+/// 标题里写明「未确认，不是客户端认定的那张」。要不要套、套不了为什么，
+/// 全交给纯函数 `trialPick` 判（没榜 / 岛外无对比 / 综合分低于 1.3 都不套，并把原因说出来）。
+setTrialProvider(async (name) => {
+  const groups = (texReply && texReply.textureCandidates) || [];
+  const want = String(name || "").toLowerCase();
+  const g = groups.find((x) => String(x.mesh || "").toLowerCase() === want) || groups[0];
+  const pick = trialPick(g);
+  if (pick.skip) return { skip: pick.skip };
+  const c = pick.candidate;
+  let png = c.png;
+  if (!png && api.candidatePng) {
+    try {
+      png = await api.candidatePng(c.hash);
+    } catch {
+      png = null;
+    }
+  }
+  if (!png) return { skip: "榜首那张的缩略图没解出来" };
+  c.png = png; // 回填给「套上看看」复用，省一次开容器
+  const adj = Number.isFinite(Number(c.adjustedScore)) ? ` · 综合分 ${Number(c.adjustedScore).toFixed(2)}` : "";
+  return { png, label: `${g.mesh} 候选 1${adj}` };
+});
+
 /// 进度广播只往「说明行」写字：批量跑一次要几分钟，用户此刻最想知道的就是
 /// 还要等多久、这一栏为什么还空着。跑完立刻重问状态（榜可能刚补上）。
 api.onTextureWarming?.((ev) => {
@@ -883,6 +907,13 @@ async function loadCandidatePngs() {
 el("secTex").addEventListener("click", async (e) => {
   const b = e.target.closest("button");
   if (!b) return;
+  if (b.dataset.act === "clearTrial") {
+    const ok = clearMeshTexture();
+    el("texNote").textContent = ok
+      ? "已退回灰模。立体预览上刚才套的可能是试贴，不是客户端认定的贴图。"
+      : "现在没有正在显示的模型，无需退回。";
+    return;
+  }
   if (b.dataset.act === "warm") {
     // 「后台跑完它们」要能在没有候选榜时点得动：那一路 texReply 恰恰是空的。
     const msg = await api.textureWarmStart();

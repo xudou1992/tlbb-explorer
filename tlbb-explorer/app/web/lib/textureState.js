@@ -123,6 +123,23 @@ export function texCandidatesHtml(group, slots = [], gi = 0, gn = 1) {
   return `<div class="tex-group" data-gi="${gi}">${head}${warn}${pick}<div class="tex-grid">${cards.join("")}</div></div>`;
 }
 
+/// 立体预览自动试贴的取舍：**只有说得出「凭什么试这张」才套**。
+/// 三种情况不套，并把原因原样交给界面显示（不静默留灰模）：
+///   · 没有候选榜；
+///   · 榜首那张岛外方差为 0 —— 分数里没有对比，套上只会误导；
+///   · 榜首综合分 < 1.3 —— 与批量统计里「度量退化」那条带同一个阈值，两处必须一起改。
+export function trialPick(group) {
+  const cs = group && group.candidates;
+  if (!Array.isArray(cs) || !cs.length) return { skip: "这只网格没有候选榜" };
+  const c = cs[0];
+  if (c.outsideVar === 0) return { skip: "榜首那张岛外没有可比像素，套上只会误导" };
+  const adj = Number(c.adjustedScore);
+  if (Number.isFinite(adj) && adj < 1.3) {
+    return { skip: `榜首综合分 ${adj.toFixed(2)} 低于 1.3，分数说明不了贴合` };
+  }
+  return { candidate: c };
+}
+
 /// 后台批量试贴的入口状态（texture_warm_status 回包）。只在「这只网格还没有
 /// 候选榜」时说话——有榜就不用提这事。
 ///
@@ -157,7 +174,11 @@ export function texBlock(reply, warm = null) {
     : `引用了 ${slots.length} 张贴图，包里都没对上文件；离线试贴还没跑，下面只是名字清单，不是候选榜`;
   return {
     slotsHtml: texSlotsHtml(slots, Boolean(group)) + (group ? "" : warmControl(warm)),
-    candHtml: groups.map((g, i) => texCandidatesHtml(g, slots, i, groups.length)).join(""),
+    // 有榜就摆一颗撤图按钮：自动试贴会把贴图盖在模型上，得有一眼可见的路退回灰模。
+    candHtml:
+      groups.map((g, i) => texCandidatesHtml(g, slots, i, groups.length)).join("") +
+      `<p class="dim"><button type="button" data-act="clearTrial">退回灰模</button>` +
+      ` 立体预览可能自动套着榜首候选作试贴——那是猜测，不是客户端认定的那张。</p>`,
     note,
     confirmed,
     total: slots.length,

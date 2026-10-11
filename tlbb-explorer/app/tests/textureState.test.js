@@ -2,7 +2,7 @@
 // 没跑过试贴时槽位只能是 ⬜ 名字清单——🟡 是候选专用，名字清单不许冒用。
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { texBlock, texSlotsHtml, texCandidatesHtml } from "../web/lib/textureState.js";
+import { texBlock, texSlotsHtml, texCandidatesHtml, trialPick } from "../web/lib/textureState.js";
 
 const SLOT_A = { name: "a_yifu_001.tga", cfgPath: "data/source/npc/x/texture/a_yifu_001.tga", overrideHash: null };
 const SLOT_B = { name: "a_shoutao_001.tga", cfgPath: "data/source/npc/x/texture/a_shoutao_001.tga", overrideHash: null };
@@ -198,4 +198,20 @@ test("区分度那一行：榜首出现次数写上卡面，只有通吃型（�
   assert.ok(!withCount(3).includes("说明得很少"), "少量重复是正常现象，不许说成可疑");
   assert.ok(!texCandidatesHtml({ mesh: "q.mesh", pool: 1, state: "candidates", ranked: false,
     candidates: [CAND_V2(1, 2, F)] }, []).includes("榜首出现过"), "取不到就不提");
+});
+
+test("trialPick：三种不该自动试贴的情况各说各的原因，能套才回候选", () => {
+  const g = (cands) => ({ mesh: "t.mesh", pool: 1650, state: "candidates", source: "batch", ranked: true, candidates: cands });
+  const c = (ov, adj) => ({ ...CAND_V2(1, adj, F), outsideVar: ov });
+  assert.equal(trialPick(null).skip, "这只网格没有候选榜");
+  assert.equal(trialPick(g([])).skip, "这只网格没有候选榜");
+  assert.ok(trialPick(g([c(0, 9.9)])).skip.includes("岛外没有可比像素"), "无对比不套");
+  assert.ok(trialPick(g([c(240, 1.02)])).skip.includes("1.02"), "退化带要说出具体的分");
+  assert.equal(trialPick(g([c(240, 9.9)])).candidate.hash, CAND_V2(1, 9.9, F).hash, "有对比且分够高才套");
+});
+
+test("有榜就摆「退回灰模」那颗按钮，并说清立体预览上可能是试贴", () => {
+  const b = texBlock({ texSlots: [SLOT_A], textureCandidates: [GROUP_V2] });
+  assert.ok(b.candHtml.includes('data-act="clearTrial"'), b.candHtml);
+  assert.ok(b.candHtml.includes("不是客户端认定的那张"), b.candHtml);
 });

@@ -129,15 +129,32 @@ async function pick(k) {
   // 「加载即贴」：这格槽位有人工确认过的贴图就直接套上——确认层存在的意义就是
   // 让确认的成果持久，不该每次开模型都手动再套一遍。查不到（没确认过）不吭声；
   // 解不开会 reject，同样静默跳过：覆盖表是加分项，绝不能挡灰模。
+  let applied = false;
   try {
     const ov = await api.meshTextureOverride(m.name);
     if (seq.isStale(my)) return; // 等覆盖图解完的空档可能已经换了模型
     if (ov && ov.png) {
       v.setTexture(ov.png);
       el("meshMeta").textContent += " · 已套用人工确认的贴图";
+      applied = true;
     }
   } catch {
     // 查询失败不提示：槽位状态以贴图试贴区的 🟢/🟡 为准，这里不重复报错。
+  }
+  if (applied || !trialProvider) return;
+  // 🟢 没有才轮到试贴。试贴必须**在标题里写明白未确认**——榜首不是答案，
+  // 把它悄悄套上就等于让灰模变成「看起来已解决」。
+  try {
+    const t = await trialProvider(m.name);
+    if (seq.isStale(my)) return;
+    if (t && t.png) {
+      v.setTexture(t.png);
+      el("meshMeta").textContent += ` · 已套试贴：${t.label}（未确认，不是客户端认定的那张）`;
+    } else if (t && t.skip) {
+      el("meshMeta").textContent += ` · 没套试贴：${t.skip}`;
+    }
+  } catch {
+    // 试贴是加分项，取不到就留灰模，不报错挡渲染。
   }
 }
 
@@ -174,6 +191,22 @@ export function showMeshes(meshState) {
     return;
   }
   pick(Math.min(Math.max(meshState.active ?? 0, 0), meshes.length - 1));
+}
+
+/// 立体预览的「自动试贴」由详情页注册进来：mesh 面板不该认识候选榜的格式，
+/// 它只问「这只网格该套哪张贴图试」，提供者回 `{png, label}` 或 `{skip: 原因}`。
+/// 没有提供者（独立用 mesh 面板、或详情页还没拿到候选榜）就一直是灰模。
+let trialProvider = null;
+export function setTrialProvider(fn) {
+  trialProvider = typeof fn === "function" ? fn : null;
+}
+
+/// 撤掉模型身上的贴图（人工确认的或试贴的），回到绑定姿态灰模。
+/// 没有 viewer 就回 false，调用方自己决定要不要提示——不让人以为点了没反应。
+export function clearMeshTexture() {
+  if (!viewer) return false;
+  viewer.clearTexture();
+  return true;
 }
 
 /// 把候选贴图套到当前显示的模型上（只换显存里的拷贝）。

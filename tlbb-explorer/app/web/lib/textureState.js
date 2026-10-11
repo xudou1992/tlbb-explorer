@@ -97,6 +97,21 @@ export function confirmTarget(slots, pickValue) {
   return { slot: hit };
 }
 
+/// 这份榜默认对准哪条槽：**只认「槽位文件名与网格同名」这一种确定关系**。
+/// 一只怪常有 2~3 份网格（衣服/手套/武器），每份榜各要标各的槽；旧写法一律默认
+/// 「第一条未确认」，于是第二份榜的标常常落错槽，人要自己从十条里找那一条。
+/// 匹不上就返回 null（前端照旧用第一条，但必须把「没有同名槽位」写在脸上，
+/// 不许让"默认值"看起来像系统认出来的答案）。
+export function autoSlotForMesh(mesh, openSlots) {
+  const stem = String(mesh || "").replace(/\.mesh$/i, "").toLowerCase();
+  if (!stem) return null;
+  const hit = (Array.isArray(openSlots) ? openSlots : []).find((s) => {
+    const n = String((s && s.name) || "");
+    return n.replace(/\.(tga|dds|png|jpg|jpeg|bmp|webp)$/i, "").toLowerCase() === stem;
+  });
+  return hit ? hit.name : null;
+}
+
 /// 候选卡：图 + 特征证据 + 两颗按钮。分数只作排序参考，必须写「未确认」。
 /// 措辞原则（用户裁定）：这是系统排出来的指标分，不许写成「UV 对齐分」暗示正确率。
 /// 全库批量缓存（source=batch）候选不带内嵌 PNG：img 不给 src，只摆占位框并标记
@@ -107,10 +122,14 @@ export function confirmTarget(slots, pickValue) {
 export function texCandidatesHtml(group, slots = [], gi = 0, gn = 1) {
   if (!group || !Array.isArray(group.candidates) || !group.candidates.length) return "";
   const openSlots = slots.filter((s) => !s.overrideHash);
+  const auto = autoSlotForMesh(group.mesh, openSlots);
+  const hint = auto
+    ? `<span class="dim"> · 已对准与网格同名的槽</span>`
+    : `<span class="dim"> · 没有与本网格同名的槽，这条得自己选</span>`;
   const pick = openSlots.length
     ? `<label class="dim">确认到槽位：<select class="tex-slot-pick"${gi === 0 ? ` id="texSlotPick"` : ""}>` +
-      openSlots.map((s) => `<option value="${esc(s.name)}">${esc(s.name)}</option>`).join("") +
-      `</select></label>`
+      openSlots.map((s) => `<option value="${esc(s.name)}"${s.name === auto ? " selected" : ""}>${esc(s.name)}</option>`).join("") +
+      `</select>${hint}</label>`
     : `<span class="dim">所有槽位都已确认（撤销后可重选）</span>`;
   const head = gn > 1
     ? `<p class="dim">第 ${gi + 1} / ${gn} 份榜 · 网格 ${esc(group.mesh)}</p>`

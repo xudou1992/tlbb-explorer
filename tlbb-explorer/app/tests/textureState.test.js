@@ -2,7 +2,7 @@
 // 没跑过试贴时槽位只能是 ⬜ 名字清单——🟡 是候选专用，名字清单不许冒用。
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { texBlock, texSlotsHtml, texCandidatesHtml, trialPick, uvMapHtml, confirmTarget } from "../web/lib/textureState.js";
+import { texBlock, texSlotsHtml, texCandidatesHtml, trialPick, uvMapHtml, confirmTarget, autoSlotForMesh } from "../web/lib/textureState.js";
 
 const SLOT_A = { name: "a_yifu_001.tga", cfgPath: "data/source/npc/x/texture/a_yifu_001.tga", overrideHash: null };
 const SLOT_B = { name: "a_shoutao_001.tga", cfgPath: "data/source/npc/x/texture/a_shoutao_001.tga", overrideHash: null };
@@ -238,4 +238,25 @@ test("确认不许改标到别的槽位，选不中就什么都不写", () => {
   assert.equal(done.slot, undefined, "全确认了要说明为什么点不动");
   assert.ok(done.reason.includes("撤销"), done.reason);
   assert.ok(confirmTarget([], SLOT_A.name).reason, "空清单也要给原因，不是静默 return");
+});
+
+test("autoSlotForMesh：只认「槽位与网格同名」，匹不上就返回 null，不硬猜一条", () => {
+  assert.equal(autoSlotForMesh("a_yifu_001.mesh", [SLOT_A, SLOT_B]), SLOT_A.name);
+  assert.equal(autoSlotForMesh("A_YIFU_001.MESH", [SLOT_A, SLOT_B]), SLOT_A.name, "大小写不该影响同名判定");
+  assert.equal(autoSlotForMesh("a_shoutao_001.mesh", [SLOT_A, SLOT_B]), SLOT_B.name);
+  assert.equal(autoSlotForMesh("b.mesh", [SLOT_A, SLOT_B]), null, "没有同名槽位就别假装认得");
+  assert.equal(autoSlotForMesh("", [SLOT_A]), null);
+  assert.equal(autoSlotForMesh("x.mesh", []), null);
+  assert.equal(autoSlotForMesh("x.mesh", [{ name: null }]), null, "槽位缺名字也不能崩");
+});
+
+test("每份榜的下拉各自对准自己那份网格的同名槽；匹不上就把话写在脸上", () => {
+  const html = texCandidatesHtml({ ...GROUP, mesh: "a_yifu_001.mesh", candidates: [CAND(1)] },
+    [SLOT_A, SLOT_B], 0, 2);
+  assert.ok(html.includes(`value="${SLOT_A.name}" selected`), html);
+  assert.ok(html.includes("已对准与网格同名的槽"), html);
+  const none = texCandidatesHtml({ ...GROUP, mesh: "z.mesh", candidates: [CAND(1)] },
+    [SLOT_A, SLOT_B], 0, 2);
+  assert.ok(!/selected/.test(none), "匹不上就不该有 selected");
+  assert.ok(none.includes("这条得自己选"), none);
 });

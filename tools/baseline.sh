@@ -2,6 +2,36 @@
 # 重新生成基线：bash tools/baseline.sh > BASELINE-SHA256.txt
 # 用途：任何会话开工前跑一次并对比，diff 出来的就是「谁动了冻结面」。
 set -euo pipefail
+
+# --check：拿现值与 BASELINE-SHA256.txt 比对，只报告、不改冻结语义。
+#   bash tools/baseline.sh --check            # 有漂移就打印并退 0（咨询用）
+#   bash tools/baseline.sh --check --strict   # 冻结面有漂移就退 1（要进 CI 就用这个）
+#   BASELINE=某文件 可指向别的基线文件（正反对照用）
+if [ "${1:-}" = "--check" ]; then
+  BASE="${BASELINE:-BASELINE-SHA256.txt}"
+  strict=0
+  [ "${2:-}" = "--strict" ] && strict=1
+  drift=0; moving_drift=0; gone=0; ok=0; section="FROZEN"
+  while IFS= read -r line; do
+    case "$line" in
+      \#*MOVING*) section="MOVING"; continue ;;
+      \#*|"") continue ;;
+    esac
+    want="${line%% *}"; f="${line#* }"; f="${f#\*}"
+    [ -f "$f" ] || { echo "缺失  $f"; gone=$((gone+1)); continue; }
+    got="$(sha256sum "$f" | cut -d' ' -f1)"
+    if [ "$got" = "$want" ]; then
+      ok=$((ok+1))
+    elif [ "$section" = "MOVING" ]; then
+      echo "漂移(在改) $f"; moving_drift=$((moving_drift+1))
+    else
+      echo "漂移        $f"; drift=$((drift+1))
+    fi
+  done < "$BASE"
+  echo "对照 $BASE：未变 $ok · 冻结面漂移 $drift · 在改区漂移 $moving_drift · 缺失 $gone"
+  if [ "$strict" = 1 ] && [ "$drift" -gt 0 ]; then exit 1; fi
+  exit 0
+fi
 cd "$(dirname "$0")/.."
 
 # v0.1 / v0.2 的冻结面：模型解析、GLB 导出、网页查看器、工作台前端纯函数层。

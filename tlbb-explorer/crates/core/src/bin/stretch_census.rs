@@ -70,8 +70,13 @@ fn fam_key(n: &str) -> String {
 /// 只接受 `fam_key(动作名) == fam_key(网格名)` 的 `.ani`，一条都不匹配就报没有。
 fn first_ani(mesh: &Path) -> Option<PathBuf> {
     let dir = mesh.parent()?;
-    let key = mesh
-        .file_stem()
+    // 键取**目录名**：客户端就是一个目录一个对象。拿网格干名当键会误判正常配对
+    // （`…/w1351_diancang_gangzhua/w1351_diancang_gangzhuam.mesh` 配
+    // `…/ani/w1351_diancang_gangzhua_idle01.ani`、
+    // `…/w1351_mrsz_denglong_001/w1351_mrsz_ludeng_001.mesh` 配 `…_denglong_001_idle.ani`），
+    // 我这样错删过 213 份可量网格。
+    let key = dir
+        .file_name()
         .map(|s| fam_key(&s.to_string_lossy()))
         .unwrap_or_default();
     let sub = dir.join("ani");

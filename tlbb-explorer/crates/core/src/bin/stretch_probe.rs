@@ -412,6 +412,94 @@ fn main() {
         }
         return;
     }
+    // 表挂错骨没有？（2026-10-12，最后一条能静态验的假设）
+    // 影响顶点表紧跟在 96B 节点记录后面——假设它其实该归**前一条或后一条**记录。
+    // 尺子：一根骨该带着离它不远的顶点（真实蒙皮里顶点权重偏向空间上靠近的骨），
+    // 所以比「骨位 ↔ 该表顶点群质心」的距离：原配 / 挪前一条 / 挪后一条。
+    // 错配的特征是**原配系统性偏大**、挪一档就变小。参照量取「骨位到父骨位」的中位（≈骨长）。
+    if argv.iter().any(|x| x == "--pairing") {
+        let bp = |nd: &tlbb_core::preview::Node| -> Option<[f64; 3]> {
+            pose::mat_inverse_affine(&nd.bind).map(|m| [m[12] as f64, m[13] as f64, m[14] as f64])
+        };
+        let mut rows: Vec<(String, usize, f64, f64, f64)> = Vec::new();
+        for (ii, nd) in nodes.iter().enumerate() {
+            let Some(sk) = &nd.skin else { continue };
+            let (mut c, mut n) = ([0f64; 3], 0usize);
+            for &v in &sk.vertices {
+                if let Some(p) = g.positions.get(v as usize) {
+                    c[0] += p[0] as f64;
+                    c[1] += p[1] as f64;
+                    c[2] += p[2] as f64;
+                    n += 1;
+                }
+            }
+            if n == 0 {
+                continue;
+            }
+            for k in 0..3 {
+                c[k] /= n as f64;
+            }
+            let d = |j: usize| -> f64 {
+                match bp(&nodes[j]) {
+                    Some(p) => ((p[0] - c[0]).powi(2) + (p[1] - c[1]).powi(2) + (p[2] - c[2]).powi(2)).sqrt(),
+                    None => f64::NAN,
+                }
+            };
+            let (self_d, prev_d, next_d) = (
+                d(ii),
+                if ii > 0 { d(ii - 1) } else { f64::NAN },
+                if ii + 1 < nodes.len() { d(ii + 1) } else { f64::NAN },
+            );
+            rows.push((nd.name.clone(), n, self_d, prev_d, next_d));
+        }
+        // 参照：骨位到父骨位的中位距离（≈一根骨的长度尺度）
+        let mut bl: Vec<f64> = Vec::new();
+        let pp = |idx: usize| -> Option<[f64; 3]> {
+            let m = h.bones[idx].bind?;
+            let inv = pose::mat_inverse_affine(&m)?;
+            Some([inv[12] as f64, inv[13] as f64, inv[14] as f64])
+        };
+        for (i, b) in h.bones.iter().enumerate() {
+            let Some(pi) = b.parent else { continue };
+            let (p, q) = match (pp(pi), pp(i)) {
+                (Some(p), Some(q)) => (p, q),
+                _ => continue,
+            };
+            let dd = (((p[0] - q[0]) as f64).powi(2) + ((p[1] - q[1]) as f64).powi(2)
+                + ((p[2] - q[2]) as f64).powi(2))
+                .sqrt();
+            bl.push(dd);
+        }
+        let med = |v: &mut Vec<f64>| -> f64 {
+            v.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+            if v.is_empty() {
+                f64::NAN
+            } else {
+                v[v.len() / 2]
+            }
+        };
+        let scale = med(&mut bl);
+        let mut g0: Vec<f64> = rows.iter().map(|r| r.2).collect();
+        let mut g1: Vec<f64> = rows.iter().map(|r| r.3).collect();
+        let mut g2: Vec<f64> = rows.iter().map(|r| r.4).collect();
+        let (m0, m1, m2) = (med(&mut g0), med(&mut g1), med(&mut g2));
+        let stem = arg(&argv, "mesh")
+            .and_then(|p| p.file_stem().map(|s| s.to_string_lossy().into_owned()))
+            .unwrap_or_default();
+        println!(
+            "PAIR|{}|{}|{:.4}|{:.4}|{:.4}|{:.4}",
+            stem,
+            rows.len(),
+            m0,
+            m1,
+            m2,
+            scale
+        );
+        for (nm, n, s0, s1, s2) in rows.iter().take(6) {
+            println!("  {:<24} 顶点 {:>4} · 原配 {:.4} · 挪前 {:.4} · 挪后 {:.4}", nm, n, s0, s1, s2);
+        }
+        return;
+    }
     if argv.iter().any(|x| x == "--worldmode") {
         let wd = |fr: usize| -> Vec<[f32; 16]> {
             let mut out = bind.clone();

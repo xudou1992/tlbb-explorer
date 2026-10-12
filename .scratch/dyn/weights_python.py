@@ -36,7 +36,10 @@ def table(raw, off, vc):
     w = struct.unpack_from('<%df' % n, raw, off + 4 + 4 * n)
     if len(set(idx)) != n or max(idx) >= vc:
         return None
-    if min(w) <= 0.0 or max(w) > 1.0001 or all(x <= 1e-6 for x in w):
+    # 与 Rust `read_skin` 对齐：单个 0 权重**不**否决（引擎确实在表里写 0 权重的标记项），
+    # 只有整张全是 0 才算噪声。上一版这里用 min(w) <= 0 直接把带 0 项的真表拒了，
+    # 于是「Rust 比 python 多认上千张表」——那条差是这只眼的错，不是 Rust 的假阳性。
+    if min(w) < 0.0 or max(w) > 1.0001 or all(x <= 1e-6 for x in w):
         return None
     return n
 

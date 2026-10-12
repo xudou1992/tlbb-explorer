@@ -572,11 +572,16 @@ pub fn bone_count(raw: &[u8]) -> Option<usize> {
 /// 「一条记录都没有」，导出时整张网格只能挂根骨。
 /// 现在按 0 相位扫，**空手时才试 2 相位**——原来认得出的文件一个字节都没变。
 pub fn parse_nodes(raw: &[u8]) -> Vec<Node> {
-    let out = scan_nodes(raw, 0);
-    if !out.is_empty() {
-        return out;
+    let mut out = scan_nodes(raw, 0);
+    // 两条相位**都**扫（不是只在空手时才试第二条）：`w1351_model_chuangjue_h001` 那种
+    // 0 相位撞上一条假记录、真记录其实在 2 相位的文件，只试第一条就会整族漏掉。
+    // 合并仍按 (名字, 绑定矩阵) 去重，所以同一份记录不会被数两次。
+    for n in scan_nodes(raw, 2) {
+        if !out.iter().any(|x: &Node| x.name == n.name && x.bind == n.bind) {
+            out.push(n);
+        }
     }
-    scan_nodes(raw, 2)
+    out
 }
 
 fn scan_nodes(raw: &[u8], start: usize) -> Vec<Node> {

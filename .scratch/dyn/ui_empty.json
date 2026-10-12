@@ -1,0 +1,19 @@
+node:internal/deps/undici/undici:15845
+      Error.captureStackTrace(err);
+            ^
+
+TypeError: fetch failed
+    at node:internal/deps/undici/undici:15845:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async file:///D:/TLGL/.scratch/dyn/ui_empty_cdp.mjs:3:18 {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:9222
+      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+    errno: -4078,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 9222
+  }
+}
+
+Node.js v25.2.1

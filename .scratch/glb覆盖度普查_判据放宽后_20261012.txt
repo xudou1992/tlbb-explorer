@@ -1,0 +1,43 @@
+GLB 总数 271
+  带 rig 对账: 241 | extras 里没有 rig: 30
+  覆盖 0 个顶点（整张挂根骨，播放时网格一动不动）: 23
+  部分覆盖: 211 | 全覆盖: 7
+
+0 覆盖的 23 份按原因分：
+  影响表整条因骨名不在骨架里被跳过（influenceNodesNotInHierarchy>0）: 0
+  连被跳过的影响表都没有（.mesh 里就没有权重表 或 名字全对但表空）: 23
+
+有覆盖的那些，顶点被骨架真正带动的比例：
+  P10 = 0.695
+  P25 = 0.791
+  P50 = 0.859
+  P75 = 0.920
+  P90 = 0.970
+  均值 = 0.833 · ≥90% 的有 66 份
+
+0 覆盖 且 带动画（导出后骨头乱飘、网格不跟）的：
+  w1351_model_sphere_lf006                     顶点   5504 关节   3 动作  1 导出轨道     3 跳过的影响节点 0
+  w1351_pets_mengyinhualing_b8                 顶点   1781 关节  50 动作 13 导出轨道   650 跳过的影响节点 0
+  w1351_pets_huyaojianjun_b4                   顶点   1692 关节  58 动作 13 导出轨道   754 跳过的影响节点 0
+  w1351_pets_yueliangshaonv_b4                 顶点   1651 关节  42 动作 13 导出轨道   546 跳过的影响节点 0
+  w1351_pets_mengyinhualing_b2                 顶点   1593 关节  50 动作 13 导出轨道   650 跳过的影响节点 0
+  w1351_pets_huaxianzi_b1_yifu_001             顶点   1025 关节  56 动作 14 导出轨道   784 跳过的影响节点 0
+  w1351_pets_haidaoshu_b8                      顶点   1013 关节  35 动作 13 导出轨道   455 跳过的影响节点 0
+  w1351_pets_zhu_b0_yifu_001                   顶点    284 关节  40 动作 13 导出轨道   520 跳过的影响节点 0
+  w1351_pets_yazuishou_b3_toufa_001            顶点    139 关节  33 动作 13 导出轨道   429 跳过的影响节点 0
+  w1351_pets_yazuishou_b6_toufa_001            顶点    137 关节  33 动作 13 导出轨道   429 跳过的影响节点 0
+  w1351_pets_yazuishou_b2_toufa_001            顶点    137 关节  33 动作 13 导出轨道   429 跳过的影响节点 0
+  w1351_pets_xiongmao_b7_shoutao_001           顶点    119 关节  42 动作 13 导出轨道   546 跳过的影响节点 0
+  w1351_pets_yazuishou_b4_toufa_001            顶点     89 关节  33 动作 13 导出轨道   429 跳过的影响节点 0
+  w1351_pets_yazuishou_b1_toufa_001            顶点     72 关节  33 动作 13 导出轨道   429 跳过的影响节点 0
+  w1351_pets_xiongmao_b1_shoutao_001           顶点     61 关节  42 动作 13 导出轨道   546 跳过的影响节点 0
+  w1351_pets_xiongmao_b6_shoutao_001           顶点     60 关节  42 动作 13 导出轨道   546 跳过的影响节点 0
+  w1351_pets_xiongmao_b2_shoutao_001           顶点     55 关节  42 动作 13 导出轨道   546 跳过的影响节点 0
+
+0 覆盖 且 没带动画的：6 份（列前 20）
+  w1351_pets_eyu_b1                            顶点    886 关节  44
+  w1351_pets_shenyuan_b4_xiezi_001             顶点    250 关节  34
+  w1351_pets_shenyuan_b4_shoutao_001           顶点    180 关节  34
+  w1351_pets_shenqie_b1_lian_01                顶点    129 关节  50
+  w1351_pets_shenyuan_b1_shoutao_001           顶点     97 关节  34
+  w1351_pets_songshu_b1_shoutao_001            顶点     47 关节  39

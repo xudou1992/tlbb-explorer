@@ -389,14 +389,14 @@ pub struct Node {
 /// **这条推翻了过去写在文档与代码里的结论「蒙皮权重不在 .mesh」**：
 /// 当时穷举的是「每顶点 4 影响、Σ=1 的定长表」，全库最高命中 0.086（噪声），
 /// 于是判成不存在。实际编码是**按骨组织的稀疏表**，紧跟在 96B 节点记录后面：
-/// `[u32 顶点数 N][N 个顶点号 u32（严格递增）][N 个权重 f32]`。
+/// `[u32 顶点数 N][N 个顶点号 u32（互异，不保证有序）][N 个权重 f32]`。
 /// 样本 `w1351_monster_xiyuqiezei_yifu_001.mesh`（781 顶点）：36 条记录里 26 条带表，
 /// 并集覆盖 555 个顶点（71.1%），每个顶点被 1~3 根骨影响，
 /// 按骨累加权重后 **441 个顶点的权重和正好 1.0**。
 /// 剩下的缺口是那 10 根没有 96B 记录的骨——它们以名字挂在别的记录后面。
 #[derive(Debug, Clone, PartialEq)]
 pub struct SkinInfluence {
-    /// 顶点号，实测严格递增；不递增就不认这张表。
+    /// 顶点号：互异且 < 顶点数。顺序不作要求——两种存法实测都有（见 `read_skin`）。
     pub vertices: Vec<u32>,
     /// 与顶点号一一对应的权重，实测全在 0..=1。
     pub weights: Vec<f32>,
@@ -510,7 +510,7 @@ fn vertex_count(raw: &[u8]) -> usize {
 }
 
 /// 读紧跟在 96B 记录之后的影响顶点表：`[u32 N][N 个顶点号][N 个权重 f32]`。
-/// 四道都不松：N 不得超过顶点数、顶点号必须严格递增且都 < 顶点数、
+/// 四道都不松：N 不得超过顶点数、顶点号必须互异且都 < 顶点数（**不要求有序**）、
 /// 权重必须全是有限且落在 0..=1、整张表全是 0 权重视为噪声不认。
 fn read_skin(raw: &[u8], at: usize, vc: usize) -> Option<SkinInfluence> {
     if vc == 0 {
@@ -524,15 +524,18 @@ fn read_skin(raw: &[u8], at: usize, vc: usize) -> Option<SkinInfluence> {
     let ib = raw.get(at + 4..idx_end)?;
     let wb = raw.get(idx_end..idx_end + 4 * n)?;
     let mut vertices = Vec::with_capacity(n);
+    let mut seen = std::collections::HashSet::with_capacity(n.min(1024));
     for c in ib.chunks_exact(4) {
         let v = u32::from_le_bytes(c.try_into().ok()?);
         if v as usize >= vc {
             return None;
         }
-        if let Some(&last) = vertices.last() {
-            if v <= last {
-                return None;
-            }
+        // 顶点号要求「互异 + 有界」，**不要求有序**：实测两种存法都存在——
+        // xiyuqiezei 那族排成严格递增，hamigua/machao 这族按绘制序存
+        // （2026-10-12：machao 60 条表里严格递增 0 条，逐顶点按骨累加
+        // 3,257/3,331 个正好 ≈1.0，表是真的）。口径与 tail_is_inf 统一。
+        if !seen.insert(v) {
+            return None;
         }
         vertices.push(v);
     }
@@ -1829,9 +1832,11 @@ mod node_tests {
         );
     }
 
-    /// 反证二：把顶点号改成不递增（这张表的形状判据之一），同样不该认。
+    /// 反证二：同一个顶点号对同一根骨列两次（这张表的形状判据之一），不该认。
+    /// 2026-10-12 起判据从「严格递增」换成「互异 + 有界」，所以反证也跟着换靶子：
+    /// 顺序合法与否不再是判据，**重复**才是。
     #[test]
-    fn unsorted_vertex_ids_are_not_a_table() {
+    fn duplicated_vertex_ids_are_not_a_table() {
         let root = std::env::var("TLBB_ROOT").map(PathBuf::from).unwrap_or_else(|_| PathBuf::from("D:/TLGL"));
         let Some(mut mesh) = raw_of(&root, "data", MESH) else {
             eprintln!("跳过：本机没有 data.pak");
@@ -1842,11 +1847,37 @@ mod node_tests {
         let at = name_at(&mesh, &nd.name);
         let s = nd.skin.as_ref().unwrap();
         let ibase = at + NODE_RECORD + 4;
-        // 把第一个改成比第二个还大
+        // 把第一个抄成第二个：形状仍全对（有界、权重合法），只有「互异」破了
         let second = s.vertices[1];
-        mesh[ibase..ibase + 4].copy_from_slice(&(second + 7).to_le_bytes());
+        mesh[ibase..ibase + 4].copy_from_slice(&second.to_le_bytes());
         let after = parse_nodes(&mesh);
         let hit = after.iter().find(|x| x.name == nd.name).expect("记录本身该还在");
-        assert!(hit.skin.is_none(), "顶点号不递增还认成表，「递增」这条判据是摆设");
+        assert!(hit.skin.is_none(), "顶点号重复还认成表，「互异」这条判据是摆设");
+    }
+
+    /// 正证：把前两个顶点号**对调**（打乱顺序但保持互异），表必须照样认。
+    /// 这条钉住 2026-10-12 那次翻案——machao/hamigua 那族按绘制序存表，
+    /// 老判据「严格递增」把 126/468 份网格整张判成没权重、导出后一动不动。
+    #[test]
+    fn pair_swapped_vertex_ids_are_still_a_table() {
+        let root = std::env::var("TLBB_ROOT").map(PathBuf::from).unwrap_or_else(|_| PathBuf::from("D:/TLGL"));
+        let Some(mut mesh) = raw_of(&root, "data", MESH) else {
+            eprintln!("跳过：本机没有 data.pak");
+            return;
+        };
+        let nodes = parse_nodes(&mesh);
+        let nd = nodes.iter().find(|n| n.skin.as_ref().map_or(false, |s| s.vertices.len() > 4)).expect("该有带表的骨");
+        let at = name_at(&mesh, &nd.name);
+        let s = nd.skin.as_ref().unwrap();
+        let ibase = at + NODE_RECORD + 4;
+        let (a, bb) = (s.vertices[0], s.vertices[1]);
+        mesh[ibase..ibase + 4].copy_from_slice(&bb.to_le_bytes());
+        mesh[ibase + 4..ibase + 8].copy_from_slice(&a.to_le_bytes());
+        let after = parse_nodes(&mesh);
+        let hit = after.iter().find(|x| x.name == nd.name).expect("记录本身该还在");
+        let got = hit.skin.as_ref().expect("对调两个顶点号就不认表，说明判据里还留着顺序要求");
+        assert_eq!(got.vertices.len(), s.vertices.len(), "对调后表长度该不变");
+        assert_eq!(got.vertices[0], bb);
+        assert_eq!(got.vertices[1], a);
     }
 }

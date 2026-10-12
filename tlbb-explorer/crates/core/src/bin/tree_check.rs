@@ -16,6 +16,7 @@ use tlbb_core::preview::{parse_hierarchy, parse_mesh, parse_nodes};
 
 fn main() {
     let mut dir = PathBuf::from("D:/TLGL/.scratch/out/sidecar_tree");
+    let mut tsv: Option<PathBuf> = None;
     let mut limit = 200usize;
     let mut ext = "mesh".to_string();
     for s in std::env::args().skip(1) {
@@ -25,6 +26,8 @@ fn main() {
             limit = v.parse().unwrap_or(200);
         } else if let Some(v) = s.strip_prefix("--ext=") {
             ext = v.to_ascii_lowercase();
+        } else if let Some(v) = s.strip_prefix("--tsv=") {
+            tsv = Some(PathBuf::from(v.trim_matches('"')));
         } else {
             eprintln!("不认识的参数：{s}（可用 --dir= --limit= --ext=）");
             std::process::exit(2);
@@ -52,6 +55,7 @@ fn main() {
     let mut nodes_but_no_skin: Vec<(String, usize)> = Vec::new();
     let mut partial: Vec<(String, usize, usize)> = Vec::new();
     let mut full = 0usize;
+    let mut tsv_rows: Vec<String> = Vec::new();
     let mut fails: Vec<(String, String)> = Vec::new();
     let heads: std::collections::BTreeMap<String, usize> = std::collections::BTreeMap::new();
     let mut head = std::collections::BTreeMap::new();
@@ -86,6 +90,14 @@ fn main() {
                     }
                 }
                 let covered = cov.iter().filter(|&&v| (v as usize) < total).count();
+                tsv_rows.push(format!(
+                    "{}|{}|{}|{}|{}",
+                    rel(f, &dir),
+                    n.len(),
+                    skinned,
+                    covered,
+                    total
+                ));
                 if n.is_empty() {
                     no_nodes.push(rel(f, &dir));
                 } else if skinned == 0 {
@@ -101,6 +113,19 @@ fn main() {
     }
     let _ = heads;
 
+    if let Some(w) = tsv.as_ref() {
+        use std::io::Write;
+        match std::fs::File::create(w) {
+            Ok(mut fh) => {
+                let _ = writeln!(fh, "file|nodes|withSkin|covered|verts");
+                for r in &tsv_rows {
+                    let _ = writeln!(fh, "{r}");
+                }
+                println!("每份明细写了 {}（{} 行）", w.display(), tsv_rows.len());
+            }
+            Err(e) => println!("明细写不出去：{e}"),
+        }
+    }
     let seen = ok + fails.len();
     println!("\n结果（{seen} 份）：");
     println!("  parse_mesh 认得：**{ok} / {seen}**（{r}%）",

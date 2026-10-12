@@ -212,6 +212,54 @@ fn main() {
     // 第四口径（假设检验，探针不进判据）：`.ani` 的轨道值**不当局部变换沿父链复合**，
     // 而是直接当这根骨的世界变换（没轨道的骨用 bind 世界矩阵）。
     // 若撕在这个口径下塌下去 ⇒ 轨道存的是绝对值，`compose_worlds` 那一层复合就是错的。
+    // 链条体检（纯源数据，不涉及播放口径；上一版这样写是恒等式，已改）：
+    // 每根 96B 记录存的是**自己那根骨的世界绑定逆**，求逆就拿到骨位——这跟父骨链无关。
+    // 所以能这么问：解析出来的父亲，在「按距离该排第几」上排第几？
+    // 链挂对了，父亲本该是最近的那几根；排到十名开外就是**挂错父**。
+    if argv.iter().any(|x| x == "--chaincheck") {
+        let pos = |i: usize| -> Option<[f32; 3]> {
+            let b = h.bones[i].bind?;
+            let inv = pose::mat_inverse_affine(&b)?;
+            Some([inv[12], inv[13], inv[14]])
+        };
+        let rec: Vec<usize> = (0..h.bones.len()).filter(|&i| pos(i).is_some()).collect();
+        let mut ranks: Vec<(String, usize, f64, usize)> = Vec::new();
+        let mut no_rec_parent = 0usize;
+        let mut hist = std::collections::BTreeMap::new();
+        for &c in &rec {
+            let Some(pi) = h.bones[c].parent else { continue };
+            let Some(pp) = pos(pi) else { no_rec_parent += 1; continue };
+            
+            let Some(cq) = pos(c) else { continue };
+            let dme = ((pp[0] - cq[0]).powi(2) + (pp[1] - cq[1]).powi(2) + (pp[2] - cq[2]).powi(2)).sqrt() as f64;
+            let mut better = 0usize;
+            for &o in &rec {
+                if o == c || o == pi {
+                    continue;
+                }
+                let Some(oq) = pos(o) else { continue };
+                let dd = ((oq[0] - cq[0]).powi(2) + (oq[1] - cq[1]).powi(2) + (oq[2] - cq[2]).powi(2)).sqrt() as f64;
+                if dd < dme {
+                    better += 1;
+                }
+            }
+            *hist.entry(better + 1).or_insert(0usize) += 1;
+            ranks.push((h.bones[c].name.clone(), better + 1, dme, rec.len()));
+        }
+        ranks.sort_by(|x, y| y.1.cmp(&x.1));
+        println!("链的拓扑体检：解析出的父亲按「离这根骨的骨位有多近」能排第几（有记录的骨 {} 根）", rec.len());
+        println!("父亲没记录、没法比的骨：{no_rec_parent} 根");
+        let mut keys: Vec<&usize> = hist.keys().collect();
+        keys.sort();
+        for k in keys {
+            println!("  排名 {:>3} ：{} 根", k, hist[k]);
+        }
+        println!("排最差的前 10 根（骨名 · 父亲排名 · 到父亲的骨位距离）：");
+        for (n, r, d, _) in ranks.iter().take(10) {
+            println!("  {:<24} 第 {:>3} 名 · {:.3}", n, r, d);
+        }
+        return;
+    }
     if argv.iter().any(|x| x == "--worldmode") {
         let wd = |fr: usize| -> Vec<[f32; 16]> {
             let mut out = bind.clone();

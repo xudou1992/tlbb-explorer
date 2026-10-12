@@ -315,6 +315,11 @@ fn main() {
             };
             let mut agg: BTreeMap<&'static str, (usize, usize, usize, f64)> = BTreeMap::new();
             let mut pairs: BTreeMap<(String, String), (usize, f64)> = BTreeMap::new();
+            // 逐类的 **bind 边长**分布：这是查「三角形索引读对没」的另两只眼。
+            // 同骨那档刚体保距，索引读错也看不出来；只有跨骨那档会露馅——
+            // 若异骨边的 bind 长度明显比同骨边长，说明我把不相干的两个顶点连成了
+            // 一条边，那「撕」就是拓扑读错而不是蒙皮错。
+            let mut blen: BTreeMap<&'static str, Vec<f64>> = BTreeMap::new();
             for &f in &frames {
                 let world = if mode == 0 {
                     pose::pose_frame(&h, &a, f)
@@ -344,6 +349,9 @@ fn main() {
                         }
                         let r = dist(&posed[i], &posed[j]) / len0;
                         let c = class(i, j);
+                        if mode == 0 && f == 0 {
+                            blen.entry(c).or_insert_with(Vec::new).push(len0);
+                        }
                         let e = agg.entry(c).or_insert((0, 0, 0, 0.0));
                         e.0 += 1;
                         if r > 1.5 {
@@ -375,6 +383,24 @@ fn main() {
                 println!("  {:<6} 边次 {:>8} · 超1.5 {:>7} · 超2 {:>7} · 最大 {:>9.2}", c, e, o15, o20, mx);
             }
             println!("  合计 {all} 边次 · 超2 的占 {:.1}%", 100.0 * torn as f64 / all.max(1) as f64);
+            if mode == 0 {
+                println!("  ——bind 边长分布（查索引读错：跨骨边若明显更长就是连了不相干的顶点）：");
+                let mut seen: Vec<&'static str> = Vec::new();
+                for (c, v) in blen.iter_mut() {
+                    if v.is_empty() {
+                        continue;
+                    }
+                    v.sort_by(|x, y| x.partial_cmp(y).unwrap());
+                    let n = v.len();
+                    let g = |k: f64| v[((n as f64 * k) as usize).min(n.saturating_sub(1))];
+                    println!(
+                        "    {:<6} 条数 {:>4} · 最短 {:.5} · 中位 {:.5} · p90 {:.5} · 最长 {:.5}",
+                        c, n, v[0], g(0.5), g(0.9), v[n - 1]
+                    );
+                    seen.push(*c);
+                }
+                let _ = seen;
+            }
             if !pairs.is_empty() {
                 let mut v: Vec<_> = pairs.into_iter().collect();
                 v.sort_by(|x, y| y.1 .1.partial_cmp(&x.1 .1).unwrap());

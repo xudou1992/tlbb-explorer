@@ -1,0 +1,16 @@
+sidecar 条目 4780 条 · resources 表 105327 行
+
+  path 为空（能填上）             4780 条
+
+能填上 path 的样例 8 条：
+  000ae4508f529ce9  data/effect/pu_skill/zhenshou/w1351_skill_zhenshoufuti_xiaohuotuan05.pu
+  000c0159c7a1758d  data/source/npc/quest/w1351_pets_daishu_b1_2_3/ani/w1351_pets_daishu_b1_2_3_dead.ani
+  001dc159766ee405  mobile_maps/w1351_gj_wqd_001/w1351_gj_wqd_001.walkplane
+  001f2559773a5ccf  mobile_maps/w1351_ll_em_001/w1351_ll_em_001.walkplane
+  002631698e4a4878  data/source/npc/quest/w1351_pets_jiuxiaozhanlong_b8/ani/w1351_pets_jiuxiaozhanlong_b8_fight_idle01.ani
+  0038b6df39665372  data/source/npc/quest/w1351_pets_yazuishou_b1/ani/w1351_pets_yazuishou_b1_vertigo.ani
+  0051844c038d82a3  data/source/npc/quest/w1351_pets_yazuishou_b3/w1351_pets_yazuishou_b3_toufa_001.mesh
+  00605ab20d657f3f  data/source/npc/quest/w1351_pets_bawanglong_b2/ani/w1351_pets_bawanglong_b2_run.ani
+
+resources 里 path 为空的总行数：48053（本次能填 4780 条 = 9.9%）
+能填上的按扩展名：{'.ani': 2995, '.mesh': 468, '.mtl': 324, '.walkplane': 296, '.mdl': 232, '.ske': 232, '.pu': 223, '.scene': 6}

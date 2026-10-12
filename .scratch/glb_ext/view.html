@@ -301,6 +301,27 @@ new GLTFLoader().load(asset, (gltf) => {
     return window.__shot(name, +(frac * c.duration).toFixed(3));
   };
 
+  /// 直接量骨头有没有动：seek 到 t0 记下前 N 根骨的世界坐标，再 seek 到 t1 记一次，
+  /// 返回每根骨两时刻的位移与最大值。绕开包围盒（SkinnedMesh.computeBoundingBox 有缓存），
+  /// 这样「grow=1.00」到底是没动还是没量到，一次就能分清。
+  window.__boneProbe = (name, t0, t1, n) => {
+    const c = clips.find((x) => x.name === name);
+    if (!c) return { error: '没有这条动作: ' + name };
+    const bones = [];
+    root.traverse((o) => { if (o.isBone && bones.length < (n || 8)) bones.push(o); });
+    const grab = () => { root.updateMatrixWorld(true); return bones.map((b) => b.getWorldPosition(new THREE.Vector3()).toArray()); };
+    const ok0 = seek(name, t0); const a = grab();
+    const ok1 = seek(name, t1); const b = grab();
+    const deltas = [];
+    for (let i = 0; i < bones.length; i++) {
+      const dx = a[i][0] - b[i][0], dy = a[i][1] - b[i][1], dz = a[i][2] - b[i][2];
+      deltas.push({ bone: bones[i].name, d: +Math.hypot(dx, dy, dz).toFixed(4) });
+    }
+    return { clip: name, t0, t1, seekOk: [ok0, ok1], bones: bones.length,
+      maxDelta: Math.max(...deltas.map((x) => x.d)), moved: deltas.filter((x) => x.d > 0.0001).length,
+      sample: deltas.slice(0, 6) };
+  };
+
   window.__rest = () => {
     for (const a of act.values()) a.stop();
     root.updateMatrixWorld(true);

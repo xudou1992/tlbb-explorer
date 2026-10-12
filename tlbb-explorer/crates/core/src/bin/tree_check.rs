@@ -56,6 +56,12 @@ fn main() {
     let mut partial: Vec<(String, usize, usize)> = Vec::new();
     let mut full = 0usize;
     let mut tsv_rows: Vec<String> = Vec::new();
+    // 硬权重（单骨 1.0）vs 混合权重（多骨或小数权重）的全库计数
+    let mut g_cov = 0usize;
+    let mut g_hard = 0usize;
+    let mut g_multi = 0usize;
+    let mut g_frac = 0usize;
+    let mut g_files_mix = 0usize;
     let mut fails: Vec<(String, String)> = Vec::new();
     let heads: std::collections::BTreeMap<String, usize> = std::collections::BTreeMap::new();
     let mut head = std::collections::BTreeMap::new();
@@ -83,20 +89,58 @@ fn main() {
                 }
                 let total = m.geometry.positions.len();
                 let skinned = n.iter().filter(|x| x.skin.is_some()).count();
-                let mut cov = std::collections::HashSet::<u32>::new();
+                // 「硬权重 vs 混合权重」这一层要数出来才知道：撕的直接原因是每顶点
+                // 只挂一根骨、权重 1.0（接缝没有过渡带）。若全库绝大多数顶点都是这种，
+                // 那「混合权重在引擎里另有一处」就是仍未排除的方向；若相当比例的顶点
+                // 本来就有多根骨、小数权重，那这份部件全 1.0 就是源数据本身如此。
+                let mut tally: std::collections::HashMap<u32, (usize, f32, bool)> =
+                    std::collections::HashMap::new();
                 for nd in &n {
-                    if let Some(sk) = &nd.skin {
-                        cov.extend(sk.vertices.iter().copied());
+                    let Some(sk) = &nd.skin else { continue };
+                    for (&v, &w) in sk.vertices.iter().zip(sk.weights.iter()) {
+                        if !w.is_finite() || w <= 0.0 {
+                            continue; // 0 权重不占槽位，与 posed_vertices 同口径
+                        }
+                        let e = tally.entry(v).or_insert((0, 0.0, false));
+                        e.0 += 1;
+                        e.1 += w;
+                        e.2 |= (w - 1.0).abs() > 1e-4; // 出现过非 1.0 的权重
                     }
                 }
-                let covered = cov.iter().filter(|&&v| (v as usize) < total).count();
+                let mut hard = 0usize;
+                let mut multi = 0usize;
+                let mut frac = 0usize;
+                for (&v, (c, _, f)) in &tally {
+                    if (v as usize) >= total {
+                        continue;
+                    }
+                    if *c > 1 {
+                        multi += 1;
+                    } else if !f {
+                        hard += 1;
+                    }
+                    if *f {
+                        frac += 1;
+                    }
+                }
+                g_hard += hard;
+                g_multi += multi;
+                g_frac += frac;
+                g_cov += tally.values().filter(|e| e.0 > 0).count().min(total);
+                if multi > 0 || frac > 0 {
+                    g_files_mix += 1;
+                }
+                let covered = tally.keys().filter(|&&v| (v as usize) < total).count();
                 tsv_rows.push(format!(
-                    "{}|{}|{}|{}|{}",
+                    "{}|{}|{}|{}|{}|{}|{}|{}",
                     rel(f, &dir),
                     n.len(),
                     skinned,
                     covered,
-                    total
+                    total,
+                    hard,
+                    multi,
+                    frac
                 ));
                 if n.is_empty() {
                     no_nodes.push(rel(f, &dir));
@@ -117,7 +161,7 @@ fn main() {
         use std::io::Write;
         match std::fs::File::create(w) {
             Ok(mut fh) => {
-                let _ = writeln!(fh, "file|nodes|withSkin|covered|verts");
+                let _ = writeln!(fh, "file|nodes|withSkin|covered|verts|hard|multi|frac");
                 for r in &tsv_rows {
                     let _ = writeln!(fh, "{r}");
                 }
@@ -132,6 +176,10 @@ fn main() {
         r = if seen > 0 { ok * 100 / seen } else { 0 });
     println!("  其中带骨架节点表的：{with_nodes} · 父骨链解得出的：{with_chain}");
     println!("  顶点合计：{verts}");
+    println!(
+        "  带表顶点 {g_cov} 个：单骨权重 1.0（硬）{g_hard} · 多骨 {g_multi} · 含小数权重 {g_frac}（{} 份文件里出现过混合）",
+        g_files_mix
+    );
     println!("\n权重表分档（决定导出后网格跟不跟骨架走）：");
     println!("  一份都没有 96B 节点记录：{} 份", no_nodes.len());
     println!("  有节点记录但后面没认出影响表：{} 份", nodes_but_no_skin.len());

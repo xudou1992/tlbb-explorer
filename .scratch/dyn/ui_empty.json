@@ -1,19 +1,66 @@
-node:internal/deps/undici/undici:15845
-      Error.captureStackTrace(err);
-            ^
-
-TypeError: fetch failed
-    at node:internal/deps/undici/undici:15845:13
-    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
-    at async file:///D:/TLGL/.scratch/dyn/ui_empty_cdp.mjs:3:18 {
-  [cause]: Error: connect ECONNREFUSED 127.0.0.1:9222
-      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
-    errno: -4078,
-    code: 'ECONNREFUSED',
-    syscall: 'connect',
-    address: '127.0.0.1',
-    port: 9222
+{
+ "id": 1,
+ "result": {
+  "result": {
+   "type": "object",
+   "value": {
+    "chip清单": [
+     {
+      "文": "全部",
+      "属性": "type=button class=chip on data-value=全部"
+     },
+     {
+      "文": "特效6,473",
+      "属性": "type=button data-value=特效"
+     },
+     {
+      "文": "场景物件3,463",
+      "属性": "type=button data-value=场景物件"
+     },
+     {
+      "文": "NPC / 怪物1,961",
+      "属性": "type=button data-value=NPC / 怪物"
+     },
+     {
+      "文": "其他资源921",
+      "属性": "type=button data-value=其他资源"
+     },
+     {
+      "文": "玩家角色204",
+      "属性": "type=button data-value=玩家角色"
+     },
+     {
+      "文": "共享材质36",
+      "属性": "type=button data-value=共享材质"
+     },
+     {
+      "文": "界面资源22",
+      "属性": "type=button data-value=界面资源"
+     },
+     {
+      "文": "全部",
+      "属性": "type=button data-value=全部"
+     },
+     {
+      "文": "角色2,165",
+      "属性": "type=button data-value=角色"
+     }
+    ],
+    "滤空后": {
+     "行数": 0,
+     "空状态文案": [
+      "打开一个 data",
+      "清空筛选",
+      "这些筛选条件把列表筛空了",
+      "开着 类型：界面资源、用途：特效。点「清空筛选」一次清掉。",
+      "有 1 个网格文件，但这组没有模型定义把它们串起来，暂时画不出",
+      "这一条没有可看的画面"
+     ],
+     "列表容器文本头": "\n      \n        打开一个 data\n        正在找客户端目录…\n        \n        怎么用左边点一个 data 文件 → 中间就是它里面的文件夹结构 → 点文件预览、点导出解包。没有名字的文件按编号摆在「(未命名)」里，照样能看能导。\n      \n\n      \n        ",
+     "页面字数变化": -19147
+    },
+    "回全部行数": 300
+   }
   }
+ }
 }
-
-Node.js v25.2.1

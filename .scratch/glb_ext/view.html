@@ -360,6 +360,50 @@ new GLTFLoader().load(asset, (gltf) => {
     return { clip: name, bones: bones.length, span: +span.toFixed(3), rows };
   };
 
+  /// 一次性诊断：为什么 __measure 的 grow 在骨骼移动时仍报 1.00。
+  /// 把每个 SkinnedMesh 的 skeleton.bones 数、bindMode、两时刻的 boundingBox 一起报出来。
+  window.__whyLie = (name, t0, t1) => {
+    const c = clips.find((x) => x.name === name);
+    if (!c) return { error: '没有这条动作: ' + name };
+    const rep = [];
+    for (const m of skinned) {
+      const one = (t) => { seek(name, t); root.updateMatrixWorld(true); m.computeBoundingBox();
+        return m.boundingBox ? m.boundingBox.getSize(new THREE.Vector3()).toArray().map((x) => +x.toFixed(3)) : null; };
+      const boneAt = (t) => { seek(name, t); root.updateMatrixWorld(true);
+        const b = m.skeleton && m.skeleton.bones && m.skeleton.bones[4];
+        return b ? b.getWorldPosition(new THREE.Vector3()).toArray().map((x) => +x.toFixed(3)) : null; };
+      const A = one(t0), B = one(t1), bA = boneAt(t0), bB = boneAt(t1);
+      // 蒙皮属性直查：权重全零 / 关节索引越界都会让顶点钉在 bind 上——
+      // 那时「盒子不动」不是量错了，是这张网格根本不被骨头带着走。
+      const g = m.geometry, si = g.getAttribute('skinIndex'), sw = g.getAttribute('skinWeight');
+      const pos = g.getAttribute('position');
+      const nB = m.skeleton ? m.skeleton.bones.length : 0;
+      let zeroW = 0, outOfRange = 0, maxIdx = -1, moved = 0;
+      const vp = new THREE.Vector3(), bp = new THREE.Vector3();
+      seek(name, t1); root.updateMatrixWorld(true);
+      const step = Math.max(1, Math.floor(pos.count / 400));
+      let sampled = 0;
+      for (let i = 0; i < pos.count; i++) {
+        let s = 0;
+        if (sw && si) for (let k = 0; k < 4; k++) { const j = si.getX(i, k); s += sw.getComponent(i, k);
+          if (j > maxIdx) maxIdx = j; if (j >= nB) outOfRange++; }
+        if (s < 1e-6) zeroW++;
+        if (i % step === 0 && sampled < 400) { sampled++;
+          m.getVertexPosition(i, vp); bp.fromBufferAttribute(pos, i);
+          if (vp.distanceTo(bp) > 1e-4) moved++; }
+      }
+      rep.push({ mesh: m.name || '(未命名)', 顶点: pos.count,
+        蒙皮索引: si ? `${si.itemSize}×${si.count}` : '★无', 蒙皮权重: sw ? `${sw.itemSize}×${sw.count}` : '★无',
+        权重全零顶点: zeroW, 索引越界: outOfRange, 最大索引: maxIdx, 骨架长: nB,
+        抽样式动过的顶点: `${moved}/${sampled}`,
+        skeleton骨数: m.skeleton ? m.skeleton.bones.length : -1,
+        boneInverses: m.skeleton && m.skeleton.boneInverses ? m.skeleton.boneInverses.length : -1,
+        bindMode: m.bindMode, 盒_t0: A, 盒_t1: B, 盒变了: JSON.stringify(A) !== JSON.stringify(B),
+        第4根骨_t0: bA, 第4根骨_t1: bB, 骨变了: JSON.stringify(bA) !== JSON.stringify(bB) });
+    }
+    return { clip: name, meshes: rep };
+  };
+
   window.__rest = () => {
     for (const a of act.values()) a.stop();
     root.updateMatrixWorld(true);

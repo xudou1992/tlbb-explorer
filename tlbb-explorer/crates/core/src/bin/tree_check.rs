@@ -45,6 +45,13 @@ fn main() {
     let mut with_nodes = 0usize;
     let mut with_chain = 0usize;
     let mut verts = 0usize;
+    // 权重表这一层单独数：GLB 那边看到「整张网格挂根骨、播放时一动不动」，
+    // 到底是 .mesh 里就没有 96B 记录，还是记录有、后面跟的影响顶点表没认出来，
+    // 只有回到源文件才分得开。
+    let mut no_nodes: Vec<String> = Vec::new();
+    let mut nodes_but_no_skin: Vec<(String, usize)> = Vec::new();
+    let mut partial: Vec<(String, usize, usize)> = Vec::new();
+    let mut full = 0usize;
     let mut fails: Vec<(String, String)> = Vec::new();
     let heads: std::collections::BTreeMap<String, usize> = std::collections::BTreeMap::new();
     let mut head = std::collections::BTreeMap::new();
@@ -70,6 +77,24 @@ fn main() {
                 if parse_hierarchy(&raw).is_some() {
                     with_chain += 1;
                 }
+                let total = m.geometry.positions.len();
+                let skinned = n.iter().filter(|x| x.skin.is_some()).count();
+                let mut cov = std::collections::HashSet::<u32>::new();
+                for nd in &n {
+                    if let Some(sk) = &nd.skin {
+                        cov.extend(sk.vertices.iter().copied());
+                    }
+                }
+                let covered = cov.iter().filter(|&&v| (v as usize) < total).count();
+                if n.is_empty() {
+                    no_nodes.push(rel(f, &dir));
+                } else if skinned == 0 {
+                    nodes_but_no_skin.push((rel(f, &dir), n.len()));
+                } else if total > 0 && covered == total {
+                    full += 1;
+                } else {
+                    partial.push((rel(f, &dir), covered, total));
+                }
             }
             Err(e) => fails.push((rel(f, &dir), format!("解析器原话：{e}（{} 字节）", raw.len()))),
         }
@@ -82,6 +107,22 @@ fn main() {
         r = if seen > 0 { ok * 100 / seen } else { 0 });
     println!("  其中带骨架节点表的：{with_nodes} · 父骨链解得出的：{with_chain}");
     println!("  顶点合计：{verts}");
+    println!("\n权重表分档（决定导出后网格跟不跟骨架走）：");
+    println!("  一份都没有 96B 节点记录：{} 份", no_nodes.len());
+    println!("  有节点记录但后面没认出影响表：{} 份", nodes_but_no_skin.len());
+    println!("  有影响表、覆盖全部顶点：{full} 份 · 只覆盖一部分：{} 份", partial.len());
+    for p in no_nodes.iter().take(6) {
+        println!("    无节点 {p}");
+    }
+    for (p, n) in nodes_but_no_skin.iter().take(6) {
+        println!("    有 {n} 条节点却无影响表 {p}");
+    }
+    let mut ps = partial.clone();
+    ps.sort_by_key(|(_, c, t)| (t - c) as i64);
+    println!("  缺口最大的几份（覆盖/总数）：");
+    for (p, c, t) in ps.iter().take(8) {
+        println!("    {c:>6}/{t:<6} {p}");
+    }
     println!("\n文件头前 9 字节的分布：");
     for (k, v) in &head {
         println!("  {v:>4} × {k:?}");

@@ -1,0 +1,36 @@
+== 解包目录体检：D:/TLGL/.scratch/out/sidecar_tree
+  找到 .mesh 文件 468 份，本轮只看前 600 份
+
+结果（468 份）：
+  parse_mesh 认得：**468 / 468**（100%）
+  其中带骨架节点表的：446 · 父骨链解得出的：430
+  顶点合计：662401
+
+权重表分档（决定导出后网格跟不跟骨架走）：
+  一份都没有 96B 节点记录：22 份
+  有节点记录但后面没认出影响表：126 份
+  有影响表、覆盖全部顶点：58 份 · 只覆盖一部分：262 份
+    无节点 data\effect\effectmodel\w1351_model_stone_lf001.mesh
+    无节点 data\effect\effectmodel\w1351_model_stone_lf002.mesh
+    无节点 data\source\npc\quest\w1351_pets_eyu_b0\w1351_pets_eyu_b1.mesh
+    无节点 data\source\npc\quest\w1351_pets_eyu_b0\w1351_pets_eyu_b2.mesh
+    无节点 data\source\npc\quest\w1351_pets_haidaoshu_b8\w1351_pets_haidaoshu_b8.mesh
+    无节点 data\source\npc\quest\w1351_pets_huaxianzi_b1\w1351_pets_huaxianzi_b1_yifu_001.mesh
+    有 13 条节点却无影响表 data\source\npc\model\w1351_model_flower_lf004\w1351_model_flower_lf004.mesh
+    有 1 条节点却无影响表 data\source\npc\model\w1351_model_sphere_lf006\w1351_model_sphere_lf006.mesh
+    有 63 条节点却无影响表 data\source\npc\quest\w1351_boss_machao\w1351_boss_machao.mesh
+    有 6 条节点却无影响表 data\source\npc\quest\w1351_monster_heimoguai03\w1351_monster_heimoguai03.mesh
+    有 42 条节点却无影响表 data\source\npc\quest\w1351_npc_xiguaguai_001\w1351_pets_renzheshengua_b1.mesh
+    有 42 条节点却无影响表 data\source\npc\quest\w1351_npc_xiguaguai_001\w1351_pets_renzheshengua_b2.mesh
+  缺口最大的几份（覆盖/总数）：
+       718/719    data\source\npc\quest\w1351_pets_bawanglong_b1\w1351_pets_bawanglong_b1_yifu_001.mesh
+       718/719    data\source\npc\quest\w1351_pets_bawanglong_b2\w1351_pets_bawanglong_b2_yifu_001.mesh
+       718/719    data\source\npc\quest\w1351_pets_bawanglong_b3\w1351_pets_bawanglong_b3_yifu_001.mesh
+       718/719    data\source\npc\quest\w1351_pets_bawanglong_b4\w1351_pets_bawanglong_b4_yifu_001.mesh
+       718/719    data\source\npc\quest\w1351_pets_bawanglong_b5\w1351_pets_bawanglong_b5_yifu_001.mesh
+       718/719    data\source\npc\quest\w1351_pets_bawanglong_b6\w1351_pets_bawanglong_b6_yifu_001.mesh
+       718/719    data\source\npc\quest\w1351_pets_bawanglong_b7\w1351_pets_bawanglong_b7.mesh
+       354/355    data\source\npc\quest\w1351_pets_chaimao_b1\w1351_pets_chaimao_b1.mesh
+
+文件头前 9 字节的分布：
+   468 × "Copyright"

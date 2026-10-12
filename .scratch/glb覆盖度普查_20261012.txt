@@ -1,0 +1,91 @@
+GLB 总数 271
+  带 rig 对账: 241 | extras 里没有 rig: 30
+  覆盖 0 个顶点（整张挂根骨，播放时网格一动不动）: 103
+  部分覆盖: 136 | 全覆盖: 2
+
+0 覆盖的 103 份按原因分：
+  影响表整条因骨名不在骨架里被跳过（influenceNodesNotInHierarchy>0）: 0
+  连被跳过的影响表都没有（.mesh 里就没有权重表 或 名字全对但表空）: 103
+
+有覆盖的那些，顶点被骨架真正带动的比例：
+  P10 = 0.011
+  P25 = 0.701
+  P50 = 0.826
+  P75 = 0.871
+  P90 = 0.958
+  均值 = 0.705 · ≥90% 的有 24 份
+
+0 覆盖 且 带动画（导出后骨头乱飘、网格不跟）的：
+  w1351_pets_xuanhuangtengshe_b6               顶点   5644 关节  89 动作 13 导出轨道  1157 跳过的影响节点 0
+  w1351_model_sphere_lf006                     顶点   5504 关节   3 动作  1 导出轨道     3 跳过的影响节点 0
+  w1351_model_flower_lf004                     顶点   5080 关节  16 动作  1 导出轨道    16 跳过的影响节点 0
+  w1351_boss_machao                            顶点   3641 关节  83 动作 15 导出轨道  1245 跳过的影响节点 0
+  w1351_pets_tuxiaoyao_b2                      顶点   2844 关节  88 动作 14 导出轨道  1232 跳过的影响节点 0
+  w1351_pets_jiuxiaozhanlong_b8                顶点   2220 关节  71 动作 13 导出轨道   923 跳过的影响节点 0
+  w1351_pets_jiuxiaozhanlong_b4                顶点   1985 关节  71 动作 12 导出轨道   852 跳过的影响节点 0
+  w1351_pets_jiuxiaozhanlong_b1                顶点   1875 关节  71 动作 13 导出轨道   923 跳过的影响节点 0
+  w1351_pets_mengyinhualing_b1                 顶点   1826 关节  50 动作 13 导出轨道   650 跳过的影响节点 0
+  w1351_pets_mengyinhualing_b8                 顶点   1781 关节  50 动作 13 导出轨道   650 跳过的影响节点 0
+  w1351_pets_huyaojianjun_b4                   顶点   1692 关节  58 动作 13 导出轨道   754 跳过的影响节点 0
+  w1351_pets_yueliangshaonv_b4                 顶点   1651 关节  42 动作 13 导出轨道   546 跳过的影响节点 0
+  w1351_pets_mengyinhualing_b2                 顶点   1593 关节  50 动作 13 导出轨道   650 跳过的影响节点 0
+  w1351_pets_lingtushuangjie_b8_yifu_001       顶点   1463 关节  91 动作 13 导出轨道  1183 跳过的影响节点 0
+  w1351_pets_youchilong_b8                     顶点   1413 关节  40 动作 13 导出轨道   520 跳过的影响节点 0
+  w1351_pets_lingtushou_b1                     顶点   1398 关节  59 动作 13 导出轨道   767 跳过的影响节点 0
+  w1351_pets_zhurong_b7                        顶点   1397 关节  28 动作 13 导出轨道   364 跳过的影响节点 0
+  w1351_pets_zhurong_b6                        顶点   1273 关节  28 动作 13 导出轨道   364 跳过的影响节点 0
+  w1351_pets_youchilong_b6_yifu_001            顶点   1264 关节  40 动作 13 导出轨道   520 跳过的影响节点 0
+  w1351_pets_youchilong_b4_yifu_001            顶点   1147 关节  40 动作 13 导出轨道   520 跳过的影响节点 0
+  w1351_pets_zhurong_b4                        顶点   1138 关节  28 动作 13 导出轨道   364 跳过的影响节点 0
+  w1351_pets_lingtushuangjie_b3_yifu_001       顶点   1078 关节  91 动作 13 导出轨道  1183 跳过的影响节点 0
+  w1351_pets_youchilong_b2_yifu_001            顶点   1067 关节  40 动作 13 导出轨道   520 跳过的影响节点 0
+  w1351_pets_huaxianzi_b1_yifu_001             顶点   1025 关节  56 动作 14 导出轨道   784 跳过的影响节点 0
+  w1351_pets_haidaoshu_b8                      顶点   1013 关节  35 动作 13 导出轨道   455 跳过的影响节点 0
+  w1351_pets_lingtushuangjie_b1_yifu_001       顶点    976 关节  91 动作 13 导出轨道  1183 跳过的影响节点 0
+  w1351_pets_lingtushuangjie_b7_yifu_001       顶点    969 关节  91 动作 13 导出轨道  1183 跳过的影响节点 0
+  w1351_pets_lingtushuangjie_b3_lian_001       顶点    946 关节  91 动作 13 导出轨道  1183 跳过的影响节点 0
+  w1351_pets_lingtushuangjie_b7_lian_001       顶点    918 关节  91 动作 13 导出轨道  1183 跳过的影响节点 0
+  w1351_pets_zhurong_b1                        顶点    918 关节  28 动作 13 导出轨道   364 跳过的影响节点 0
+  w1351_pets_zhurong_b2                        顶点    885 关节  28 动作 13 导出轨道   364 跳过的影响节点 0
+  w1351_pets_lingtushuangjie_b1_lian_001       顶点    882 关节  91 动作 13 导出轨道  1183 跳过的影响节点 0
+  w1351_pets_lingtushuangjie_b2_yifu_001       顶点    813 关节  91 动作 13 导出轨道  1183 跳过的影响节点 0
+  w1351_pets_lingtushuangjie_b2_lian_001       顶点    774 关节  91 动作 13 导出轨道  1183 跳过的影响节点 0
+  w1351_pets_yazuishou_b7_yifu_001             顶点    626 关节  33 动作 13 导出轨道   429 跳过的影响节点 0
+  w1351_monster_heimoguai03                    顶点    625 关节  22 动作 12 导出轨道   264 跳过的影响节点 0
+  w1351_pets_yazuishou_b3_yifu_001             顶点    624 关节  33 动作 13 导出轨道   429 跳过的影响节点 0
+  w1351_pets_yazuishou_b2_yifu_001             顶点    616 关节  33 动作 13 导出轨道   429 跳过的影响节点 0
+  w1351_pets_yazuishou_b5_yifu_001             顶点    616 关节  33 动作 13 导出轨道   429 跳过的影响节点 0
+  w1351_pets_yazuishou_b1_yifu_001             顶点    616 关节  33 动作 13 导出轨道   429 跳过的影响节点 0
+  w1351_pets_yazuishou_b4_yifu_001             顶点    603 关节  33 动作 13 导出轨道   429 跳过的影响节点 0
+  w1351_pets_zhu_b0_yifu_001                   顶点    284 关节  40 动作 13 导出轨道   520 跳过的影响节点 0
+  w1351_pets_yazuishou_b3_toufa_001            顶点    139 关节  33 动作 13 导出轨道   429 跳过的影响节点 0
+  w1351_pets_yazuishou_b6_toufa_001            顶点    137 关节  33 动作 13 导出轨道   429 跳过的影响节点 0
+  w1351_pets_yazuishou_b2_toufa_001            顶点    137 关节  33 动作 13 导出轨道   429 跳过的影响节点 0
+  w1351_pets_xiongmao_b7_shoutao_001           顶点    119 关节  42 动作 13 导出轨道   546 跳过的影响节点 0
+  w1351_pets_yazuishou_b4_toufa_001            顶点     89 关节  33 动作 13 导出轨道   429 跳过的影响节点 0
+  w1351_pets_yazuishou_b1_toufa_001            顶点     72 关节  33 动作 13 导出轨道   429 跳过的影响节点 0
+  w1351_pets_xiongmao_b1_shoutao_001           顶点     61 关节  42 动作 13 导出轨道   546 跳过的影响节点 0
+  w1351_pets_xiongmao_b6_shoutao_001           顶点     60 关节  42 动作 13 导出轨道   546 跳过的影响节点 0
+  w1351_pets_xiongmao_b2_shoutao_001           顶点     55 关节  42 动作 13 导出轨道   546 跳过的影响节点 0
+
+0 覆盖 且 没带动画的：52 份（列前 20）
+  w1351_pets_huanyizhiling_b8                  顶点  12923 关节 139
+  w1351_pets_xianglong_b8                      顶点  12006 关节 236
+  w1351_pets_xianglong_b6                      顶点  10987 关节 179
+  w1351_zuoqi_hudie_lv                         顶点   8753 关节 101
+  w1351_pets_xianglong_b4                      顶点   7422 关节 176
+  w1351_pets_xianglong_b2                      顶点   7107 关节 159
+  w1351_zuoqi_yuexiaxun_lan                    顶点   6278 关节 103
+  w1351_nv_s_yifu_yszm_qingfeng                顶点   6237 关节 134
+  w1351_pets_yuansukonglong_b6                 顶点   5392 关节  88
+  w1351_nan_s_yifu_zhangjiantianya_bai         顶点   5332 关节 133
+  w1351_pets_lianyishou_b8                     顶点   5152 关节 117
+  w1351_pets_jianyinghu_b8                     顶点   4967 关节  84
+  w1351_pets_jianyinghu_b6                     顶点   4458 关节  84
+  w1351_pets_lianyishou_b4                     顶点   4434 关节  95
+  w1351_pets_lianyishou_b6                     顶点   4348 关节  95
+  w1351_pets_lianyishou_b2                     顶点   4222 关节  85
+  w1351_nan_s_yifu_txfh_yanzhilei              顶点   4013 关节 133
+  w1351_pets_jianyinghu_b2                     顶点   3840 关节  84
+  w1351_pets_yuansukonglong_b8                 顶点   3579 关节  90
+  w1351_pets_tangguotianxin_b2                 顶点   3462 关节 111

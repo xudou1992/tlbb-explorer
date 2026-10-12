@@ -609,6 +609,49 @@ new GLTFLoader().load(asset, (gltf) => {
       撕集中的骨: [...byBone].sort((x, y) => y[1] - x[1]).slice(0, 6) };
   };
 
+  /// 这条动作里，「被顶点用到但没有轨道」的骨带走了多少权重。
+  /// 为什么查这个：没轨道的骨在两种口径下都被拿 bind 兜底——
+  /// 沿父链复合时它会被祖先带着走，直接当世界时它又恒等不动。
+  /// 不管哪一种，**只要权重落在这批骨上，蒙皮就和动画对不上**，撕就在那里。
+  /// 这条只看数，不改任何东西。
+  window.__weightNoTrack = (name) => {
+    const c = clips.find((x) => x.name === name);
+    if (!c) return { error: '没有这条动作: ' + name };
+    const tracked = new Set();
+    for (const tr of c.tracks) {
+      const i = tr.name.indexOf('.');
+      if (i > 0) tracked.add(tr.name.slice(0, i));
+    }
+    const use = new Map();
+    for (const mesh of skinned) {
+      const g = mesh.geometry, si = g.getAttribute('skinIndex'), sw = g.getAttribute('skinWeight');
+      const bones = mesh.skeleton.bones;
+      for (let v = 0; v < si.count; v++) {
+        for (let k = 0; k < 4; k++) {
+          const w = sw.getComponent(v, k);
+          if (w <= 1e-6) continue;
+          const bn = bones[si.getComponent(v, k)] ? bones[si.getComponent(v, k)].name : '(' + si.getComponent(v, k) + ')';
+          const e = use.get(bn) ?? { w: 0, verts: 0, track: false };
+          e.w += w; e.verts++;
+          use.set(bn, e);
+        }
+      }
+    }
+    let wTotal = 0, wNoTrack = 0, nUsed = 0, nNoTrack = 0;
+    const worst = [];
+    for (const [bn, e] of use) {
+      e.track = tracked.has(bn);
+      wTotal += e.w; nUsed++;
+      if (!e.track) { wNoTrack += e.w; nNoTrack++; worst.push([bn, +e.w.toFixed(1), e.verts]); }
+    }
+    worst.sort((a, b) => b[1] - a[1]);
+    return { clip: name, 轨道数: c.tracks.length, 有轨道的骨名数: tracked.size,
+      被权重用到的骨: nUsed, 其中没轨道的: nNoTrack,
+      权重合计: +wTotal.toFixed(1), 落在没轨道骨上的权重: +wNoTrack.toFixed(1),
+      占比: +(100 * wNoTrack / (wTotal || 1)).toFixed(1),
+      最重的几根: worst.slice(0, 8) };
+  };
+
   window.__rest = () => {
     for (const a of act.values()) a.stop();
     root.updateMatrixWorld(true);

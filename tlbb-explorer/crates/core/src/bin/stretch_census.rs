@@ -304,18 +304,23 @@ fn main() {
     // 同族 `_b1…_b8` 与部件（yifu/shoutao/toufa…）共用一副骨架与一批动作，
     // 按文件算的份数会虚高——这里按「族」再数一遍。
     let fam = |n: &str| -> String {
+        let digits = |t: &str| !t.is_empty() && t.chars().all(|c| c.is_ascii_digit());
         let mut base = n.to_string();
-        if let Some(pos) = base.rfind("_b") {
-            let tail = &base[pos + 2..];
-            if tail.len() <= 3 && tail.chars().all(|c| c.is_ascii_digit()) {
-                base = base[..pos].to_string();
+        // 反复剥，直到剥不动为止——上一版先剥 `_bN` 再剥部件后缀，
+        // 于是 `…_b7_yifu_001` 里那个 `_b7` 留在族名上，族数虚高（95 是上界）。
+        loop {
+            let segs: Vec<&str> = base.split('_').collect();
+            if segs.len() < 3 {
+                break;
             }
-        }
-        // 部件后缀也去掉：同一只怪的 yifu / shoutao / toufa 各算一份会重复计数
-        for suf in ["_yifu_001", "_yifu_002", "_shoutao_001", "_toufa_001", "_lian_001"] {
-            if let Some(stripped) = base.strip_suffix(suf) {
-                base = stripped.to_string();
+            let last = segs[segs.len() - 1];
+            // 三种尾巴都算装饰：纯数字（部件号 `001`）、形态号 `b5`、`x2` 之类；
+            // 上一版只认纯数字，于是 `…_jiuxiaozhanlong_b5` 八份各成一族，族数反而从 95 涨到 200。
+            let is_form = last.starts_with('b') && digits(&last[1..]);
+            if !((digits(last) && last.len() <= 3) || (is_form && last.len() <= 4)) {
+                break;
             }
+            base = segs[..segs.len() - 1].join("_");
         }
         base
     };

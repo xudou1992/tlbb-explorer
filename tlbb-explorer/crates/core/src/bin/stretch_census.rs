@@ -34,9 +34,46 @@ fn walk(dir: &Path, out: &mut Vec<PathBuf>) {
     }
 }
 
-/// 给这份网格找一条动作：先同目录的 `ani/` 子目录，再同目录任何 `.ani`。
+/// 同角色判定：两边的角色键**任一为另一前缀**即可。
+/// 网格名尾部是形态号/部件号（`…_b1_yifu_001` → 键 `…_huaxianzi`），
+/// 而动作名尾部是动作名（`…_b1_behit` 剥不动 → 键还带着 `_b1_behit`），
+/// 只比相等会把每一对都判成"没有动作"（我第一次就这么把 217 份跑成了 0 份）。
+fn same_role(a: &str, b: &str) -> bool {
+    a == b
+        || (a.len() < b.len() && b.starts_with(a) && b.as_bytes()[a.len()] == b'_')
+        || (b.len() < a.len() && a.starts_with(b) && a.as_bytes()[b.len()] == b'_')
+}
+/// 两处都用它：族聚类（不靠"数文件名"），以及**动作配对**——
+/// 一个目录里可能放几只互不相关的模型（README 早警告过），
+/// 按字母序抓第一条 `.ani` 会把别人的动作套到这份网格上，撕的倍数因此是假的。
+fn fam_key(n: &str) -> String {
+    let digits = |t: &str| !t.is_empty() && t.chars().all(|c| c.is_ascii_digit());
+    let const_parts: [&str; 6] = ["yifu", "shoutao", "toufa", "lian", "weapon", "prop"];
+    let mut base = n.to_string();
+    loop {
+        let segs: Vec<&str> = base.split('_').collect();
+        if segs.len() < 3 {
+            break;
+        }
+        let last = segs[segs.len() - 1];
+        let is_form = last.starts_with('b') && digits(&last[1..]);
+        let is_part = const_parts.contains(&last.to_lowercase().as_str());
+        if !((digits(last) && last.len() <= 3) || (is_form && last.len() <= 4) || is_part) {
+            break;
+        }
+        base = segs[..segs.len() - 1].join("_");
+    }
+    base
+}
+
+/// 给这份网格找一条**同角色**的动作：先同目录的 `ani/`，再同目录；
+/// 只接受 `fam_key(动作名) == fam_key(网格名)` 的 `.ani`，一条都不匹配就报没有。
 fn first_ani(mesh: &Path) -> Option<PathBuf> {
     let dir = mesh.parent()?;
+    let key = mesh
+        .file_stem()
+        .map(|s| fam_key(&s.to_string_lossy()))
+        .unwrap_or_default();
     let sub = dir.join("ani");
     for d in [sub.as_path(), dir] {
         let Ok(rd) = std::fs::read_dir(d) else { continue };
@@ -44,6 +81,11 @@ fn first_ani(mesh: &Path) -> Option<PathBuf> {
             .flatten()
             .map(|e| e.path())
             .filter(|p| p.extension().and_then(|x| x.to_str()) == Some("ani"))
+            .filter(|p| {
+                p.file_stem()
+                    .map(|s| same_role(&key, &fam_key(&s.to_string_lossy())))
+                    .unwrap_or(false)
+            })
             .collect();
         cands.sort();
         if let Some(p) = cands.into_iter().next() {
@@ -341,10 +383,16 @@ fn main() {
             return;
         }
         let mean = got.iter().map(|(_, w)| *w).sum::<f64>() / got.len() as f64;
+        // 均值会被极端值彻底带走（全库跑出过 460×、某档 7,755×），
+        // 所以中位数与 p90 一起打，不然这张表没有可读性。
+        let mut ws: Vec<f64> = got.iter().map(|(_, w)| *w).collect();
+        ws.sort_by(|a, b| a.partial_cmp(b).unwrap());
+        let med = ws[ws.len() / 2];
+        let p90 = ws[((ws.len() as f64 - 1.0) * 0.9) as usize];
         let win = got.iter().filter(|(r, w)| *w < r.worst * 0.75).count();
         let bad = got.iter().filter(|(r, w)| *w > r.worst * 1.25).count();
         println!(
-            "  {name}：配对 {} 份 · 峰值均值 {mean:.1}× · 比现口径压掉 ≥25% 的 {win} 份 · 涨 ≥25% 的 {bad} 份",
+            "  {name}：配对 {} 份 · 峰值 中位 {med:.1}× / p90 {p90:.1}× / 均值 {mean:.1}× · 比现口径压掉 ≥25% 的 {win} 份 · 涨 ≥25% 的 {bad} 份",
             got.len()
         );
     };
@@ -382,31 +430,7 @@ fn main() {
 
     // 同族 `_b1…_b8` 与部件（yifu/shoutao/toufa…）共用一副骨架与一批动作，
     // 按文件算的份数会虚高——这里按「族」再数一遍。
-    let fam = |n: &str| -> String {
-        let digits = |t: &str| !t.is_empty() && t.chars().all(|c| c.is_ascii_digit());
-        let mut base = n.to_string();
-        // 反复剥，直到剥不动为止——上一版先剥 `_bN` 再剥部件后缀，
-        // 于是 `…_b7_yifu_001` 里那个 `_b7` 留在族名上，族数虚高（95 是上界）。
-        loop {
-            let segs: Vec<&str> = base.split('_').collect();
-            if segs.len() < 3 {
-                break;
-            }
-            let last = segs[segs.len() - 1];
-            // 三种尾巴都算装饰：纯数字（部件号 `001`）、形态号 `b5`、`x2` 之类；
-            // 上一版只认纯数字，于是 `…_jiuxiaozhanlong_b5` 八份各成一族，族数反而从 95 涨到 200。
-            let is_form = last.starts_with('b') && digits(&last[1..]);
-            // 部件词也剥：`…_b6_yifu` 这种「形态号 + 部件名不带号」的写法，
-            // 只剥数字与形态号会把它留成一族（112 那个数因此是上界）。
-            const PARTS: [&str; 6] = ["yifu", "shoutao", "toufa", "lian", "weapon", "prop"];
-            let is_part = PARTS.contains(&last.to_lowercase().as_str());
-            if !((digits(last) && last.len() <= 3) || (is_form && last.len() <= 4) || is_part) {
-                break;
-            }
-            base = segs[..segs.len() - 1].join("_");
-        }
-        base
-    };
+    let fam = |n: &str| -> String { fam_key(n) };
     let mut byfam: Vec<(String, f64, f64, usize)> = Vec::new();
     for r in &cur {
         let f = fam(&r.name);

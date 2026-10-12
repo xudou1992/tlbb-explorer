@@ -322,6 +322,44 @@ new GLTFLoader().load(asset, (gltf) => {
       sample: deltas.slice(0, 6) };
   };
 
+  /// 骨架盒版测量：`__measure` 的 grow/drift 靠 SkinnedMesh.computeBoundingBox，
+  /// 实测在骨骼明明移动的文件上系统性报 1.00/0.0（10-12 用 __boneProbe 抓到），
+  /// 所以在它修好之前，量动画有没有生效要用这里：直接取骨架节点的世界坐标盒。
+  /// 同时把这条动作**真实的关键帧时刻**交出来——按时长一半猜中点会把
+  /// 「中点恰好等于首帧姿态」的短动作误判成没动（machao_dead 7 帧就是这么来的）。
+  window.__times = (name) => {
+    const c = clips.find((x) => x.name === name);
+    if (!c) return { error: '没有这条动作: ' + name };
+    const ts = new Set();
+    for (const tr of c.tracks) for (let i = 0; i < tr.times.length; i++) ts.add(+tr.times[i].toFixed(4));
+    return { clip: name, duration: +c.duration.toFixed(4), keys: ts.size, times: [...ts].sort((a, b) => a - b) };
+  };
+  window.__boneHull = (name, times) => {
+    const c = clips.find((x) => x.name === name);
+    if (!c) return { error: '没有这条动作: ' + name };
+    const bones = [];
+    root.traverse((o) => { if (o.isBone) bones.push(o); });
+    const hull = () => {
+      root.updateMatrixWorld(true);
+      const b = new THREE.Box3();
+      const p = new THREE.Vector3();
+      for (const o of bones) { o.getWorldPosition(p); b.expandByPoint(p); }
+      return b;
+    };
+    seek(name, (times && times[0]) || 0);
+    const bind = hull();
+    const span = bind.getSize(new THREE.Vector3()).length();
+    const center0 = bind.getCenter(new THREE.Vector3());
+    const rows = [];
+    for (const t of (times || [0])) {
+      seek(name, t);
+      const b = hull();
+      rows.push({ t: +t.toFixed(4), grow: +(b.getSize(new THREE.Vector3()).length() / span).toFixed(4),
+        drift: +(b.getCenter(new THREE.Vector3()).distanceTo(center0) / span).toFixed(4) });
+    }
+    return { clip: name, bones: bones.length, span: +span.toFixed(3), rows };
+  };
+
   window.__rest = () => {
     for (const a of act.values()) a.stop();
     root.updateMatrixWorld(true);

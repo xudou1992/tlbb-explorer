@@ -1,0 +1,17 @@
+全库 7,996 份按「有无节点记录 × 自己声明几根骨」分桶（偏移 0x110，从 geometry.rs 读）：
+  无记录·声明0                5194 份
+  有记录                    2776 份
+  无记录·声明1~4              19 份
+  无记录·声明≥30              5 份
+  无记录·声明5~29             2 份
+
+**漏读群体 = 无记录但声明 ≥30 根骨：共 5 份**
+按目录：
+  data/source/npc                                5 份
+
+声明骨数最多的 15 份：
+  声明   79 根 · 顶点  10300 · w1351_model_mj_nan_stone_h01/w1351_model_mj_nan_stone_h01.mesh
+  声明   69 根 · 顶点  21627 · rce/npc/model/w1351_model_bell_h002/w1351_model_bell_h002.mesh
+  声明   55 根 · 顶点   2575 · l/w1351_model_glass_ani_lf001/w1351_model_glass_ani_lf001.mesh
+  声明   50 根 · 顶点    256 · w1351_model_fazhen_ani_lf001/w1351_model_fazhen_ani_lf001.mesh
+  声明   38 根 · 顶点   6000 · model/w1351_model_ymg01_stone01/w1351_model_ymg01_stone01.mesh

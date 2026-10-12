@@ -1,0 +1,22 @@
+全库 7,996 份网格按路径类别分桶（列：份数 / 有 96B 节点记录 / 带权重表）
+注：父骨链那一档 TSV 里没落列，本轮不引；类别取路径前两段。
+
+类别                           份数      有记录       占比       有表
+其他                         3264        7     0.2%        0
+data/source                3032     2673    88.2%     2226
+特效                         1700       96     5.6%        1
+合计                         7996     2776    34.7%     2227
+
+无记录里最大的 12 个类别目录前缀（看是不是集中在特效/场景）：
+  data/source/npc/toukui                                     123 份
+  data/source/npc/wuqi                                       121 份
+  data/source/npc/quest                                      80 份
+  data/source/npc/model                                      29 份
+  data/source/npc/changjingdaoju                             5 份
+  data/effect/effectmodel/test_jianzhen.mesh                 1 份
+  data/effect/effectmodel/test_jianzhen2.mesh                1 份
+  data/effect/effectmodel/w1351_an_model_wave_h002.mesh      1 份
+  data/effect/effectmodel/w1351_jianmo_v1.mesh               1 份
+  data/effect/effectmodel/w1351_jianmo_v2.mesh               1 份
+  data/effect/effectmodel/w1351_jianmo_v3.mesh               1 份
+  data/effect/effectmodel/w1351_jianmo_v4.mesh               1 份

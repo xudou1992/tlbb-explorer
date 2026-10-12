@@ -1,0 +1,6 @@
+声明骨数所在偏移 0x110（从 geometry.rs 的 BONE_COUNT_AT 读，不硬编码）
+
+无节点记录（359 份里抽样）：抽 359 份 → {'0（不声明骨）': 333, '1~4': 19, '≥30': 5, '5~29': 2}
+  声明 ≥30 根却没认出记录的样例：[('w1351_model_ymg01_stone01.mesh', 38), ('w1351_model_fazhen_ani_lf001.mesh', 50), ('w1351_model_glass_ani_lf001.mesh', 55), ('w1351_model_mj_nan_stone_h01.mesh', 79), ('w1351_model_bell_h002.mesh', 69)]
+有节点记录（对照，抽样 300）：抽 300 份 → {'5~29': 90, '≥30': 178, '1~4': 31, '0（不声明骨）': 1}
+  声明 ≥30 根却没认出记录的样例：[('w1351_pets_yezhu_b1.mesh', 40), ('w1351_npc_xiuzhendaozhang_01_yifu_001.mesh', 98), ('w1351_npc_wuzhuhu.mesh', 33), ('w1351_zuoqi_qunshanzhidian.mesh', 64), ('w1351_pets_chaimao_b0.mesh', 35), ('w1351_npc_xunshanxianzi_02_b.mesh', 88)]

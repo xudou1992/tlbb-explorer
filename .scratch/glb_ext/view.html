@@ -556,6 +556,59 @@ new GLTFLoader().load(asset, (gltf) => {
     });
   };
 
+  /// 单骨三角形检验：三根顶点的主权重骨是**同一根**（可选再要求主权重 ≥0.99）的三角形，
+  /// 在这一帧的边长还能不能拉开。
+  /// 为什么这条值钱：调色板已证是刚体（83/83），刚体变换**保距**，
+  /// 所以同一根骨带住的三角形边长比必须是 1.00。要是它也撕，那就不是父骨链的问题，
+  /// 而是**权重与关节的配对**错了（比如刚认回来的不递增表把 index↔weight 配错了行）。
+  window.__sameBoneTear = (name, t, strict) => {
+    if (!seek(name, t)) return { error: '没有这条动作' };
+    const P = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()];
+    const B = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()];
+    let same = 0, sameTorn = 0, pure = 0, pureTorn = 0, maxSame = 0, maxPure = 0;
+    const byBone = new Map();
+    for (const mesh of skinned) {
+      const g = mesh.geometry, pos = g.getAttribute('position');
+      const sidx = g.getAttribute('skinIndex'), swgt = g.getAttribute('skinWeight');
+      const bones = mesh.skeleton.bones;
+      const dom = (i) => {
+        let bw = -1, bn = '(无权重)', bwn = 0;
+        for (let k = 0; k < 4; k++) {
+          const w = swgt.getComponent(i, k), j = sidx.getComponent(i, k);
+          if (w > bw) { bw = w; bn = bones[j] ? bones[j].name : '(' + j + ')'; bwn = w; }
+        }
+        return [bn, bwn];
+      };
+      const order = g.index ? g.index.array : null;
+      const tri = order ? order.length / 3 : Math.floor(pos.count / 3);
+      for (let f = 0; f < tri; f++) {
+        const ix = order ? [order[f * 3], order[f * 3 + 1], order[f * 3 + 2]] : [f * 3, f * 3 + 1, f * 3 + 2];
+        const d0 = dom(ix[0]), d1 = dom(ix[1]), d2 = dom(ix[2]);
+        if (!(d0[0] === d1[0] && d1[0] === d2[0])) continue;
+        for (let k = 0; k < 3; k++) { mesh.getVertexPosition(ix[k], P[k]); B[k].fromBufferAttribute(pos, ix[k]); }
+        let worst = 0;
+        for (const [u, v] of [[0, 1], [1, 2], [2, 0]]) {
+          const l0 = B[u].distanceTo(B[v]);
+          if (l0 < 1e-4) continue;
+          worst = Math.max(worst, P[u].distanceTo(P[v]) / l0);
+        }
+        same++;
+        if (worst > 1.5) sameTorn++;
+        maxSame = Math.max(maxSame, worst);
+        if (Math.min(d0[1], d1[1], d2[1]) >= 0.99) {
+          pure++;
+          if (worst > 1.5) pureTorn++;
+          maxPure = Math.max(maxPure, worst);
+          if (worst > 1.5) byBone.set(d0[0], (byBone.get(d0[0]) ?? 0) + 1);
+        }
+      }
+    }
+    return { clip: name, t, strict: strict !== false,
+      同主骨三角形: same, 同骨撕的: sameTorn, 最大倍数: +maxSame.toFixed(3),
+      纯净同骨三角形: pure, 纯净撕的: pureTorn, 纯净最大倍数: +maxPure.toFixed(3),
+      撕集中的骨: [...byBone].sort((x, y) => y[1] - x[1]).slice(0, 6) };
+  };
+
   window.__rest = () => {
     for (const a of act.values()) a.stop();
     root.updateMatrixWorld(true);

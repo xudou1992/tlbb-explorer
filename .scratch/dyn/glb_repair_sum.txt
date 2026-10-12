@@ -1,4 +1,7 @@
-本次重导（补齐动作配对之后）：mesh=468 · glb=271 · rigged=234 · fail=0 · dup=197
-解出骨架并写出蒙皮的 234 份里：带至少一条动作的 234 份 · 一条动作都没配上的 3 份
-manifest 条目 4
-样例（新配上动作的）：['w1351_boss_huoyanlaohu', 'w1351_boss_machao', 'w1351_guajian_ysym_01', 'w1351_model_flower_lf004', 'w1351_model_sphere_lf006', 'w1351_monster_heimoguai03']
+本次重导（补齐动作配对之后，产物 .scratch/out/glb_repair）
+  mesh=468 · glb=271（dup=197）· rigged=234 · fail=0 · normals=464 · uv=429 · multiSlot=78
+  骨架解得出并写出蒙皮的 234 份里：配上至少一条动作的 231 份 · 一条都没配上的 3 份
+  写出的动作总数 2963 条（平均每份 12.7 条）
+  一条都没配上的：['w1351_nan_s_yifu_txfh_yanzhilei', 'w1351_nan_s_yifu_zhangjiantianya_bai', 'w1351_nv_s_yifu_yszm_qingfeng']
+对照：合并前身份集里 90 个目录（212 份网格）一份 ani 都没有；本次已从库里的同名目录补了 87 个目录/1,141 条 .ani。
+更正：上一条提交信息里写的「175 份」是我未核就落笔的错数，正确值是本文件的 231 份（配上动作的份数）。

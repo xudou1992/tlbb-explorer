@@ -209,6 +209,43 @@ fn main() {
         bone_rigidity(&h, &pal);
         return;
     }
+    // 第四口径（假设检验，探针不进判据）：`.ani` 的轨道值**不当局部变换沿父链复合**，
+    // 而是直接当这根骨的世界变换（没轨道的骨用 bind 世界矩阵）。
+    // 若撕在这个口径下塌下去 ⇒ 轨道存的是绝对值，`compose_worlds` 那一层复合就是错的。
+    if argv.iter().any(|x| x == "--worldmode") {
+        let wd = |fr: usize| -> Vec<[f32; 16]> {
+            let mut out = bind.clone();
+            for t in &a.tracks {
+                if t.bone.is_empty() || t.rotations.is_empty() || t.positions.is_empty() || t.scales.is_empty() {
+                    continue;
+                }
+                if let Some(i) = h.bones.iter().position(|x| x.name == t.bone) {
+                    let k = fr.min(t.rotations.len() - 1).min(t.positions.len() - 1).min(t.scales.len() - 1);
+                    out[i] = pose::trs_matrix(&t.rotations[k], t.positions[k], t.scales[k]);
+                }
+            }
+            out
+        };
+        let anchor_w = wd(0);
+        let one = |anch: &[[f32; 16]], world: &[[f32; 16]]| -> String {
+            match pose::skin_palette(&h, anch, world)
+                .and_then(|pal| pose::posed_vertices(&h, &pal, &nodes, &g.positions))
+            {
+                Some(posed) => {
+                    let (o15, o20, max) = stretch(&g.positions, &posed, &g.indices);
+                    format!("{o15}/{o20}/{max:.2}")
+                }
+                None => "算不出".to_string(),
+            }
+        };
+        println!("帧 | 现口径（轨道当局部·沿父链复合） | 试错口径（轨道直接当世界）  （超1.5/超2/最大倍数）");
+        for f in (0..a.frames).step_by(step.max(1)) {
+            let cur = pose::pose_frame(&h, &a, f);
+            let w = wd(f);
+            println!("{f:3} | {} | {}", one(&anchor, &cur), one(&anchor_w, &w));
+        }
+        return;
+    }
     println!("帧 | frame0 锚(现口径) | bind 锚 | bind 锚+静态区补位   （超1.5 边数 / 超2 / 最大倍数）");
     for f in (0..a.frames).step_by(step.max(1)) {
         let world = pose::pose_frame(&h, &a, f);

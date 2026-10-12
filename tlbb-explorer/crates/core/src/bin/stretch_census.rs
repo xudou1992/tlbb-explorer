@@ -301,6 +301,49 @@ fn main() {
         );
     }
 
+    // 同族 `_b1…_b8` 与部件（yifu/shoutao/toufa…）共用一副骨架与一批动作，
+    // 按文件算的份数会虚高——这里按「族」再数一遍。
+    let fam = |n: &str| -> String {
+        let mut base = n.to_string();
+        if let Some(pos) = base.rfind("_b") {
+            let tail = &base[pos + 2..];
+            if tail.len() <= 3 && tail.chars().all(|c| c.is_ascii_digit()) {
+                base = base[..pos].to_string();
+            }
+        }
+        // 部件后缀也去掉：同一只怪的 yifu / shoutao / toufa 各算一份会重复计数
+        for suf in ["_yifu_001", "_yifu_002", "_shoutao_001", "_toufa_001", "_lian_001"] {
+            if let Some(stripped) = base.strip_suffix(suf) {
+                base = stripped.to_string();
+            }
+        }
+        base
+    };
+    let mut byfam: Vec<(String, f64, f64, usize)> = Vec::new();
+    for r in &cur {
+        let f = fam(&r.name);
+        let w = wor.iter().find(|x| x.name == r.name).map(|x| x.worst).unwrap_or(r.worst);
+        match byfam.iter_mut().find(|x| x.0 == f) {
+            Some(e) => {
+                if r.worst > e.1 {
+                    e.1 = r.worst;
+                }
+                if w > e.2 {
+                    e.2 = w;
+                }
+                e.3 += 1;
+            }
+            None => byfam.push((f, r.worst, w, 1)),
+        }
+    }
+    byfam.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
+    println!("
+按族去重：{} 个族（上面是 {} 份文件）", byfam.len(), cur.len());
+    println!("族 · 份数 · 现口径峰值 · 世界口径峰值");
+    for (f, c, w, n) in byfam.iter().take(16) {
+        println!("  {:<44} {:>2} 份 · {:>6.1}× → {:>6.1}×", f, n, c, w);
+    }
+
     let mut srt = cur.clone();
     srt.sort_by(|a, b| b.worst.partial_cmp(&a.worst).unwrap());
     println!("\n现口径撕得最狠的 12 份（现 → 世界 · 带表骨/骨架 · 顶点 · 撕边/总边）：");

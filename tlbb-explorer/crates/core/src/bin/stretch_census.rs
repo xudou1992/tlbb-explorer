@@ -68,6 +68,55 @@ fn sig(mut names: Vec<String>) -> u64 {
     h
 }
 
+/// 多重集指纹：排序但**不去重**——两支动作结构一样也算两条证据，
+/// 这是给「同目录一批 `.ani`」用的，骨名集用上面的 `sig`。
+fn sig_multi(mut items: Vec<String>) -> u64 {
+    items.sort();
+    let mut h: u64 = 0x8422_3b7f_4eee_ff19;
+    for it in &items {
+        for b in it.as_bytes().iter().chain(std::iter::once(&0x1fu8)) {
+            h ^= *b as u64;
+            h = h.wrapping_mul(0x100_0000_01b3);
+        }
+    }
+    h
+}
+
+/// 动作结构指纹：同目录（或其 `ani/` 子目录）每支 `.ani` 取
+/// 「去掉角色前缀的动作名 + 帧数 + 轨道数」。变体形态之间动作同构 → 指纹相同，
+/// 这样族判定不必靠剥文件名。
+fn anim_sig(mesh: &Path) -> (u64, usize) {
+    let dir = match mesh.parent() {
+        Some(d) => d,
+        None => return (0, 0),
+    };
+    let mut cand: Vec<PathBuf> = Vec::new();
+    for d in [dir.join("ani").as_path(), dir] {
+        let Ok(rd) = std::fs::read_dir(d) else { continue };
+        for e in rd.flatten() {
+            let p = e.path();
+            if p.extension().and_then(|x| x.to_str()) == Some("ani") {
+                cand.push(p);
+            }
+        }
+    }
+    let mut items: Vec<String> = Vec::new();
+    for p in &cand {
+        let Ok(raw) = std::fs::read(p) else { continue };
+        let Some(a) = parse_ani(&raw) else { continue };
+        let stem = p
+            .file_stem()
+            .map(|s| s.to_string_lossy().to_string())
+            .unwrap_or_default();
+        let tail = match stem.rfind('_') {
+            Some(i) => stem[i + 1..].to_string(),
+            None => stem.clone(),
+        };
+        items.push(format!("{}:{}:{}", tail, a.frames, a.tracks.len()));
+    }
+    (sig_multi(items.clone()), items.len())
+}
+
 /// 一种口径下的撕账。
 #[derive(Clone)]
 struct Row {
@@ -80,6 +129,8 @@ struct Row {
     worst: f64,
     skel_sig: u64,
     skin_sig: u64,
+    anim_sig: u64,
+    anims: usize,
 }
 
 fn measure(
@@ -176,6 +227,7 @@ fn main() {
         let anchor = pose::pose_frame(&h, &a, 0);
         let bindw = pose::bind_worlds(&h);
         let name = f.file_stem().unwrap().to_string_lossy().to_string();
+        let (asig, acount) = anim_sig(f);
         let base = Row {
             name,
             verts: g.positions.len(),
@@ -192,6 +244,8 @@ fn main() {
                     .map(|n| n.name.clone())
                     .collect(),
             ),
+            anim_sig: asig,
+            anims: acount,
         };
 
         if let Some((o2, ed, mx)) = measure(
@@ -382,7 +436,10 @@ fn main() {
     // 路径相对当前工作目录（习惯在仓库根跑）。
     if let Ok(mut fh) = std::fs::File::create(".scratch/census_signatures.tsv") {
         use std::io::Write;
-        let _ = writeln!(fh, "file|verts|skinned_bones|bones|peak|world_peak|skel_sig|skin_sig");
+        let _ = writeln!(
+            fh,
+            "file|verts|skinned_bones|bones|peak|world_peak|skel_sig|skin_sig|anim_sig|anims"
+        );
         for r in &cur {
             let w = wor
                 .iter()
@@ -391,8 +448,9 @@ fn main() {
                 .unwrap_or(r.worst);
             let _ = writeln!(
                 fh,
-                "{}|{}|{}|{}|{:.2}|{:.2}|{:x}|{:x}",
-                r.name, r.verts, r.skinned_bones, r.bones, r.worst, w, r.skel_sig, r.skin_sig
+                "{}|{}|{}|{}|{:.2}|{:.2}|{:x}|{:x}|{:x}|{}",
+                r.name, r.verts, r.skinned_bones, r.bones, r.worst, w,
+                r.skel_sig, r.skin_sig, r.anim_sig, r.anims
             );
         }
         println!("签名明细写了 .scratch/census_signatures.tsv（{} 行）", cur.len());

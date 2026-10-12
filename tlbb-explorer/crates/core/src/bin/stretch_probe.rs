@@ -260,6 +260,132 @@ fn main() {
         }
         return;
     }
+    // 边的分类账（2026-10-12）：把每条三角形边按「两端的带权重表骨集合」分四类，
+    // 逐类量拉伸，两种播放口径各跑一遍。要分开的两件事——
+    //   * **覆盖不全**：一端或两端没有权重表，那端按口径保持存储位不动，边长当然
+    //     变——这是缺数据，不是摆错，不能拿来判合成律；
+    //   * **骨与骨之间的相对变换**：两端都有表且集合不同，边长变化才由合成律决定。
+    // 「两端同集」那档同时是尺子的自检：同一根骨刚体保距 ⇒ 该档最大倍数应贴着 1。
+    if argv.iter().any(|x| x == "--edgeclass") {
+        use std::collections::BTreeMap;
+        let mut bidx: BTreeMap<&str, usize> = BTreeMap::new();
+        for (i, b) in h.bones.iter().enumerate() {
+            bidx.insert(b.name.as_str(), i);
+        }
+        // 逐顶点的带表骨（w>0 才占位，与 `posed_vertices` 同口径）
+        let mut vbones: Vec<Vec<usize>> = vec![Vec::new(); g.positions.len()];
+        for nd in &nodes {
+            let Some(skin) = &nd.skin else { continue };
+            let Some(&bi) = bidx.get(nd.name.as_str()) else { continue };
+            for (&v, &w) in skin.vertices.iter().zip(skin.weights.iter()) {
+                let vi = v as usize;
+                if vi < vbones.len() && w.is_finite() && w > 0.0 {
+                    vbones[vi].push(bi);
+                }
+            }
+        }
+        let cov = vbones.iter().filter(|x| !x.is_empty()).count();
+        let n = g.positions.len();
+        println!("顶点 {n} 个 · 带表 {cov} 个 · 无表 {} 个（覆盖 {:.1}%）", n - cov, 100.0 * cov as f64 / n as f64);
+        println!("带表的骨 {} 根（节点记录 {} 条）", nodes.iter().filter(|x| x.skin.is_some()).count(), nodes.len());
+
+        let dist = |a: &[f32; 3], b: &[f32; 3]| -> f64 {
+            ((b[0] - a[0]).powi(2) + (b[1] - a[1]).powi(2) + (b[2] - a[2]).powi(2)).sqrt() as f64
+        };
+        let class = |i: usize, j: usize| -> &'static str {
+            let (x, y) = (&vbones[i], &vbones[j]);
+            if x.is_empty() && y.is_empty() {
+                "两端都无表"
+            } else if x.is_empty() || y.is_empty() {
+                "一端无表"
+            } else if x == y {
+                "两端同骨"
+            } else if x.iter().any(|k| y.contains(k)) {
+                "两端交叠"
+            } else {
+                "两端异骨"
+            }
+        };
+        let frames: Vec<usize> = (0..a.frames).step_by(step.max(1)).collect();
+        for mode in 0..2u8 {
+            let tag = if mode == 0 {
+                "现口径（轨道当局部·沿父链复合）"
+            } else {
+                "试错口径（轨道直接当世界·无轨道骨用 bind 世界）"
+            };
+            let mut agg: BTreeMap<&'static str, (usize, usize, usize, f64)> = BTreeMap::new();
+            let mut pairs: BTreeMap<(String, String), (usize, f64)> = BTreeMap::new();
+            for &f in &frames {
+                let world = if mode == 0 {
+                    pose::pose_frame(&h, &a, f)
+                } else {
+                    let mut out = bind.clone();
+                    for t in &a.tracks {
+                        if t.rotations.is_empty() || t.positions.is_empty() || t.scales.is_empty() {
+                            continue;
+                        }
+                        if let Some(i) = h.bones.iter().position(|x| x.name == t.bone) {
+                            let k = f.min(t.rotations.len() - 1)
+                                .min(t.positions.len() - 1)
+                                .min(t.scales.len() - 1);
+                            out[i] = pose::trs_matrix(&t.rotations[k], t.positions[k], t.scales[k]);
+                        }
+                    }
+                    out
+                };
+                let Some(pal) = pose::skin_palette(&h, &anchor, &world) else { continue };
+                let Some(posed) = pose::posed_vertices(&h, &pal, &nodes, &g.positions) else { continue };
+                for tri in g.indices.chunks_exact(3) {
+                    for &(i, j) in &[(tri[0], tri[1]), (tri[1], tri[2]), (tri[2], tri[0])] {
+                        let (i, j) = (i as usize, j as usize);
+                        let len0 = dist(&g.positions[i], &g.positions[j]);
+                        if len0 < 1e-4 {
+                            continue;
+                        }
+                        let r = dist(&posed[i], &posed[j]) / len0;
+                        let c = class(i, j);
+                        let e = agg.entry(c).or_insert((0, 0, 0, 0.0));
+                        e.0 += 1;
+                        if r > 1.5 {
+                            e.1 += 1;
+                        }
+                        if r > 2.0 {
+                            e.2 += 1;
+                        }
+                        if r > e.3 {
+                            e.3 = r;
+                        }
+                        if c == "两端异骨" && r > 2.0 {
+                            let a0 = h.bones[vbones[i][0]].name.clone();
+                            let b0 = h.bones[vbones[j][0]].name.clone();
+                            let key = if a0 <= b0 { (a0, b0) } else { (b0, a0) };
+                            let p = pairs.entry(key).or_insert((0, 0.0));
+                            p.0 += 1;
+                            p.1 = p.1.max(r);
+                        }
+                    }
+                }
+            }
+            println!("\n{tag} · {} 帧取样（边次 = 边数 × 取样帧数）", frames.len());
+            let mut all = 0usize;
+            let mut torn = 0usize;
+            for (c, (e, o15, o20, mx)) in &agg {
+                all += e;
+                torn += o20;
+                println!("  {:<6} 边次 {:>8} · 超1.5 {:>7} · 超2 {:>7} · 最大 {:>9.2}", c, e, o15, o20, mx);
+            }
+            println!("  合计 {all} 边次 · 超2 的占 {:.1}%", 100.0 * torn as f64 / all.max(1) as f64);
+            if !pairs.is_empty() {
+                let mut v: Vec<_> = pairs.into_iter().collect();
+                v.sort_by(|x, y| y.1 .1.partial_cmp(&x.1 .1).unwrap());
+                println!("  异骨超 2 倍的骨对（骨A · 骨B · 边次 · 最大倍数）：");
+                for ((a0, b0), (cnt, mx)) in v.iter().take(8) {
+                    println!("    {a0} × {b0} · {cnt} · {mx:.2}");
+                }
+            }
+        }
+        return;
+    }
     if argv.iter().any(|x| x == "--worldmode") {
         let wd = |fr: usize| -> Vec<[f32; 16]> {
             let mut out = bind.clone();

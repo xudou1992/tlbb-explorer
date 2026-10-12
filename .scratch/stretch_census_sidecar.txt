@@ -1,0 +1,30 @@
+== 边长尺普查：D:/TLGL/.scratch/out/sidecar_tree（取前 200 份 .mesh）
+
+量到的份数：102 · 跳过（无骨架 4 / 无节点 12 / 无表 1 / 无动作或动作读不出 81）
+至少一条边被拉开过 2 倍的：102 份
+撕边占比 >5% 的：94 份
+单份最大边长倍数：P50 = 19.4× · P90 = 110.9× · 最差 = 134.9×
+
+撕得最狠的 12 份（最大倍数 · 撕边合计/边合计 · 带表骨数 · 顶点）：
+    134.9×   14723/94050  骨  44 顶点   2136  w1351_pets_jiuxiaozhanlong_b5
+    134.9×   14723/94050  骨  44 顶点   2136  w1351_pets_jiuxiaozhanlong_b6
+    134.9×   15943/91586  骨  44 顶点   1991  w1351_pets_jiuxiaozhanlong_b3
+    134.9×   14490/86680  骨  44 顶点   1875  w1351_pets_jiuxiaozhanlong_b1
+    134.9×   14490/86680  骨  44 顶点   1875  w1351_pets_jiuxiaozhanlong_b2
+    134.9×   15997/91454  骨  44 顶点   1985  w1351_pets_jiuxiaozhanlong_b4
+    134.9×   14759/100298 骨  44 顶点   2219  w1351_pets_jiuxiaozhanlong_b7
+    134.9×   14893/100826 骨  44 顶点   2220  w1351_pets_jiuxiaozhanlong_b8
+    110.9×   12767/60720  骨  36 顶点   1398  w1351_pets_lingtushou_b1
+    110.9×   12767/60720  骨  36 顶点   1398  w1351_pets_lingtushou_b2
+    110.9×   12767/60720  骨  36 顶点   1398  w1351_pets_lingtushou_b3
+    110.9×   12767/60720  骨  36 顶点   1398  w1351_pets_lingtushou_b4
+
+撕得最轻的 8 份：
+     10.6×    3016/25806  骨  25 顶点    593  w1351_pets_huozongshu_b6
+     10.6×    3016/25806  骨  25 顶点    593  w1351_pets_huozongshu_b5
+     10.6×    3016/25806  骨  25 顶点    593  w1351_pets_huozongshu_b4
+     10.6×    3016/25806  骨  25 顶点    593  w1351_pets_huozongshu_b3
+     10.6×    3016/25806  骨  25 顶点    593  w1351_pets_huozongshu_b2
+     10.6×    3016/25806  骨  25 顶点    593  w1351_pets_huozongshu_b1
+     10.7×    3339/37686  骨  22 顶点    946  w1351_pets_lingtushuangjie_b3_lian_001
+     12.0×     932/31482  骨  22 顶点    674  w1351_pets_haidaoshu_b7_yifu_001

@@ -1,0 +1,4 @@
+本次重导（补齐动作配对之后）：mesh=468 · glb=271 · rigged=234 · fail=0 · dup=197
+解出骨架并写出蒙皮的 234 份里：带至少一条动作的 234 份 · 一条动作都没配上的 3 份
+manifest 条目 4
+样例（新配上动作的）：['w1351_boss_huoyanlaohu', 'w1351_boss_machao', 'w1351_guajian_ysym_01', 'w1351_model_flower_lf004', 'w1351_model_sphere_lf006', 'w1351_monster_heimoguai03']

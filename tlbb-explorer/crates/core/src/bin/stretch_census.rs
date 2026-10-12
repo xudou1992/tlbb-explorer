@@ -130,6 +130,10 @@ fn main() {
 
     let mut cur: Vec<Row> = Vec::new();
     let mut wor: Vec<Row> = Vec::new();
+    let mut mix: Vec<Row> = Vec::new();
+    // 混口径这条臂到底动了什么：数一下「没有 bind 记录、但有轨道」的骨——
+    // 只有这批骨在两条口径下取值不同，其它骨两条臂本来就一样。
+    let (mut acc_none_bone, mut acc_none_track) = (0usize, 0usize);
     let (mut no_hier, mut no_nodes, mut no_skin, mut no_ani) = (0, 0, 0, 0);
 
     for f in &files {
@@ -146,6 +150,12 @@ fn main() {
 
         let g = &layout.geometry;
         let frames: Vec<usize> = (0..a.frames).step_by(1.max(a.frames / 8)).collect();
+        acc_none_bone += h.bones.iter().filter(|b| b.bind.is_none()).count();
+        acc_none_track += h
+            .bones
+            .iter()
+            .filter(|b| b.bind.is_none() && a.tracks.iter().any(|t| t.bone == b.name))
+            .count();
         let anchor = pose::pose_frame(&h, &a, 0);
         let bindw = pose::bind_worlds(&h);
         let name = f.file_stem().unwrap().to_string_lossy().to_string();
@@ -191,6 +201,33 @@ fn main() {
             r.worst = mx;
             wor.push(r);
         }
+
+        // 第三条臂（混口径）：只有**自己带 96B 绑定记录**的骨把轨道值当世界用，
+        // 其余的骨仍沿父链复合——看两条口径各管哪一半。
+        let mixed = |fr: usize| -> Vec<[f32; 16]> {
+            let hw = pose::pose_frame(&h, &a, fr);
+            let ww = world_direct(&h, &a, &bindw, fr);
+            hw.into_iter()
+                .enumerate()
+                .map(|(i, m)| if h.bones[i].bind.is_some() { ww[i] } else { m })
+                .collect()
+        };
+        let anchor_m = mixed(0);
+        if let Some((o2, ed, mx)) = measure(
+            &h,
+            &nodes,
+            &g.positions,
+            &g.indices,
+            &anchor_m,
+            &mixed,
+            &frames,
+        ) {
+            let mut r = base.clone();
+            r.over2 = o2;
+            r.edges = ed;
+            r.worst = mx;
+            mix.push(r);
+        }
     }
 
     let paired = cur.iter().filter(|r| wor.iter().any(|w| w.name == r.name)).count();
@@ -211,6 +248,29 @@ fn main() {
         "世界口径把峰值压掉 ≥25% 的：{better} 份 · 反而涨 ≥25% 的：{worse} 份 · 其余：{} 份",
         paired - better - worse
     );
+
+    println!(
+        "混口径与世界口径的差别只在「没 bind 记录却有轨道」的骨上：这些份里无 bind 骨累计 {acc_none_bone} 根，其中带轨道的 {acc_none_track} 根"
+    );
+    let arm = |v: &Vec<Row>, name: &str| {
+        let got: Vec<(&Row, f64)> = cur
+            .iter()
+            .filter_map(|r| v.iter().find(|x| x.name == r.name).map(|x| (r, x.worst)))
+            .collect();
+        if got.is_empty() {
+            println!("  {name}：没量到");
+            return;
+        }
+        let mean = got.iter().map(|(_, w)| *w).sum::<f64>() / got.len() as f64;
+        let win = got.iter().filter(|(r, w)| *w < r.worst * 0.75).count();
+        let bad = got.iter().filter(|(r, w)| *w > r.worst * 1.25).count();
+        println!(
+            "  {name}：配对 {} 份 · 峰值均值 {mean:.1}× · 比现口径压掉 ≥25% 的 {win} 份 · 涨 ≥25% 的 {bad} 份",
+            got.len()
+        );
+    };
+    arm(&wor, "世界口径（轨道全当世界）");
+    arm(&mix, "混口径（有记录的骨才当世界）");
 
     for (lo, hi) in [(0.0f64, 0.34), (0.34, 0.70), (0.70, 1.01)] {
         let grp: Vec<&Row> = cur

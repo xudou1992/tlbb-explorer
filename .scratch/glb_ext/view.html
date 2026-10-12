@@ -412,7 +412,16 @@ new GLTFLoader().load(asset, (gltf) => {
     if (!seek(name, t)) return { error: '没有这条动作' };
     const P = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()];
     const B = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()];
-    const kinds = new Map(), pairs = new Map();
+    const kinds = new Map(), pairs = new Map(), sub = new Map();
+    // 补一根无记录骨的骨位会连带修好它**整棵子树**，所以只数「自己有没有记录」低估了影响面。
+    // traverse 是前序：父骨先分类，子骨才拿得到父骨的结论。
+    const clsOf = new Map();
+    root.traverse((o) => {
+      if (!o.isBone) return;
+      const p = (o.parent && o.parent.isBone) ? clsOf.get(o.parent.name) : null;
+      const inherited = p === '自己无记录' || p === '祖上无记录';
+      clsOf.set(o.name, miss.has(o.name) ? '自己无记录' : (inherited ? '祖上无记录' : '干净'));
+    });
     let edges = 0, over2 = 0;
     for (const mesh of skinned) {
       const g = mesh.geometry, pos = g.getAttribute('position');
@@ -445,6 +454,10 @@ new GLTFLoader().load(asset, (gltf) => {
           const kind = ka === '无记录' && kb === '无记录' ? '两端都无记录'
             : (ka === '无记录' || kb === '无记录' ? '一端无记录' : '两端都有记录');
           kinds.set(kind, (kinds.get(kind) ?? 0) + 1);
+          const ca = clsOf.get(a) || '未知', cb = clsOf.get(b) || '未知';
+          const sk = (ca === '干净' && cb === '干净') ? '两端都在干净子树'
+            : (ca === '干净' || cb === '干净' ? '一端在脏子树' : '两端都在脏子树');
+          sub.set(sk, (sub.get(sk) ?? 0) + 1);
           if (kind !== '两端都有记录') {
             const pk = [a, b].sort().join(' | ');
             pairs.set(pk, (pairs.get(pk) ?? 0) + 1);
@@ -453,6 +466,8 @@ new GLTFLoader().load(asset, (gltf) => {
       }
     }
     return { clip: name, t, edges, over2, 按记录分类: Object.fromEntries(kinds),
+      按子树分类: Object.fromEntries(sub),
+      骨名分类样本: [...clsOf].slice(0, 8),
       涉及无记录的骨对: [...pairs].sort((x, y) => y[1] - x[1]).slice(0, 12) };
   };
 

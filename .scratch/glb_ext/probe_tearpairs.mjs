@@ -20,10 +20,13 @@ const out = await ev('(function(){var ts=(window.__times("machao_behit01").times
   'var rows=ts.map(function(t){return window.__tearPairs("machao_behit01",t,' + miss + ');});' +
   'return JSON.stringify({n:rows.length,rows:rows});})()');
 const j = JSON.parse(String(out));
-let tot = 0, byKind = {};
-for (const r of j.rows) { tot += r.over2; for (const [k, v] of Object.entries(r.按记录分类)) byKind[k] = (byKind[k] || 0) + v; }
+let tot = 0, byKind = {}, bySub = {};
+for (const r of j.rows) { tot += r.over2; for (const [k, v] of Object.entries(r.按记录分类)) byKind[k] = (byKind[k] || 0) + v;
+  for (const [k, v] of Object.entries(r.按子树分类 || {})) bySub[k] = (bySub[k] || 0) + v; }
 console.log('量了 ' + j.n + ' 帧 · 过 2 倍的边合计 ' + tot);
-for (const [k, v] of Object.entries(byKind)) console.log('  ' + k + ': ' + v + ' (' + (100 * v / tot).toFixed(1) + '%)');
+for (const [k, v] of Object.entries(byKind)) console.log('  按自己有没有记录 — ' + k + ': ' + v + ' (' + (100 * v / tot).toFixed(1) + '%)');
+for (const [k, v] of Object.entries(bySub)) console.log('  按整棵子树脏不脏 — ' + k + ': ' + v + ' (' + (100 * v / tot).toFixed(1) + '%)');
+console.log('  骨名分类样本：' + JSON.stringify(j.rows[0].骨名分类样本));
 const best = j.rows.slice().sort((a, b) => b.over2 - a.over2)[0];
 console.log('\n撕得最狠那帧 t=' + best.t + '（' + best.over2 + '/' + best.edges + '）里涉及无记录骨的骨对 top：');
 for (const [p, n] of best.涉及无记录的骨对) console.log('  ' + n + ' 条  ' + p);

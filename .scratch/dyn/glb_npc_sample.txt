@@ -1,0 +1,967 @@
+[glb] w1351_caiji_bosijihao_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=32 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_duchanchu_01: joints=26 无bind骨=5 覆盖顶点=218 归一=157 差额挂根骨=61 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 41 帧 · .ani 轨道 26 条 · 对上 25 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 26 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 41 帧 · .ani 轨道 26 条 · 对上 25 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 26 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 41 帧 · .ani 轨道 26 条 · 对上 25 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 26 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_duwugong_01: joints=24 无bind骨=9 覆盖顶点=193 归一=148 差额挂根骨=45 按和强归=0 未覆盖=98 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 70 帧 · .ani 轨道 24 条 · 对上 23 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 24 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 70 帧 · .ani 轨道 24 条 · 对上 23 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 24 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 70 帧 · .ani 轨道 24 条 · 对上 23 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 24 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_duzhizhu_01: joints=46 无bind骨=10 覆盖顶点=399 归一=256 差额挂根骨=143 按和强归=0 未覆盖=7 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 50 帧 · .ani 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 46 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 50 帧 · .ani 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 46 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 50 帧 · .ani 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 46 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_hamigua_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=66 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_heihou_01: joints=29 无bind骨=7 覆盖顶点=279 归一=246 差额挂根骨=33 按和强归=0 未覆盖=36 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 30 帧 · .ani 轨道 29 条 · 对上 28 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 29 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 41 帧 · .ani 轨道 29 条 · 对上 28 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 29 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 30 帧 · .ani 轨道 29 条 · 对上 28 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 29 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_honghou_01: joints=29 无bind骨=7 覆盖顶点=279 归一=246 差额挂根骨=33 按和强归=0 未覆盖=36 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 30 帧 · .ani 轨道 29 条 · 对上 28 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 29 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 41 帧 · .ani 轨道 29 条 · 对上 28 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 29 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 30 帧 · .ani 轨道 29 条 · 对上 28 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 29 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_hongzhuangsuguo_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=247 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_jinbi_01: joints=2 无bind骨=1 覆盖顶点=3036 归一=3036 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 4 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_t_pose: 4 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_liaoguojihao_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=66 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_meiguihua_001: joints=35 无bind骨=14 覆盖顶点=328 归一=140 差额挂根骨=188 按和强归=0 未覆盖=775 超4影响=0 trs不符=0
+[glb]   动画 001_idle01: 121 帧 · .ani 轨道 35 条 · 对上 34 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 35 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_meirenzhuahonglian_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=290 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_muzhilingjian_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=164 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_putaogan_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=97 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_sanluobingqi: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=80 超4影响=0 trs不符=0
+[glb]   动画 sanluobingqi_idle01: 5 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 sanluobingqi_idle02: 5 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 sanluobingqi_idle03: 5 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_sanluodemogu_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=163 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_sanluodemuchai_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=388 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_sanluodesongguo_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=92 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_sanluodunpai: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=34 超4影响=0 trs不符=0
+[glb]   动画 sanluodunpai_idle01: 5 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 sanluodunpai_idle02: 5 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 sanluodunpai_idle03: 5 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_sanluokuijia: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=326 超4影响=0 trs不符=0
+[glb]   动画 sanluokuijia_idle01: 5 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 sanluokuijia_idle02: 5 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 sanluokuijia_idle03: 5 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_shizhilingjian_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=107 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_shuiqiu: joints=4 无bind骨=2 覆盖顶点=3 归一=3 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 shuiqiu_idle: 101 帧 · .ani 轨道 4 条 · 对上 3 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 4 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 shuiqiu_idle01: 41 帧 · .ani 轨道 4 条 · 对上 3 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 4 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 shuiqiu_idle02: 41 帧 · .ani 轨道 4 条 · 对上 3 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 4 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 shuiqiu_idle03: 41 帧 · .ani 轨道 4 条 · 对上 3 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 4 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_shuishangxue_001: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=12 超4影响=0 trs不符=0
+[glb]   动画 001_idle01: 31 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 001_idle02: 31 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 001_idle03: 31 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 001_t_pose: 6 帧 · .ani 轨道 22 条 · 对上 1 · 对不上 21 个 ["bone009", "bone001", "bone010", "bone011", "bone012", "bone013", "bone014", "bone015", "bone003", "bone005", "bone002", "bone019", "bone020", "bone021", "bone016", "bone017", "bone018", "bone006", "bone007", "bone008", "(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_songjunjihao_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=56 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_tongzhilingjian_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=137 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_wudanglingzhi_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=9 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_wudangrenshen_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=124 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_wudangshouwu_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=67 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_xiaobaishe_01: joints=15 无bind骨=1 覆盖顶点=145 归一=145 差额挂根骨=0 按和强归=0 未覆盖=8 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 100 帧 · .ani 轨道 15 条 · 对上 14 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 15 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 100 帧 · .ani 轨道 15 条 · 对上 14 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 15 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 100 帧 · .ani 轨道 15 条 · 对上 14 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 15 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_xiaohongshe_01: joints=15 无bind骨=1 覆盖顶点=145 归一=145 差额挂根骨=0 按和强归=0 未覆盖=8 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 100 帧 · .ani 轨道 15 条 · 对上 14 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 15 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 100 帧 · .ani 轨道 15 条 · 对上 14 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 15 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 100 帧 · .ani 轨道 15 条 · 对上 14 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 15 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_xiguateng_001: joints=4 无bind骨=2 覆盖顶点=3816 归一=3816 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 001_idle01: 31 帧 · .ani 轨道 4 条 · 对上 3 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 4 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_xiguateng_002: joints=4 无bind骨=2 覆盖顶点=3661 归一=3661 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 002_idle01: 31 帧 · .ani 轨道 4 条 · 对上 3 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 4 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_xiguateng_003: joints=4 无bind骨=2 覆盖顶点=3008 归一=3008 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 003_idle01: 31 帧 · .ani 轨道 4 条 · 对上 3 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 4 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_xiguateng_004: joints=4 无bind骨=2 覆盖顶点=7163 归一=7163 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 004_idle01: 31 帧 · .ani 轨道 4 条 · 对上 3 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 4 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_xuelianhua_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=460 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_yanermei_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=194 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_yuebing_001: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=564 超4影响=0 trs不符=0
+[glb]   动画 001_idle01: 21 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 001_idle02: 21 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 001_idle03: 21 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_yuebing_003: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=913 超4影响=0 trs不符=0
+[glb]   动画 003_idle01: 21 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 003_idle02: 21 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 003_idle03: 21 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_yuebing_004: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=909 超4影响=0 trs不符=0
+[glb]   动画 004_idle01: 21 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 004_idle02: 21 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 004_idle03: 21 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_caiji_zhenlongzhiguang_01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=101 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle02: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle03: 10 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_banruozhang: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=24 超4影响=0 trs不符=0
+[glb]   动画 banruozhang_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 banruozhang_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 banruozhang_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_beimingshengong: joints=12 无bind骨=2 覆盖顶点=626 归一=626 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 beimingshengong_idle01: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 beimingshengong_idle02: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 beimingshengong_t_pose: 6 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_bilinzhen: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=345 超4影响=0 trs不符=0
+[glb]   动画 bilinzhen_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 bilinzhen_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 bilinzhen_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_chansiqinnashou: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=24 超4影响=0 trs不符=0
+[glb]   动画 chansiqinnashou_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 chansiqinnashou_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 chansiqinnashou_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_dagoubang: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=298 超4影响=0 trs不符=0
+[glb]   动画 dagoubang_idle01: 51 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 dagoubang_idle02: 51 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 dagoubang_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_douzhuanxingyi: joints=12 无bind骨=2 覆盖顶点=653 归一=653 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 douzhuanxingyi_idle01: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 douzhuanxingyi_idle02: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 douzhuanxingyi_t_pose: 6 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_ezuijian: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=630 超4影响=0 trs不符=0
+[glb]   动画 ezuijian_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 ezuijian_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 ezuijian_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_gangzhuam: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=267 超4影响=0 trs不符=0
+[glb]   动画 gangzhua_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 gangzhua_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 gangzhua_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_guitoudao: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=216 超4影响=0 trs不符=0
+[glb]   动画 guitoudao_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 guitoudao_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 guitoudao_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_hama_lian_001: joints=96 无bind骨=21 覆盖顶点=54 归一=50 差额挂根骨=4 按和强归=0 未覆盖=4 超4影响=0 trs不符=0
+[glb]   动画 behit: 31 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 dead: 2 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 deadbegin: 56 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 hit01: 41 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 idle01: 51 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 run: 41 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 skill01: 51 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 skill02: 71 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 walk: 41 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_hama_toufa_001: joints=96 无bind骨=21 覆盖顶点=557 归一=539 差额挂根骨=18 按和强归=0 未覆盖=18 超4影响=0 trs不符=0
+[glb]   动画 behit: 31 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 dead: 2 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 deadbegin: 56 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 hit01: 41 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 idle01: 51 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 run: 41 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 skill01: 51 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 skill02: 71 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 walk: 41 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_hama_yifu_001: joints=96 无bind骨=21 覆盖顶点=506 归一=461 差额挂根骨=45 按和强归=0 未覆盖=77 超4影响=0 trs不符=0
+[glb]   动画 behit: 31 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 dead: 2 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 deadbegin: 56 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 hit01: 41 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 idle01: 51 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 run: 41 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 skill01: 51 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 skill02: 71 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 walk: 41 帧 · .ani 轨道 96 条 · 对上 95 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 96 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_huagongdafa: joints=12 无bind骨=2 覆盖顶点=626 归一=626 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 huagongdafa_idle01: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 huagongdafa_idle02: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 huagongdafa_t_pose: 6 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_jiashafumogong: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=24 超4影响=0 trs不符=0
+[glb]   动画 jiashafumogong_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 jiashafumogong_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 jiashafumogong_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_lingboweibu: joints=12 无bind骨=2 覆盖顶点=618 归一=618 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 lingboweibu_idle01: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 lingboweibu_idle02: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 lingboweibu_t_pose: 6 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_liumaishenjian: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=24 超4影响=0 trs不符=0
+[glb]   动画 liumaishenjian_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 liumaishenjian_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 liumaishenjian_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_longzhuashou: joints=12 无bind骨=2 覆盖顶点=596 归一=596 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 longzhuashou_idle01: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 longzhuashou_idle02: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 longzhuashou_t_pose: 6 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_luohanquan: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=24 超4影响=0 trs不符=0
+[glb]   动画 luohanquan_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 luohanquan_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 luohanquan_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_lvboxiangludao: joints=7 无bind骨=1 覆盖顶点=331 归一=331 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 lvboxiangludao_idle01: 41 帧 · .ani 轨道 7 条 · 对上 6 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 7 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 lvboxiangludao_idle02: 41 帧 · .ani 轨道 7 条 · 对上 6 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 7 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 lvboxiangludao_t_pose: 6 帧 · .ani 轨道 7 条 · 对上 6 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 7 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_panguanbi: joints=16 无bind骨=3 覆盖顶点=386 归一=386 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 panguanbi_idle01: 41 帧 · .ani 轨道 16 条 · 对上 15 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 16 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 panguanbi_idle02: 41 帧 · .ani 轨道 16 条 · 对上 15 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 16 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 panguanbi_t_pose: 6 帧 · .ani 轨道 16 条 · 对上 15 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 16 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_qiannianbingcan: joints=11 无bind骨=4 覆盖顶点=210 归一=106 差额挂根骨=104 按和强归=0 未覆盖=18 超4影响=0 trs不符=0
+[glb]   动画 qiannianbingcan_idle01: 41 帧 · .ani 轨道 11 条 · 对上 10 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 11 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 qiannianbingcan_idle02: 41 帧 · .ani 轨道 11 条 · 对上 10 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 11 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 qiannianbingcan_t_pose: 6 帧 · .ani 轨道 11 条 · 对上 10 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 11 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_qiannianlingzhi: joints=10 无bind骨=4 覆盖顶点=950 归一=947 差额挂根骨=3 按和强归=0 未覆盖=1108 超4影响=0 trs不符=0
+[glb]   动画 qiannianlingzhi_idle01: 41 帧 · .ani 轨道 10 条 · 对上 9 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 10 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 qiannianlingzhi_idle02: 41 帧 · .ani 轨道 10 条 · 对上 9 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 10 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 qiannianlingzhi_t_pose: 6 帧 · .ani 轨道 10 条 · 对上 9 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 10 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_qiannianrenshen: joints=12 无bind骨=3 覆盖顶点=1169 归一=924 差额挂根骨=245 按和强归=0 未覆盖=88 超4影响=0 trs不符=0
+[glb]   动画 qiannianrenshen_idle01: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 qiannianrenshen_idle02: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 qiannianrenshen_t_pose: 6 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_qibaobanzhi: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=335 超4影响=0 trs不符=0
+[glb]   动画 qibaobanzhi_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 qibaobanzhi_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 qibaobanzhi_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_qimeigun: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=1616 超4影响=0 trs不符=0
+[glb]   动画 qimeigun_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 qimeigun_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 qimeigun_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_qingfengding: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=76 超4影响=0 trs不符=0
+[glb]   动画 qingfengding_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 qingfengding_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 qingfengding_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_qinggangjian: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=73 超4影响=0 trs不符=0
+[glb]   动画 qinggangjian_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 qinggangjian_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 qinggangjian_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_qinlonggong: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=24 超4影响=0 trs不符=0
+[glb]   动画 qinlonggong_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 qinlonggong_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 qinlonggong_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_rousisuo: joints=17 无bind骨=2 覆盖顶点=300 归一=300 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 rousisuo_idle01: 41 帧 · .ani 轨道 17 条 · 对上 16 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 17 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 rousisuo_idle02: 41 帧 · .ani 轨道 17 条 · 对上 16 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 17 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 rousisuo_t_pose: 6 帧 · .ani 轨道 17 条 · 对上 16 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 17 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_ruanbian: joints=32 无bind骨=3 覆盖顶点=1244 归一=1244 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 ruanbian_idle01: 41 帧 · .ani 轨道 32 条 · 对上 31 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 32 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 ruanbian_idle02: 41 帧 · .ani 轨道 32 条 · 对上 31 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 32 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 ruanbian_t_pose: 6 帧 · .ani 轨道 32 条 · 对上 31 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 32 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_shandiandiao: joints=45 无bind骨=10 覆盖顶点=1509 归一=1315 差额挂根骨=194 按和强归=0 未覆盖=570 超4影响=0 trs不符=0
+[glb]   动画 shandiandiao_idle01: 31 帧 · .ani 轨道 45 条 · 对上 44 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 45 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 shandiandiao_idle02: 31 帧 · .ani 轨道 45 条 · 对上 44 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 45 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 shandiandiao_t_pose: 6 帧 · .ani 轨道 45 条 · 对上 44 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 45 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_shengsifu: joints=12 无bind骨=2 覆盖顶点=618 归一=618 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 shengsifu_idle01: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 shengsifu_idle02: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 shengsifu_t_pose: 6 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_shengsifulu: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=311 超4影响=0 trs不符=0
+[glb]   动画 shengsifulu_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 shengsifulu_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 shengsifulu_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_shibazhang: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=24 超4影响=0 trs不符=0
+[glb]   动画 shibazhang_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 shibazhang_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 shibazhang_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_tianlongbabutu: joints=8 无bind骨=2 覆盖顶点=1260 归一=32 差额挂根骨=1228 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 tianlongbabutu_idle01: 41 帧 · .ani 轨道 8 条 · 对上 7 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 8 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 tianlongbabutu_idle02: 41 帧 · .ani 轨道 8 条 · 对上 7 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 8 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 tianlongbabutu_t_pose: 6 帧 · .ani 轨道 8 条 · 对上 7 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 8 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_tianshanliuyangzhang: joints=12 无bind骨=2 覆盖顶点=662 归一=662 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 tianshanliuyangzhang_idle01: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 tianshanliuyangzhang_idle02: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 tianshanliuyangzhang_t_pose: 6 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_tianshanxuelian: joints=16 无bind骨=9 覆盖顶点=317 归一=183 差额挂根骨=134 按和强归=0 未覆盖=102 超4影响=0 trs不符=0
+[glb]   动画 tianshanxuelian_idle01: 41 帧 · .ani 轨道 16 条 · 对上 15 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 16 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 tianshanxuelian_idle02: 41 帧 · .ani 轨道 16 条 · 对上 15 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 16 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 tianshanxuelian_t_pose: 6 帧 · .ani 轨道 16 条 · 对上 15 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 16 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_tiashanzhemeishou: joints=12 无bind骨=2 覆盖顶点=662 归一=662 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 tiashanzhemeishou_idle01: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 tiashanzhemeishou_idle02: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 tiashanzhemeishou_t_pose: 6 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_xiangmodaofa: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=24 超4影响=0 trs不符=0
+[glb]   动画 xiangmodaofa_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 xiangmodaofa_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 xiangmodaofa_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_xiaowuxianggong: joints=12 无bind骨=2 覆盖顶点=626 归一=626 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 xiaowuxianggong_idle01: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 xiaowuxianggong_idle02: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 xiaowuxianggong_t_pose: 6 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_xiuluodao: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=115 超4影响=0 trs不符=0
+[glb]   动画 xiuluodao_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 xiuluodao_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 xiuluodao_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_yanguoyuxi: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=2677 超4影响=0 trs不符=0
+[glb]   动画 yanguoyuxi_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 yanguoyuxi_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 yanguoyuxi_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_yemingzhu: joints=3 无bind骨=1 覆盖顶点=456 归一=456 差额挂根骨=0 按和强归=0 未覆盖=62 超4影响=0 trs不符=0
+[glb]   动画 yemingzhu_idle01: 81 帧 · .ani 轨道 3 条 · 对上 2 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 3 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 yemingzhu_idle02: 81 帧 · .ani 轨道 3 条 · 对上 2 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 3 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 yemingzhu_t_pose: 6 帧 · .ani 轨道 3 条 · 对上 2 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 3 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_yijinjing: joints=12 无bind骨=2 覆盖顶点=596 归一=596 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 yijinjing_idle01: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 yijinjing_idle02: 41 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 yijinjing_t_pose: 6 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_yiyangzhifa: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=24 超4影响=0 trs不符=0
+[glb]   动画 yiyangzhifa_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 yiyangzhifa_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 yiyangzhifa_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_youlongjian: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=2370 超4影响=0 trs不符=0
+[glb]   动画 youlongjian_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 youlongjian_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 youlongjian_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_diancang_yugan: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=60 超4影响=0 trs不符=0
+[glb]   动画 yugan_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 yugan_idle02: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 yugan_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_drop_bihebaoguo1: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=520 超4影响=0 trs不符=0
+[glb]   动画 bihebaoguo1_idle01: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 bihebaoguo1_idle02: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 bihebaoguo1_idle03: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 bihebaoguo1_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_drop_bihebaoguo3: joints=2 无bind骨=1 覆盖顶点=150 归一=150 差额挂根骨=0 按和强归=0 未覆盖=270 超4影响=0 trs不符=0
+[glb]   动画 bihebaoguo3_idle01: 31 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 bihebaoguo3_idle02: 31 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 bihebaoguo3_idle03: 31 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 bihebaoguo3_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_drop_dakaibaoguo1: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=617 超4影响=0 trs不符=0
+[glb]   动画 dakaibaoguo1_idle01: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 dakaibaoguo1_idle02: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 dakaibaoguo1_idle03: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 dakaibaoguo1_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_drop_jian: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=196 超4影响=0 trs不符=0
+[glb]   动画 jian_idle01: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 jian_idle02: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 jian_idle03: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 jian_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_npc_gouhuo: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=1972 超4影响=0 trs不符=0
+[glb]   动画 gouhuo_idle01: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 gouhuo_idle02: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 gouhuo_idle03: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 gouhuo_tpose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_pvpcaiji_mie: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=101 超4影响=0 trs不符=0
+[glb]   动画 mie_idle01: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 mie_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_candou1: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=729 超4影响=0 trs不符=0
+[glb]   动画 candou1_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 candou1_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_candou2: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=1647 超4影响=0 trs不符=0
+[glb]   动画 candou2_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 candou2_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_candou3: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=2295 超4影响=0 trs不符=0
+[glb]   动画 candou3_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 candou3_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_dami1: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=648 超4影响=0 trs不符=0
+[glb]   动画 dami1_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 dami1_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_dami2: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=842 超4影响=0 trs不符=0
+[glb]   动画 dami2_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 dami2_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_dami3: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=842 超4影响=0 trs不符=0
+[glb]   动画 dami3_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 dami3_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_gaoliang1: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=2760 超4影响=0 trs不符=0
+[glb]   动画 gaoliang1_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 gaoliang1_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_gaoliang2: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=2080 超4影响=0 trs不符=0
+[glb]   动画 gaoliang2_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 gaoliang2_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_gaoliang3: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=2080 超4影响=0 trs不符=0
+[glb]   动画 gaoliang3_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 gaoliang3_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_hongshu1: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=199 超4影响=0 trs不符=0
+[glb]   动画 hongshu1_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 hongshu1_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_hongshu2: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=411 超4影响=0 trs不符=0
+[glb]   动画 hongshu2_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 hongshu2_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_hongshu3: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=329 超4影响=0 trs不符=0
+[glb]   动画 hongshu3_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 hongshu3_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_huangdou1: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=5508 超4影响=0 trs不符=0
+[glb]   动画 huangdou1_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 huangdou1_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_huangdou2: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=5888 超4影响=0 trs不符=0
+[glb]   动画 huangdou2_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 huangdou2_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_huangdou3: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=5355 超4影响=0 trs不符=0
+[glb]   动画 huangdou3_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 huangdou3_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_huasheng1: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=3591 超4影响=0 trs不符=0
+[glb]   动画 huasheng1_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 huasheng1_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_huasheng2: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=5274 超4影响=0 trs不符=0
+[glb]   动画 huasheng2_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 huasheng2_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_huasheng3: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=4698 超4影响=0 trs不符=0
+[glb]   动画 huasheng3_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 huasheng3_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_kuangshi1: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=78 超4影响=0 trs不符=0
+[glb]   动画 kuangshi1_idle: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_kuangshi10: joints=2 无bind骨=1 覆盖顶点=75 归一=75 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 kuangshi10_idle: 4 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_kuangshi2: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=78 超4影响=0 trs不符=0
+[glb]   动画 kuangshi2_idle: 31 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_kuangshi3: joints=2 无bind骨=1 覆盖顶点=70 归一=70 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 kuangshi3_idle: 31 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_lvdou1: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=199 超4影响=0 trs不符=0
+[glb]   动画 lvdou1_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 lvdou1_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_lvdou2: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=411 超4影响=0 trs不符=0
+[glb]   动画 lvdou2_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 lvdou2_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_lvdou3: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=1525 超4影响=0 trs不符=0
+[glb]   动画 lvdou3_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 lvdou3_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_xiaomai1: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=1472 超4影响=0 trs不符=0
+[glb]   动画 xiaomai1_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 xiaomai1_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_xiaomai2: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=1384 超4影响=0 trs不符=0
+[glb]   动画 xiaomai2_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 xiaomai2_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_xiaomai3: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=1858 超4影响=0 trs不符=0
+[glb]   动画 xiaomai3_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 xiaomai3_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_yumi1: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=2080 超4影响=0 trs不符=0
+[glb]   动画 yumi1_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 yumi1_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_yumi2: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=2656 超4影响=0 trs不符=0
+[glb]   动画 yumi2_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 yumi2_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_yumi3: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=2656 超4影响=0 trs不符=0
+[glb]   动画 yumi3_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 yumi3_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_zhima1: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=5508 超4影响=0 trs不符=0
+[glb]   动画 zhima1_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 zhima1_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_zhima2: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=5508 超4影响=0 trs不符=0
+[glb]   动画 zhima2_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 zhima2_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shenghuo_zhima3: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=7035 超4影响=0 trs不符=0
+[glb]   动画 zhima3_idle: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 zhima3_t_pose: 6 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_shuihu01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=57 超4影响=0 trs不符=0
+[glb]   动画 shuihu01_idle01: 3 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 shuihu01_t_pose: 3 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ui_baoxiang_01: joints=16 无bind骨=14 覆盖顶点=2101 归一=2101 差额挂根骨=0 按和强归=0 未覆盖=1955 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 6 帧 · .ani 轨道 16 条 · 对上 15 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 16 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_open: 13 帧 · .ani 轨道 16 条 · 对上 15 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 16 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ui_baoxiang_02: joints=16 无bind骨=14 覆盖顶点=1200 归一=1200 差额挂根骨=0 按和强归=0 未覆盖=2426 超4影响=0 trs不符=0
+[glb]   动画 02_idle01: 6 帧 · .ani 轨道 16 条 · 对上 15 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 16 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 02_open: 13 帧 · .ani 轨道 16 条 · 对上 15 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 16 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ui_baoxiang_03: joints=16 无bind骨=14 覆盖顶点=1426 归一=1047 差额挂根骨=379 按和强归=0 未覆盖=1129 超4影响=0 trs不符=0
+[glb]   动画 03_idle01: 6 帧 · .ani 轨道 16 条 · 对上 15 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 16 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 03_open: 13 帧 · .ani 轨道 16 条 · 对上 15 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 16 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ui_baoxiang_04: joints=16 无bind骨=14 覆盖顶点=1124 归一=1124 差额挂根骨=0 按和强归=0 未覆盖=3304 超4影响=0 trs不符=0
+[glb]   动画 04_idle01: 6 帧 · .ani 轨道 16 条 · 对上 15 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 16 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 04_open: 13 帧 · .ani 轨道 16 条 · 对上 15 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 16 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ui_baoxiang_05: joints=16 无bind骨=14 覆盖顶点=1007 归一=949 差额挂根骨=58 按和强归=0 未覆盖=3305 超4影响=0 trs不符=0
+[glb]   动画 05_idle01: 6 帧 · .ani 轨道 16 条 · 对上 15 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 16 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 05_open: 13 帧 · .ani 轨道 16 条 · 对上 15 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 16 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ui_baoxiang_06: joints=21 无bind骨=17 覆盖顶点=1470 归一=1272 差额挂根骨=198 按和强归=0 未覆盖=3770 超4影响=0 trs不符=0
+[glb]   动画 06_idle01: 6 帧 · .ani 轨道 21 条 · 对上 20 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 21 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 06_open: 13 帧 · .ani 轨道 21 条 · 对上 20 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 21 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ui_baoxiang_07: joints=23 无bind骨=19 覆盖顶点=2751 归一=2571 差额挂根骨=180 按和强归=0 未覆盖=4578 超4影响=0 trs不符=0
+[glb]   动画 07_idle01: 6 帧 · .ani 轨道 23 条 · 对上 22 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 23 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 07_open: 13 帧 · .ani 轨道 23 条 · 对上 22 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 23 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ui_baoxiang_08: joints=26 无bind骨=22 覆盖顶点=3926 归一=3602 差额挂根骨=324 按和强归=0 未覆盖=3405 超4影响=0 trs不符=0
+[glb]   动画 08_idle01: 6 帧 · .ani 轨道 26 条 · 对上 25 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 26 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 08_open: 13 帧 · .ani 轨道 26 条 · 对上 25 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 26 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ui_baoxiang_09: joints=33 无bind骨=25 覆盖顶点=3242 归一=2992 差额挂根骨=250 按和强归=0 未覆盖=4730 超4影响=0 trs不符=0
+[glb]   动画 09_idle01: 6 帧 · .ani 轨道 33 条 · 对上 32 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 33 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 09_open: 13 帧 · .ani 轨道 33 条 · 对上 32 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 33 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ui_baoxiang_10: joints=17 无bind骨=12 覆盖顶点=3062 归一=2684 差额挂根骨=378 按和强归=0 未覆盖=5305 超4影响=0 trs不符=0
+[glb]   动画 10_dayanmibao: 36 帧 · .ani 轨道 17 条 · 对上 16 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 17 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 10_idle01: 6 帧 · .ani 轨道 17 条 · 对上 16 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 17 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 10_open: 13 帧 · .ani 轨道 17 条 · 对上 16 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 17 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_yqlygyw_lihe001: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=35 超4影响=0 trs不符=0
+[glb]   动画 lihe001_idle: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 lihe001_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_yqlygyw_xuyuanshu001_lian_001: joints=33 无bind骨=14 覆盖顶点=452 归一=452 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 idle: 81 帧 · .ani 轨道 33 条 · 对上 32 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 33 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 t_pose: 6 帧 · .ani 轨道 33 条 · 对上 32 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 33 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_yqlygyw_xuyuanshu001_shoutao_001: joints=33 无bind骨=14 覆盖顶点=4650 归一=4471 差额挂根骨=179 按和强归=0 未覆盖=652 超4影响=0 trs不符=0
+[glb]   动画 idle: 81 帧 · .ani 轨道 33 条 · 对上 32 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 33 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 t_pose: 6 帧 · .ani 轨道 33 条 · 对上 32 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 33 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_yqlygyw_xuyuanshu001_yifu_001: joints=33 无bind骨=14 覆盖顶点=101 归一=101 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 idle: 81 帧 · .ani 轨道 33 条 · 对上 32 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 33 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 t_pose: 6 帧 · .ani 轨道 33 条 · 对上 32 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 33 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1354_pvpcaiji_hua: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=101 超4影响=0 trs不符=0
+[glb]   动画 hua_idle01: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 hua_t_pose: 6 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_mrsz_bulian_001: joints=13 无bind骨=5 覆盖顶点=164 归一=164 差额挂根骨=0 按和强归=0 未覆盖=164 超4影响=0 trs不符=0
+[glb]   动画 buliandeng_001_idle: 101 帧 · .ani 轨道 13 条 · 对上 12 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 13 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_mrsz_bulian_002: joints=16 无bind骨=6 覆盖顶点=211 归一=211 差额挂根骨=0 按和强归=0 未覆盖=230 超4影响=0 trs不符=0
+[glb]   动画 buliandongtai_002_idle: 101 帧 · .ani 轨道 16 条 · 对上 15 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 16 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_mrsz_ludeng_001: joints=7 无bind骨=3 覆盖顶点=189 归一=189 差额挂根骨=0 按和强归=0 未覆盖=160 超4影响=0 trs不符=0
+[glb]   动画 denglong_001_idle: 101 帧 · .ani 轨道 7 条 · 对上 6 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 7 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_mrsz_tielian_001: joints=3 无bind骨=1 覆盖顶点=1320 归一=128 差额挂根骨=1192 按和强归=0 未覆盖=155 超4影响=0 trs不符=0
+[glb]   动画 001_idle01: 101 帧 · .ani 轨道 3 条 · 对上 2 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 3 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_mrsz_tongyongwujian_001: joints=22 无bind骨=5 覆盖顶点=1126 归一=1000 差额挂根骨=126 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 tongyongwujiandongtai_001_idle: 151 帧 · .ani 轨道 22 条 · 对上 21 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 22 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_guajian_ysym_moren: joints=82 无bind骨=8 覆盖顶点=852 归一=852 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 01_horse_idle: 21 帧 · .ani 轨道 82 条 · 对上 81 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 82 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle: 201 帧 · .ani 轨道 82 条 · 对上 81 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 82 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_idle01: 201 帧 · .ani 轨道 82 条 · 对上 81 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 82 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_jump: 23 帧 · .ani 轨道 82 条 · 对上 81 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 82 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_move: 18 帧 · .ani 轨道 82 条 · 对上 81 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 82 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_nan_horse_idle: 21 帧 · .ani 轨道 82 条 · 对上 81 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 82 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_nan_idle: 201 帧 · .ani 轨道 82 条 · 对上 81 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 82 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_nan_idle01: 201 帧 · .ani 轨道 82 条 · 对上 81 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 82 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_nan_jump: 23 帧 · .ani 轨道 82 条 · 对上 81 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 82 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_nan_move: 17 帧 · .ani 轨道 82 条 · 对上 81 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 82 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_nan_qinggong: 21 帧 · .ani 轨道 82 条 · 对上 81 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 82 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_qinggong: 21 帧 · .ani 轨道 82 条 · 对上 81 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 82 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 01_tpose: 6 帧 · .ani 轨道 82 条 · 对上 81 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 82 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_an_model_wave_h001: joints=3 无bind骨=2 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=2601 超4影响=0 trs不符=0
+[glb]   动画 h001_hit02: 36 帧 · .ani 轨道 3 条 · 对上 2 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 3 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ani_model_9999_h005: joints=7 无bind骨=6 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=13107 超4影响=0 trs不符=0
+[glb]   动画 h005_idle01: 99 帧 · .ani 轨道 7 条 · 对上 6 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 7 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ani_model_lianhua_h001: joints=104 无bind骨=46 覆盖顶点=1879 归一=725 差额挂根骨=1154 按和强归=0 未覆盖=8 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 351 帧 · .ani 轨道 104 条 · 对上 103 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 104 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 h001_idle01: 351 帧 · .ani 轨道 104 条 · 对上 103 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 104 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ani_model_lianhua_h002: joints=132 无bind骨=62 覆盖顶点=2850 归一=524 差额挂根骨=2326 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h002_idle01: 301 帧 · .ani 轨道 132 条 · 对上 131 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 132 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ani_model_maobi_w001: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=137 超4影响=0 trs不符=0
+[glb]   动画 w001_idle01: 76 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ani_ysym_bird_h001: joints=134 无bind骨=35 覆盖顶点=2975 归一=2919 差额挂根骨=56 按和强归=0 未覆盖=588 超4影响=0 trs不符=0
+[glb]   动画 h001_kong_yunshangyuyi_01: 192 帧 · .ani 轨道 134 条 · 对上 133 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 134 关节 × 3 通道 · TRS 往返超差 638
+[glb]   动画 h001_t_pos: 9 帧 · .ani 轨道 134 条 · 对上 133 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 134 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ani_ysym_bird_h002: joints=120 无bind骨=35 覆盖顶点=3017 归一=2009 差额挂根骨=1008 按和强归=0 未覆盖=546 超4影响=0 trs不符=0
+[glb]   动画 h002_kong_yunshangyuyi_01: 230 帧 · .ani 轨道 120 条 · 对上 119 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 120 关节 × 3 通道 · TRS 往返超差 1065
+[glb]   动画 h002_t_pos: 9 帧 · .ani 轨道 120 条 · 对上 119 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 120 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ani_ysym_moon_h001: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=600 超4影响=0 trs不符=0
+[glb]   动画 h001_kong_yunshangyuyi_01: 277 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 h001_t_pos: 9 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ani_ysym_moon_h001_2: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=600 超4影响=0 trs不符=0
+[glb]   动画 kong_yunshangyuyi_01: 277 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 t_pos: 9 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ani_ysym_moon_h002: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=600 超4影响=0 trs不符=0
+[glb]   动画 h002_kong_yunshangyuyi_01: 322 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 h002_t_pos: 9 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_ani_ysym_moon_h002_2: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=600 超4影响=0 trs不符=0
+[glb]   动画 kong_yunshangyuyi_01: 322 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 t_pos: 9 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_boss_hxw_c001: joints=30 无bind骨=7 覆盖顶点=437 归一=375 差额挂根骨=62 按和强归=0 未覆盖=63 超4影响=0 trs不符=0
+[glb]   动画 c001_msnh_shifa01: 25 帧 · .ani 轨道 30 条 · 对上 29 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 30 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_liqinglu_skill03_h001: joints=5 无bind骨=3 覆盖顶点=28 归一=28 差额挂根骨=0 按和强归=0 未覆盖=252 超4影响=0 trs不符=0
+[glb]   动画 h001_skill03: 131 帧 · .ani 轨道 5 条 · 对上 4 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 5 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_liqinglu_skill04_h001: joints=5 无bind骨=1 覆盖顶点=65 归一=60 差额挂根骨=5 按和强归=0 未覆盖=2 超4影响=0 trs不符=0
+[glb]   动画 h001_skill04: 43 帧 · .ani 轨道 5 条 · 对上 4 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 5 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_new_jiumozhi_skill04_h001: joints=3 无bind骨=2 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=352 超4影响=0 trs不符=0
+[glb]   动画 h001_skill04: 60 帧 · .ani 轨道 3 条 · 对上 2 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 3 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_npc_liqinglu_hit_h001: joints=6 无bind骨=5 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=628 超4影响=0 trs不符=0
+[glb]   动画 h001_hit01: 91 帧 · .ani 轨道 6 条 · 对上 5 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 6 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_npc_liqinglu_skill02_h001: joints=6 无bind骨=5 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=628 超4影响=0 trs不符=0
+[glb]   动画 h001_skill02: 41 帧 · .ani 轨道 6 条 · 对上 5 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 6 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_npc_liqinglu_skill02_h002: joints=6 无bind骨=5 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=628 超4影响=0 trs不符=0
+[glb]   动画 h002_skill02: 251 帧 · .ani 轨道 6 条 · 对上 5 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 6 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_zhenshoufuti_huandie01_w001: joints=14 无bind骨=4 覆盖顶点=249 归一=181 差额挂根骨=68 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 w001_idle01: 55 帧 · .ani 轨道 14 条 · 对上 13 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 14 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_zhenshoufuti_huandie02_w001: joints=18 无bind骨=4 覆盖顶点=274 归一=218 差额挂根骨=56 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 w001_idle01: 55 帧 · .ani 轨道 18 条 · 对上 17 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 18 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_zhenshoufuti_huandie02_w002: joints=18 无bind骨=4 覆盖顶点=283 归一=227 差额挂根骨=56 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 w002_idle01: 55 帧 · .ani 轨道 18 条 · 对上 17 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 18 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_zhenshoufuti_huandie03_w001: joints=18 无bind骨=4 覆盖顶点=216 归一=164 差额挂根骨=52 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 w001_idle01: 191 帧 · .ani 轨道 18 条 · 对上 17 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 18 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_zhenshoufuti_huandie04_w001: joints=18 无bind骨=4 覆盖顶点=270 归一=206 差额挂根骨=64 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 w001_idle01: 191 帧 · .ani 轨道 18 条 · 对上 17 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 18 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_zhenshoufuti_huandie04_w003: joints=4 无bind骨=2 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=8 超4影响=0 trs不符=0
+[glb]   动画 w003_idle01: 191 帧 · .ani 轨道 4 条 · 对上 3 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 4 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_zhenshoufuti_huandie05_w001: joints=20 无bind骨=6 覆盖顶点=364 归一=276 差额挂根骨=88 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 w001_idle01: 191 帧 · .ani 轨道 20 条 · 对上 19 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 20 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_zhenshoufuti_youlong01_c01: joints=8 无bind骨=1 覆盖顶点=620 归一=594 差额挂根骨=26 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 c01_idle01: 108 帧 · .ani 轨道 8 条 · 对上 7 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 8 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_zhenshoufuti_youlong02_c01: joints=26 无bind骨=5 覆盖顶点=1348 归一=1150 差额挂根骨=198 按和强归=0 未覆盖=305 超4影响=0 trs不符=0
+[glb]   动画 c01_idle01: 96 帧 · .ani 轨道 26 条 · 对上 25 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 26 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_zhenshoufuti_youlong03_c01: joints=26 无bind骨=5 覆盖顶点=1348 归一=1150 差额挂根骨=198 按和强归=0 未覆盖=305 超4影响=0 trs不符=0
+[glb]   动画 c01_idle01: 117 帧 · .ani 轨道 26 条 · 对上 25 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 26 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_zhenshoufuti_youlong04_c01: joints=26 无bind骨=5 覆盖顶点=1348 归一=1150 差额挂根骨=198 按和强归=0 未覆盖=305 超4影响=0 trs不符=0
+[glb]   动画 c01_idle01: 108 帧 · .ani 轨道 26 条 · 对上 25 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 26 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_zhenshoufuti_youlong05_c01: joints=26 无bind骨=10 覆盖顶点=1529 归一=1402 差额挂根骨=127 按和强归=0 未覆盖=791 超4影响=0 trs不符=0
+[glb]   动画 c01_idle01: 166 帧 · .ani 轨道 26 条 · 对上 25 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 26 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ani_zhenshoufuti_youlong05plane_c01: joints=20 无bind骨=1 覆盖顶点=124 归一=119 差额挂根骨=5 按和强归=0 未覆盖=2 超4影响=0 trs不符=0
+[glb]   动画 c01_idle01: 166 帧 · .ani 轨道 20 条 · 对上 19 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 20 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_bamenjinsuo_h001: joints=37 无bind骨=3 覆盖顶点=519 归一=507 差额挂根骨=12 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 31 帧 · .ani 轨道 37 条 · 对上 36 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 37 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_bell_lf001: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=5442 超4影响=0 trs不符=0
+[glb]   动画 lf001_idle01: 61 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 lf001_idle02: 11 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_bird_lf002: joints=134 无bind骨=35 覆盖顶点=2810 归一=2488 差额挂根骨=322 按和强归=0 未覆盖=434 超4影响=15 trs不符=0
+[glb]   动画 lf002_fly: 161 帧 · .ani 轨道 134 条 · 对上 133 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 134 关节 × 3 通道 · TRS 往返超差 80
+[glb] w1351_model_boss_gss_fw_001: joints=4 无bind骨=1 覆盖顶点=35 归一=35 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 001_idle: 51 帧 · .ani 轨道 4 条 · 对上 3 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 4 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_butterfly_lf001: joints=17 无bind骨=8 覆盖顶点=16 归一=16 差额挂根骨=0 按和强归=0 未覆盖=32 超4影响=0 trs不符=0
+[glb]   动画 lf001_idle: 137 帧 · .ani 轨道 17 条 · 对上 16 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 17 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_butterfly_lf002: joints=21 无bind骨=10 覆盖顶点=20 归一=20 差额挂根骨=0 按和强归=0 未覆盖=40 超4影响=0 trs不符=0
+[glb]   动画 lf002_idle: 137 帧 · .ani 轨道 21 条 · 对上 20 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 21 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_cygg_flow_c01: joints=44 无bind骨=15 覆盖顶点=15759 归一=15122 差额挂根骨=637 按和强归=0 未覆盖=3103 超4影响=0 trs不符=0
+[glb]   动画 c01_idle: 151 帧 · .ani 轨道 44 条 · 对上 43 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 44 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_dao_lf001: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=99 超4影响=0 trs不符=0
+[glb]   动画 lf001_idle: 101 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 lf001_idle2: 31 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_diaowenqizhen_s09: joints=17 无bind骨=1 覆盖顶点=19621 归一=19240 差额挂根骨=381 按和强归=0 未覆盖=1225 超4影响=0 trs不符=0
+[glb]   动画 s09_idle: 100 帧 · .ani 轨道 17 条 · 对上 16 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 17 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_diaowenqizhen_s11: joints=17 无bind骨=1 覆盖顶点=19621 归一=19240 差额挂根骨=381 按和强归=0 未覆盖=1225 超4影响=0 trs不符=0
+[glb]   动画 s11_idle: 100 帧 · .ani 轨道 17 条 · 对上 16 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 17 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_dingchunqiu_hand01: joints=172 无bind骨=45 覆盖顶点=3753 归一=3015 差额挂根骨=738 按和强归=0 未覆盖=1413 超4影响=0 trs不符=0
+[glb]   动画 hand01_skill02: 61 帧 · .ani 轨道 172 条 · 对上 171 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 172 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_dqz_dici_z001: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=288 超4影响=0 trs不符=0
+[glb]   动画 z001_idle: 61 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_dunpai_z001: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=228 超4影响=0 trs不符=0
+[glb]   动画 z001_dile: 31 帧 · .ani 轨道 4 条 · 对上 0 · 对不上 4 个 ["bone002", "bone003", "bone004", "(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 z001_idle: 31 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_em_nan_sword01: joints=3 无bind骨=2 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=648 超4影响=0 trs不符=0
+[glb]   动画 sword01_idle: 56 帧 · .ani 轨道 3 条 · 对上 2 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 3 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_em_nv_lz_h001: joints=52 无bind骨=3 覆盖顶点=495 归一=486 差额挂根骨=9 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 286 帧 · .ani 轨道 52 条 · 对上 51 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 52 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_em_nv_lz_h002: joints=17 无bind骨=1 覆盖顶点=165 归一=165 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=3 trs不符=0
+[glb]   动画 h002_idle: 291 帧 · .ani 轨道 17 条 · 对上 16 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 17 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_em_pl_h02: joints=33 无bind骨=2 覆盖顶点=300 归一=300 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h02_idle: 261 帧 · .ani 轨道 33 条 · 对上 32 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 33 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_em_pl_h03: joints=33 无bind骨=2 覆盖顶点=300 归一=300 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h03_idle: 261 帧 · .ani 轨道 33 条 · 对上 32 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 33 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_em_pl_h04: joints=33 无bind骨=2 覆盖顶点=300 归一=300 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h04_idle: 261 帧 · .ani 轨道 33 条 · 对上 32 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 33 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_emei_h003: joints=7 无bind骨=6 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=78 超4影响=0 trs不符=0
+[glb]   动画 h003_idle: 101 帧 · .ani 轨道 7 条 · 对上 6 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 7 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_emei_h004: joints=7 无bind骨=6 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=78 超4影响=0 trs不符=0
+[glb]   动画 h004_idle: 101 帧 · .ani 轨道 7 条 · 对上 6 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 7 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_feilongzaitian_h001: joints=31 无bind骨=7 覆盖顶点=872 归一=567 差额挂根骨=305 按和强归=0 未覆盖=159 超4影响=10 trs不符=0
+[glb]   动画 h001_idle: 36 帧 · .ani 轨道 31 条 · 对上 30 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 31 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_fenghuang_h001: joints=43 无bind骨=13 覆盖顶点=326 归一=151 差额挂根骨=175 按和强归=0 未覆盖=49 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 51 帧 · .ani 轨道 43 条 · 对上 42 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 43 关节 × 3 通道 · TRS 往返超差 2
+[glb] w1351_model_fish_h02: joints=47 无bind骨=10 覆盖顶点=3424 归一=1613 差额挂根骨=219 按和强归=1592 未覆盖=0 超4影响=2688 trs不符=0
+[glb]   动画 h02_idle: 101 帧 · .ani 轨道 47 条 · 对上 46 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 47 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_flower_lf001a: joints=11 无bind骨=9 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=2844 超4影响=0 trs不符=0
+[glb]   动画 lf001a_idle01: 31 帧 · .ani 轨道 11 条 · 对上 10 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 11 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_flower_lf002a: joints=17 无bind骨=15 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=3840 超4影响=0 trs不符=0
+[glb]   动画 lf002a_idle: 211 帧 · .ani 轨道 17 条 · 对上 16 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 17 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_gb_cy_h001: joints=12 无bind骨=1 覆盖顶点=441 归一=441 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 101 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_gb_hand_h01: joints=13 无bind骨=1 覆盖顶点=5639 归一=5639 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h01_idle: 151 帧 · .ani 轨道 13 条 · 对上 12 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 13 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_gb_longtou_h01: joints=17 无bind骨=1 覆盖顶点=5228 归一=5228 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h01_idle: 151 帧 · .ani 轨道 17 条 · 对上 16 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 17 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_gb_nan_wq_h01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=530 超4影响=0 trs不符=0
+[glb]   动画 h01_idle: 85 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_gbnan_long_h001: joints=106 无bind骨=21 覆盖顶点=6931 归一=4766 差额挂根骨=0 按和强归=2165 未覆盖=0 超4影响=4098 trs不符=6
+[glb]   动画 h001_idle: 101 帧 · .ani 轨道 106 条 · 对上 105 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 106 关节 × 3 通道 · TRS 往返超差 606
+[glb] w1351_model_gbnan_long_h003: joints=50 无bind骨=13 覆盖顶点=4293 归一=3373 差额挂根骨=920 按和强归=0 未覆盖=4 超4影响=0 trs不符=4
+[glb]   动画 h003_idle: 141 帧 · .ani 轨道 50 条 · 对上 49 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 50 关节 × 3 通道 · TRS 往返超差 564
+[glb] w1351_model_gbnan_long_lg_h001: joints=106 无bind骨=21 覆盖顶点=5931 归一=4271 差额挂根骨=0 按和强归=1660 未覆盖=0 超4影响=3399 trs不符=6
+[glb]   动画 h001_idle: 101 帧 · .ani 轨道 106 条 · 对上 105 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 106 关节 × 3 通道 · TRS 往返超差 606
+[glb] w1351_model_gbnan_long_wy_h001: joints=106 无bind骨=21 覆盖顶点=5931 归一=4271 差额挂根骨=0 按和强归=1660 未覆盖=0 超4影响=3399 trs不符=6
+[glb]   动画 h001_idle: 101 帧 · .ani 轨道 106 条 · 对上 105 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 106 关节 × 3 通道 · TRS 往返超差 606
+[glb] w1351_model_gbnan_long_wy_h003: joints=50 无bind骨=13 覆盖顶点=4293 归一=3373 差额挂根骨=920 按和强归=0 未覆盖=4 超4影响=0 trs不符=4
+[glb]   动画 h003_idle: 141 帧 · .ani 轨道 50 条 · 对上 49 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 50 关节 × 3 通道 · TRS 往返超差 564
+[glb] w1351_model_gbnv_long_l_gx_h001: joints=23 无bind骨=2 覆盖顶点=760 归一=760 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 101 帧 · .ani 轨道 23 条 · 对上 22 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 23 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_gbnv_long_l_h001: joints=106 无bind骨=21 覆盖顶点=6931 归一=4766 差额挂根骨=0 按和强归=2165 未覆盖=0 超4影响=4098 trs不符=6
+[glb]   动画 h001_idle: 101 帧 · .ani 轨道 106 条 · 对上 105 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 106 关节 × 3 通道 · TRS 往返超差 606
+[glb] w1351_model_gbnv_long_l_lg_h001: joints=106 无bind骨=21 覆盖顶点=5646 归一=3951 差额挂根骨=0 按和强归=1695 未覆盖=0 超4影响=3253 trs不符=6
+[glb]   动画 h001_idle: 101 帧 · .ani 轨道 106 条 · 对上 105 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 106 关节 × 3 通道 · TRS 往返超差 606
+[glb] w1351_model_gbnv_long_r_h001: joints=106 无bind骨=21 覆盖顶点=6931 归一=4766 差额挂根骨=0 按和强归=2165 未覆盖=0 超4影响=4098 trs不符=6
+[glb]   动画 h001_idle: 101 帧 · .ani 轨道 106 条 · 对上 105 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 106 关节 × 3 通道 · TRS 往返超差 606
+[glb] w1351_model_gbnv_wuqi_h001: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=530 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 101 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_gfpy_z001: joints=19 无bind骨=1 覆盖顶点=1800 归一=1761 差额挂根骨=39 按和强归=0 未覆盖=50 超4影响=0 trs不符=0
+[glb]   动画 z001_idle: 241 帧 · .ani 轨道 19 条 · 对上 18 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 19 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_gfpy_z002: joints=19 无bind骨=1 覆盖顶点=1800 归一=1779 差额挂根骨=21 按和强归=0 未覆盖=50 超4影响=0 trs不符=0
+[glb]   动画 z002_idle: 241 帧 · .ani 轨道 19 条 · 对上 18 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 19 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_guqin_nan: joints=18 无bind骨=16 覆盖顶点=3213 归一=2862 差额挂根骨=351 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 nan_idle01: 171 帧 · .ani 轨道 18 条 · 对上 17 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 18 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 nan_t_pose: 6 帧 · .ani 轨道 18 条 · 对上 17 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 18 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_guqin_nan_h001: joints=18 无bind骨=16 覆盖顶点=935 归一=584 差额挂根骨=351 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h001_idle01: 171 帧 · .ani 轨道 18 条 · 对上 17 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 18 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 h001_t_pose: 6 帧 · .ani 轨道 18 条 · 对上 17 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 18 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_hehua_h001_pbr: joints=90 无bind骨=30 覆盖顶点=13537 归一=12707 差额挂根骨=30 按和强归=800 未覆盖=0 超4影响=10107 trs不符=0
+[glb]   动画 pbr_idle: 260 帧 · .ani 轨道 90 条 · 对上 89 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 90 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 pbr_idle02: 241 帧 · .ani 轨道 90 条 · 对上 89 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 90 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 pbr_tpos: 3 帧 · .ani 轨道 90 条 · 对上 89 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 90 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_hongbaoshi_s001: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=287 超4影响=0 trs不符=0
+[glb]   动画 s001_idle: 101 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_hua_hjyw_w001: joints=43 无bind骨=14 覆盖顶点=10988 归一=10804 差额挂根骨=184 按和强归=0 未覆盖=60 超4影响=0 trs不符=0
+[glb]   动画 w001_idle: 151 帧 · .ani 轨道 43 条 · 对上 42 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 43 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_hua_zhaohuan_w001: joints=43 无bind骨=14 覆盖顶点=10988 归一=10804 差额挂根骨=184 按和强归=0 未覆盖=60 超4影响=0 trs不符=0
+[glb]   动画 w001_idel: 151 帧 · .ani 轨道 43 条 · 对上 42 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 43 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 w001_idle: 151 帧 · .ani 轨道 44 条 · 对上 42 · 对不上 2 个 ["yezi01", "(unnamed)"] · 重定基后写出 43 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_hua_zhaohuan_w002: joints=43 无bind骨=14 覆盖顶点=5496 归一=5163 差额挂根骨=333 按和强归=0 未覆盖=802 超4影响=0 trs不符=0
+[glb]   动画 w002_idle: 151 帧 · .ani 轨道 43 条 · 对上 42 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 43 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_hua_zhaohuan_w003: joints=43 无bind骨=14 覆盖顶点=18003 归一=17366 差额挂根骨=637 按和强归=0 未覆盖=875 超4影响=0 trs不符=0
+[glb]   动画 w003_idel: 151 帧 · .ani 轨道 43 条 · 对上 42 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 43 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_hudie_c001: joints=6 无bind骨=4 覆盖顶点=14 归一=1 差额挂根骨=13 按和强归=0 未覆盖=11 超4影响=0 trs不符=0
+[glb]   动画 c001_idle01: 21 帧 · .ani 轨道 6 条 · 对上 5 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 6 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_hudie_h002: joints=3 无bind骨=2 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=8 超4影响=0 trs不符=0
+[glb]   动画 h002_idle: 136 帧 · .ani 轨道 3 条 · 对上 2 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 3 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_hxw_dun_c001: joints=5 无bind骨=3 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=1230 超4影响=0 trs不符=0
+[glb]   动画 c001_idle01: 31 帧 · .ani 轨道 5 条 · 对上 4 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 5 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_hxw_lf002: joints=30 无bind骨=7 覆盖顶点=437 归一=375 差额挂根骨=62 按和强归=0 未覆盖=63 超4影响=0 trs不符=0
+[glb]   动画 lf002_shifa_01: 86 帧 · .ani 轨道 30 条 · 对上 29 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 30 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 lf002_shifa_02: 93 帧 · .ani 轨道 30 条 · 对上 29 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 30 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 lf002_shifa_03: 87 帧 · .ani 轨道 30 条 · 对上 29 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 30 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_jgsb_jian_z001: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=662 超4影响=0 trs不符=0
+[glb]   动画 z001_idle: 161 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_jian_lf001: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=134 超4影响=0 trs不符=0
+[glb]   动画 lf001_idle: 31 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_jian_lf002: joints=12 无bind骨=10 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=2420 超4影响=0 trs不符=0
+[glb]   动画 lf002_idle: 61 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_jian_lf003: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=134 超4影响=0 trs不符=0
+[glb]   动画 lf003_idle: 31 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_jianyinghu_idle03_guiji_c001: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=4 超4影响=0 trs不符=0
+[glb]   动画 c001_idle01: 156 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 c001_idle02: 131 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_jingji_b_h01: joints=101 无bind骨=10 覆盖顶点=9460 归一=8690 差额挂根骨=770 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h01_idle: 91 帧 · .ani 轨道 101 条 · 对上 100 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 101 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_jingji_b_h02: joints=90 无bind骨=13 覆盖顶点=6489 归一=6115 差额挂根骨=374 按和强归=0 未覆盖=2191 超4影响=0 trs不符=0
+[glb]   动画 h02_idle: 100 帧 · .ani 轨道 90 条 · 对上 89 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 90 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_jingji_buff_h01: joints=51 无bind骨=5 覆盖顶点=4730 归一=4345 差额挂根骨=385 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h01_idle: 100 帧 · .ani 轨道 51 条 · 对上 50 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 51 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_jingji_l_h01: joints=51 无bind骨=14 覆盖顶点=3784 归一=3476 差额挂根骨=308 按和强归=0 未覆盖=946 超4影响=0 trs不符=0
+[glb]   动画 h01_idle: 121 帧 · .ani 轨道 51 条 · 对上 50 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 51 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_jingji_l_h02: joints=53 无bind骨=5 覆盖顶点=5206 归一=4980 差额挂根骨=226 按和强归=0 未覆盖=296 超4影响=0 trs不符=0
+[glb]   动画 h02_idle: 50 帧 · .ani 轨道 53 条 · 对上 52 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 53 关节 × 3 通道 · TRS 往返超差 32
+[glb] w1351_model_jingji_r_h01: joints=51 无bind骨=5 覆盖顶点=4730 归一=4345 差额挂根骨=385 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h01_idle: 76 帧 · .ani 轨道 51 条 · 对上 50 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 51 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_jingji_r_h02: joints=72 无bind骨=7 覆盖顶点=6309 归一=5983 差额挂根骨=326 按和强归=0 未覆盖=313 超4影响=0 trs不符=0
+[glb]   动画 h02_idle: 50 帧 · .ani 轨道 72 条 · 对上 71 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 72 关节 × 3 通道 · TRS 往返超差 64
+[glb] w1351_model_jingji_skill02_hand01: joints=51 无bind骨=5 覆盖顶点=4730 归一=4345 差额挂根骨=385 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 hand01_idle: 81 帧 · .ani 轨道 51 条 · 对上 50 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 51 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_jinyu_lf001: joints=53 无bind骨=14 覆盖顶点=415 归一=415 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 lf001_idle01: 591 帧 · .ani 轨道 53 条 · 对上 52 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 53 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 lf001_idle02: 401 帧 · .ani 轨道 53 条 · 对上 52 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 53 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 lf001_idle03: 381 帧 · .ani 轨道 53 条 · 对上 52 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 53 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_jinyubaobao_gj_c001: joints=3 无bind骨=1 覆盖顶点=4 归一=4 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 c001_idle01: 121 帧 · .ani 轨道 3 条 · 对上 2 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 3 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_jiumozhi_hoqiu_w002: joints=4 无bind骨=3 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=89 超4影响=0 trs不符=0
+[glb]   动画 w002_idel: 31 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 4 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 w002_idle: 31 帧 · .ani 轨道 4 条 · 对上 3 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 4 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_jiuyinshenzhua_h001: joints=44 无bind骨=14 覆盖顶点=751 归一=678 差额挂根骨=73 按和强归=0 未覆盖=158 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 81 帧 · .ani 轨道 44 条 · 对上 43 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 44 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_kanshu_nan_c01_01: joints=20 无bind骨=6 覆盖顶点=474 归一=164 差额挂根骨=310 按和强归=0 未覆盖=22 超4影响=0 trs不符=0
+[glb]   动画 01_idle01: 321 帧 · .ani 轨道 20 条 · 对上 19 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 20 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_knife_h01: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=530 超4影响=0 trs不符=0
+[glb]   动画 h01_idle: 39 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_lens02_qf_h01: joints=137 无bind骨=31 覆盖顶点=4650 归一=3922 差额挂根骨=728 按和强归=0 未覆盖=196 超4影响=0 trs不符=0
+[glb]   动画 h01_idle: 19 帧 · .ani 轨道 137 条 · 对上 136 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 137 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_link_h02: joints=15 无bind骨=1 覆盖顶点=2167 归一=2167 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h02_idle: 101 帧 · .ani 轨道 15 条 · 对上 14 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 15 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_link_h02_fire01: joints=15 无bind骨=1 覆盖顶点=722 归一=722 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=627 trs不符=0
+[glb]   动画 fire01_idle: 101 帧 · .ani 轨道 15 条 · 对上 14 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 15 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_lion_h001: joints=46 无bind骨=16 覆盖顶点=5615 归一=5246 差额挂根骨=369 按和强归=0 未覆盖=14 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 31 帧 · .ani 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 46 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_lion_h002: joints=46 无bind骨=16 覆盖顶点=8489 归一=6578 差额挂根骨=1911 按和强归=0 未覆盖=82 超4影响=0 trs不符=0
+[glb]   动画 h002_idle: 31 帧 · .ani 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 46 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_lion_h004: joints=181 无bind骨=46 覆盖顶点=2821 归一=2767 差额挂根骨=54 按和强归=0 未覆盖=2 超4影响=0 trs不符=0
+[glb]   动画 h004_idle: 61 帧 · .ani 轨道 181 条 · 对上 180 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 181 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_lion_h004_1: joints=181 无bind骨=46 覆盖顶点=2821 归一=2767 差额挂根骨=54 按和强归=0 未覆盖=2 超4影响=0 trs不符=0
+[glb]   动画 1_idle: 61 帧 · .ani 轨道 181 条 · 对上 180 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 181 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_liuliyan_h001: joints=4 无bind骨=3 覆盖顶点=24 归一=24 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 301 帧 · .ani 轨道 4 条 · 对上 3 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 4 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ls_yudu_h001: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=80 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 201 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_luoyingjian_h001: joints=14 无bind骨=12 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=528 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 26 帧 · .ani 轨道 14 条 · 对上 13 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 14 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_meihuasannong_changqiang_h001: joints=43 无bind骨=14 覆盖顶点=694 归一=643 差额挂根骨=51 按和强归=0 未覆盖=204 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 41 帧 · .ani 轨道 43 条 · 对上 42 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 43 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_meihuasannong_h001: joints=43 无bind骨=14 覆盖顶点=694 归一=643 差额挂根骨=51 按和强归=0 未覆盖=39 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 46 帧 · .ani 轨道 43 条 · 对上 42 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 43 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_mhsn_nancq01: joints=40 无bind骨=12 覆盖顶点=662 归一=630 差额挂根骨=32 按和强归=0 未覆盖=193 超4影响=0 trs不符=0
+[glb]   动画 nancq01_idle: 31 帧 · .ani 轨道 40 条 · 对上 39 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 40 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_mhsn_nanhuan01: joints=40 无bind骨=12 覆盖顶点=660 归一=628 差额挂根骨=32 按和强归=0 未覆盖=364 超4影响=0 trs不符=0
+[glb]   动画 nanhuan01_idle: 41 帧 · .ani 轨道 40 条 · 对上 39 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 40 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_mhsn_nansd01: joints=40 无bind骨=12 覆盖顶点=616 归一=596 差额挂根骨=20 按和强归=0 未覆盖=520 超4影响=0 trs不符=0
+[glb]   动画 nansd01_idle: 31 帧 · .ani 轨道 40 条 · 对上 39 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 40 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_mhsn_nanshan01: joints=40 无bind骨=12 覆盖顶点=686 归一=646 差额挂根骨=40 按和强归=0 未覆盖=22 超4影响=0 trs不符=0
+[glb]   动画 nanshan01_idle: 41 帧 · .ani 轨道 40 条 · 对上 39 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 40 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_mj_nv_jt_link_x01: joints=22 无bind骨=1 覆盖顶点=15616 归一=15431 差额挂根骨=185 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 x01_mj_cj_jt: 281 帧 · .ani 轨道 22 条 · 对上 21 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 22 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 x01_mj_idle01_jt: 61 帧 · .ani 轨道 22 条 · 对上 21 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 22 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_mj_nv_jt_link_x02: joints=15 无bind骨=1 覆盖顶点=2167 归一=2167 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 x02_lujing01: 31 帧 · .ani 轨道 15 条 · 对上 14 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 15 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_mj_nv_jt_link_x03: joints=15 无bind骨=1 覆盖顶点=2167 归一=2167 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 x03_lujing02: 31 帧 · .ani 轨道 15 条 · 对上 14 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 15 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_mj_nv_jt_link_x04: joints=15 无bind骨=1 覆盖顶点=2167 归一=2167 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 x04_lujing03: 31 帧 · .ani 轨道 15 条 · 对上 14 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 15 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_mj_nv_jt_wing_x01: joints=36 无bind骨=8 覆盖顶点=2976 归一=2384 差额挂根骨=464 按和强归=128 未覆盖=230 超4影响=366 trs不符=0
+[glb]   动画 x01_mj_cj_jt: 39 帧 · .ani 轨道 36 条 · 对上 35 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 36 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 x01_t_pose: 6 帧 · .ani 轨道 36 条 · 对上 35 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 36 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_mr_cj_nan_jianzhen_glow_lf001: joints=8 无bind骨=6 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=24 超4影响=0 trs不符=0
+  [rigged] model/w1351_model_mr_cj_nan_jianzhen_glow_lf001/w1351_model_mr_cj_nan_jianzhen_glow_lf001.mesh: 跳过 w1351_model_mr_cj_nan_jianzhen_glow_lf001_idle01: parse_ani 不认
+  [rigged] model/w1351_model_mr_cj_nan_jianzhen_glow_lf001/w1351_model_mr_cj_nan_jianzhen_glow_lf001.mesh: 跳过 w1351_model_mr_cj_nan_jianzhen_glow_lf001_idle02: parse_ani 不认
+  [rigged] model/w1351_model_mr_cj_nan_jianzhen_glow_lf001/w1351_model_mr_cj_nan_jianzhen_glow_lf001.mesh: 跳过 w1351_model_mr_cj_nan_jianzhen_glow_lf001_idle03: parse_ani 不认
+  [rigged] model/w1351_model_mr_cj_nan_jianzhen_glow_lf001/w1351_model_mr_cj_nan_jianzhen_glow_lf001.mesh: 跳过 w1351_model_mr_cj_nan_jianzhen_glow_lf001_t_pose: parse_ani 不认
+[glb] w1351_model_mr_cj_nan_jianzhen_glow_lf002: joints=8 无bind骨=6 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=24 超4影响=0 trs不符=0
+  [rigged] model/w1351_model_mr_cj_nan_jianzhen_glow_lf002/w1351_model_mr_cj_nan_jianzhen_glow_lf002.mesh: 跳过 w1351_model_mr_cj_nan_jianzhen_glow_lf002_idle01: parse_ani 不认
+  [rigged] model/w1351_model_mr_cj_nan_jianzhen_glow_lf002/w1351_model_mr_cj_nan_jianzhen_glow_lf002.mesh: 跳过 w1351_model_mr_cj_nan_jianzhen_glow_lf002_idle02: parse_ani 不认
+  [rigged] model/w1351_model_mr_cj_nan_jianzhen_glow_lf002/w1351_model_mr_cj_nan_jianzhen_glow_lf002.mesh: 跳过 w1351_model_mr_cj_nan_jianzhen_glow_lf002_t_pose: parse_ani 不认
+[glb] w1351_model_mr_cj_nan_jianzhen_lf001: joints=8 无bind骨=6 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=10056 超4影响=0 trs不符=0
+  [rigged] model/w1351_model_mr_cj_nan_jianzhen_lf001/w1351_model_mr_cj_nan_jianzhen_lf001.mesh: 跳过 w1351_model_mr_cj_nan_jianzhen_lf001_idle01: parse_ani 不认
+  [rigged] model/w1351_model_mr_cj_nan_jianzhen_lf001/w1351_model_mr_cj_nan_jianzhen_lf001.mesh: 跳过 w1351_model_mr_cj_nan_jianzhen_lf001_idle02: parse_ani 不认
+  [rigged] model/w1351_model_mr_cj_nan_jianzhen_lf001/w1351_model_mr_cj_nan_jianzhen_lf001.mesh: 跳过 w1351_model_mr_cj_nan_jianzhen_lf001_idle03: parse_ani 不认
+  [rigged] model/w1351_model_mr_cj_nan_jianzhen_lf001/w1351_model_mr_cj_nan_jianzhen_lf001.mesh: 跳过 w1351_model_mr_cj_nan_jianzhen_lf001_t_pose: parse_ani 不认
+[glb] w1351_model_mr_cj_nan_jianzhen_lf002: joints=8 无bind骨=6 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=10056 超4影响=0 trs不符=0
+  [rigged] model/w1351_model_mr_cj_nan_jianzhen_lf002/w1351_model_mr_cj_nan_jianzhen_lf002.mesh: 跳过 w1351_model_mr_cj_nan_jianzhen_lf002_idle01: parse_ani 不认
+  [rigged] model/w1351_model_mr_cj_nan_jianzhen_lf002/w1351_model_mr_cj_nan_jianzhen_lf002.mesh: 跳过 w1351_model_mr_cj_nan_jianzhen_lf002_idle02: parse_ani 不认
+  [rigged] model/w1351_model_mr_cj_nan_jianzhen_lf002/w1351_model_mr_cj_nan_jianzhen_lf002.mesh: 跳过 w1351_model_mr_cj_nan_jianzhen_lf002_t_pose: parse_ani 不认
+[glb] w1351_model_mr_cj_nan_path_lf002: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=4 超4影响=0 trs不符=0
+  [rigged] model/w1351_model_mr_cj_nan_path_lf002/w1351_model_mr_cj_nan_path_lf002.mesh: 跳过 w1351_model_mr_cj_nan_path_lf002_idle: parse_ani 不认
+[glb] w1351_model_mr_cj_nv_jianzhen_glow_lf002: joints=8 无bind骨=6 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=24 超4影响=0 trs不符=0
+  [rigged] model/w1351_model_mr_cj_nv_jianzhen_glow_lf002/w1351_model_mr_cj_nv_jianzhen_glow_lf002.mesh: 跳过 w1351_model_mr_cj_nv_jianzhen_glow_lf002_idle01: parse_ani 不认
+  [rigged] model/w1351_model_mr_cj_nv_jianzhen_glow_lf002/w1351_model_mr_cj_nv_jianzhen_glow_lf002.mesh: 跳过 w1351_model_mr_cj_nv_jianzhen_glow_lf002_t_pose: parse_ani 不认
+[glb] w1351_model_mr_cj_nv_jianzhen_glow_lf003: joints=14 无bind骨=12 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=48 超4影响=0 trs不符=0
+  [rigged] model/w1351_model_mr_cj_nv_jianzhen_glow_lf003/w1351_model_mr_cj_nv_jianzhen_glow_lf003.mesh: 跳过 w1351_model_mr_cj_nv_jianzhen_glow_lf003_idle01: parse_ani 不认
+  [rigged] model/w1351_model_mr_cj_nv_jianzhen_glow_lf003/w1351_model_mr_cj_nv_jianzhen_glow_lf003.mesh: 跳过 w1351_model_mr_cj_nv_jianzhen_glow_lf003_t_pose: parse_ani 不认
+[glb] w1351_model_mr_cj_nv_jianzhen_lf002: joints=8 无bind骨=6 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=10056 超4影响=0 trs不符=0
+  [rigged] model/w1351_model_mr_cj_nv_jianzhen_lf002/w1351_model_mr_cj_nv_jianzhen_lf002.mesh: 跳过 w1351_model_mr_cj_nv_jianzhen_lf002_idle01: parse_ani 不认
+  [rigged] model/w1351_model_mr_cj_nv_jianzhen_lf002/w1351_model_mr_cj_nv_jianzhen_lf002.mesh: 跳过 w1351_model_mr_cj_nv_jianzhen_lf002_t_pose: parse_ani 不认
+[glb] w1351_model_mr_cj_nv_jianzhen_lf003: joints=14 无bind骨=12 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=20112 超4影响=0 trs不符=0
+  [rigged] model/w1351_model_mr_cj_nv_jianzhen_lf003/w1351_model_mr_cj_nv_jianzhen_lf003.mesh: 跳过 w1351_model_mr_cj_nv_jianzhen_lf003_idle01: parse_ani 不认
+  [rigged] model/w1351_model_mr_cj_nv_jianzhen_lf003/w1351_model_mr_cj_nv_jianzhen_lf003.mesh: 跳过 w1351_model_mr_cj_nv_jianzhen_lf003_t_pose: parse_ani 不认
+[glb] w1351_model_mr_nv_cj_trail_ani_lf001: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=4 超4影响=0 trs不符=0
+  [rigged] model/w1351_model_mr_nv_cj_trail_ani_lf001/w1351_model_mr_nv_cj_trail_ani_lf001.mesh: 跳过 w1351_model_mr_nv_cj_trail_ani_lf001_idle01: parse_ani 不认
+  [rigged] model/w1351_model_mr_nv_cj_trail_ani_lf001/w1351_model_mr_nv_cj_trail_ani_lf001.mesh: 跳过 w1351_model_mr_nv_cj_trail_ani_lf001_t_pose: parse_ani 不认
+[glb] w1351_model_nan_wujian_piaodai_lf001: joints=52 无bind骨=5 覆盖顶点=384 归一=384 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 lf001_idle01: 346 帧 · .ani 轨道 52 条 · 对上 51 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 52 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_nv_cj_canying_h001: joints=60 无bind骨=23 覆盖顶点=1326 归一=1210 差额挂根骨=116 按和强归=0 未覆盖=107 超4影响=0 trs不符=1
+[glb]   动画 h001_idle: 41 帧 · .ani 轨道 60 条 · 对上 59 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 60 关节 × 3 通道 · TRS 往返超差 41
+[glb] w1351_model_nv_wujian_piaodai_lf001: joints=52 无bind骨=5 覆盖顶点=384 归一=384 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 lf001_idle01: 406 帧 · .ani 轨道 52 条 · 对上 51 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 52 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_nv_xy_juanzhou_h001: joints=22 无bind骨=1 覆盖顶点=353 归一=353 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 98 帧 · .ani 轨道 22 条 · 对上 21 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 22 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_pets_tgtx_c004: joints=15 无bind骨=14 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=4312 超4影响=0 trs不符=0
+[glb]   动画 c004_idle01: 61 帧 · .ani 轨道 15 条 · 对上 14 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 15 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_pets_xhl_b7_c01: joints=6 无bind骨=4 覆盖顶点=558 归一=558 差额挂根骨=0 按和强归=0 未覆盖=36 超4影响=0 trs不符=0
+[glb]   动画 c01_idle: 161 帧 · .ani 轨道 6 条 · 对上 5 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 6 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_phoenix_h01: joints=29 无bind骨=10 覆盖顶点=4524 归一=3138 差额挂根骨=1386 按和强归=0 未覆盖=952 超4影响=0 trs不符=0
+[glb]   动画 h01_idle: 211 帧 · .ani 轨道 29 条 · 对上 28 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 29 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_pmf_lqs_ymgz_c01: joints=11 无bind骨=4 覆盖顶点=205 归一=111 差额挂根骨=94 按和强归=0 未覆盖=134 超4影响=0 trs不符=0
+[glb]   动画 c01_idle: 26 帧 · .ani 轨道 11 条 · 对上 10 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 11 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 c01_idle02: 18 帧 · .ani 轨道 11 条 · 对上 10 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 11 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_qf_h001: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=24 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 11 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_qf_h002: joints=2 无bind骨=1 覆盖顶点=1248 归一=1248 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h002_idle: 17 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_qf_h003: joints=3 无bind骨=2 覆盖顶点=2496 归一=2496 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h003_idle: 27 帧 · .ani 轨道 3 条 · 对上 2 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 3 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_qf_skill02_dragon_h01: joints=106 无bind骨=21 覆盖顶点=6931 归一=4766 差额挂根骨=0 按和强归=2165 未覆盖=0 超4影响=4098 trs不符=6
+[glb]   动画 h01_idle: 71 帧 · .ani 轨道 106 条 · 对上 105 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 106 关节 × 3 通道 · TRS 往返超差 426
+[glb] w1351_model_qf_skill02_dragon_h02: joints=23 无bind骨=2 覆盖顶点=760 归一=760 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h02_idle: 66 帧 · .ani 轨道 23 条 · 对上 22 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 23 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_qf_skill02_dragon_h03: joints=106 无bind骨=21 覆盖顶点=5486 归一=3828 差额挂根骨=0 按和强归=1658 未覆盖=0 超4影响=3197 trs不符=6
+[glb]   动画 h03_idle: 71 帧 · .ani 轨道 106 条 · 对上 105 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 106 关节 × 3 通道 · TRS 往返超差 426
+[glb] w1351_model_qf_skill02_dragon_h04: joints=92 无bind骨=86 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=11167 超4影响=0 trs不符=0
+[glb]   动画 h04_idle: 96 帧 · .ani 轨道 92 条 · 对上 91 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 92 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_qf_skill02_dragon_h06: joints=23 无bind骨=2 覆盖顶点=760 归一=760 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 h06_idle: 51 帧 · .ani 轨道 23 条 · 对上 22 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 23 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_qianghua_h001: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=24 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 201 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_qianlongwuyong_h001: joints=31 无bind骨=7 覆盖顶点=872 归一=567 差额挂根骨=305 按和强归=0 未覆盖=159 超4影响=10 trs不符=0
+[glb]   动画 h001_idle: 41 帧 · .ani 轨道 31 条 · 对上 30 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 31 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_qinhuangdigong_zuanshi_s001: joints=6 无bind骨=4 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=96 超4影响=0 trs不符=0
+[glb]   动画 s001_idle: 61 帧 · .ani 轨道 6 条 · 对上 5 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 6 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 s001_idle02: 121 帧 · .ani 轨道 6 条 · 对上 5 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 6 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_monster_qinyun_qin: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=165 超4影响=0 trs不符=0
+  [rigged] model/w1351_model_qinyun_qin_cx001/w1351_monster_qinyun_qin.mesh: 跳过 w1351_model_qinyun_qin_cx001_idle01: parse_ani 不认
+  [rigged] model/w1351_model_qinyun_qin_cx001/w1351_monster_qinyun_qin.mesh: 跳过 w1351_model_qinyun_qin_cx001_idle02: parse_ani 不认
+  [rigged] model/w1351_model_qinyun_qin_cx001/w1351_monster_qinyun_qin.mesh: 跳过 w1351_model_qinyun_qin_cx001_idle03: parse_ani 不认
+  [rigged] model/w1351_model_qinyun_qin_cx001/w1351_monster_qinyun_qin.mesh: 跳过 w1351_model_qinyun_qin_cx001_skill01: parse_ani 不认
+  [rigged] model/w1351_model_qinyun_qin_cx001/w1351_monster_qinyun_qin.mesh: 跳过 w1351_model_qinyun_qin_cx001_t_pose: parse_ani 不认
+[glb] w1351_model_qizhi_h001: joints=16 无bind骨=5 覆盖顶点=992 归一=968 差额挂根骨=24 按和强归=0 未覆盖=32 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 61 帧 · .ani 轨道 16 条 · 对上 15 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 16 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_ring_lf006: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=162 超4影响=0 trs不符=0
+[glb]   动画 lf006_idle: 31 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_rlsz_z001: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=25 超4影响=0 trs不符=0
+[glb]   动画 z001_idle: 31 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_sceneeditor01_dragon_h02: joints=106 无bind骨=21 覆盖顶点=6931 归一=4766 差额挂根骨=0 按和强归=2165 未覆盖=0 超4影响=4098 trs不符=6
+[glb]   动画 h02_idle: 91 帧 · .ani 轨道 106 条 · 对上 105 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 106 关节 × 3 通道 · TRS 往返超差 546
+[glb] w1351_model_sceneeditor01_dragon_lg_h02: joints=106 无bind骨=21 覆盖顶点=5606 归一=3896 差额挂根骨=0 按和强归=1710 未覆盖=0 超4影响=3249 trs不符=6
+[glb]   动画 h02_idle: 91 帧 · .ani 轨道 106 条 · 对上 105 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 106 关节 × 3 通道 · TRS 往返超差 546
+[glb] w1351_model_shici_w003: joints=13 无bind骨=12 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=3538 超4影响=0 trs不符=0
+[glb]   动画 w003_idel01: 100 帧 · .ani 轨道 13 条 · 对上 12 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 13 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 w003_idle: 50 帧 · .ani 轨道 13 条 · 对上 12 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 13 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_shuishangxue_lf001: joints=22 无bind骨=6 覆盖顶点=474 归一=474 差额挂根骨=0 按和强归=0 未覆盖=0 超4影响=0 trs不符=0
+[glb]   动画 lf001_idle01: 41 帧 · .ani 轨道 22 条 · 对上 21 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 22 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_sl_hand_h01: joints=12 无bind骨=5 覆盖顶点=492 归一=250 差额挂根骨=242 按和强归=0 未覆盖=120 超4影响=0 trs不符=0
+[glb]   动画 h01_idle: 78 帧 · .ani 轨道 12 条 · 对上 11 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 12 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_sl_jiasha_h01: joints=49 无bind骨=8 覆盖顶点=1024 归一=124 差额挂根骨=6 按和强归=894 未覆盖=0 超4影响=993 trs不符=0
+[glb]   动画 h01_idle: 111 帧 · .ani 轨道 49 条 · 对上 48 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 49 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 h01_sl_cj_jt: 278 帧 · .ani 轨道 49 条 · 对上 48 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 49 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 h01_sl_idle01_jt: 71 帧 · .ani 轨道 49 条 · 对上 48 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 49 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_sl_nan_shitou_x04: joints=15 无bind骨=5 覆盖顶点=7071 归一=6660 差额挂根骨=411 按和强归=0 未覆盖=1140 超4影响=0 trs不符=0
+[glb]   动画 x04_idle: 31 帧 · .ani 轨道 15 条 · 对上 14 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 15 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_sl_wan_h001: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=126 超4影响=0 trs不符=0
+[glb]   动画 h001_idle: 91 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_sl_wan_h002: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=25 超4影响=0 trs不符=0
+[glb]   动画 idle01_idle01: 41 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb]   动画 h002_idle01: 41 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_sl_wuqi_h01: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=839 超4影响=0 trs不符=0
+[glb]   动画 h01_idle: 31 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_sphere_lf003: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=453 超4影响=0 trs不符=0
+[glb]   动画 lf003_idle01: 43 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_spider_dsxj_h01: joints=10 无bind骨=9 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=16416 超4影响=0 trs不符=0
+[glb]   动画 h01_idle: 111 帧 · .ani 轨道 10 条 · 对上 9 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 10 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_spider_h01: joints=3 无bind骨=2 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=1024 超4影响=0 trs不符=0
+[glb]   动画 h01_idle: 101 帧 · .ani 轨道 3 条 · 对上 2 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 3 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_spider_h02: joints=49 无bind骨=20 覆盖顶点=782 归一=754 差额挂根骨=28 按和强归=0 未覆盖=121 超4影响=0 trs不符=0
+[glb]   动画 h02_idle: 261 帧 · .ani 轨道 49 条 · 对上 48 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 49 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_spider_h03: joints=10 无bind骨=9 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=16464 超4影响=0 trs不符=0
+[glb]   动画 h03_idle: 181 帧 · .ani 轨道 10 条 · 对上 9 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 10 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_stone_c001: joints=31 无bind骨=29 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=2942 超4影响=0 trs不符=0
+[glb]   动画 c001_idle01: 129 帧 · .ani 轨道 31 条 · 对上 30 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 31 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_stone_lf001: joints=22 无bind骨=21 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=1178 超4影响=0 trs不符=0
+[glb]   动画 lf001_idle: 61 帧 · .ani 轨道 22 条 · 对上 21 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 22 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_stone_lf002: joints=24 无bind骨=23 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=3097 超4影响=0 trs不符=0
+[glb]   动画 lf002_idle: 61 帧 · .ani 轨道 24 条 · 对上 23 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 24 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_stone_lf003: joints=28 无bind骨=27 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=4394 超4影响=0 trs不符=0
+[glb]   动画 lf003_idle: 61 帧 · .ani 轨道 28 条 · 对上 27 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 28 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_stone_lf004: joints=46 无bind骨=40 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=6930 超4影响=0 trs不符=0
+[glb]   动画 lf004_idle: 91 帧 · .ani 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 46 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_stone_lf006: joints=17 无bind骨=16 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=1167 超4影响=0 trs不符=0
+[glb]   动画 lf006_idle: 31 帧 · .ani 轨道 17 条 · 对上 16 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 17 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_sword_h01: joints=1 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=444 超4影响=0 trs不符=0
+[glb]   动画 h01_idle: 10 帧 · .ani 轨道 1 条 · 对上 0 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 1 关节 × 3 通道 · TRS 往返超差 0
+[glb] w1351_model_sz_slnvtz_z01: joints=2 无bind骨=1 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=11793 超4影响=0 trs不符=0
+[glb]   动画 z01_idle: 301 帧 · .ani 轨道 2 条 · 对上 1 · 对不上 1 个 ["(unnamed)"] · 重定基后写出 2 关节 × 3 通道 · TRS 往返超差 0
+mesh=400 glb=375 dup=25 fail=0 rigged=330 normals=384 uv=355 multiSlot=40 verts=1029102 tris=1034943 uniqueGlb=375 manifest=D:/TLGL/.scratch/out/glb_npc_sample\manifest.json

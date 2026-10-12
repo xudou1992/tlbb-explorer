@@ -1,0 +1,1 @@
+mesh=400 glb=399 dup=1 fail=0 rigged=0 normals=397 uv=387 multiSlot=4 verts=369358 tris=389078 uniqueGlb=399 manifest=D:/TLGL/.scratch/out/glb_lib_sample\manifest.json

@@ -1,0 +1,7 @@
+m_f8e9433000036a9c.glb · 关节 83 根
+节点世界 与 IBM求逆 的平移差：最大 0.000000 · 平均 0.000000 · 超 0.01 的 0 根
+Traceback (most recent call last):
+  File "D:\TLGL\.scratch\dyn\check_node_vs_ibm.py", line 99, in <module>
+    print('（差都在 1e-6 量级 \u21d2 两者本来就是同一份数据，上一条「节点 rest 塌、IBM 对」的说法不成立）')
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'gbk' codec can't encode character '\u21d2' in position 13: illegal multibyte sequence

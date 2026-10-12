@@ -30,7 +30,8 @@ for (const t of JSON.parse(process.env.JOBS ?? '[]')) {
     for (const c of (i.clips || []).slice(0, 3)) {
       const tt = window.__times(c.name);
       const ts = tt.times || [0, c.dur];
-      const pick = ts.length > 2 ? ts[ts.length - 1] : ts[ts.length - 1];
+      // 取**中间**那个关键帧：末帧常常回到待击姿态，那时顶点本来就不该偏。
+      const pick = ts[Math.floor(ts.length / 2)] ?? c.dur;
       const w = window.__whyLie(c.name, ts[0], pick);
       const h = window.__boneHull(c.name, ts.slice(0, 8));
       rows.push({ clip: c.name, 关键帧: ts.length, 取的末帧: pick,

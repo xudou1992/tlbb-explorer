@@ -1,0 +1,6 @@
+身份集里无配套 ani 的网格共 212 份（占 468 份网格的 45.3%）
+  库里同名目录有 ani（能补）                    207 份 · 例 ['w1351_pets_tanglang_b2.mesh', 'w1351_zuoqi_nianshou02_xiezi.mesh', 'w1351_pets_xianglong_b2.mesh', 'w1351_pets_jianyinghu_b6.mesh', 'w1351_pets_xiaohualing_b8.mesh', 'w1351_pets_lang_b1.mesh']
+  两处都没有（这份本来就不动）                     5 份 · 例 ['w1351_nan_s_yifu_txfh_yanzhilei.mesh', 'w1351_model_stone_lf001.mesh', 'w1351_model_stone_lf002.mesh', 'w1351_nan_s_yifu_zhangjiantianya_bai.mesh', 'w1351_nv_s_yifu_yszm_qingfeng.mesh']
+
+有配套 ani 的网格 256 份，其中已解到 sidecar_tree 的 256 份
+没解到的样例：[]

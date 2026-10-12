@@ -1,0 +1,21 @@
+sidecar 条目 4780 · 扩展名分布 {'.ani': 2995, '.mesh': 468, '.mtl': 324, '.walkplane': 296, '.mdl': 232, '.ske': 232, '.pu': 223, '.scene': 6, '.terraininfo': 4}
+有网格的目录 322 个 · 网格共 468 份
+目录级：身份集里有配套 ani 的 232 个 · 一份 ani 都没有的 90 个
+按网格数：有 ani 的目录共 256 份网格 · 无 ani 的目录共 212 份网格
+五样齐全（mesh+mtl+mdl+ske+ani 归同一目录）232 个目录
+
+无 ani 的目录样例 12 个（目录 · 网格数 · 该目录解到的种类）：
+  data/effect/effectmodel                                          2 份 · ['mesh']
+  data/source/npc/guajian/w1351_guajian_ysym_01                    8 份 · ['mesh']
+  data/source/npc/quest/w1351_npc_xiguaguai_001                    5 份 · ['mesh']
+  data/source/npc/quest/w1351_pets_baihu_b1                        1 份 · ['mesh']
+  data/source/npc/quest/w1351_pets_baozi_b0                        4 份 · ['mesh']
+  data/source/npc/quest/w1351_pets_beijixiong_b0                   5 份 · ['mesh']
+  data/source/npc/quest/w1351_pets_bianfu_b0                       2 份 · ['mesh']
+  data/source/npc/quest/w1351_pets_ciwei_b0                        3 份 · ['mesh']
+  data/source/npc/quest/w1351_pets_daxingxing_b0                   5 份 · ['mesh']
+  data/source/npc/quest/w1351_pets_eyu_b0                          2 份 · ['mesh']
+  data/source/npc/quest/w1351_pets_gou_b0                          1 份 · ['mesh']
+  data/source/npc/quest/w1351_pets_houzi_b0                        1 份 · ['mesh']
+
+前 8 份无配套 ani 的网格干名：['w1351_boss_huoyanlaohu', 'w1351_guajian_ysym_01', 'w1351_guajian_ysym_biyuqing', 'w1351_guajian_ysym_chenxi', 'w1351_guajian_ysym_chijinliuyun', 'w1351_guajian_ysym_chuying', 'w1351_guajian_ysym_xunyimeng', 'w1351_guajian_ysym_yemoyanhuo']

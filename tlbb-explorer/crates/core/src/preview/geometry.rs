@@ -565,9 +565,23 @@ pub fn bone_count(raw: &[u8]) -> Option<usize> {
 
 /// 扫出尾部的骨架节点（含绑定矩阵）。按 4 字节步长滑过去，只收「认得出是记录」
 /// 的位置，并保证相邻两条至少隔一条记录的长度（不重叠计数）。
+///
+/// **两条相位都试**（2026-10-12）：10-10 那次给 `hierarchy_try` 解掉了
+/// 「整段相对文件头错开 2 字节」那一族，`parse_nodes` 当时没跟着改，
+/// 于是 `w1351_npc_heiyirendage.mesh`（68 条记录全在 `≡2 mod 4`）这类文件被读成
+/// 「一条记录都没有」，导出时整张网格只能挂根骨。
+/// 现在按 0 相位扫，**空手时才试 2 相位**——原来认得出的文件一个字节都没变。
 pub fn parse_nodes(raw: &[u8]) -> Vec<Node> {
+    let out = scan_nodes(raw, 0);
+    if !out.is_empty() {
+        return out;
+    }
+    scan_nodes(raw, 2)
+}
+
+fn scan_nodes(raw: &[u8], start: usize) -> Vec<Node> {
     let mut out = Vec::new();
-    let mut i = 0usize;
+    let mut i = start;
     while i + NODE_RECORD <= raw.len() {
         if let Some(n) = read_node(raw, i) {
             if !out.iter().any(|x: &Node| x.name == n.name && x.bind == n.bind) {
@@ -1832,6 +1846,33 @@ mod node_tests {
         );
     }
 
+    /// 整段错开 2 字节那一族：记录在 `2 mod 4` 上时也必须认得出（2026-10-12）。
+    /// 这条钉住 `parse_nodes` 的 2 相位兜底——`w1351_npc_heiyirendage.mesh` 的
+    /// 68 条记录全在 `2 mod 4`，改之前 Rust 读成「一条都没有」，导出整张挂根骨。
+    #[test]
+    fn nodes_are_found_when_tail_is_offset_by_two() {
+        let mut raw = vec![0u8; 0x400];
+        raw[0x8C..0x90].copy_from_slice(&100u32.to_le_bytes());
+        let at = 0x102usize;
+        raw[at..at + 6].copy_from_slice(b"bone01");
+        let m: [f32; 16] = [
+            1.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0,
+        ];
+        for (i, v) in m.iter().enumerate() {
+            let o = at + 32 + 4 * i;
+            raw[o..o + 4].copy_from_slice(&v.to_le_bytes());
+        }
+        assert_eq!(at % 4, 2, "样例要放在 2 mod 4 上");
+        let got = parse_nodes(&raw);
+        assert!(
+            got.iter().any(|n| n.name == "bone01"),
+            "错开 2 字节的网格该也认得出记录，实测 {} 条",
+            got.len()
+        );
+    }
     /// 反证二：同一个顶点号对同一根骨列两次（这张表的形状判据之一），不该认。
     /// 2026-10-12 起判据从「严格递增」换成「互异 + 有界」，所以反证也跟着换靶子：
     /// 顺序合法与否不再是判据，**重复**才是。

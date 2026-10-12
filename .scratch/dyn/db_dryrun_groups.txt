@@ -1,0 +1,11 @@
+agroups 表列：['id', 'hub', 'hub_path', 'dir', 'stem', 'kind', 'n', 'n_mesh', 'n_mtl', 'n_ani', 'n_ske', 'n_tex', 'n_other', 'names']
+组总数 13080（界面显示 13,080 应与此一致）
+  组·已命名        12159
+  组·未命名        921
+
+hub 哈希在 sidecar 里的组：916 个
+其中「现在未命名 + hub 的 resources.path 为空 + sidecar 有路径」⇒ 回填后**若同步刷新 agroups** 会变为有名：916 个
+
+**关键一条**：界面判有名用的是 agroups 里**存着的** hub_path/stem 两列（sqlite.rs:299 取的就是这两列），
+所以只 UPDATE resources.path 不会让界面变——要么回填时一并刷新 agroups，要么 app 改成从 resources 现算。
+这就是「正式换库」与「只读 sidecar 覆盖」的真正差别所在。

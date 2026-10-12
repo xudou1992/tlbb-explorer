@@ -430,8 +430,8 @@ new GLTFLoader().load(asset, (gltf) => {
       const primary = (i) => {
         let bw = -1, bn = '(无权重)';
         for (let k = 0; k < 4; k++) {
-          const w = swgt.getComponent(i, k);
-          if (w > bw) { bw = w; bn = bones[sidx.getX(i, k)] ? bones[sidx.getX(i, k)].name : '(' + sidx.getX(i, k) + ')'; }
+          const w = swgt.getComponent(i, k), j = sidx.getComponent(i, k);
+          if (w > bw) { bw = w; bn = bones[j] ? bones[j].name : '(' + j + ')'; }
         }
         return bn;
       };
@@ -469,6 +469,91 @@ new GLTFLoader().load(asset, (gltf) => {
       按子树分类: Object.fromEntries(sub),
       骨名分类样本: [...clsOf].slice(0, 8),
       涉及无记录的骨对: [...pairs].sort((x, y) => y[1] - x[1]).slice(0, 12) };
+  };
+
+  /// 因果实验：把 missing 那批「没有 96B 绑定记录」的骨**从蒙皮里剔掉**——
+  /// 顶点的全部权重挪给它在同一副骨架里**最近的有记录祖先**（只改 JOINTS_0 的下标，
+  /// 权重不动、骨架不动），然后拿**同一把尺** `__stretch` 再量一次。
+  /// 撕塌下去 ⇒ 主因确实是这些骨的错位；纹丝不动 ⇒ 上一条的「脏子树」只是相关不是因果。
+  /// 量完把数组还原，页面状态不留改动。
+  window.__dropAndMeasure = (name, times, missing) => {
+    const miss = new Set(missing || []);
+    const saved = [], maps = [];
+    for (const mesh of skinned) {
+      const si = mesh.geometry.getAttribute('skinIndex');
+      if (!si) return { error: '这份网格没有 skinIndex' };
+      const cp = new Uint16Array(si.count * 4);
+      for (let i = 0; i < si.count; i++) for (let k = 0; k < 4; k++) cp[i * 4 + k] = si.getComponent(i, k);
+      saved.push(cp);
+      const bones = mesh.skeleton.bones;
+      maps.push(bones.map((b) => {
+        if (!miss.has(b.name)) return -1;
+        let p = b.parent;
+        while (p) { if (p.isBone && !miss.has(p.name)) return bones.indexOf(p); p = p.parent; }
+        return -1;
+      }));
+    }
+    let moved = 0, touched = 0;
+    skinned.forEach((mesh, mi) => {
+      const si = mesh.geometry.getAttribute('skinIndex'), map = maps[mi], base = saved[mi];
+      // 用 setComponent/getComponent：GLTFLoader 可能把 JOINTS_0 放进 InterleavedBuffer，
+      // 那时 `si.array[i*4+k]` 根本不是那个顶点的槽位（第一版就这么静默跑成了空操作）。
+      for (let i = 0; i < si.count; i++) {
+        for (let k = 0; k < 4; k++) {
+          const o = si.getComponent(i, k);
+          const to = map[o];
+          if (to >= 0) touched++;
+          if (to >= 0 && to !== o) { si.setComponent(i, k, to); moved++; }
+        }
+      }
+      si.needsUpdate = true;
+    });
+    const rows = (times || []).map((t) => {
+      const s = window.__stretch(name, t);
+      return { t, edges: s.edges, over15: s.over1_5, over2: s.over2, max: s.maxRatio, rootVerts: s.rootVerts };
+    });
+    skinned.forEach((mesh, mi) => {
+      const si = mesh.geometry.getAttribute('skinIndex'), cp = saved[mi];
+      for (let i = 0; i < si.count; i++) for (let k = 0; k < 4; k++) si.setComponent(i, k, cp[i * 4 + k]);
+      si.needsUpdate = true;
+    });
+    const 还原确认 = skinned.every((mesh, mi) => {
+      const si = mesh.geometry.getAttribute('skinIndex'), cp = saved[mi];
+      for (let i = 0; i < si.count; i++) for (let k = 0; k < 4; k++) if (si.getComponent(i, k) !== cp[i * 4 + k]) return false;
+      return true;
+    });
+    return { clip: name, 挪走的影响槽位: moved, 命中无记录骨的槽位: touched, 还原确认, rows };
+  };
+
+  /// 自查：把 skeleton 的骨名与 JOINTS_0 的值域摸一遍，用来判断「挪不动槽位」
+  /// 是名字对不上还是索引对不上。
+  window.__jointDiag = (missing) => {
+    const miss = new Set(missing || []);
+    return skinned.map((mesh) => {
+      const names = mesh.skeleton.bones.map((b) => b.name);
+      const hit = names.map((n, i) => (miss.has(n) ? i : -1)).filter((i) => i >= 0);
+      const si = mesh.geometry.getAttribute('skinIndex');
+      const seen = new Set();
+      for (let i = 0; i < si.count; i++) for (let k = 0; k < 4; k++) seen.add(si.getComponent(i, k));
+      const vals = [...seen].sort((a, b) => a - b);
+      const refMissing = vals.filter((v) => hit.indexOf(v) >= 0).map((v) => names[v]);
+      // 权重侧也要看：槽位指向无记录骨但权重 0，等于没引用
+      const sw = mesh.geometry.getAttribute('skinWeight');
+      let wOnMissing = 0, vertsWithMissing = 0;
+      for (let i = 0; i < si.count; i++) {
+        let any = false;
+        for (let k = 0; k < 4; k++) {
+          if (hit.indexOf(si.getComponent(i, k)) >= 0 && sw.getComponent(i, k) > 1e-6) { wOnMissing += sw.getComponent(i, k); any = true; }
+        }
+        if (any) vertsWithMissing++;
+      }
+      return { mesh: mesh.name || '(未命名)', 骨架骨数: names.length, 顶点: si.count,
+        被引用的无记录骨: refMissing, 落在无记录骨上的权重合计: +wOnMissing.toFixed(1),
+        引用无记录骨的顶点数: vertsWithMissing,
+        JOINTS不同值: vals.length, JOINTS值域: [vals[0], vals[vals.length - 1]],
+        同一骨架: mesh.skeleton.bones.length === skinned[0].skeleton.bones.length &&
+          mesh.skeleton === skinned[0].skeleton };
+    });
   };
 
   window.__rest = () => {

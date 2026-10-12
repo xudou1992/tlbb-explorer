@@ -317,7 +317,11 @@ fn main() {
             // 三种尾巴都算装饰：纯数字（部件号 `001`）、形态号 `b5`、`x2` 之类；
             // 上一版只认纯数字，于是 `…_jiuxiaozhanlong_b5` 八份各成一族，族数反而从 95 涨到 200。
             let is_form = last.starts_with('b') && digits(&last[1..]);
-            if !((digits(last) && last.len() <= 3) || (is_form && last.len() <= 4)) {
+            // 部件词也剥：`…_b6_yifu` 这种「形态号 + 部件名不带号」的写法，
+            // 只剥数字与形态号会把它留成一族（112 那个数因此是上界）。
+            const PARTS: [&str; 6] = ["yifu", "shoutao", "toufa", "lian", "weapon", "prop"];
+            let is_part = PARTS.contains(&last.to_lowercase().as_str());
+            if !((digits(last) && last.len() <= 3) || (is_form && last.len() <= 4) || is_part) {
                 break;
             }
             base = segs[..segs.len() - 1].join("_");

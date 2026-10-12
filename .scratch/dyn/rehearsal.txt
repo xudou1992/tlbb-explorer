@@ -1,0 +1,16 @@
+在副本 resources_rehearsal.db 上演练两步：第一步改 4780 行 resources.path · 第二步改 916 行 agroups
+
+指标                          演练前          演练后 变化
+resources 行数             105327       105327 不变
+path 为空                   48053        43273 -4780
+agroups 总数                13080        13080 不变
+三无组                         921            5 -916
+amembers 行数               48122        48122 不变
+relations 行数             100303       100303 不变
+assets 行数                 46155        46155 不变
+blobs 行数                 105222       105222 不变
+
+抽样（规则写进去的值）：
+  gid 1       hub_path=odel_zq_hd_h001/w1351_model_zq_qszd_h001.mdl dir=c/model/w1351_model_zq_hd_h001 stem=w1351_model_zq_qszd_h001
+  gid 2       hub_path=player/w1351_nan/w1351_nan_s_yifu_mjrmdz.mdl dir=data/source/player/w1351_nan   stem=w1351_nan_s_yifu_mjrmdz
+  gid 3       hub_path=hirenyanshi/w1351_monster_yanshijiangong.mdl dir=est/w1351_monster_shirenyanshi stem=w1351_monster_yanshijiangong

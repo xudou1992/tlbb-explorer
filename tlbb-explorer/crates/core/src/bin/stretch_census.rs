@@ -53,6 +53,21 @@ fn first_ani(mesh: &Path) -> Option<PathBuf> {
     None
 }
 
+/// 名字集合的指纹：排序去重后 FNV-1a。只回答「这两份用的是不是同一副骨架」，
+/// 不当校验和用——剥文件名数族会把独立证据放大，所以改按骨架本身聚类。
+fn sig(mut names: Vec<String>) -> u64 {
+    names.sort();
+    names.dedup();
+    let mut h: u64 = 0xcbf2_98ce_2f9f_198f;
+    for n in &names {
+        for b in n.as_bytes().iter().chain(std::iter::once(&0x1fu8)) {
+            h ^= *b as u64;
+            h = h.wrapping_mul(0x100_0000_01b3);
+        }
+    }
+    h
+}
+
 /// 一种口径下的撕账。
 #[derive(Clone)]
 struct Row {
@@ -63,6 +78,8 @@ struct Row {
     over2: usize,
     edges: usize,
     worst: f64,
+    skel_sig: u64,
+    skin_sig: u64,
 }
 
 fn measure(
@@ -167,6 +184,14 @@ fn main() {
             over2: 0,
             edges: 0,
             worst: 0.0,
+            skel_sig: sig(h.bones.iter().map(|b| b.name.clone()).collect()),
+            skin_sig: sig(
+                nodes
+                    .iter()
+                    .filter(|n| n.skin.is_some())
+                    .map(|n| n.name.clone())
+                    .collect(),
+            ),
         };
 
         if let Some((o2, ed, mx)) = measure(
@@ -351,6 +376,26 @@ fn main() {
     println!("族 · 份数 · 现口径峰值 · 世界口径峰值");
     for (f, c, w, n) in byfam.iter().take(16) {
         println!("  {:<44} {:>2} 份 · {:>6.1}× → {:>6.1}×", f, n, c, w);
+    }
+
+    // 每份的签名与数字都吐出来：族数不能靠剥文件名，得看「同一副骨架 / 同一批有权重的骨」。
+    // 路径相对当前工作目录（习惯在仓库根跑）。
+    if let Ok(mut fh) = std::fs::File::create(".scratch/census_signatures.tsv") {
+        use std::io::Write;
+        let _ = writeln!(fh, "file|verts|skinned_bones|bones|peak|world_peak|skel_sig|skin_sig");
+        for r in &cur {
+            let w = wor
+                .iter()
+                .find(|x| x.name == r.name)
+                .map(|x| x.worst)
+                .unwrap_or(r.worst);
+            let _ = writeln!(
+                fh,
+                "{}|{}|{}|{}|{:.2}|{:.2}|{:x}|{:x}",
+                r.name, r.verts, r.skinned_bones, r.bones, r.worst, w, r.skel_sig, r.skin_sig
+            );
+        }
+        println!("签名明细写了 .scratch/census_signatures.tsv（{} 行）", cur.len());
     }
 
     let mut srt = cur.clone();

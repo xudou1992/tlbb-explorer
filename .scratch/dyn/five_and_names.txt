@@ -1,0 +1,20 @@
+== 一、回填后仍无名的 5 个组 ==
+gid 5463    hub 228f5fddc69971b2 成员 1（mesh 0 mtl 0 ani 0 ske 0 tex 0）· 成员里有 path 的 0 个
+    228f5fddc69971b2 other    JBCF       
+gid 6601    hub 4c6588e3f8ba5d14 成员 1（mesh 0 mtl 0 ani 0 ske 0 tex 0）· 成员里有 path 的 0 个
+    4c6588e3f8ba5d14 other    JBCF       
+gid 6946    hub 589e088d1fb13019 成员 1（mesh 0 mtl 0 ani 0 ske 0 tex 0）· 成员里有 path 的 0 个
+    589e088d1fb13019 other    JBCF       
+gid 7073    hub 5fcf0ea3f8e1d1e6 成员 1（mesh 0 mtl 0 ani 0 ske 0 tex 0）· 成员里有 path 的 0 个
+    5fcf0ea3f8e1d1e6 other    JBCF       
+gid 8220    hub a6ceaa63840ea77b 成员 1（mesh 0 mtl 0 ani 0 ske 0 tex 0）· 成员里有 path 的 0 个
+    a6ceaa63840ea77b other    JBCF       
+
+== 二、names 列是什么 ==
+agroup_names 列：['gid', 'name', 'cls']
+names 与 agroup_names 里该组行数的关系：相等 12876 · 不等 204 · 该组在 agroup_names 里没行 3031
+  不等样例 gid 1 · agroups.names=9453 · 实际行数 2066
+  不等样例 gid 7 · agroups.names=28 · 实际行数 17
+  不等样例 gid 8 · agroups.names=5 · 实际行数 4
+  不等样例 gid 17 · agroups.names=38 · 实际行数 15
+  不等样例 gid 18 · agroups.names=30 · 实际行数 24

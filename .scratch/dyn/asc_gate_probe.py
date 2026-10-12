@@ -97,7 +97,10 @@ def report(paths, tag):
 
 side = sorted(glob.glob('.scratch/out/sidecar_tree/**/*.mesh', recursive=True))
 ctrl = sorted(glob.glob('.scratch/out/tree/**/*.mesh', recursive=True))
-step = max(1, len(ctrl) // 120)
-report(side, 'sidecar_tree（cfg 身份救回的 468 份）')
-report(ctrl[::step][:120], '对照：原有有名网格抽 %d 份' % len(ctrl[::step][:120]))
-print('对照全库共 %d 份 .mesh，本轮只抽 %d 份（全跑要另开一次）' % (len(ctrl), len(ctrl[::step][:120])))
+# 抽样还是全库跑，用环境变量说话（N=99999 就是全库；正则扫整份文件，全库要十几分钟）
+want = int(os.environ.get('N', '120'))
+step = max(1, len(ctrl) // want)
+sample = ctrl[::step][:want]
+report(side, 'sidecar_tree（cfg 身份救回的 %d 份）' % len(side))
+report(sample, '对照：原有有名网格 %s（全库 %d 份里取 %d 份）'
+       % ('全库' if want >= len(ctrl) else '均匀抽样', len(ctrl), len(sample)))

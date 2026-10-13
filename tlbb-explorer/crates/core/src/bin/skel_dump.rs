@@ -281,7 +281,7 @@ fn build(root: &Path, con: &Connection, mesh: Option<&str>, anis: &[String]) -> 
         "missing": missing,
         "provenance": {
             "nodeRecord": "96B = char[32] 名字 + f32[16] 矩阵（D3DX 行向量）。存储矩阵是世界绑定矩阵的逆（B = S⁻¹，2026-10-06 翻案，见 preview::pose::bind_worlds）：bindPosition 是求逆后第 4 行的平移（真实骨位）；存储矩阵的末行 (tx,ty,tz,1) 是逆矩阵的平移，不是骨位，别直接拿去摆骨架",
-            "influences": "蒙皮权重在 .mesh：每条 96B 骨记录之后跟 [u32 顶点数 N][N 个顶点号（严格递增）][N 个权重 f32]，是按骨组织的稀疏表，不是每顶点 4 影响的定长表（2026-09-30 实测，闸门 preview::geometry::node_tests::skin_influences_sum_to_one_per_vertex）",
+            "influences": "蒙皮权重在 .mesh：每条 96B 骨记录之后跟 [u32 顶点数 N][N 个顶点号（互异且有界，**不保证递增**）][N 个权重 f32]，是按骨组织的稀疏表，不是每顶点 4 影响的定长表（2026-09-30 实测；2026-10-12 实测存在按绘制序存表的那一族，故老判据「严格递增」换成「互异+有界」，闸门 preview::geometry::node_tests::duplicated_vertex_ids_are_not_a_table）",
             "restRecord": ".ani 骨架区 60B/骨 = +12 绑定旋转（每条单位长）；+48 那三个浮点用途未证，没往这份导出里放",
             "trackRecord": "每骨每帧 = f32×4 旋转 + f32×3 位移 + f32 缩放",
             "boneCountField": ".mesh 头部 0x110 处的 u32 = 骨骼根数，与该模型 .ani 的轨道数一致",
@@ -471,8 +471,8 @@ mod tests {
             let w = nd["influences"]["weights"].as_array().unwrap();
             assert_eq!(v.len(), w.len(), "顶点号与权重个数该相等");
             assert!(
-                v.windows(2).all(|p| p[0].as_u64().unwrap() < p[1].as_u64().unwrap()),
-                "顶点号该严格递增"
+                v.iter().map(|x| x.as_u64().unwrap()).collect::<std::collections::HashSet<_>>().len() == v.len(),
+                "顶点号该互异（**不保证递增**：按绘制序存表那一族实测存在，2026-10-12 把老的严格递增判据换成了互异+有界）"
             );
         }
         assert!(

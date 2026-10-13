@@ -1,0 +1,11 @@
+const t = await (await fetch('http://127.0.0.1:9222/json/list')).json();
+const pg = t.find(x => x.type === 'page');
+const ws = new WebSocket(pg.webSocketDebuggerUrl);
+const pend = new Map(); let id = 0;
+ws.addEventListener('message', e => { const m = JSON.parse(e.data); if (m.id && pend.has(m.id)) { pend.get(m.id)(m.result ?? m); pend.delete(m.id); } });
+await new Promise(r => ws.addEventListener('open', r, { once: true }));
+const send = (met, params = {}) => new Promise(res => { const k = ++id; pend.set(k, res); ws.send(JSON.stringify({ id: k, method: met, params })); });
+const expr = 'JSON.stringify([].slice.call(document.querySelectorAll("button,a,[role=button],.chip,.fchip,label")).map(function(e){return (e.textContent||"").trim()}).filter(function(s){return s.length>0 && s.length<28 && (s.indexOf("未命名")>=0 || s.indexOf("921")>=0 || s.indexOf("无名")>=0)}))';
+const r = await send('Runtime.evaluate', { expression: expr, returnByValue: true });
+console.log(r.result && r.result.value ? r.result.value : JSON.stringify(r));
+ws.close();

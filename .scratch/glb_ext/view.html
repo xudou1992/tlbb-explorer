@@ -274,6 +274,22 @@ new GLTFLoader().load(asset, (gltf) => {
     const c = clips.find((x) => x.name === name);
     if (!c) return {error: '没有这条动作: ' + name};
     const span = bindBox.getSize(new THREE.Vector3()).length();
+    // 口径说明（10-12 实测校正）：下面的 grow/drift 走 SkinnedMesh.computeBoundingBox。
+    // 早先记的「骨骼在动它也系统性报 1.00/0.0」**过头了**——machao_behit01 实测 grow 会到 1.58，
+    // 但骨盒口径更大（2.23），说明几何盒只吃到一部分。所以同一次测量并排给出骨盒口径
+    // （growB/driftB，取骨架节点世界坐标的盒）：**两个都看，别只信几何盒**；哪个能用要按文件验。
+    const boneList = [];
+    root.traverse((o) => { if (o.isBone) boneList.push(o); });
+    const hull = () => {
+      root.updateMatrixWorld(true);
+      const b = new THREE.Box3();
+      const p = new THREE.Vector3();
+      for (const o of boneList) { o.getWorldPosition(p); b.expandByPoint(p); }
+      return b;
+    };
+    seek(name, 0);
+    const bSpan0 = hull().getSize(new THREE.Vector3()).length() || 1;
+    const bCenter0 = hull().getCenter(new THREE.Vector3());
     const rows = [];
     for (const t of times) {
       seek(name, t);
@@ -281,9 +297,17 @@ new GLTFLoader().load(asset, (gltf) => {
       const s = b.getSize(new THREE.Vector3()).length();
       // 相对 bind：包围盒中心漂了多少、体积涨到 bind 的几倍。撕开时这两项会炸。
       const drift = b.getCenter(new THREE.Vector3()).distanceTo(center) / span;
-      rows.push({t: num(t), box: pack(b), grow: num(s / span), drift: num(drift)});
+      const hb = hull();
+      rows.push({
+        t: num(t), box: pack(b), grow: num(s / span), drift: num(drift),
+        growB: num(hb.getSize(new THREE.Vector3()).length() / bSpan0),
+        driftB: num(hb.getCenter(new THREE.Vector3()).distanceTo(bCenter0) / bSpan0),
+      });
     }
-    return {clip: name, duration: num(c.duration), bindSpan: num(span), rows};
+    return {
+      clip: name, duration: num(c.duration), bindSpan: num(span), rows,
+      口径: 'grow/drift 是几何盒（bind 姿态算的，看不见骨骼更新）；growB/driftB 是骨盒，量动画生效看这两个',
+    };
   };
 
   window.__shot = (name, t) => {

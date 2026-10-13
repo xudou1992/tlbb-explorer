@@ -1,0 +1,22 @@
+const t = await (await fetch('http://127.0.0.1:9333/json/list')).json();
+const pg = t.find(x => x.type === 'page');
+const ws = new WebSocket(pg.webSocketDebuggerUrl);
+const pend = new Map(); let id = 0;
+ws.addEventListener('message', e => { const m = JSON.parse(e.data); if (m.id && pend.has(m.id)) { pend.get(m.id)(m.result ?? m); pend.delete(m.id); } });
+await new Promise(r => ws.addEventListener('open', r, { once: true }));
+const send = (met, params = {}) => new Promise(res => { const k = ++id; pend.set(k, r => res(r.result ?? r)); ws.send(JSON.stringify({ id: k, method: met, params })); });
+const ev = async x => { const r = await send('Runtime.evaluate', { expression: x, returnByValue: true, awaitPromise: true }); return r && 'value' in r ? r.value : r; };
+await send('Page.enable', {}); await send('Runtime.enable', {});
+await send('Page.navigate', { url: 'http://127.0.0.1:8765/.scratch/glb_ext/view.html?asset=' + encodeURIComponent('/.scratch/out/glb_repair/m_f8e9433000036a9c.glb') + '&bones=0&view=front' });
+await new Promise(r => setTimeout(r, 9000));
+for (let i = 0; i < 20; i++) { if (await ev('!!window.__ready')) break; await new Promise(r => setTimeout(r, 700)); }
+console.log('ready=', await ev('!!window.__ready'), 'error=', await ev('JSON.stringify(window.__error||null)'));
+const tm = JSON.parse(await ev('JSON.stringify(window.__times("machao_behit01"))'));
+const times = tm.times.filter((_, i) => i % 3 === 0).slice(0, 6);
+const r = JSON.parse(await ev(`JSON.stringify(window.__measure("machao_behit01", ${JSON.stringify(times)}))`));
+console.log('时刻', JSON.stringify(r.rows.map(x => x.t)), '关键帧数', tm.keys);
+console.log('几何盒 grow  ', JSON.stringify(r.rows.map(x => x.grow)));
+console.log('骨盒   growB ', JSON.stringify(r.rows.map(x => x.growB)));
+console.log('骨盒   driftB', JSON.stringify(r.rows.map(x => x.driftB)));
+console.log('口径说明:', r['口径']);
+ws.close();

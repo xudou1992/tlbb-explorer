@@ -580,8 +580,64 @@ fn main() {
         return;
     }
 
-    if mode == "missnames" {
+    if mode == "shift" {
+        // 第三十补留下的一条正面线索没追完：有些变体记录的**基向量与标准整块精确相等**，
+        // 只有平移那三个数差 0.006~0.16。这个差若在一份内**恒定**，它就是「整份的一个根变换」，
+        // 语义当场可定；若不恒定，那这些记录只是各自不同的姿态。
+        for ld in &loaded {
+            let mut ds: Vec<([f64; 3], String)> = Vec::new();
+            for v in &ld.var_nodes {
+                let Some(s) = ld.std_nodes.iter().find(|m| m.name == v.name) else { continue };
+                if !slots12().iter().all(|&k| (v.bind[k] - s.bind[k]).abs() <= 1e-6) {
+                    continue;
+                }
+                let d = [
+                    v.bind[12] as f64 - s.bind[12] as f64,
+                    v.bind[13] as f64 - s.bind[13] as f64,
+                    v.bind[14] as f64 - s.bind[14] as f64,
+                ];
+                ds.push((d, v.name.clone()));
+            }
+            println!("\n{} · 基向量相等的 {} 根", ld.file, ds.len());
+            if ds.len() < 2 {
+                println!("  不足两根，判不了恒不恒定");
+                continue;
+            }
+            for (d, nm) in &ds {
+                println!("  {nm:<24} 差 [{:>10.6}, {:>10.6}, {:>10.6}]", d[0], d[1], d[2]);
+            }
+            let mut axis_spread = [0f64; 3];
+            for k in 0..3 {
+                let col: Vec<f64> = ds.iter().map(|(d, _)| d[k]).collect();
+                let mn = col.iter().fold(f64::INFINITY, |a, &b| a.min(b));
+                let mx = col.iter().fold(f64::NEG_INFINITY, |a, &b| a.max(b));
+                axis_spread[k] = mx - mn;
+            }
+            println!(
+                "  逐轴极差 [{:.6}, {:.6}, {:.6}] · 恒定判据（极差 ≤1e-4）：{}",
+                axis_spread[0],
+                axis_spread[1],
+                axis_spread[2],
+                if axis_spread.iter().all(|s| *s <= 1e-4) { "恒定" } else { "不恒定" }
+            );
+            // 参照：该份根骨（标准记录里名字最短的那条通常就是 `000`/`origin`）的存储平移
+            if let Some(r) = ld
+                .std_nodes
+                .iter()
+                .min_by_key(|n| n.name.chars().count())
+            {
+                println!(
+                    "  参照 · 根 {} 存储平移 [{:.6}, {:.6}, {:.6}]",
+                    r.name, r.bind[12], r.bind[13], r.bind[14]
+                );
+            }
+        }
+        return;
+    }
 
+
+
+    if mode == "missnames" {
         // 第三十六补留的尾巴：59 份「各差 1 个」——差的到底是哪个名。
         // 只看带变体记录且同目录有解得开的 .ani 的份，把「独有、却在 .ani 骨名表里找不到」的名字点出来。
         let paths = mesh_paths(&con, &batch, limit);

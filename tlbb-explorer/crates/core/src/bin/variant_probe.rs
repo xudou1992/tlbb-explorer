@@ -186,9 +186,9 @@ fn main() {
             eprintln!("未知参数 {a}");
         }
     }
-    if names.is_empty() && mode != "gain" && mode != "missnames" {
-        eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames] 干名[,...]");
-        eprintln!("      批量：variant_probe --mode=gain|missnames --batch=路径片段 [--limit=N]");
+    if names.is_empty() && mode != "gain" && mode != "missnames" && mode != "skin" {
+        eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin] 干名[,...]");
+        eprintln!("      批量：variant_probe --mode=gain|missnames|skin --batch=路径片段 [--limit=N]");
         std::process::exit(2);
     }
     let db = root.join(".scratch/resources.db");
@@ -304,7 +304,7 @@ fn main() {
             declared: bone_count(&raw),
         });
     }
-    if loaded.is_empty() && mode != "gain" && mode != "missnames" {
+    if loaded.is_empty() && mode != "gain" && mode != "missnames" && mode != "skin" {
         eprintln!("一份都没读到");
         std::process::exit(2);
     }
@@ -465,6 +465,51 @@ fn main() {
         }
         println!(
             "\n可比的 {cmp} 根：基向量=局部旋转(≤1e-4) {hits_rot} · 平移=轨道常量(≤1e-3) {hits_med} · 平移=静态区offset {hits_off}"
+        );
+        return;
+    }
+
+    if mode == "skin" {
+        // 变体记录**带不带影响顶点表**、带上又能多覆盖多少顶点。
+        // 只出数、不改主干：口径与 `tree_check` 那份「带表 2,227/7,996」可比
+        // （同一份里先收标准记录的顶点集，再看变体那套往里新增了多少个）。
+        use std::collections::HashSet;
+        let paths = mesh_paths(&con, &batch, limit);
+        let (mut files, mut with_var, mut var_recs, mut var_skin) = (0usize, 0usize, 0usize, 0usize);
+        let (mut new_verts, mut files_gain, mut std_verts) = (0usize, 0usize, 0usize);
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            files += 1;
+            let var = parse_nodes_variant(&raw);
+            if var.is_empty() {
+                continue;
+            }
+            with_var += 1;
+            var_recs += var.len();
+            let mut covered: HashSet<u32> = HashSet::new();
+            for n in parse_nodes(&raw) {
+                if let Some(sk) = &n.skin {
+                    covered.extend(sk.vertices.iter().copied());
+                }
+            }
+            let before = covered.len();
+            std_verts += before;
+            for n in &var {
+                if let Some(sk) = &n.skin {
+                    var_skin += 1;
+                    covered.extend(sk.vertices.iter().copied());
+                }
+            }
+            let added = covered.len() - before;
+            if added > 0 {
+                files_gain += 1;
+                new_verts += added;
+            }
+        }
+        println!(
+            "# 读到 {files} 份 · 带变体记录 {with_var} 份（变体记录 {var_recs} 条，其中带影响表 {var_skin} 条）\n\
+             # 标准那套覆盖的顶点合计 {std_verts} · 变体再往里新增 {new_verts} 个（有增益的份数 {files_gain}）"
         );
         return;
     }

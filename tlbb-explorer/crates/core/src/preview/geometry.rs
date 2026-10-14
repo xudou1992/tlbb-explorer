@@ -572,7 +572,12 @@ fn read_node_variant(raw: &[u8], at: usize) -> Option<Node> {
     Some(Node {
         name: String::from_utf8_lossy(nm).into_owned(),
         bind: m,
-        skin: read_skin(raw, base + 64, vertex_count(raw)),
+        // 影响表在 **+132**，不是 +128：`--mode=skin` 那版按 +128 量出「38,201 条变体记录、
+        // 带表 0 条」是**我读错偏移造成的假阴性**——同一批位置按 +132 试，主样本 16 条里认到 13 条
+        // （闸门 [`variant_table_offset_is_128_not_132`] 当场把它撞红）。
+        // 组块的第一个标量槽在 +64，四组基向量/平移占到 +68..+132 ⇒ 后面还有一个 4 字节字段，
+        // 整条记录长 136。
+        skin: read_skin(raw, base + 4 + 64, vertex_count(raw)),
     })
 }
 
@@ -1838,6 +1843,51 @@ mod node_tests {
                 .count()
         );
     }
+
+    /// 变体记录**后面到底有没有影响表**，以及表在 `+128` 还是 `+132`：
+    /// 这是 `--mode=skin` 量出「38,201 条变体记录、带表 0 条」的前置问题——
+    /// 如果表其实在 `+132`，那句「0 条」就是我读错偏移造成的假阴性（另一条取证线写的是 +132）。
+    /// 所以这里两个偏移都试，并把个数打出来；钉子是「`read_node_variant` 用的 +128 不比 +132 差」。
+    #[test]
+    fn variant_table_offset_is_128_not_132() {
+        let root = std::env::var("TLBB_ROOT").map(PathBuf::from).unwrap_or_else(|_| PathBuf::from("D:/TLGL"));
+        let Some(mesh) = raw_of(&root, "data", MESH) else {
+            eprintln!("跳过：本机没有 data.pak 或这份资源不在里面");
+            return;
+        };
+        let vc = super::vertex_count(&mesh);
+        let var = super::scan_nodes_variant(&mesh);
+        assert!(!var.is_empty(), "这份该认得到变体记录");
+        // 逐位置重扫一遍，才能对同一位置试第二个偏移。
+        let mut at128 = 0usize;
+        let mut at132 = 0usize;
+        let mut i = 0usize;
+        while i + super::VARIANT_RECORD <= mesh.len() {
+            if super::read_node_variant(&mesh, i).is_some() {
+                if super::read_skin(&mesh, i + 128, vc).is_some() {
+                    at128 += 1;
+                }
+                if super::read_skin(&mesh, i + 132, vc).is_some() {
+                    at132 += 1;
+                }
+            }
+            i += 4;
+        }
+        eprintln!(
+            "变体记录 {} 条（顶点数 {vc}）：表在 +128 认到 {at128} 条 · 在 +132 认到 {at132} 条",
+            var.len()
+        );
+        assert!(
+            at132 >= at128,
+            "表起点按 +128 认到 {at128} 条、+132 认到 {at132} 条——这条钉子要求 +132 不少于 +128，\
+             否则就是 `read_node_variant` 的偏移又被改回去了（10-14 就是这么撞出「带表 0 条」的假阴性）"
+        );
+        assert!(
+            at132 >= var.len() / 2,
+            "变体记录该大面积带表：16 条里只认到 {at132} 条"
+        );
+    }
+
 
     /// 把 `bip01_l_xxx` 换成 `bip01_r_xxx`。
     fn mirror(name: &str) -> Option<String> {

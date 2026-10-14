@@ -428,31 +428,13 @@ const BONE_COUNT_AT: usize = 0x110;
 
 /// 认一条记录：名字段必须可打印且 NUL 填充，基向量必须两两垂直、等比缩放，
 /// 末位是齐次 1。任何一条不满足就跳过这个位置——不硬凑。
+///
+/// 名字段的合法性（含"往前一个字节不能还是名字字符"那条词边界规则）与矩阵的
+/// 基向量合法性都抽在下面两个共用函数里：标准 96B 记录与「变体记录」
+/// （[`read_node_variant`]）必须共用同一套判据，各写一套迟早分叉——
+/// 导出侧与 app 侧分叉就是这么撞出来的。
 fn read_node(raw: &[u8], at: usize) -> Option<Node> {
-    let name_bytes = raw.get(at..at + 32)?;
-    // 名字必须从字段头开始：往前一个字节要是还是名字字符，那就是从长名字中间
-    // 切出来的假记录（`bip01_l_finger0` 被读成 `1_l_finger0`，本机真撞到过）
-    if at > 0 {
-        let prev = raw[at - 1];
-        if prev.is_ascii_alphanumeric() || matches!(prev, b'_' | b'-' | b'.') {
-            return None;
-        }
-    }
-    let end = name_bytes.iter().position(|&c| c == 0)?;
-    if end < 3 || end > 40 {
-        return None;
-    }
-    let nm = &name_bytes[..end];
-    if !nm
-        .iter()
-        .all(|c| c.is_ascii_alphanumeric() || matches!(c, b'_' | b'-' | b'.'))
-    {
-        return None;
-    }
-    // 名字段剩余必须真是填充 0（浮点流里撞出一段可打印 ASCII 后面跟着的不会是 0）
-    if name_bytes[end..].iter().any(|&c| c != 0) {
-        return None;
-    }
+    let nm = name_field(raw, at)?;
     // 挂点表（128B = `tx_*` 挂点名 + 骨名 + 矩阵）的第二段也是「骨名 + 矩阵」，
     // 单看这一条与节点记录一模一样。区别在它前面那 32 字节一定是 `tx_` 开头的挂点名：
     // 实测这份 .mesh 里 `Bip01_Head`/`Bone01`/`Bip01_Spine1`/`Bip01_Spine` 四条就是这么
@@ -471,10 +453,49 @@ fn read_node(raw: &[u8], at: usize) -> Option<Node> {
     for (i, chunk) in mb.chunks_exact(4).enumerate() {
         m[i] = f32::from_le_bytes(chunk.try_into().ok()?);
     }
+    affine_basis(&m)?;
+    Some(Node {
+        name: String::from_utf8_lossy(nm).into_owned(),
+        bind: m,
+        skin: read_skin(raw, at + NODE_RECORD, vertex_count(raw)),
+    })
+}
+
+/// 名字段合法性：从字段头开始（前一个字节不能还是名字字符，否则是从长名字中间
+/// 切出来的假记录——`bip01_l_finger0` 被读成 `1_l_finger0`，本机真撞到过）、
+/// 3~31 个可打印字符、NUL 结尾、剩余必须真填 0（浮点流里撞出一段可打印 ASCII
+/// 后面跟着的不会是 0）。返回不含 NUL 的名字字节。
+fn name_field(raw: &[u8], at: usize) -> Option<&[u8]> {
+    let name_bytes = raw.get(at..at + NAME_FIELD)?;
+    if at > 0 {
+        let prev = raw[at - 1];
+        if prev.is_ascii_alphanumeric() || matches!(prev, b'_' | b'-' | b'.') {
+            return None;
+        }
+    }
+    let end = name_bytes.iter().position(|&c| c == 0)?;
+    if end < 3 || end > 40 {
+        return None;
+    }
+    let nm = &name_bytes[..end];
+    if !nm
+        .iter()
+        .all(|c| c.is_ascii_alphanumeric() || matches!(c, b'_' | b'-' | b'.'))
+    {
+        return None;
+    }
+    if name_bytes[end..].iter().any(|&c| c != 0) {
+        return None;
+    }
+    Some(nm)
+}
+
+/// 行主序 4×4 的基向量合法性（行向量约定）：全有限且不过大、`m[15]` 是齐次 1、
+/// 前三行两两垂直且等比。通过就返回三行的长度。
+fn affine_basis(m: &[f32; 16]) -> Option<[f32; 3]> {
     if !m.iter().all(|v| v.is_finite() && v.abs() < 1e7) {
         return None;
     }
-    // 行向量约定：m[15] 是齐次 1，m[12..15] 是平移（可以有值），前三行是基向量
     if (m[15] - 1.0).abs() > 1e-3 {
         return None;
     }
@@ -493,10 +514,57 @@ fn read_node(raw: &[u8], at: usize) -> Option<Node> {
             }
         }
     }
+    Some(lens)
+}
+
+/// 变体记录（2026-10-14 取证；证据与覆盖面对账见 `.scratch/cfg身份普查_20261011.md`
+/// 第二十四～二十六补）：
+///
+/// ```text
+/// +0   char[32] 骨名
+/// +32  char[32] 同一个骨名原样再一遍      ← 标准 read_node 就死在这里（它要求名字后紧跟矩阵）
+/// +64  f32      恒 0（矩阵前的一个标量槽）
+/// +68  f32[16]  标准行主序仿射矩阵（与 96B 记录同一套判据）
+/// +132 [u32 N][N 个顶点号][N 个权重 f32]  影响顶点表
+/// ```
+///
+/// 它补的是「父骨链里有、标准扫描认不到绑定矩阵」那批骨：抽 45 份已有记录的文件，
+/// 41 份能多认骨名（平均 3.1 根、最多 +24），且**能比的 37 个变体独有骨名 37 个都在
+/// 该份自己的父骨链名单上**（链的来源是 `.ani` 轨道骨名，独立旁证）。
+///
+/// 两道限制，都不是洁癖：
+/// * **基向量长度必须 ≈1**。全库有 5 份场景道具（`fazhen`/`glass`/`bell`/`stone` 一族）
+///   的变体矩阵整体放大 100 倍，那个 100 倍因子的含义未定性——放它进来会把骨骼放大 100 倍。
+/// * 只在标准扫描**认不到这个名字**时才采用（见 [`parse_nodes`] 里的合并），
+///   因为这条判据裸用不特异：正常文件上也会命中，且命中的多半与标准记录同骨重名。
+/// 语义没定之前**不并进 `parse_nodes`**（理由见 `parse_nodes` 里那段注释与闸门
+/// `variant_records_are_real_but_not_world_bind`），所以普通构建里它暂时没人调用。
+#[allow(dead_code)]
+fn read_node_variant(raw: &[u8], at: usize) -> Option<Node> {
+    let nm = name_field(raw, at)?;
+    // 同一个名字必须原样再来一遍
+    let second = name_field(raw, at + NAME_FIELD)?;
+    if second != nm {
+        return None;
+    }
+    // 矩阵前那个标量槽实测恒 0
+    let pad = raw.get(at + 2 * NAME_FIELD..at + 2 * NAME_FIELD + 4)?;
+    if f32::from_le_bytes(pad.try_into().ok()?) != 0.0 {
+        return None;
+    }
+    let mb = raw.get(at + 2 * NAME_FIELD + 4..at + 2 * NAME_FIELD + 68)?;
+    let mut m = [0f32; 16];
+    for (i, chunk) in mb.chunks_exact(4).enumerate() {
+        m[i] = f32::from_le_bytes(chunk.try_into().ok()?);
+    }
+    let lens = affine_basis(&m)?;
+    if lens.iter().any(|v| (v - 1.0).abs() > 0.05) {
+        return None;
+    }
     Some(Node {
         name: String::from_utf8_lossy(nm).into_owned(),
         bind: m,
-        skin: read_skin(raw, at + NODE_RECORD, vertex_count(raw)),
+        skin: read_skin(raw, at + 2 * NAME_FIELD + 68, vertex_count(raw)),
     })
 }
 
@@ -580,6 +648,35 @@ pub fn parse_nodes(raw: &[u8]) -> Vec<Node> {
         if !out.iter().any(|x: &Node| x.name == n.name && x.bind == n.bind) {
             out.push(n);
         }
+    }
+    // 变体记录（[`read_node_variant`]）**故意不在这里合并**。它认得出的骨名是真的
+    // （抽 45 份有记录的文件 41 份多认骨名、能比的 37 个变体独有骨名 37 个都在父骨链上），
+    // 但**矩阵语义与标准记录不同**：一旦按名字并进 `bind`，闸门
+    // `bind_translations_mirror_left_and_right` 就红——`bip01_l_finger0` 与
+    // `bip01_r_finger0` 的平移 [0.98,0.62,-0.035] vs [1.056,0.443,0.232] 三根轴都不镜像，
+    // 而标准记录全库左右对都满足「一根轴差符号」。⇒ 它多半是**局部**变换或另一种约定，
+    // 不是世界绑定矩阵之逆。先把语义定下来（见 `.scratch/cfg身份普查_20261011.md` 第二十七补），
+    // 语义没定之前并进 `bind` 会把骨架放错位置。
+    out
+}
+
+/// 变体记录整段长 132 字节（名字 32 + 名字 32 + 标量 4 + 矩阵 64），后面才跟影响表。
+/// 记录之间隔着变长的影响表，步长不固定 ⇒ 一路逐 4 字节滑过去。
+const VARIANT_RECORD: usize = 132;
+
+#[allow(dead_code)]
+fn scan_nodes_variant(raw: &[u8]) -> Vec<Node> {
+    let mut out = Vec::new();
+    let mut i = 0usize;
+    while i + VARIANT_RECORD <= raw.len() {
+        if let Some(n) = read_node_variant(raw, i) {
+            if !out.iter().any(|x: &Node| x.name == n.name && x.bind == n.bind) {
+                out.push(n);
+            }
+            i += 4;
+            continue;
+        }
+        i += 4;
     }
     out
 }
@@ -1649,6 +1746,47 @@ mod node_tests {
         let mut needle = [0u8; 32];
         needle[..name.len()].copy_from_slice(name.as_bytes());
         raw.windows(32).position(|w| w == needle).expect("名字在原文里")
+    }
+
+    /// 变体记录：骨名是真的、缺口也是真的，但**矩阵语义不是世界绑定逆**——
+    /// 这条测试把三件事一起钉住，免得下一个人又去直接并进 `bind`。
+    #[test]
+    fn variant_records_are_real_but_not_world_bind() {
+        let root = std::env::var("TLBB_ROOT").map(PathBuf::from).unwrap_or_else(|_| PathBuf::from("D:/TLGL"));
+        let Some(mesh) = raw_of(&root, "data", MESH) else {
+            eprintln!("跳过：本机没有 data.pak 或这份资源不在里面");
+            return;
+        };
+        let std_names: Vec<String> = parse_nodes(&mesh).iter().map(|x| x.name.clone()).collect();
+        let var = super::scan_nodes_variant(&mesh);
+        // ① 变体判据确实认到骨名，而且这些名字标准扫描认不到（缺口是真的）
+        for want in ["bip01_head", "bip01_footsteps", "bip01_l_finger0"] {
+            assert!(var.iter().any(|x| x.name == want), "变体判据该认到 {want}");
+            assert!(!std_names.iter().any(|n| n == want), "{want} 若已被标准扫描认到，这条测试的前提就变了");
+        }
+        // ② 但它的矩阵不满足左右镜像 ⇒ 不能当 bind 用
+        let l = var.iter().find(|x| x.name == "bip01_l_finger0").expect("上面查过");
+        let r = var.iter().find(|x| x.name == "bip01_r_finger0").expect("上面查过");
+        let flipped = (0..3).filter(|k| near(l.bind[12 + k] + r.bind[12 + k], 0.0)).count();
+        let same = (0..3).filter(|k| near(l.bind[12 + k], r.bind[12 + k])).count();
+        assert!(
+            !(flipped == 1 && same == 2),
+            "变体矩阵若满足左右镜像，就说明它和标准记录同语义——那时才谈得上并进 bind"
+        );
+        // ③ 合并这条路是关着的
+        assert_eq!(
+            std_names.iter().filter(|n| **n == "bip01_head").count(),
+            0,
+            "语义没定之前，parse_nodes 不该并入变体记录"
+        );
+        eprintln!(
+            "变体认到 {} 条（标准 {} 条），其中 {} 是标准扫描的缺口",
+            var.len(),
+            std_names.len(),
+            var.iter()
+                .filter(|x| !std_names.contains(&x.name))
+                .count()
+        );
     }
 
     /// 把 `bip01_l_xxx` 换成 `bip01_r_xxx`。

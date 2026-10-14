@@ -1,0 +1,9 @@
+每份：现有判据认到的骨名 / 变体判据认到的骨名 / 变体里**现有认不到**的那些（就是缺口）
+
+找不到 data/source/npc/model/w1351_boss_machao/w1351_boss_machao_yifu_001.mesh
+找不到 data/source/npc/model/w1351_boss_machao/w1351_boss_machao.mesh
+w1351_monster_xiyuqiezei_yifu_001.mesh
+  标准 35 条（去重 35 名）· 变体 16 条（去重 16 名）· 变体独有 6 名
+  变体独有样例：['bip01_footsteps', 'bip01_head', 'bip01_l_finger0', 'bip01_l_finger1', 'bip01_r_finger0', 'bip01_r_finger1']
+
+找不到 data/source/npc/quest/w1351_pets_daishu_b0/w1351_pets_daishu_b0_yifu_001.mesh

@@ -1,0 +1,12 @@
+抽 45 份「有标准记录」的文件：其中 41 份能从变体判据多认出骨名，合计多认 140 个骨名（平均 3.1 个/份）
+多认最多的 10 份：
+  +24  w1351_pets_rongyanjushou_b0.mesh                         ['bip001_footsteps', 'bone003', 'bone004', 'bone005', 'bone017', 'bone018']
+  +13  w1351_pets_tuxiaoyao_b5.mesh                             ['bip001_footsteps', 'bip001_lthightwist', 'bone16', 'bone17', 'bone18', 'bone19']
+  +12  w1351_pets_xiongmao_b0_yifu_001.mesh                     ['bip01_footsteps', 'bip01_l_finger0', 'bip01_l_finger1', 'bip01_l_finger2', 'bip01_ponytail1', 'bip01_ponytail2']
+  +9   w1351_nan_t_yifu_shilinyi_1801.mesh                      ['bone02_m', 'bone02_m_mirror01', 'bone092', 'camera_target', 'm_bip01_footsteps', 'm_youjianjia']
+  +9   w1351_nan_s_yifu_huohuangshengyi.mesh                    ['bone02_m', 'bone02_m_mirror01', 'bone092', 'camera_target', 'm_bip01_footsteps', 'm_youjianjia']
+  +9   w1351_nan_t_shoutao_shengtianshoutao_1501.mesh           ['bone02_m', 'bone02_m_mirror01', 'bone092', 'camera_target', 'm_bip01_footsteps', 'm_youjianjia']
+  +6   w1351_zuoqi_juyuan.mesh                                  ['bip01_footsteps', 'bone01', 'bone02', 'bone03', 'bone04', 'bone05']
+  +5   w1351_pets_shenyuan_b7_xiezi_001.mesh                    ['bip01_footsteps', 'bip01_l_finger0', 'bip01_r_finger0', 'bip01_r_finger1', 'bone03']
+  +4   w1351_zuoqi_bailang_yifu_001.mesh                        ['bip03_footsteps', 'bone001', 'bone002', 'bone02']
+  +4   w1351_pets_danghu_b0.mesh                                ['bone022', 'bone027', 'bone033', 'bone044']

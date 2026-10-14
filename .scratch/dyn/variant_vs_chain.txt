@@ -1,0 +1,7 @@
+w1351_monster_guifengzhuangke_lian_001         链  28 · 标准节点  24 · 变体独有   1 · 在链上   1  ['bip02_footsteps']
+w1351_monster_xiyuqiezei_yifu_001              链  46 · 标准节点  32 · 变体独有   6 · 在链上   6  ['bip01_footsteps', 'bip01_head', 'bip01_l_finger0', 'bip01_l_finger1', 'bip01_r_finger0']
+w1351_pets_rongyanjushou_b0                    链  87 · 标准节点  39 · 变体独有  24 · 在链上  24  ['bip001_footsteps', 'bone003', 'bone004', 'bone005', 'bone017']
+w1351_pets_xiongmao_b0_yifu_001                链   0 · 标准节点  25 · 变体独有  12 · 在链上   0  ['bip01_footsteps', 'bip01_l_finger0', 'bip01_l_finger1', 'bip01_l_finger2', 'bip01_ponytail1']
+w1351_zuoqi_juyuan                             链  49 · 标准节点  34 · 变体独有   6 · 在链上   6  ['bip01_footsteps', 'bone01', 'bone02', 'bone03', 'bone04']
+
+5 份文件里：变体独有 49 个骨名，其中 37 个（75.5%）本来就在那份的父骨链名单上

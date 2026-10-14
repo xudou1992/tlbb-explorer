@@ -186,9 +186,11 @@ fn main() {
             eprintln!("未知参数 {a}");
         }
     }
-    if names.is_empty() && mode != "gain" && mode != "missnames" && mode != "skin" {
-        eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin] 干名[,...]");
-        eprintln!("      批量：variant_probe --mode=gain|missnames|skin --batch=路径片段 [--limit=N]");
+    if names.is_empty()
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus")
+    {
+        eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus] 干名[,...]");
+        eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus --batch=路径片段 [--limit=N]");
         std::process::exit(2);
     }
     let db = root.join(".scratch/resources.db");
@@ -304,7 +306,9 @@ fn main() {
             declared: bone_count(&raw),
         });
     }
-    if loaded.is_empty() && mode != "gain" && mode != "missnames" && mode != "skin" {
+    if loaded.is_empty()
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus")
+    {
         eprintln!("一份都没读到");
         std::process::exit(2);
     }
@@ -635,6 +639,64 @@ fn main() {
         return;
     }
 
+
+
+    if mode == "shiftcensus" {
+        // 第四十一补那条判据只有 `rongyanjushou_b0` 一份支撑。这里铺到全库：
+        // 每份挑「基向量与标准整块精确相等」的变体记录，量平移差的逐轴极差，
+        // 统计恒定与否、以及极差最大的是哪条轴（上一份看到的是「几乎只压 X」）。
+        let paths = mesh_paths(&con, &batch, limit);
+        let (mut files, mut with_var, mut testable, mut constant, mut varying) =
+            (0usize, 0usize, 0usize, 0usize, 0usize);
+        let mut axis_max = [0usize; 3];
+        let mut bones = 0usize;
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            files += 1;
+            let var = parse_nodes_variant(&raw);
+            if var.is_empty() {
+                continue;
+            }
+            with_var += 1;
+            let std_nodes = parse_nodes(&raw);
+            let mut ds: Vec<[f64; 3]> = Vec::new();
+            for v in &var {
+                let Some(s) = std_nodes.iter().find(|m| m.name == v.name) else { continue };
+                if !slots12().iter().all(|&k| (v.bind[k] - s.bind[k]).abs() <= 1e-6) {
+                    continue;
+                }
+                ds.push((0..3).map(|k| v.bind[12 + k] as f64 - s.bind[12 + k] as f64).collect::<Vec<_>>().try_into().unwrap());
+            }
+            if ds.len() < 2 {
+                continue;
+            }
+            testable += 1;
+            bones += ds.len();
+            let mut spread = [0f64; 3];
+            for k in 0..3 {
+                let col: Vec<f64> = ds.iter().map(|d| d[k]).collect();
+                let mn = col.iter().fold(f64::INFINITY, |a, &b| a.min(b));
+                let mx = col.iter().fold(f64::NEG_INFINITY, |a, &b| a.max(b));
+                spread[k] = mx - mn;
+            }
+            if spread.iter().all(|s| *s <= 1e-4) {
+                constant += 1;
+            } else {
+                varying += 1;
+                let am = (0..3).reduce(|acc, k| if spread[k] > spread[acc] { k } else { acc }).unwrap();
+                axis_max[am] += 1;
+                println!("{name}\t{}\t{:.6}\t{:.6}\t{:.6}", ds.len(), spread[0], spread[1], spread[2]);
+            }
+        }
+        println!(
+            "\n# 读到 {files} 份 · 带变体记录 {with_var} 份 · 可比（≥2 根基向量相等）{testable} 份、骨数合计 {bones}\n\
+             # 平移差恒定（三轴极差 ≤1e-4）的份数 {constant} · 不恒定 {varying}\n\
+             # 不恒定那些份里，极差最大的轴：X {} · Y {} · Z {}",
+            axis_max[0], axis_max[1], axis_max[2]
+        );
+        return;
+    }
 
 
     if mode == "missnames" {

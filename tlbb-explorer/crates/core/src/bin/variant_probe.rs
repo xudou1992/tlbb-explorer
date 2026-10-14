@@ -700,7 +700,10 @@ fn main() {
                 mir.replace_range(rest..rest + 3, "_r_");
                 let Some((_, b)) = ds.iter().find(|(m, _)| m == &mir) else { continue };
                 let eq = |i: usize| (a[i] - b[i]).abs() <= 1e-4;
-                let flip = |i: usize| (a[i] + b[i]).abs() <= 1e-4;
+                // 零对零时 `|a-b|<=tol` 与 `|a+b|<=tol` 同时成立，所以「反号」必须先看量级：
+                // 两边都是零头就不叫反号，归「都同」（第四十三补就是撞在这上面的）。
+                let big = |i: usize| a[i].abs().max(b[i].abs()) > 1e-4;
+                let flip = |i: usize| big(i) && (a[i] + b[i]).abs() <= 1e-4;
                 pairs += 1;
                 if flip(0) && eq(1) && eq(2) {
                     p_x_flip += 1;

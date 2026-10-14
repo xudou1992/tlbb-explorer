@@ -186,9 +186,9 @@ fn main() {
             eprintln!("未知参数 {a}");
         }
     }
-    if names.is_empty() && mode != "gain" {
-        eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain] 干名[,...]");
-        eprintln!("      批量覆盖面：variant_probe --mode=gain --batch=路径片段 [--limit=N]");
+    if names.is_empty() && mode != "gain" && mode != "missnames" {
+        eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames] 干名[,...]");
+        eprintln!("      批量：variant_probe --mode=gain|missnames --batch=路径片段 [--limit=N]");
         std::process::exit(2);
     }
     let db = root.join(".scratch/resources.db");
@@ -304,7 +304,7 @@ fn main() {
             declared: bone_count(&raw),
         });
     }
-    if loaded.is_empty() {
+    if loaded.is_empty() && mode != "gain" && mode != "missnames" {
         eprintln!("一份都没读到");
         std::process::exit(2);
     }
@@ -468,6 +468,61 @@ fn main() {
         );
         return;
     }
+
+    if mode == "missnames" {
+        // 第三十六补留的尾巴：59 份「各差 1 个」——差的到底是哪个名。
+        // 只看带变体记录且同目录有解得开的 .ani 的份，把「独有、却在 .ani 骨名表里找不到」的名字点出来。
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut agg: BTreeMap<String, usize> = BTreeMap::new();
+        let mut hit_files = 0usize;
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            let std_names: Vec<String> = parse_nodes(&raw).iter().map(|n| n.name.clone()).collect();
+            let var = parse_nodes_variant(&raw);
+            if var.is_empty() {
+                continue;
+            }
+            let mut bones: Vec<String> = Vec::new();
+            for a in anim_names_for(&con, p) {
+                let Some(araw) = bytes_of(&con, &root, &mut paks, &a) else { continue };
+                let Some(an) = parse_ani(&araw) else { continue };
+                bones = an.tracks.iter().map(|t| t.bone.clone()).collect();
+                if let Some(rs) = rest_poses(&araw) {
+                    for r in rs {
+                        if !r.bone.is_empty() && !bones.contains(&r.bone) {
+                            bones.push(r.bone);
+                        }
+                    }
+                }
+                break;
+            }
+            if bones.is_empty() {
+                continue;
+            }
+            let missing: Vec<String> = var
+                .iter()
+                .map(|v| v.name.clone())
+                .filter(|n| !std_names.contains(n) && !bones.contains(n))
+                .collect();
+            if missing.is_empty() {
+                continue;
+            }
+            hit_files += 1;
+            for m in &missing {
+                *agg.entry(m.clone()).or_default() += 1;
+            }
+            println!("{name} · {}", missing.join(","));
+        }
+        println!("\n# 有缺名的份数 {hit_files} · 按名字汇总：");
+        let mut rows: Vec<(usize, String)> = agg.into_iter().map(|(k, v)| (v, k)).collect();
+        rows.sort_by(|a, b| b.0.cmp(&a.0).then(a.1.cmp(&b.1)));
+        for (n, k) in rows.iter().take(25) {
+            println!("  {k} · {n} 份");
+        }
+        return;
+    }
+
 
     if mode == "crosspart" {
         for i in 0..loaded.len() {

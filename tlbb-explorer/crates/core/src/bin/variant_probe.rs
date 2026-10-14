@@ -650,6 +650,14 @@ fn main() {
             (0usize, 0usize, 0usize, 0usize, 0usize);
         let mut axis_max = [0usize; 3];
         let mut bones = 0usize;
+        // 第四十二补留的第①件：左右镜像对的差值是不是「同一条轴反号」。
+        // 全库口径：同一份里 `x_l_foo` 与 `x_r_foo` 都有可比记录时，比它们三个分量的关系。
+        let mut pairs = 0usize;
+        let mut p_x_flip = 0usize; // X 反号、Y/Z 同
+        let mut p_y_flip = 0usize; // Y 反号、X/Z 同
+        let mut p_z_flip = 0usize; // Z 反号、X/Y 同
+        let mut p_same = 0usize; // 三个都同
+        let mut p_other = 0usize;
         for p in &paths {
             let name = p.rsplit('/').next().unwrap_or("").to_string();
             let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
@@ -660,13 +668,18 @@ fn main() {
             }
             with_var += 1;
             let std_nodes = parse_nodes(&raw);
-            let mut ds: Vec<[f64; 3]> = Vec::new();
+            let mut ds: Vec<(String, [f64; 3])> = Vec::new();
             for v in &var {
                 let Some(s) = std_nodes.iter().find(|m| m.name == v.name) else { continue };
                 if !slots12().iter().all(|&k| (v.bind[k] - s.bind[k]).abs() <= 1e-6) {
                     continue;
                 }
-                ds.push((0..3).map(|k| v.bind[12 + k] as f64 - s.bind[12 + k] as f64).collect::<Vec<_>>().try_into().unwrap());
+                let d = [
+                    v.bind[12] as f64 - s.bind[12] as f64,
+                    v.bind[13] as f64 - s.bind[13] as f64,
+                    v.bind[14] as f64 - s.bind[14] as f64,
+                ];
+                ds.push((v.name.clone(), d));
             }
             if ds.len() < 2 {
                 continue;
@@ -675,10 +688,31 @@ fn main() {
             bones += ds.len();
             let mut spread = [0f64; 3];
             for k in 0..3 {
-                let col: Vec<f64> = ds.iter().map(|d| d[k]).collect();
+                let col: Vec<f64> = ds.iter().map(|(_, d)| d[k]).collect();
                 let mn = col.iter().fold(f64::INFINITY, |a, &b| a.min(b));
                 let mx = col.iter().fold(f64::NEG_INFINITY, |a, &b| a.max(b));
                 spread[k] = mx - mn;
+            }
+            // 镜像对：同一份里 `_l_` 与 `_r_` 都有可比记录时才比，容差 1e-4
+            for (nm, a) in &ds {
+                let Some(rest) = nm.find("_l_") else { continue };
+                let mut mir = nm.clone();
+                mir.replace_range(rest..rest + 3, "_r_");
+                let Some((_, b)) = ds.iter().find(|(m, _)| m == &mir) else { continue };
+                let eq = |i: usize| (a[i] - b[i]).abs() <= 1e-4;
+                let flip = |i: usize| (a[i] + b[i]).abs() <= 1e-4;
+                pairs += 1;
+                if flip(0) && eq(1) && eq(2) {
+                    p_x_flip += 1;
+                } else if eq(0) && flip(1) && eq(2) {
+                    p_y_flip += 1;
+                } else if eq(0) && eq(1) && flip(2) {
+                    p_z_flip += 1;
+                } else if eq(0) && eq(1) && eq(2) {
+                    p_same += 1;
+                } else {
+                    p_other += 1;
+                }
             }
             if spread.iter().all(|s| *s <= 1e-4) {
                 constant += 1;
@@ -692,7 +726,8 @@ fn main() {
         println!(
             "\n# 读到 {files} 份 · 带变体记录 {with_var} 份 · 可比（≥2 根基向量相等）{testable} 份、骨数合计 {bones}\n\
              # 平移差恒定（三轴极差 ≤1e-4）的份数 {constant} · 不恒定 {varying}\n\
-             # 不恒定那些份里，极差最大的轴：X {} · Y {} · Z {}",
+             # 不恒定那些份里，极差最大的轴：X {} · Y {} · Z {}\n\
+             # 镜像对 {pairs} 组：X 反号 {p_x_flip} · Y 反号 {p_y_flip} · Z 反号 {p_z_flip} · 三分量都同 {p_same} · 其余形态 {p_other}",
             axis_max[0], axis_max[1], axis_max[2]
         );
         return;

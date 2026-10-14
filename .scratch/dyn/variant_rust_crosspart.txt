@@ -1,0 +1,19 @@
+
+跨部件（变体 vs 变体）：w1351_monster_xiyuqiezei_shoutao_001.mesh · w1351_monster_xiyuqiezei_yifu_001.mesh
+  bip01_footsteps          最大差 2.0980951376259327e-7 对上
+  bip01_head               最大差 0e0 对上
+  bip01_l_finger0          最大差 0e0 对上
+  bip01_l_finger1          最大差 0e0 对上
+  bone09                   最大差 0e0 对上
+  bone08                   最大差 0e0 对上
+  bip01_r_finger0          最大差 0e0 对上
+  bip01_r_finger1          最大差 0e0 对上
+  bone01                   最大差 0e0 对上
+  bone07                   最大差 0e0 对上
+  bip01_l_toe0             最大差 0e0 对上
+  bip01_r_toe0             最大差 0e0 对上
+  bone12                   最大差 0e0 对上
+  bone12_mirror02          最大差 0e0 对上
+  bone12_mirror01          最大差 0e0 对上
+  bone12_mirror02_mirror01 最大差 0e0 对上
+  同名 16 个：等 16 · 不等 0

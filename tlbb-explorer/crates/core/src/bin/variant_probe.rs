@@ -1,0 +1,360 @@
+//! `variant_probe` — 变体记录（132B 那族）的矩阵语义探针。
+//!
+//! 为什么还要一个探针：主干 `parse_nodes` 故意不并变体记录，而它的语义一直靠一次性
+//! 脚本比字节（`.scratch/cfg身份普查_20261011.md` 第二十四～二十九补）。那些脚本没留档、
+//! 判据也和 Rust 那套共用判据（`name_field`/`affine_basis`）不是同一份代码——
+//! 双实现分叉正是这个仓库撞过的坑。这里直接用主干的读法，数字不再来自第二套判据。
+//!
+//! 三个比对：
+//! * `--same`：同一份文件里同名骨的 变体 vs 标准，比 本身 / 转置 / 逆 / 逆的转置 四个候选。
+//! * `--12slot`：只比 12 个有效元素（前三行 × 前三列），排除齐次位与平移那 4 个约定槽。
+//! * `--crosspart`：同一角色两个部件文件里，**变体对变体**（不是变体对标准）同骨比对——
+//!   局部变换应当与部件无关，世界变换则会差一个根变换。
+//!
+//! 只读纪律：db 只读、pak 只读，什么都不写。
+//!
+//! 用法：
+//! ```text
+//! variant_probe [--root D:/TLGL] [--mode same|12slot|trans|axis|crosspart] 文件干名[,...]
+//! ```
+
+use std::collections::BTreeMap;
+use std::path::{Path, PathBuf};
+
+use rusqlite::{Connection, OpenFlags};
+use tlbb_core::jpak::Pak;
+use tlbb_core::payload;
+use tlbb_core::preview::{bone_count, parse_nodes, parse_nodes_variant, pose};
+
+fn locate(con: &Connection, name: &str) -> Option<(u64, String)> {
+    let mut stmt = con
+        .prepare("SELECT hash, coalesce(pak,'') FROM resources WHERE path LIKE ?1 AND stored > 0 LIMIT 1")
+        .ok()?;
+    stmt.query_row([format!("%/{}", name.replace('\'', "''"))], |r| {
+        let hex: String = r.get(0)?;
+        let pak: String = r.get(1)?;
+        Ok((hex, pak))
+    })
+    .ok()
+    .and_then(|(hex, pak)| u64::from_str_radix(&hex, 16).ok().map(|h| (h, pak)))
+}
+
+/// 干名 → 实际文件名（部件名精确、组干名按前缀取最大的一份）。
+fn resolve_mesh(con: &Connection, stem: &str) -> Option<String> {
+    let base = |p: String| p.rsplit('/').next().unwrap_or("").to_string();
+    let exact: Option<String> = con
+        .prepare("SELECT coalesce(path,'') FROM resources WHERE ext='.mesh' AND path LIKE ?1 LIMIT 1")
+        .ok()
+        .and_then(|mut st| st.query_row([format!("%/{stem}.mesh")], |r| r.get(0)).ok());
+    if let Some(p) = exact {
+        return Some(base(p));
+    }
+    con.prepare("SELECT coalesce(path,'') FROM resources WHERE ext='.mesh' AND path LIKE ?1 ORDER BY stored DESC LIMIT 1")
+        .ok()
+        .and_then(|mut st| st.query_row([format!("%/{stem}%.mesh")], |r| r.get(0)).ok())
+        .map(base)
+}
+
+fn bytes_of(con: &Connection, root: &Path, paks: &mut BTreeMap<String, Pak>, name: &str) -> Option<Vec<u8>> {
+    let (hash, pak) = locate(con, name)?;
+    if !paks.contains_key(&pak) {
+        paks.insert(pak.clone(), Pak::open(&root.join(format!("{pak}.pak"))).ok()?);
+    }
+    let p = paks.get(&pak)?;
+    let rec = p.records().find(|r| r.hash == hash && r.stored > 0)?;
+    payload::decode(p, &rec).ok().map(|d| d.bytes)
+}
+
+fn transposed(m: &[f32; 16]) -> [f32; 16] {
+    let mut t = [0f32; 16];
+    for r in 0..4 {
+        for c in 0..4 {
+            t[c * 4 + r] = m[r * 4 + c];
+        }
+    }
+    t
+}
+
+/// 差值口径：逐元素绝对差的最大值（主序全 16 位，或只取前三行×前三列那 12 位）。
+/// 无效（非有限/分母为 0）返回 `None`，不硬凑成一个数。
+fn diff(a: &[f32; 16], b: &[f32; 16], slots: &[usize]) -> Option<f64> {
+    let mut mx = 0f64;
+    for &k in slots {
+        let (x, y) = (a[k] as f64, b[k] as f64);
+        if !x.is_finite() || !y.is_finite() {
+            return None;
+        }
+        mx = mx.max((x - y).abs());
+    }
+    Some(mx)
+}
+
+fn slots16() -> Vec<usize> {
+    (0..16).collect()
+}
+
+fn slots12() -> Vec<usize> {
+    let mut v = Vec::new();
+    for r in 0..3 {
+        for c in 0..3 {
+            v.push(r * 4 + c);
+        }
+    }
+    v
+}
+
+fn main() {
+    let mut root = PathBuf::from("D:/TLGL");
+    let mut mode = "same".to_string();
+    let mut names: Vec<String> = Vec::new();
+    let mut args = std::env::args().skip(1);
+    while let Some(a) = args.next() {
+        if a == "--root" {
+            root = PathBuf::from(args.next().unwrap_or_default());
+        } else if let Some(v) = a.strip_prefix("--mode=") {
+            mode = v.to_string();
+        } else if a == "--mode" {
+            mode = args.next().unwrap_or_default();
+        } else if let Some(v) = a.strip_prefix("--names=") {
+            names = v.split(',').map(|s| s.trim().to_string()).collect();
+        } else if !a.starts_with("--") {
+            names = a.split(',').map(|s| s.trim().to_string()).collect();
+        } else {
+            eprintln!("未知参数 {a}");
+        }
+    }
+    if names.is_empty() {
+        eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|crosspart] 干名[,...]");
+        std::process::exit(2);
+    }
+    let db = root.join(".scratch/resources.db");
+    let con = match Connection::open_with_flags(
+        &db,
+        OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+    ) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("资源清单打不开（{db:?}）：{e}");
+            std::process::exit(2);
+        }
+    };
+    let mut paks: BTreeMap<String, Pak> = BTreeMap::new();
+
+    struct Load {
+        file: String,
+        std_nodes: Vec<tlbb_core::preview::Node>,
+        var_nodes: Vec<tlbb_core::preview::Node>,
+        declared: Option<usize>,
+    }
+    let mut loaded: Vec<Load> = Vec::new();
+    for stem in &names {
+        let Some(mesh) = resolve_mesh(&con, stem.trim_end_matches(".mesh")) else {
+            println!("  跳过 {stem}：清单里找不到同名/前缀 .mesh");
+            continue;
+        };
+        let Some(raw) = bytes_of(&con, &root, &mut paks, &mesh) else {
+            println!("  跳过 {stem}：读不出字节");
+            continue;
+        };
+        loaded.push(Load {
+            file: mesh,
+            std_nodes: parse_nodes(&raw),
+            var_nodes: parse_nodes_variant(&raw),
+            declared: bone_count(&raw),
+        });
+    }
+    if loaded.is_empty() {
+        eprintln!("一份都没读到");
+        std::process::exit(2);
+    }
+
+    let slots = if mode == "12slot" { slots12() } else { slots16() };
+    let tag = if mode == "12slot" { "12位差" } else { "16位差" };
+
+    if mode == "trans" {
+        // 基向量已经实测能整体精确相等（12 位差 0.0000），剩下的差别全在平移那三个数。
+        // 这一档就只问一件事：变体记录的平移行 = 标准记录的什么？
+        // 候选：存储末行（= 逆矩阵的平移）/ 求逆后的末行（= 真实骨位）/ 转置矩阵的末列。
+        for ld in &loaded {
+            println!("\n{} · 标准 {} 条 · 变体 {} 条", ld.file, ld.std_nodes.len(), ld.var_nodes.len());
+            for n in &ld.var_nodes {
+                let Some(s) = ld.std_nodes.iter().find(|m| m.name == n.name) else { continue };
+                let vt = [n.bind[12], n.bind[13], n.bind[14]];
+                let mut cands: Vec<(&str, [f32; 3])> = vec![("存储末行", [s.bind[12], s.bind[13], s.bind[14]])];
+                if let Some(inv) = pose::mat_inverse_affine(&s.bind) {
+                    cands.push(("求逆末行(真实骨位)", [inv[12], inv[13], inv[14]]));
+                }
+                let t = transposed(&s.bind);
+                cands.push(("转置末行", [t[12], t[13], t[14]]));
+                let basis_ok = slots12().iter().all(|&k| (n.bind[k] - s.bind[k]).abs() <= 1e-6);
+                let parts: Vec<String> = cands
+                    .iter()
+                    .map(|(label, c)| {
+                        let d = (0..3).map(|k| (vt[k] as f64 - c[k] as f64).abs()).fold(0f64, f64::max);
+                        format!("{label} {d:.6}")
+                    })
+                    .collect();
+                println!(
+                    "  {:<24} 基向量{} 平移 {:?} 标准末行 {:?} → {}",
+                    n.name,
+                    if basis_ok { "等" } else { "不等" },
+                    vt,
+                    [s.bind[12], s.bind[13], s.bind[14]],
+                    parts.join(" · ")
+                );
+            }
+        }
+        return;
+    }
+
+    if mode == "axis" {
+        // 基向量逐元素相等、只有平移差 0.006~0.16 的那批：差向量到底朝哪儿？
+        // 若它平行于三条基向量之一（|cos|≈1），就是「沿骨自身轴的局部偏移」；
+        // 若三条都不平行，它是世界系的某个平移，语义另说。
+        for ld in &loaded {
+            println!("\n{} · 变体 {} 条", ld.file, ld.var_nodes.len());
+            let mut par = 0usize;
+            let mut tot = 0usize;
+            for n in &ld.var_nodes {
+                let Some(s) = ld.std_nodes.iter().find(|m| m.name == n.name) else { continue };
+                if !slots12().iter().all(|&k| (n.bind[k] - s.bind[k]).abs() <= 1e-6) {
+                    continue;
+                }
+                let d: [f64; 3] =
+                    (0..3).map(|k| n.bind[12 + k] as f64 - s.bind[12 + k] as f64).collect::<Vec<_>>().try_into().unwrap();
+                let len = (d[0] * d[0] + d[1] * d[1] + d[2] * d[2]).sqrt();
+                if len < 1e-9 {
+                    continue;
+                }
+                tot += 1;
+                let cos: Vec<f64> = (0..3)
+                    .map(|r| {
+                        let row: [f64; 3] =
+                            (0..3).map(|c| s.bind[r * 4 + c] as f64).collect::<Vec<_>>().try_into().unwrap();
+                        let rl = (row[0] * row[0] + row[1] * row[1] + row[2] * row[2]).sqrt();
+                        let dot = d[0] * row[0] + d[1] * row[1] + d[2] * row[2];
+                        (dot / (rl * len)).abs()
+                    })
+                    .collect();
+                let (bk, bv) = cos
+                    .iter()
+                    .enumerate()
+                    .fold((0usize, 0f64), |(ai, av), (i, v)| if *v > av { (i, *v) } else { (ai, av) });
+                if bv > 0.999 {
+                    par += 1;
+                }
+                println!(
+                    "  {:<22} |差| {:.6} 平行度 行{} |cos|={:.6} 其余 {:.4} {:.4}",
+                    n.name, len, bk, bv, cos[(bk + 1) % 3], cos[(bk + 2) % 3]
+                );
+            }
+            println!("  基向量相等且可量的 {tot} 根：差向量平行于某条基向量的 {par} 根");
+        }
+        return;
+    }
+
+
+    if mode == "crosspart" {
+        // 变体对变体：同一根骨在两个部件文件里的变体值该不该一致
+        for i in 0..loaded.len() {
+            for j in 0..loaded.len() {
+                if i >= j {
+                    continue;
+                }
+                let (a, b) = (&loaded[i], &loaded[j]);
+                let shared: Vec<&str> = a
+                    .var_nodes
+                    .iter()
+                    .filter_map(|n| {
+                        b.var_nodes.iter().any(|m| m.name == n.name).then(|| n.name.as_str())
+                    })
+                    .collect();
+                if shared.is_empty() {
+                    continue;
+                }
+                println!("\n跨部件（变体 vs 变体）：{} · {}", a.file, b.file);
+                let (mut eq, mut ne) = (0usize, 0usize);
+                for nm in &shared {
+                    let va = a.var_nodes.iter().find(|n| &&n.name == nm).unwrap();
+                    let vb = b.var_nodes.iter().find(|n| &&n.name == nm).unwrap();
+                    match diff(&va.bind, &vb.bind, &slots) {
+                        Some(d) => {
+                            let same = d <= 1e-6;
+                            if same {
+                                eq += 1;
+                            } else {
+                                ne += 1;
+                            }
+                            println!("  {:<24} 最大差 {:e} {}", nm, d, if same { "对上" } else { "不对上" });
+                        }
+                        None => println!("  {:<24} 差值无效（非有限）", nm),
+                    }
+                }
+                println!("  同名 {} 个：等 {eq} · 不等 {ne}", shared.len());
+            }
+        }
+        return;
+    }
+
+    let mut totals: BTreeMap<&str, usize> = BTreeMap::new();
+    let mut grand = 0usize;
+    for ld in &loaded {
+        println!(
+            "\n{} · 声明 {} 根 · 标准 {} 条 · 变体 {} 条",
+            ld.file,
+            ld.declared.unwrap_or(0),
+            ld.std_nodes.len(),
+            ld.var_nodes.len()
+        );
+        let shared: Vec<&str> = ld
+            .var_nodes
+            .iter()
+            .filter_map(|n| ld.std_nodes.iter().any(|m| m.name == n.name).then(|| n.name.as_str()))
+            .collect();
+        if shared.is_empty() {
+            println!("  两套没有同名骨，比不了");
+            continue;
+        }
+        for nm in &shared {
+            let v = ld.var_nodes.iter().find(|n| &&n.name == nm).unwrap();
+            let s = ld.std_nodes.iter().find(|n| &&n.name == nm).unwrap();
+            let inv = pose::mat_inverse_affine(&s.bind);
+            let cands: [(&str, Option<[f32; 16]>); 4] = [
+                ("本身", Some(s.bind)),
+                ("转置", Some(transposed(&s.bind))),
+                ("逆", inv),
+                ("逆的转置", inv.map(|m: [f32; 16]| transposed(&m))),
+            ];
+            let mut parts = Vec::new();
+            let mut best: Option<(&str, f64)> = None;
+            for (label, cand) in cands {
+                match cand.and_then(|c| diff(&v.bind, &c, &slots)) {
+                    Some(d) => {
+                        let hit = d <= 1e-6;
+                        if hit {
+                            *totals.entry(label).or_default() += 1;
+                        }
+                        parts.push(format!("{label} {:.4}", d));
+                        if best.map_or(true, |(_, bd)| d < bd) {
+                            best = Some((label, d));
+                        }
+                    }
+                    None => parts.push(format!("{label} x")),
+                }
+            }
+            let exact = v.bind == s.bind;
+            println!(
+                "  {:<24} {} 最近={} 精确等={}",
+                nm,
+                parts.join(" "),
+                best.map_or("无".to_string(), |(l, d)| format!("{l} {d:.6}")),
+                exact
+            );
+        }
+        grand += shared.len();
+    }
+    println!(
+        "\n{tag}口径 · {grand} 个同名对比里等于各候选的个数：{:?}（判据：差 ≤1e-6）",
+        totals
+    );
+}

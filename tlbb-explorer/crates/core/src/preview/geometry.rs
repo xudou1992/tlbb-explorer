@@ -538,8 +538,8 @@ fn affine_basis(m: &[f32; 16]) -> Option<[f32; 3]> {
 /// * 只在标准扫描**认不到这个名字**时才采用（见 [`parse_nodes`] 里的合并），
 ///   因为这条判据裸用不特异：正常文件上也会命中，且命中的多半与标准记录同骨重名。
 /// 语义没定之前**不并进 `parse_nodes`**（理由见 `parse_nodes` 里那段注释与闸门
-/// `variant_records_are_real_but_not_world_bind`），所以普通构建里它暂时没人调用。
-#[allow(dead_code)]
+/// `variant_records_are_real_but_not_world_bind`）。对外只给这一个探针入口
+/// （`variant_probe`），主干仍不走它。
 fn read_node_variant(raw: &[u8], at: usize) -> Option<Node> {
     let nm = name_field(raw, at)?;
     // 同一个名字必须原样再来一遍
@@ -672,7 +672,6 @@ pub fn parse_nodes(raw: &[u8]) -> Vec<Node> {
 /// 记录之间隔着变长的影响表，步长不固定 ⇒ 一路逐 4 字节滑过去。
 const VARIANT_RECORD: usize = 132;
 
-#[allow(dead_code)]
 fn scan_nodes_variant(raw: &[u8]) -> Vec<Node> {
     let mut out = Vec::new();
     let mut i = 0usize;
@@ -687,6 +686,13 @@ fn scan_nodes_variant(raw: &[u8]) -> Vec<Node> {
         i += 4;
     }
     out
+}
+
+/// 变体记录扫描的**探针专用**入口（`variant_probe`）。它与 [`parse_nodes`] 的区别：
+/// 只走 [`read_node_variant`] 那套布局，不与标准 96B 记录合并、不去重、不改变任何
+/// 主干行为。语义定下来之前，除探针外没人调它。
+pub fn parse_nodes_variant(raw: &[u8]) -> Vec<Node> {
+    scan_nodes_variant(raw)
 }
 
 fn scan_nodes(raw: &[u8], start: usize) -> Vec<Node> {
@@ -1765,7 +1771,8 @@ mod node_tests {
             eprintln!("跳过：本机没有 data.pak 或这份资源不在里面");
             return;
         };
-        let std_names: Vec<String> = parse_nodes(&mesh).iter().map(|x| x.name.clone()).collect();
+        let std_nodes = parse_nodes(&mesh);
+        let std_names: Vec<String> = std_nodes.iter().map(|x| x.name.clone()).collect();
         let var = super::scan_nodes_variant(&mesh);
         // ① 变体判据确实认到骨名，而且这些名字标准扫描认不到（缺口是真的）
         for want in ["bip01_head", "bip01_footsteps", "bip01_l_finger0"] {
@@ -1787,8 +1794,43 @@ mod node_tests {
             0,
             "语义没定之前，parse_nodes 不该并入变体记录"
         );
+        // ④ 它**与部件无关**（2026-10-14 第三十补，`variant_probe --mode=crosspart`）：
+        //    同一只怪的「手套」那份里，16 个同名变体记录与「衣服」这份数值对上
+        //    （最大差 ≤1e-6，末位有浮点舍入差，不是字面复制），而两部件各自的标准记录并不相同。
+        //    ⇒ 变体块是这套骨架自带的一套矩阵、被写进每个部件文件，不是「这份网格自己的绑定」
+        //    ——而 `bind` 要的正是后者，所以它天然不该并进 `parse_nodes`。
+        //    这条比②更硬：②只说镜像不合，④说的是「它根本不属于这个部件」。
+        let hand = super::scan_nodes_variant(&raw_of(&root, "data", SHOUTAO).expect("手套那份网格"));
+        let mut shared = 0usize;
+        let mut worst = 0f64;
+        for x in &hand {
+            if let Some(y) = var.iter().find(|v| v.name == x.name) {
+                shared += 1;
+                let d = (0..16)
+                    .map(|k| (x.bind[k] as f64 - y.bind[k] as f64).abs())
+                    .fold(0f64, f64::max);
+                assert!(d <= 1e-6, "跨部件变体记录 {} 该对上，实际最大差 {d:.3e}", x.name);
+                worst = worst.max(d);
+            }
+        }
+        assert!(shared >= 12, "两份部件的变体记录该大面积重合，实际 {shared}");
+        // 分辨力：两部件的**标准记录名字集合**是同一套（骨架名共用），所以「与部件无关」
+        // 不能靠名字差来撑，只能靠「同一份文件里变体 ≠ 标准」这条——实测同名 46 个 0 个对上。
+        let std_diff = var
+            .iter()
+            .filter(|v| {
+                std_nodes
+                    .iter()
+                    .find(|s| s.name == v.name)
+                    .map_or(true, |s| (0..16).any(|k| (v.bind[k] - s.bind[k]).abs() > 1e-6))
+            })
+            .count();
+        assert!(
+            std_diff >= 10,
+            "变体若与同份标准记录一致，④就没有意义；实际对不上的 {std_diff} 条"
+        );
         eprintln!(
-            "变体认到 {} 条（标准 {} 条），其中 {} 是标准扫描的缺口",
+            "变体认到 {} 条（标准 {} 条），其中 {} 是标准扫描的缺口；跨部件同名对上 {shared} 条（最大差 {worst:.3e}）",
             var.len(),
             std_names.len(),
             var.iter()

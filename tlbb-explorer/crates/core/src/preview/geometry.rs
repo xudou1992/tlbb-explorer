@@ -1877,6 +1877,22 @@ mod node_tests {
             "变体记录 {} 条（顶点数 {vc}）：表在 +128 认到 {at128} 条 · 在 +132 认到 {at132} 条",
             var.len()
         );
+        // +128 那 4 个字节是什么（记录长 136 的由来）：原样统计，不猜。
+        // 若它是齐次位/常数，`f32` 那栏会集中在 0.0 或 1.0；若是计数或索引，`u32` 那栏该跟着
+        // 该条表的顶点数走——所以把「u32 值」与「同位置那条表的 N」并排打出来对账。
+        let mut pairs: Vec<(u32, f32, usize)> = Vec::new();
+        let mut i2 = 0usize;
+        while i2 + super::VARIANT_RECORD <= mesh.len() {
+            if let Some(n) = super::read_node_variant(&mesh, i2) {
+                let b = mesh[i2 + 128..i2 + 132].try_into().unwrap();
+                pairs.push((u32::from_le_bytes(b), f32::from_le_bytes(b), n.skin.as_ref().map_or(0, |s| s.vertices.len())));
+            }
+            i2 += 4;
+        }
+        eprintln!("+128 那 4 字节（u32 · f32 · 同条表 N）：");
+        for (u, f, n) in pairs.iter().take(16) {
+            eprintln!("  {u} · {f} · N={n}");
+        }
         assert!(
             at132 >= at128,
             "表起点按 +128 认到 {at128} 条、+132 认到 {at132} 条——这条钉子要求 +132 不少于 +128，\

@@ -175,7 +175,7 @@ fn main() {
         // 全库（或一片）覆盖面：变体块到底在多少份网格里存在、能补多少「标准扫描认不到的骨名」。
         // 只出数、不改主干——`parse_nodes` 该不该并它仍由语义定下来之后再说。
         let paths = mesh_paths(&con, &batch, limit);
-        println!("# file\tdeclared\tstd\tvar\tonly\tonChain\tcoveredAfterMerge");
+        println!("# file\tdeclared\tstd\tvar\tonly\tonChain\tchainLen\tcoveredAfterMerge");
         let (mut files, mut with_var, mut only_all, mut chain_all, mut reach) = (0usize, 0usize, 0usize, 0usize, 0usize);
         for p in &paths {
             let name = p.rsplit('/').next().unwrap_or("").to_string();
@@ -209,9 +209,10 @@ fn main() {
                 reach += 1;
             }
             println!(
-                "{name}\t{declared}\t{}\t{}\t{only}\t{on_chain}\t{}",
+                "{name}\t{declared}\t{}\t{}\t{only}\t{on_chain}\t{}\t{}",
                 std_nodes.len(),
                 var.len(),
+                chain.len(),
                 std_nodes.len() + only
             );
         }

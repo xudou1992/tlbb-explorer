@@ -878,21 +878,40 @@ fn main() {
                 let mut nm = 0usize;
                 let mut full = 0usize;
                 let mut basis = 0usize;
+                let mut hits: Vec<String> = Vec::new();
                 for v in &a.var_nodes {
                     let Some(s) = b.std_nodes.iter().find(|x| x.name == v.name) else { continue };
                     nm += 1;
                     if diff(&v.bind, &s.bind, &slots16()).map_or(false, |d| d <= 1e-4) {
                         full += 1;
+                        hits.push(v.name.clone());
                     }
                     if diff(&v.bind, &s.bind, &slots12()).map_or(false, |d| d <= 1e-4) {
                         basis += 1;
                     }
                 }
                 if nm > 0 {
+                    // **同一对文件再比一次「标准 vs 标准」**：48 补查出变体与_own_标准只差 1~4 个 ULP，
+                    // 那 30 补「变体跨部件相同 ⇒ 它不是 bind」的推理就取决于一个没验过的前提——
+                    // **标准记录本身跨部件是不是也相同**。相同的话那条推理作废。
+                    let mut s_nm = 0usize;
+                    let mut s_full = 0usize;
+                    for x in &a.std_nodes {
+                        let Some(y) = b.std_nodes.iter().find(|m| m.name == x.name) else { continue };
+                        s_nm += 1;
+                        if diff(&x.bind, &y.bind, &slots16()).map_or(false, |d| d <= 1e-4) {
+                            s_full += 1;
+                        }
+                    }
                     println!(
-                        "  {} → {}：{full}/{basis}/{nm}",
+                        "  {} → {}：变体比标准 {full}/{basis}/{nm}；**标准比标准 {s_full}/{s_nm}**{}",
                         a.file.trim_end_matches(".mesh"),
-                        b.file.trim_end_matches(".mesh")
+                        b.file.trim_end_matches(".mesh"),
+                        if hits.is_empty() {
+                            String::new()
+                        } else {
+                            format!(" 变体命中骨名：{}", hits.join(","))
+                        }
                     );
                 }
             }
@@ -979,7 +998,7 @@ fn main() {
                         if hit {
                             *totals.entry(label).or_default() += 1;
                         }
-                        parts.push(format!("{label} {:.4}", d));
+                        parts.push(format!("{label} {:.3e}", d));
                         if best.map_or(true, |(_, bd)| d < bd) {
                             best = Some((label, d));
                         }

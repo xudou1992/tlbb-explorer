@@ -1,0 +1,22 @@
+
+# A 的变体 vs B 的标准（同骨名）：全 16 位命中 / 基向量 12 位命中 / 同名骨数
+  w1351_pets_rongyanjushou_b0 → w1351_pets_rongyanjushou_b1：0/14/24
+  w1351_pets_rongyanjushou_b0 → w1351_pets_rongyanjushou_b3：0/14/24
+  w1351_pets_rongyanjushou_b0 → w1351_pets_rongyanjushou_b5：0/2/25
+  w1351_pets_rongyanjushou_b0 → w1351_pets_rongyanjushou_b7：0/2/25
+  w1351_pets_rongyanjushou_b1 → w1351_pets_rongyanjushou_b0：0/14/24
+  w1351_pets_rongyanjushou_b1 → w1351_pets_rongyanjushou_b3：0/14/24
+  w1351_pets_rongyanjushou_b1 → w1351_pets_rongyanjushou_b5：0/2/25
+  w1351_pets_rongyanjushou_b1 → w1351_pets_rongyanjushou_b7：0/2/25
+  w1351_pets_rongyanjushou_b3 → w1351_pets_rongyanjushou_b0：0/14/24
+  w1351_pets_rongyanjushou_b3 → w1351_pets_rongyanjushou_b1：0/14/24
+  w1351_pets_rongyanjushou_b3 → w1351_pets_rongyanjushou_b5：0/2/25
+  w1351_pets_rongyanjushou_b3 → w1351_pets_rongyanjushou_b7：0/2/25
+  w1351_pets_rongyanjushou_b5 → w1351_pets_rongyanjushou_b0：0/2/17
+  w1351_pets_rongyanjushou_b5 → w1351_pets_rongyanjushou_b1：0/2/17
+  w1351_pets_rongyanjushou_b5 → w1351_pets_rongyanjushou_b3：0/2/17
+  w1351_pets_rongyanjushou_b5 → w1351_pets_rongyanjushou_b7：7/13/23 命中骨名：bone013,bone012,bone011,bone016,bone015,bone014,bone003
+  w1351_pets_rongyanjushou_b7 → w1351_pets_rongyanjushou_b0：0/2/17
+  w1351_pets_rongyanjushou_b7 → w1351_pets_rongyanjushou_b1：0/2/17
+  w1351_pets_rongyanjushou_b7 → w1351_pets_rongyanjushou_b3：0/2/17
+  w1351_pets_rongyanjushou_b7 → w1351_pets_rongyanjushou_b5：7/13/23 命中骨名：bone013,bone012,bone011,bone016,bone015,bone014,bone003

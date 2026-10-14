@@ -187,9 +187,9 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr")
     {
-        eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus] 干名[,...]");
+        eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus --batch=路径片段 [--limit=N]");
         std::process::exit(2);
     }
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -736,6 +736,79 @@ fn main() {
         return;
     }
 
+
+    if mode == "mirr" {
+        // 最后一个没在全库验过的结构性预言：变体块若真是「这份网格的绑定矩阵」，
+        // 它就该满足标准记录那条镜像律——左右同名骨的绑定位移**只差一根轴的符号**
+        // （`bind_translations_mirror_left_and_right` 用 5e-3 容差，全库标准记录满足）。
+        // 这里只看变体那套，逐对统计满足/不满足。
+        let paths = mesh_paths(&con, &batch, limit);
+        let (mut files, mut pairs, mut ok, mut bad) = (0usize, 0usize, 0usize, 0usize);
+        let mut axis_flip = [0usize; 3];
+        // 同一段判据也跑一遍**标准记录**：只有拿到它的「反号轴是根」当基线，
+        // 上面变体那串 Z 才有得比（标准那套反的不是 Z 就说明两套约定不同）。
+        let (mut s_pairs, mut s_ok, mut s_bad) = (0usize, 0usize, 0usize);
+        let mut s_axis = [0usize; 3];
+        let near = |x: f32, y: f32| (x - y).abs() < 5e-3;
+        let neg = |x: f32, y: f32| (x + y).abs() < 5e-3;
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            files += 1;
+            let stdn = parse_nodes(&raw);
+            for a in &stdn {
+                let Some(rest) = a.name.find("_l_") else { continue };
+                let mut mir = a.name.clone();
+                mir.replace_range(rest..rest + 3, "_r_");
+                let Some(b) = stdn.iter().find(|x| x.name == mir) else { continue };
+                let same = (0..3).filter(|k| near(a.bind[12 + k], b.bind[12 + k])).count();
+                let flip = (0..3).filter(|k| neg(a.bind[12 + k], b.bind[12 + k])).count();
+                s_pairs += 1;
+                if same == 2 && flip == 1 {
+                    s_ok += 1;
+                    for k in 0..3 {
+                        if neg(a.bind[12 + k], b.bind[12 + k]) {
+                            s_axis[k] += 1;
+                        }
+                    }
+                } else {
+                    s_bad += 1;
+                }
+            }
+            let var = parse_nodes_variant(&raw);
+            if var.is_empty() {
+                continue;
+            }
+            for a in &var {
+                let Some(rest) = a.name.find("_l_") else { continue };
+                let mut mir = a.name.clone();
+                mir.replace_range(rest..rest + 3, "_r_");
+                let Some(b) = var.iter().find(|x| x.name == mir) else { continue };
+                let near = |x: f32, y: f32| (x - y).abs() < 5e-3;
+                let neg = |x: f32, y: f32| (x + y).abs() < 5e-3;
+                let same = (0..3).filter(|k| near(a.bind[12 + k], b.bind[12 + k])).count();
+                let flip = (0..3).filter(|k| neg(a.bind[12 + k], b.bind[12 + k])).count();
+                pairs += 1;
+                if same == 2 && flip == 1 {
+                    ok += 1;
+                    for k in 0..3 {
+                        if neg(a.bind[12 + k], b.bind[12 + k]) {
+                            axis_flip[k] += 1;
+                        }
+                    }
+                } else {
+                    bad += 1;
+                }
+            }
+        }
+        println!(
+            "\n# 读到 {files} 份 · 变体里的左右对 {pairs} 组：满足镜像律（两轴同·一轴反号）{ok} · 不满足 {bad}\n\
+             # 满足那些组里反号的那根轴：X {} · Y {} · Z {}（标准记录全库是固定一根，若这里散开就说明不是同一套约定）\n\
+             # 基线·标准记录：左右对 {s_pairs} 组：满足 {s_ok} · 不满足 {s_bad} · 反号轴 X {} · Y {} · Z {}",
+            axis_flip[0], axis_flip[1], axis_flip[2], s_axis[0], s_axis[1], s_axis[2]
+        );
+        return;
+    }
 
     if mode == "missnames" {
         // 第三十六补留的尾巴：59 份「各差 1 个」——差的到底是哪个名。

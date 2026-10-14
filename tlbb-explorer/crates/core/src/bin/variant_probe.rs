@@ -57,6 +57,39 @@ fn resolve_mesh(con: &Connection, stem: &str) -> Option<String> {
         .map(base)
 }
 
+/// 清单里一条资源的完整路径（按文件名结尾取第一条）。
+fn path_of(con: &Connection, name: &str) -> Option<String> {
+    let mut stmt = con
+        .prepare("SELECT coalesce(path,'') FROM resources WHERE path LIKE ?1 LIMIT 1")
+        .ok()?;
+    stmt.query_row([format!("%/{}", name.replace('\'', "''"))], |r| r.get(0)).ok()
+}
+
+/// 一只模型的动作清单：同目录的 `<目录>/ani/*.ani`（与 `skel_dump` 同口径——
+/// 客户端就是这么摆的，按模型干名捞会一条也捞不到）。
+fn anim_names_for(con: &Connection, mesh_path: &str) -> Vec<String> {
+    let dir = match mesh_path.rfind('/') {
+        Some(i) => &mesh_path[..i],
+        None => return Vec::new(),
+    };
+    let mut out = Vec::new();
+    if let Ok(mut stmt) =
+        con.prepare("SELECT coalesce(path,'') FROM resources WHERE ext='.ani' AND path LIKE ?1")
+    {
+        if let Ok(rows) = stmt.query_map([format!("%{dir}/ani/%")], |r| r.get::<_, String>(0)) {
+            for p in rows.flatten() {
+                if let Some(n) = p.rsplit('/').next() {
+                    if !n.is_empty() && !out.contains(&n.to_string()) {
+                        out.push(n.to_string());
+                    }
+                }
+            }
+        }
+    }
+    out.sort();
+    out
+}
+
 /// 一批网格：按路径片段筛，`limit` 兜住别一次跑穿（同 `skel_dump` 的批量口径）。
 fn mesh_paths(con: &Connection, prefix: &str, limit: usize) -> Vec<String> {
     let mut stmt = match con.prepare(
@@ -175,8 +208,9 @@ fn main() {
         // 全库（或一片）覆盖面：变体块到底在多少份网格里存在、能补多少「标准扫描认不到的骨名」。
         // 只出数、不改主干——`parse_nodes` 该不该并它仍由语义定下来之后再说。
         let paths = mesh_paths(&con, &batch, limit);
-        println!("# file\tdeclared\tstd\tvar\tonly\tonChain\tchainLen\tcoveredAfterMerge");
+        println!("# file\tdeclared\tstd\tvar\tonly\tonChain\tchainLen\tcoveredAfterMerge\taniBones\tinAni");
         let (mut files, mut with_var, mut only_all, mut chain_all, mut reach) = (0usize, 0usize, 0usize, 0usize, 0usize);
+        let (mut ani_names_all, mut ani_in_all, mut with_ani) = (0usize, 0usize, 0usize);
         for p in &paths {
             let name = p.rsplit('/').next().unwrap_or("").to_string();
             let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
@@ -191,25 +225,48 @@ fn main() {
             let chain: Vec<String> = parse_hierarchy(&raw)
                 .map(|h| h.bones.iter().map(|b| b.name.clone()).collect())
                 .unwrap_or_default();
-            let mut only = 0usize;
-            let mut on_chain = 0usize;
-            for v in &var {
-                if std_names.contains(&v.name.as_str()) {
-                    continue;
+            let mut only_names: Vec<&str> = var
+                .iter()
+                .map(|v| v.name.as_str())
+                .filter(|n| !std_names.contains(n))
+                .collect();
+            let only = only_names.len();
+            let on_chain = only_names.iter().filter(|n| chain.iter().any(|c| c == *n)).count();
+            // 另一份容器：同目录 `ani/` 里第一个解得开的 `.ani`，它的骨名表（轨道名 + 静态区名）
+            // 与 `.mesh` 无关，是**真独立**的旁证口径。
+            let mut ani_bones = 0usize;
+            let mut in_ani = 0usize;
+            let mut ani_file = String::new();
+            for a in anim_names_for(&con, p) {
+                let Some(araw) = bytes_of(&con, &root, &mut paks, &a) else { continue };
+                let Some(an) = parse_ani(&araw) else { continue };
+                let mut bones: Vec<String> = an.tracks.iter().map(|t| t.bone.clone()).collect();
+                if let Some(rs) = rest_poses(&araw) {
+                    for r in rs {
+                        if !r.bone.is_empty() && !bones.contains(&r.bone) {
+                            bones.push(r.bone);
+                        }
+                    }
                 }
-                only += 1;
-                if chain.contains(&v.name) {
-                    on_chain += 1;
-                }
+                ani_bones = bones.len();
+                in_ani = only_names.iter().filter(|n| bones.iter().any(|b| b == *n)).count();
+                ani_file = a;
+                break;
             }
+            only_names.sort();
             only_all += only;
             chain_all += on_chain;
+            ani_in_all += in_ani;
+            if ani_bones > 0 {
+                with_ani += 1;
+                ani_names_all += only;
+            }
             let declared = bone_count(&raw).unwrap_or(0);
             if declared > 0 && std_nodes.len() + only >= declared {
                 reach += 1;
             }
             println!(
-                "{name}\t{declared}\t{}\t{}\t{only}\t{on_chain}\t{}\t{}",
+                "{name}\t{declared}\t{}\t{}\t{only}\t{on_chain}\t{}\t{}\t{ani_bones}\t{in_ani}",
                 std_nodes.len(),
                 var.len(),
                 chain.len(),
@@ -217,7 +274,7 @@ fn main() {
             );
         }
         println!(
-            "\n# 筛出 {} 份 · 读到 {} 份 · 带变体记录 {with_var} 份 · 变体独有骨名合计 {only_all}（其中 {chain_all} 个在该份父骨链上）· 两套合起来够到声明骨数的 {reach} 份",
+            "\n# 筛出 {} 份 · 读到 {} 份 · 带变体记录 {with_var} 份 · 变体独有骨名合计 {only_all}（其中 {chain_all} 个在该份父骨链上）· 两套合起来够到声明骨数的 {reach} 份 · 同目录有 .ani 可比 {with_ani} 份（那份里独有 {ani_names_all} 个，也在 .ani 骨名表里的 {ani_in_all} 个）",
             paths.len(),
             files
         );

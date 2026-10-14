@@ -1,0 +1,12 @@
+有名贴图（有 offset）2259 条，分布在 3 个 pak
+最近邻猜「去掉末尾 1 段」的目录：1756/2243 = 78.3%
+最近邻猜「去掉末尾 2 段」的目录：2162/2243 = 96.4%
+最近邻猜「去掉末尾 3 段」的目录：2166/2243 = 96.6%
+随机基线（4000 次抽样）：去掉 1 段 5.0% · 2 段 27.8% · 3 段 49.6%
+
+**按角色目录对齐**（剥掉 texture/ani 末段再比）：1088/1495 = 72.8%
+同名主目录样例：
+  ui/icon/skill/icon_mr_skill_lingshenshi.tga → 角色目录 ui/icon/skill
+  ui/texture/font/worldmap/f_sjdt_yn.tga → 角色目录 ui/texture/font/worldmap
+  ui/icon/buff/icon_buff_meishi.tga → 角色目录 ui/icon/buff
+  ui/texture/font/dynamic/f_juese_menpai9.tga → 角色目录 ui/texture/font/dynamic

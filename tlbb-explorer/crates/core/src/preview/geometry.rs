@@ -552,7 +552,11 @@ fn read_node_variant(raw: &[u8], at: usize) -> Option<Node> {
     // 早先按 +68 连续读 16 个浮点是把整块错位了 4 字节，那样读出来的矩阵
     // 既不过镜像闸门也不合任何语义（第二十七补就是这么撞红的）。
     let base = at + 2 * NAME_FIELD;
-    let grp = raw.get(base..base + 64)?;
+    // 四组各 16 字节（标量 + x,y,z），**第五个标量槽在 base+64**：实测它恒为 f32 的 1.0
+    // （`variant_table_offset_is_128_not_132` 打出的 16 条全是 `1065353216`），
+    // 就是平移行的 w ⇒ 整条记录长 136，影响表从 +132 起。
+    // 早先这里是「按约定补 1.0」，等于把判据里最该验的一位当成已知——现在改成读出来再验。
+    let grp = raw.get(base..base + 68)?;
     let mut m = [0f32; 16];
     for r in 0..4 {
         let g = &grp[r * 16..r * 16 + 16];
@@ -562,9 +566,13 @@ fn read_node_variant(raw: &[u8], at: usize) -> Option<Node> {
         for c in 0..3 {
             m[r * 4 + c] = f32::from_le_bytes(g[4 + c * 4..8 + c * 4].try_into().ok()?);
         }
-        // 齐次位：基向量行是 0，平移行是 1（第四组末位被下一段占用，实测这里补约定值）
-        m[r * 4 + 3] = if r == 3 { 1.0 } else { 0.0 };
+        m[r * 4 + 3] = 0.0;
     }
+    let w = f32::from_le_bytes(grp[64..68].try_into().ok()?);
+    if (w - 1.0).abs() > 1e-6 {
+        return None;
+    }
+    m[15] = w;
     let lens = affine_basis(&m)?;
     if lens.iter().any(|v| (v - 1.0).abs() > 0.05) {
         return None;
@@ -575,8 +583,6 @@ fn read_node_variant(raw: &[u8], at: usize) -> Option<Node> {
         // 影响表在 **+132**，不是 +128：`--mode=skin` 那版按 +128 量出「38,201 条变体记录、
         // 带表 0 条」是**我读错偏移造成的假阴性**——同一批位置按 +132 试，主样本 16 条里认到 13 条
         // （闸门 [`variant_table_offset_is_128_not_132`] 当场把它撞红）。
-        // 组块的第一个标量槽在 +64，四组基向量/平移占到 +68..+132 ⇒ 后面还有一个 4 字节字段，
-        // 整条记录长 136。
         skin: read_skin(raw, base + 4 + 64, vertex_count(raw)),
     })
 }
@@ -673,9 +679,11 @@ pub fn parse_nodes(raw: &[u8]) -> Vec<Node> {
     out
 }
 
-/// 变体记录整段长 132 字节（名字 32 + 名字 32 + 标量 4 + 矩阵 64），后面才跟影响表。
+/// 变体记录整段长 **136** 字节（名字 32 + 名字 32 + 四个标量槽与三组基向量共 64 +
+/// 平移行的 w 一个标量 4），后面才跟影响表（起点 = 记录内 +132）。
+/// 10-14 之前这个常量写的 132，那是「四组各 16」漏掉了第五个标量槽——扫描窗口按 136 收紧。
 /// 记录之间隔着变长的影响表，步长不固定 ⇒ 一路逐 4 字节滑过去。
-const VARIANT_RECORD: usize = 132;
+const VARIANT_RECORD: usize = 136;
 
 fn scan_nodes_variant(raw: &[u8]) -> Vec<Node> {
     let mut out = Vec::new();

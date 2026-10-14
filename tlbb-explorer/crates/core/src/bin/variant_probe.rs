@@ -865,6 +865,41 @@ fn main() {
     }
 
 
+    if mode == "xstd" {
+        // 变体块是不是**另一个文件的标准绑定**？第二十七补只比过「同形态的兄弟部件」（0/6），
+        // 形态那一维（`_b0`/`_b1`…）没人试过。这里对 `loaded` 里所有有序对做全量对账：
+        // A 的变体记录 vs B 的标准记录，同骨名比整块 16 位与纯基向量 12 位两种命中数。
+        println!("\n# A 的变体 vs B 的标准（同骨名）：全 16 位命中 / 基向量 12 位命中 / 同名骨数");
+        for a in &loaded {
+            for b in &loaded {
+                if std::ptr::eq(a, b) {
+                    continue;
+                }
+                let mut nm = 0usize;
+                let mut full = 0usize;
+                let mut basis = 0usize;
+                for v in &a.var_nodes {
+                    let Some(s) = b.std_nodes.iter().find(|x| x.name == v.name) else { continue };
+                    nm += 1;
+                    if diff(&v.bind, &s.bind, &slots16()).map_or(false, |d| d <= 1e-4) {
+                        full += 1;
+                    }
+                    if diff(&v.bind, &s.bind, &slots12()).map_or(false, |d| d <= 1e-4) {
+                        basis += 1;
+                    }
+                }
+                if nm > 0 {
+                    println!(
+                        "  {} → {}：{full}/{basis}/{nm}",
+                        a.file.trim_end_matches(".mesh"),
+                        b.file.trim_end_matches(".mesh")
+                    );
+                }
+            }
+        }
+        return;
+    }
+
     if mode == "crosspart" {
         for i in 0..loaded.len() {
             for j in 0..loaded.len() {

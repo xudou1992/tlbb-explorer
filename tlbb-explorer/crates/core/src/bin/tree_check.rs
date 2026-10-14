@@ -131,8 +131,21 @@ fn main() {
                     g_files_mix += 1;
                 }
                 let covered = tally.keys().filter(|&&v| (v as usize) < total).count();
+                // 变体记录那套**也带影响表**（2026-10-14 第四十二补：全库 38,201 条里 16,121 条带表，
+                // 比标准多覆盖 747,295 个顶点）。这里只**如实并列报数，不并进上面那些结论**：
+                // 它的矩阵语义八条候选全否，定不出 `bind` 就当权重不可用（README「已经推翻」那条）。
+                // 并进 `covered`/`full` 会把「数据在那里」写成「覆盖率涨了」，那是编。
+                let mut vv: Vec<u32> = Vec::new();
+                for vn in tlbb_core::preview::parse_nodes_variant(&raw) {
+                    if let Some(sk) = &vn.skin {
+                        vv.extend(sk.vertices.iter().copied().filter(|&v| (v as usize) < total));
+                    }
+                }
+                vv.sort_unstable();
+                vv.dedup();
+                let vnew = vv.iter().filter(|&&v| !tally.contains_key(&v)).count();
                 tsv_rows.push(format!(
-                    "{}|{}|{}|{}|{}|{}|{}|{}",
+                    "{}|{}|{}|{}|{}|{}|{}|{}|{}",
                     rel(f, &dir),
                     n.len(),
                     skinned,
@@ -140,7 +153,8 @@ fn main() {
                     total,
                     hard,
                     multi,
-                    frac
+                    frac,
+                    vnew
                 ));
                 if n.is_empty() {
                     no_nodes.push(rel(f, &dir));
@@ -157,11 +171,25 @@ fn main() {
     }
     let _ = heads;
 
+    // 变体那套的增益只**并列报数**：从明细行里回读第 9 列，不动上面算过的任何结论。
+    let var_rows = tsv_rows
+        .iter()
+        .filter(|r| r.split('|').nth(8).unwrap_or("0") != "0")
+        .count();
+    let var_verts: usize = tsv_rows
+        .iter()
+        .map(|r| r.split('|').nth(8).unwrap_or("0").parse::<usize>().unwrap_or(0))
+        .sum();
+    println!(
+        "\n另：变体记录那套带影响表并新增覆盖的份数 {var_rows} · 新增顶点合计 {var_verts}\
+         （**没并进上面任何一条结论**——它矩阵语义未定，定不出 bind 就当权重不可用）"
+    );
+
     if let Some(w) = tsv.as_ref() {
         use std::io::Write;
         match std::fs::File::create(w) {
             Ok(mut fh) => {
-                let _ = writeln!(fh, "file|nodes|withSkin|covered|verts|hard|multi|frac");
+                let _ = writeln!(fh, "file|nodes|withSkin|covered|verts|hard|multi|frac|varNew");
                 for r in &tsv_rows {
                     let _ = writeln!(fh, "{r}");
                 }

@@ -1,0 +1,40 @@
+== 解包目录体检：D:/TLGL/.scratch/unpacked/data
+  找到 .mesh 文件 1441 份，本轮只看前 9000 份
+
+另：变体记录那套带影响表并新增覆盖的份数 558 · 新增顶点合计 248933（**没并进上面任何一条结论**——它矩阵语义未定，定不出 bind 就当权重不可用）
+每份明细写了 .scratch/dyn/tree_check_with_var.txt（1441 行）
+
+结果（1441 份）：
+  parse_mesh 认得：**1441 / 1441**（100%）
+  其中带骨架节点表的：821 · 父骨链解得出的：742
+  顶点合计：1546642
+  带表顶点 604685 个：单骨权重 1.0（硬）225334 · 多骨 333933 · 含小数权重 379351（565 份文件里出现过混合）
+
+权重表分档（决定导出后网格跟不跟骨架走）：
+  一份都没有 96B 节点记录：620 份
+  有节点记录但后面没认出影响表：183 份
+  有影响表、覆盖全部顶点：181 份 · 只覆盖一部分：457 份
+    无节点 data\effect\effectmodel\w1351_jianmo_v2.mesh
+    无节点 data\effect\effectmodel\w1351_jianmo_v4.mesh
+    无节点 data\effect\effectmodel\w1351_jianmo_v5.mesh
+    无节点 data\effect\effectmodel\w1351_jianmo_v6.mesh
+    无节点 data\effect\effectmodel\w1351_jianmo_v7.mesh
+    无节点 data\effect\effectmodel\w1351_jianmo_v8.mesh
+    有 1 条节点却无影响表 data\effect\effectmodel\w1351_model_boss_cj_z002.mesh
+    有 2 条节点却无影响表 data\effect\effectmodel\w1351_model_bx_ui_z04.mesh
+    有 18 条节点却无影响表 data\effect\effectmodel\w1351_model_em_nan_z001.mesh
+    有 18 条节点却无影响表 data\effect\effectmodel\w1351_model_gb_long_h01.mesh
+    有 18 条节点却无影响表 data\effect\effectmodel\w1351_model_gb_sp_h01.mesh
+    有 2 条节点却无影响表 data\effect\effectmodel\w1351_model_gr_light_h001.mesh
+  缺口最大的几份（覆盖/总数）：
+       735/736    data\source\player\w1351_nv\w1351_nv_lian\w1351_nv_t_lian_chushi_001.mesh
+       124/126    data\source\npc\model\w1351_model_ani_zhenshoufuti_youlong05plane_c01\w1351_model_ani_zhenshoufuti_youlong05plane_c01.mesh
+      2821/2823   data\source\npc\model\w1351_model_lion_h004\w1351_model_lion_h004.mesh
+      2821/2823   data\source\npc\model\w1351_model_lion_h004_1\w1351_model_lion_h004_1.mesh
+       142/144    data\source\npc\quest\w1351_boss_baicen\w1351_boss_baicen_lian_001.mesh
+       142/144    data\source\npc\quest\w1351_monster_changmaoxueguai\w1351_monster_changmaoxueguai_lian_001.mesh
+       142/144    data\source\npc\quest\w1351_monster_liaoyaxueren\w1351_monster_liaoyaxueren_lian_001.mesh
+       865/867    data\source\player\w1351_nan\w1351_nan_toufa\w1351_nan_s_toufa_wdrmdz.mesh
+
+文件头前 9 字节的分布：
+  1441 × "Copyright"

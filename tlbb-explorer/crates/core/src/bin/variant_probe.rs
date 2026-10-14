@@ -514,7 +514,74 @@ fn main() {
         return;
     }
 
+    if mode == "local" {
+        // 没被验过的候选：变体 = **由标准记录自己推出的局部变换**
+        // （行向量口径 `W_child = L · W_parent` ⇒ `L = W_child · inv(W_parent)`，
+        //  而存储值是世界的逆，所以 `W = inv(stored)`）。
+        // 之前只拿它比过 `.ani` 的 frame0（第二十七补否掉），没比过网格侧的父链。
+        fn mul(a: &[f32; 16], b: &[f32; 16]) -> [f32; 16] {
+            let mut o = [0f32; 16];
+            for r in 0..4 {
+                for c in 0..4 {
+                    let mut s = 0f32;
+                    for k in 0..4 {
+                        s += a[r * 4 + k] * b[k * 4 + c];
+                    }
+                    o[r * 4 + c] = s;
+                }
+            }
+            o
+        }
+        for ld in &loaded {
+            let raw = match bytes_of(&con, &root, &mut paks, &ld.file) {
+                Some(r) => r,
+                None => continue,
+            };
+            let h = match parse_hierarchy(&raw) {
+                Some(h) => h,
+                None => {
+                    println!("\n{} · 父骨链解不出，这条比不了", ld.file);
+                    continue;
+                }
+            };
+            println!("\n{} · 标准 {} 条 · 变体 {} 条 · 链 {} 根", ld.file, ld.std_nodes.len(), ld.var_nodes.len(), h.bones.len());
+            let bind_of = |nm: &str| ld.std_nodes.iter().find(|n| n.name == nm).map(|n| n.bind);
+            let (mut eq, mut ne, mut skip) = (0usize, 0usize, 0usize);
+            let mut least = f64::MAX;
+            for bi in 0..h.bones.len() {
+                let nm = h.bones[bi].name.clone();
+                let Some(pi) = h.bones[bi].parent else { continue };
+                let pname = h.bones[pi].name.clone();
+                let Some(v) = ld.var_nodes.iter().find(|x| x.name == nm) else { continue };
+                let (Some(wc), Some(wp)) = (bind_of(&nm), bind_of(&pname)) else { skip += 1; continue };
+                // W = inv(stored)；L = W_child · inv(W_parent)
+                let (Some(w_c), Some(w_p)) = (pose::mat_inverse_affine(&wc), pose::mat_inverse_affine(&wp)) else { skip += 1; continue };
+                let l = mul(&w_c, &w_p);
+                match diff(&v.bind, &l, &slots16()) {
+                    Some(dv) => {
+                        if dv < least {
+                            least = dv;
+                        }
+                        if dv <= 1e-4 {
+                            eq += 1;
+                        } else {
+                            ne += 1;
+                        }
+                        println!("  {nm:<24} 与局部差 {dv:.6} {}", if dv <= 1e-4 { "对上" } else { "不对上" });
+                    }
+                    None => println!("  {nm:<24} 差值无效（非有限）"),
+                }
+            }
+            println!(
+                "  可比：对上 {eq} · 不对上 {ne} · 缺记录跳过 {skip} · 最小差 {}",
+                if least == f64::MAX { "无可比".to_string() } else { format!("{least:.6}") }
+            );
+        }
+        return;
+    }
+
     if mode == "missnames" {
+
         // 第三十六补留的尾巴：59 份「各差 1 个」——差的到底是哪个名。
         // 只看带变体记录且同目录有解得开的 .ani 的份，把「独有、却在 .ani 骨名表里找不到」的名字点出来。
         let paths = mesh_paths(&con, &batch, limit);

@@ -865,6 +865,77 @@ fn main() {
     }
 
 
+    if mode == "pose" {
+        // 49 补把两条反证撤了以后，能定性的静态实验只剩这个：
+        // 变体与标准**同名的骨**分成两类——整块相同的（只差 ULP）与整块不同的。
+        // 若「相同的」恰好是该份动作里**不动的骨**、「不同的」恰好是**会动的骨**，
+        // 那变体块就是**同一副骨架在另一个姿态下的绑定**（这条预言可证伪，不用等运行时）。
+        let Some(ani) = &ani_name else {
+            eprintln!("--mode=pose 要配 --ani=名字.ani");
+            std::process::exit(2);
+        };
+        let araw = match bytes_of(&con, &root, &mut paks, ani) {
+            Some(r) => r,
+            None => {
+                eprintln!("读不出 {ani}");
+                std::process::exit(2);
+            }
+        };
+        let an = match parse_ani(&araw) {
+            Some(a) => a,
+            None => {
+                eprintln!("{ani} 解不出动作");
+                std::process::exit(2);
+            }
+        };
+        // 会动 = 该骨的位移或旋转在帧间极差 > 1e-4（与判撕那套路数同口径）
+        let mut moving: Vec<String> = Vec::new();
+        for t in &an.tracks {
+            if t.bone.is_empty() {
+                continue;
+            }
+            let span = (0..3).map(|k| {
+                let col: Vec<f32> = t.positions.iter().map(|p| p[k]).collect();
+                let mn = col.iter().fold(f32::INFINITY, |a, &b| a.min(b));
+                let mx = col.iter().fold(f32::NEG_INFINITY, |a, &b| a.max(b));
+                mx - mn
+            }).collect::<Vec<_>>();
+            let rspan = (0..3).map(|k| {
+                let col: Vec<f32> = t.rotations.iter().map(|p| p[k]).collect();
+                let mn = col.iter().fold(f32::INFINITY, |a, &b| a.min(b));
+                let mx = col.iter().fold(f32::NEG_INFINITY, |a, &b| a.max(b));
+                mx - mn
+            }).collect::<Vec<_>>();
+            if span.iter().chain(rspan.iter()).any(|v| *v > 1e-4) {
+                moving.push(t.bone.clone());
+            }
+        }
+        println!("\n# {ani} · 轨道 {} 条 · 会动的骨 {} 根", an.tracks.len(), moving.len());
+        let (mut ss, mut sd, mut ds, mut dd, mut nomove) = (0usize, 0usize, 0usize, 0usize, 0usize);
+        for ld in &loaded {
+            for v in &ld.var_nodes {
+                let Some(s) = ld.std_nodes.iter().find(|x| x.name == v.name) else { continue };
+                let same = diff(&v.bind, &s.bind, &slots16()).map_or(false, |d| d <= 1e-6);
+                if !moving.is_empty() && !an.tracks.iter().any(|t| t.bone == v.name) {
+                    nomove += 1;
+                    continue;
+                }
+                let mv = moving.contains(&v.name);
+                match (same, mv) {
+                    (true, false) => ss += 1,
+                    (true, true) => sd += 1,
+                    (false, false) => ds += 1,
+                    (false, true) => dd += 1,
+                }
+            }
+        }
+        println!(
+            "# 交叉表（变体 vs 同份标准）：相同且不动 {ss} · 相同但会动 {sd} · 不同且不动 {ds} · 不同且会动 {dd} · 无轨道 {nomove}\n\
+             # 预言「相同=不动、不同=会动」的话，读 {ss}/{dd} 这两格；{sd} 与 {ds} 是该反例的个数"
+        );
+        return;
+    }
+
     if mode == "xstd" {
         // 变体块是不是**另一个文件的标准绑定**？第二十七补只比过「同形态的兄弟部件」（0/6），
         // 形态那一维（`_b0`/`_b1`…）没人试过。这里对 `loaded` 里所有有序对做全量对账：

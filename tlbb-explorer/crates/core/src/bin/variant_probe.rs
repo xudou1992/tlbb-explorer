@@ -15,7 +15,8 @@
 //!
 //! 用法：
 //! ```text
-//! variant_probe [--root D:/TLGL] [--mode same|12slot|trans|axis|crosspart] 文件干名[,...]
+//! variant_probe [--root D:/TLGL] [--mode same|12slot|trans|axis|crosspart|rest|gain] 干名[,...]
+//! variant_probe --mode=gain --batch=.mesh [--limit=N]     # 覆盖面批量（默认 400）
 //! ```
 
 use std::collections::BTreeMap;
@@ -24,8 +25,8 @@ use std::path::{Path, PathBuf};
 use rusqlite::{Connection, OpenFlags};
 use tlbb_core::jpak::Pak;
 use tlbb_core::payload;
-use tlbb_core::preview::rest::{self, quat_to_mat_passive};
-use tlbb_core::preview::{bone_count, parse_ani, parse_nodes, parse_nodes_variant, rest_poses, pose, Track};
+use tlbb_core::preview::rest;
+use tlbb_core::preview::{bone_count, parse_ani, parse_hierarchy, parse_nodes, parse_nodes_variant, rest_poses, pose};
 
 fn locate(con: &Connection, name: &str) -> Option<(u64, String)> {
     let mut stmt = con
@@ -54,6 +55,23 @@ fn resolve_mesh(con: &Connection, stem: &str) -> Option<String> {
         .ok()
         .and_then(|mut st| st.query_row([format!("%/{stem}%.mesh")], |r| r.get(0)).ok())
         .map(base)
+}
+
+/// 一批网格：按路径片段筛，`limit` 兜住别一次跑穿（同 `skel_dump` 的批量口径）。
+fn mesh_paths(con: &Connection, prefix: &str, limit: usize) -> Vec<String> {
+    let mut stmt = match con.prepare(
+        "SELECT coalesce(path,'') FROM resources WHERE ext='.mesh' AND path LIKE ?1 \
+         ORDER BY stored DESC LIMIT ?2",
+    ) {
+        Ok(s) => s,
+        Err(_) => return Vec::new(),
+    };
+    stmt.query_map(
+        rusqlite::params![format!("%{prefix}%"), limit as i64],
+        |r| r.get::<_, String>(0),
+    )
+    .map(|rows| rows.flatten().collect())
+    .unwrap_or_default()
 }
 
 fn bytes_of(con: &Connection, root: &Path, paks: &mut BTreeMap<String, Pak>, name: &str) -> Option<Vec<u8>> {
@@ -108,6 +126,8 @@ fn main() {
     let mut root = PathBuf::from("D:/TLGL");
     let mut mode = "same".to_string();
     let mut ani_name: Option<String> = None;
+    let mut batch = String::new();
+    let mut limit: usize = 400;
     let mut names: Vec<String> = Vec::new();
     let mut args = std::env::args().skip(1);
     while let Some(a) = args.next() {
@@ -121,6 +141,10 @@ fn main() {
             mode = v.to_string();
         } else if a == "--mode" {
             mode = args.next().unwrap_or_default();
+        } else if let Some(v) = a.strip_prefix("--batch=") {
+            batch = v.to_string();
+        } else if let Some(v) = a.strip_prefix("--limit=") {
+            limit = v.parse().unwrap_or(400);
         } else if let Some(v) = a.strip_prefix("--names=") {
             names = v.split(',').map(|s| s.trim().to_string()).collect();
         } else if !a.starts_with("--") {
@@ -129,8 +153,9 @@ fn main() {
             eprintln!("未知参数 {a}");
         }
     }
-    if names.is_empty() {
-        eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|crosspart] 干名[,...]");
+    if names.is_empty() && mode != "gain" {
+        eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain] 干名[,...]");
+        eprintln!("      批量覆盖面：variant_probe --mode=gain --batch=路径片段 [--limit=N]");
         std::process::exit(2);
     }
     let db = root.join(".scratch/resources.db");
@@ -145,6 +170,58 @@ fn main() {
         }
     };
     let mut paks: BTreeMap<String, Pak> = BTreeMap::new();
+
+    if mode == "gain" {
+        // 全库（或一片）覆盖面：变体块到底在多少份网格里存在、能补多少「标准扫描认不到的骨名」。
+        // 只出数、不改主干——`parse_nodes` 该不该并它仍由语义定下来之后再说。
+        let paths = mesh_paths(&con, &batch, limit);
+        println!("# file\tdeclared\tstd\tvar\tonly\tonChain\tcoveredAfterMerge");
+        let (mut files, mut with_var, mut only_all, mut chain_all, mut reach) = (0usize, 0usize, 0usize, 0usize, 0usize);
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            files += 1;
+            let std_nodes = parse_nodes(&raw);
+            let var = parse_nodes_variant(&raw);
+            if var.is_empty() {
+                continue;
+            }
+            with_var += 1;
+            let std_names: Vec<&str> = std_nodes.iter().map(|n| n.name.as_str()).collect();
+            let chain: Vec<String> = parse_hierarchy(&raw)
+                .map(|h| h.bones.iter().map(|b| b.name.clone()).collect())
+                .unwrap_or_default();
+            let mut only = 0usize;
+            let mut on_chain = 0usize;
+            for v in &var {
+                if std_names.contains(&v.name.as_str()) {
+                    continue;
+                }
+                only += 1;
+                if chain.contains(&v.name) {
+                    on_chain += 1;
+                }
+            }
+            only_all += only;
+            chain_all += on_chain;
+            let declared = bone_count(&raw).unwrap_or(0);
+            if declared > 0 && std_nodes.len() + only >= declared {
+                reach += 1;
+            }
+            println!(
+                "{name}\t{declared}\t{}\t{}\t{only}\t{on_chain}\t{}",
+                std_nodes.len(),
+                var.len(),
+                std_nodes.len() + only
+            );
+        }
+        println!(
+            "\n# 筛出 {} 份 · 读到 {} 份 · 带变体记录 {with_var} 份 · 变体独有骨名合计 {only_all}（其中 {chain_all} 个在该份父骨链上）· 两套合起来够到声明骨数的 {reach} 份",
+            paths.len(),
+            files
+        );
+        return;
+    }
 
     struct Load {
         file: String,

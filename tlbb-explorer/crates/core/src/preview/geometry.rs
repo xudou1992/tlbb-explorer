@@ -547,15 +547,23 @@ fn read_node_variant(raw: &[u8], at: usize) -> Option<Node> {
     if second != nm {
         return None;
     }
-    // 矩阵前那个标量槽实测恒 0
-    let pad = raw.get(at + 2 * NAME_FIELD..at + 2 * NAME_FIELD + 4)?;
-    if f32::from_le_bytes(pad.try_into().ok()?) != 0.0 {
-        return None;
-    }
-    let mb = raw.get(at + 2 * NAME_FIELD + 4..at + 2 * NAME_FIELD + 68)?;
+    // 布局（`variant_bytes.txt` 摊出来的原始字节）：4 组 × 16 字节，每组是
+    // **(一个 0 标量 + x,y,z)**——前三组是基向量行、第四组是平移。
+    // 早先按 +68 连续读 16 个浮点是把整块错位了 4 字节，那样读出来的矩阵
+    // 既不过镜像闸门也不合任何语义（第二十七补就是这么撞红的）。
+    let base = at + 2 * NAME_FIELD;
+    let grp = raw.get(base..base + 64)?;
     let mut m = [0f32; 16];
-    for (i, chunk) in mb.chunks_exact(4).enumerate() {
-        m[i] = f32::from_le_bytes(chunk.try_into().ok()?);
+    for r in 0..4 {
+        let g = &grp[r * 16..r * 16 + 16];
+        if f32::from_le_bytes(g[0..4].try_into().ok()?) != 0.0 {
+            return None;
+        }
+        for c in 0..3 {
+            m[r * 4 + c] = f32::from_le_bytes(g[4 + c * 4..8 + c * 4].try_into().ok()?);
+        }
+        // 齐次位：基向量行是 0，平移行是 1（第四组末位被下一段占用，实测这里补约定值）
+        m[r * 4 + 3] = if r == 3 { 1.0 } else { 0.0 };
     }
     let lens = affine_basis(&m)?;
     if lens.iter().any(|v| (v - 1.0).abs() > 0.05) {
@@ -564,7 +572,7 @@ fn read_node_variant(raw: &[u8], at: usize) -> Option<Node> {
     Some(Node {
         name: String::from_utf8_lossy(nm).into_owned(),
         bind: m,
-        skin: read_skin(raw, at + 2 * NAME_FIELD + 68, vertex_count(raw)),
+        skin: read_skin(raw, base + 64, vertex_count(raw)),
     })
 }
 

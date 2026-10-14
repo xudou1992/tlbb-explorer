@@ -1,0 +1,21 @@
+w1351_monster_xiyuqiezei_yifu_001：变体认到 16 根骨。每根比三个假设，数值=最大绝对差（越小越像）
+
+骨名                            vs局部TRS     vs世界frame0     vs标准bind  判定
+bip01_footsteps                 1.865              2          nan  都不是
+bip01_head                      2.165          1.823          nan  都不是
+bip01_l_finger0                 1.006          1.146          nan  都不是
+bip01_l_finger1                 1.511          1.565          nan  都不是
+bip01_l_toe0                    0.966          1.596            1  都不是
+bip01_r_finger0                0.8788          1.526          nan  都不是
+bip01_r_finger1                 1.028          1.519          nan  都不是
+bip01_r_toe0                    1.174          1.855            1  都不是
+bone01                          1.023          1.651        1.798  都不是
+bone07                           1.27          1.559       0.1256  都不是
+bone08                          1.832          1.406       0.9978  都不是
+bone09                          1.087          1.468        1.331  都不是
+bone12                          0.956          1.283       0.2331  都不是
+bone12_mirror01                 1.732          1.453       0.2331  都不是
+bone12_mirror02                0.8883          1.698       0.1543  都不是
+bone12_mirror02_mirror01        1.768          1.369       0.1543  都不是
+
+小结：像局部 TRS 0 · 像世界 frame0 0 · 都不是 16

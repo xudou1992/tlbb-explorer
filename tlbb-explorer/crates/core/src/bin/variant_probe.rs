@@ -24,7 +24,8 @@ use std::path::{Path, PathBuf};
 use rusqlite::{Connection, OpenFlags};
 use tlbb_core::jpak::Pak;
 use tlbb_core::payload;
-use tlbb_core::preview::{bone_count, parse_nodes, parse_nodes_variant, pose};
+use tlbb_core::preview::rest::{self, quat_to_mat_passive};
+use tlbb_core::preview::{bone_count, parse_ani, parse_nodes, parse_nodes_variant, rest_poses, pose, Track};
 
 fn locate(con: &Connection, name: &str) -> Option<(u64, String)> {
     let mut stmt = con
@@ -106,11 +107,16 @@ fn slots12() -> Vec<usize> {
 fn main() {
     let mut root = PathBuf::from("D:/TLGL");
     let mut mode = "same".to_string();
+    let mut ani_name: Option<String> = None;
     let mut names: Vec<String> = Vec::new();
     let mut args = std::env::args().skip(1);
     while let Some(a) = args.next() {
         if a == "--root" {
             root = PathBuf::from(args.next().unwrap_or_default());
+        } else if a == "--ani" {
+            ani_name = Some(args.next().unwrap_or_default());
+        } else if let Some(v) = a.strip_prefix("--ani=") {
+            ani_name = Some(v.to_string());
         } else if let Some(v) = a.strip_prefix("--mode=") {
             mode = v.to_string();
         } else if a == "--mode" {
@@ -254,8 +260,81 @@ fn main() {
     }
 
 
+    if mode == "rest" {
+        // 变体块既然与部件无关，就对着**骨架级**的另一处数据比：`.ani` 静态区。
+        // 已知语义（`preview::rest` 模块头，研究班 2026-10-07 钉死）：
+        //   静态区 +12 四元数 qrest = bind **局部**旋转的逆，行向量口径下局部旋转 = quat_to_mat_passive(qrest)；
+        //   轨道常量平移（每骨 positions 逐分量中位数）= bind 局部平移。
+        // 所以这里问两件事：变体的基向量 = 局部旋转？变体的平移 = 静态区 offset / 轨道常量？
+        let Some(ani) = &ani_name else {
+            eprintln!("--mode=rest 要配 --ani=名字.ani");
+            std::process::exit(2);
+        };
+        let mesh = &loaded[0];
+        let raw = match bytes_of(&con, &root, &mut paks, ani) {
+            Some(r) => r,
+            None => {
+                eprintln!("读不出 {ani}");
+                std::process::exit(2);
+            }
+        };
+        let rests = parse_ani(&raw).and_then(|_| rest_poses(&raw)).unwrap_or_default();
+        let tracks = parse_ani(&raw).map(|a| a.tracks).unwrap_or_default();
+        let median = |t: &tlbb_core::preview::Track| -> [f32; 3] {
+            let mut out = [0f32; 3];
+            for k in 0..3 {
+                let mut col: Vec<f32> = t.positions.iter().map(|p| p[k]).collect();
+                col.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+                out[k] = col[col.len() / 2];
+            }
+            out
+        };
+        println!(
+            "\n{} · 变体 {} 条 · 静态区 {} 条 · 轨道 {} 条",
+            mesh.file,
+            mesh.var_nodes.len(),
+            rests.len(),
+            tracks.len()
+        );
+        let mut hits_rot = 0usize;
+        let mut hits_med = 0usize;
+        let mut hits_off = 0usize;
+        let mut cmp = 0usize;
+        for v in &mesh.var_nodes {
+            let Some(r) = rests.iter().find(|r| r.bone == v.name) else { continue };
+            let lmat = rest::quat_to_mat_passive(&r.rotation);
+            let drot = diff(&v.bind, &lmat, &slots12());
+            let t = tracks.iter().find(|t| t.bone == v.name).map(&median);
+            let vt = [v.bind[12], v.bind[13], v.bind[14]];
+            let dmed = t.map(|m| (0..3).map(|k| (vt[k] as f64 - m[k] as f64).abs()).fold(0f64, f64::max));
+            let doff = (0..3)
+                .map(|k| (vt[k] as f64 - r.offset[k] as f64).abs())
+                .fold(0f64, f64::max);
+            cmp += 1;
+            if drot.map_or(false, |d| d <= 1e-4) {
+                hits_rot += 1;
+            }
+            if dmed.map_or(false, |d| d <= 1e-3) {
+                hits_med += 1;
+            }
+            if doff <= 1e-3 {
+                hits_off += 1;
+            }
+            println!(
+                "  {:<24} 局部旋转差 {}  轨道常量差 {}  静态区offset差 {:.6}",
+                v.name,
+                drot.map_or("—".to_string(), |d| format!("{d:.6}")),
+                dmed.map_or("无轨道".to_string(), |d| format!("{d:.6}")),
+                doff
+            );
+        }
+        println!(
+            "\n可比的 {cmp} 根：基向量=局部旋转(≤1e-4) {hits_rot} · 平移=轨道常量(≤1e-3) {hits_med} · 平移=静态区offset {hits_off}"
+        );
+        return;
+    }
+
     if mode == "crosspart" {
-        // 变体对变体：同一根骨在两个部件文件里的变体值该不该一致
         for i in 0..loaded.len() {
             for j in 0..loaded.len() {
                 if i >= j {

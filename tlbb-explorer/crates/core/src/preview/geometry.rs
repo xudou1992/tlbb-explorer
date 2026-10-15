@@ -988,6 +988,14 @@ fn tail_is_inf(raw: &[u8], at: usize, vc: usize) -> bool {
         return false;
     }
     let mut seen = std::collections::HashSet::with_capacity(n.min(1024));
+    // 两种都收：互异（老口径，全库 2,227 份带表走这条）或**非降序**——
+    // 81 补实测 `ymg02` 那 80 份在这里躺的是一张 `[u32 n][n 个 id][n 个 f32]` 真权重表，
+    // 但 id 是排过序且**有重复**的（n=77、重复 3 个、号段 901 < 顶点数 6,931、
+    // 77 个权重全在 0..1），老口径的「互异」把它判成非表 ⇒ 表长被当成条目标志。
+    // 只放宽这一处（走法的块跳过判据）；蒙皮权重那条路（`read_skin`）判据不动。
+    let mut distinct = true;
+    let mut non_decreasing = true;
+    let mut prev = 0u32;
     for k in 0..n {
         let v = match tail_u32(raw, at + 4 + 4 * k) {
             Some(v) => v,
@@ -997,8 +1005,20 @@ fn tail_is_inf(raw: &[u8], at: usize, vc: usize) -> bool {
             return false;
         }
         if !seen.insert(v) {
-            return false; // 互异：同一顶点不该对同一骨列两次
+            distinct = false; // 同一顶点列了两次——非降序那族允许
         }
+        if k > 0 && v < prev {
+            non_decreasing = false;
+        }
+        prev = v;
+        if !distinct && !non_decreasing {
+            // 两条都已经不成立，后面再读也翻不回来——这条早退是老口径省时间的地方，
+            // 没有它全库普查从 4 分钟涨到 10 分钟（82 补实测）。
+            return false;
+        }
+    }
+    if !(distinct || non_decreasing) {
+        return false;
     }
     (0..n).all(|k| {
         tail_f32(raw, at + 4 + 4 * n + 4 * k)

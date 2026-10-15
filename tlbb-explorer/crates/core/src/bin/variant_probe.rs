@@ -1008,6 +1008,7 @@ fn main() {
         let mut tally: BTreeMap<String, (usize, String)> = BTreeMap::new();
         // 45 那格（条目全对、死在孩子表某槽）单独摊字节：死在哪个偏移、当时读到几个孩子、其后 8 个 u32。
         let mut kid: Vec<String> = Vec::new();
+        let mut nam: Vec<String> = Vec::new();
         let (mut files, mut gap, mut nos) = (0usize, 0usize, 0usize);
         for p in &paths {
             let name = p.rsplit('/').next().unwrap_or("").to_string();
@@ -1033,7 +1034,9 @@ fn main() {
             };
             let e = tally.entry(label.to_string()).or_insert((0, name.clone()));
             e.0 += 1;
-            if label == "child-name-unreadable" && kid.len() < 12 {
+            if (label == "child-name-unreadable" && kid.len() < 6)
+                || (label == "name1-unreadable" && nam.len() < 10)
+            {
                 let w = |i: usize| -> u32 {
                     raw.get(dead + 4 * i..dead + 4 * i + 4)
                         .and_then(|b| <[u8; 4]>::try_from(b).ok())
@@ -1049,10 +1052,15 @@ fn main() {
                         None => break,
                     }
                 }
-                kid.push(format!(
+                let row = format!(
                     "  {name} · 声明孩子 {ccount} 个 · 死槽偏移 {dead}(0x{dead:x}) · 其后 8 个 u32 [{}]\n    +0..96 ASCII「{asc}」",
                     words.join(", ")
-                ));
+                );
+                if label == "name1-unreadable" {
+                    nam.push(row);
+                } else {
+                    kid.push(row);
+                }
             }
         }
         let mut rows: Vec<(String, (usize, String))> = tally.into_iter().collect();
@@ -1064,6 +1072,10 @@ fn main() {
         }
         println!("\n# 孩子表那格的死槽字节（前 {} 份 · 偏移是绝对位置）：", kid.len());
         for r in &kid {
+            println!("{r}");
+        }
+        println!("\n# 「读不出第一个名字」那格的死槽字节（前 {} 份）：", nam.len());
+        for r in &nam {
             println!("{r}");
         }
         return;

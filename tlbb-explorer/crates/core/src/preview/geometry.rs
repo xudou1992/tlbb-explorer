@@ -1038,8 +1038,8 @@ fn tail_try_entry_why(
     let flag = tail_u32(raw, p).ok_or(("flag-unreadable", 0, 0))?;
     let _ = flag; // 实测恒 1 / 根 -1；不是父索引，不解释
     p += 4;
-    let nm1 = tail_name_at(raw, p).ok_or(("name1-unreadable", 0, 0))?;
-    let nm2 = tail_name_at(raw, p + 32).ok_or(("name2-unreadable", 0, 0))?;
+    let nm1 = tail_name_at(raw, p).ok_or(("name1-unreadable", 0, p))?;
+    let nm2 = tail_name_at(raw, p + 32).ok_or(("name2-unreadable", 0, p + 32))?;
     if nm1 != nm2 {
         return Err(("names-differ", 0, 0));
     }

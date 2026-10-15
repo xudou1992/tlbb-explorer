@@ -1015,6 +1015,7 @@ fn main() {
         let mut audit: BTreeMap<String, usize> = BTreeMap::new();
         let mut fblock: Vec<String> = Vec::new();
         let mut fgap: BTreeMap<String, usize> = BTreeMap::new();
+        let mut f156: Vec<String> = Vec::new();
         let (mut files, mut gap, mut nos) = (0usize, 0usize, 0usize);
         for p in &paths {
             let name = p.rsplit('/').next().unwrap_or("").to_string();
@@ -1174,7 +1175,26 @@ fn main() {
                     }
                     (Some((o0, _)), None) => format!("只找到 1 段名字 · 在 +{o0}"),
                 };
-                *fgap.entry(key).or_insert(0) += 1;
+                *fgap.entry(key.clone()).or_insert(0) += 1;
+                // 95 补那一刀：31 份挤在 +160/+164 这两格，把「卡点字往后 156 字节」整段摊成
+                // 39 个 u32 打出来（同一份同时给 f32 味道的只看 u32 那串），特征定了再谈加分支。
+                if (key.ends_with("+160") || key.ends_with("+164")) && f156.len() < 10 {
+                    let mut words = Vec::new();
+                    for w in 0..39 {
+                        words.push(
+                            raw.get(dead + 4 * w..dead + 4 * w + 4)
+                                .and_then(|b| <[u8; 4]>::try_from(b).ok())
+                                .map(u32::from_le_bytes)
+                                .unwrap_or(0)
+                                .to_string(),
+                        );
+                    }
+                    let zeros = words.iter().filter(|s| s.as_str() == "0").count();
+                    f156.push(format!(
+                        "  {name} · {key} · 零字 {zeros}/39 · 39 个 u32 [{}]",
+                        words.join(",")
+                    ));
+                }
             }
         }
         let mut rows: Vec<(String, (usize, String))> = tally.into_iter().collect();
@@ -1208,6 +1228,10 @@ fn main() {
         fr.sort_by(|a, b| b.1.cmp(&a.1));
         for (k, v) in fr {
             println!("  {v:4} 份 · {k}");
+        }
+        println!("\n# 挤在 +160/+164 这两格的份，卡点字往后 156 字节 = 39 个 u32（前 {} 份）：", f156.len());
+        for r in &f156 {
+            println!("{r}");
         }
         println!("\n# name1 那格按「死槽前一字 = 表长」审 id 与权重（份数 · 类别）：");
         let mut ar: Vec<(String, usize)> = audit.into_iter().collect();

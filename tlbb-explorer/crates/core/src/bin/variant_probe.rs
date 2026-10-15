@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -996,6 +996,77 @@ fn main() {
                 forest.map_or("None".to_string(), |n| format!("{n} 根节点")),
                 n_root
             );
+        }
+        return;
+    }
+
+    if mode == "countgate" {
+        // 107 补定的那条数：全库有多少份是「走到 EOF 但条目数 != 声明骨数」，
+        // 差额能不能由「只有 96B 记录、没有条目尾的骨」解释。
+        // 用的都是现成出口（`hierarchy_stuck` 给 declared/eaten，`parse_nodes` 给记录条数），主干一个字没改。
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut t: BTreeMap<String, usize> = BTreeMap::new();
+        let (mut files, mut eofneq, mut okexpl) = (0usize, 0usize, 0usize);
+        let mut ex: Vec<String> = Vec::new();
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            files += 1;
+            if parse_nodes(&raw).is_empty() || parse_hierarchy(&raw).is_some() {
+                continue;
+            }
+            let Some(sp) = hierarchy_stuck(&raw) else {
+                *t.entry("拿不到卡点（0x110 读不出）".to_string()).or_insert(0) += 1;
+                continue;
+            };
+            if sp.stopped < raw.len() {
+                *t.entry("走不到 EOF（与等式无关）".to_string()).or_insert(0) += 1;
+                continue;
+            }
+            let recs = parse_nodes(&raw).len();
+            let (gap, over) = if sp.eaten > sp.declared {
+                (sp.eaten - sp.declared, true)
+            } else {
+                (sp.declared - sp.eaten, false)
+            };
+            eofneq += 1;
+            if !over && gap > 0 && recs.saturating_sub(sp.eaten) >= gap {
+                okexpl += 1;
+            }
+            let k = if over {
+                format!("条目比声明多（差 {gap}）")
+            } else {
+                match gap {
+                    0 => "等式本成立（那为何被挡）".to_string(),
+                    1 => "条目少 1".to_string(),
+                    2..=5 => format!("条目少 {gap}"),
+                    _ => format!("条目少 {gap}"),
+                }
+            };
+            *t.entry(k).or_insert(0) += 1;
+            if gap > 0 && ex.len() < 12 {
+                ex.push(format!(
+                    "  {name} · 声明 {} · 条目 {} · 记录 {} · 差额 {} 由「只有记录的骨」{}解释",
+                    sp.declared,
+                    sp.eaten,
+                    recs,
+                    gap,
+                    if recs.saturating_sub(sp.eaten) >= gap { "能" } else { "不能" }
+                ));
+            }
+        }
+        println!(
+            "\n# 读到 {files} 份 · 走得到 EOF 但条目数 != 声明数的 **{eofneq} 份** · \
+             其中差额能由「只有记录、没条目尾的骨」解释的 **{okexpl} 份**"
+        );
+        let mut rows: Vec<(String, usize)> = t.into_iter().collect();
+        rows.sort_by(|a, b| b.1.cmp(&a.1));
+        for (k, v) in rows {
+            println!("  {v:4} 份 · {k}");
+        }
+        println!("# 差额逐例（前 {} 份）：", ex.len());
+        for r in &ex {
+            println!("{r}");
         }
         return;
     }

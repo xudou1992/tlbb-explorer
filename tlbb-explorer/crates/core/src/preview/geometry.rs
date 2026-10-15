@@ -841,7 +841,8 @@ fn tail_name_at(raw: &[u8], at: usize) -> Option<&str> {
     let prev = raw[at - 1];
     // 括号算名字字符：实测有孩子的名字是 `bone001(mirrored)` 这种（32B 槽、NUL 结尾、
     // 其余真填 0），字符集不收括号 ⇒ 条目走到孩子表第一个就断。79/80 补，全库 45 份。
-    if prev.is_ascii_alphanumeric() || matches!(prev, b'_' | b'-' | b'.' | b'(' | b')') {
+    // 斜杠同理：挂点段的记录名实测有 `tx/-zuiba`（99 补的轨迹指出来的），不收 `/` 就收不下整段挂点。
+    if prev.is_ascii_alphanumeric() || matches!(prev, b'_' | b'-' | b'.' | b'(' | b')' | b'/') {
         return None;
     }
     let nb = &raw[at..at + 32];
@@ -851,7 +852,7 @@ fn tail_name_at(raw: &[u8], at: usize) -> Option<&str> {
     }
     if !nb[..end]
         .iter()
-        .all(|c| c.is_ascii_alphanumeric() || matches!(c, b'_' | b'-' | b'.' | b'(' | b')'))
+        .all(|c| c.is_ascii_alphanumeric() || matches!(c, b'_' | b'-' | b'.' | b'(' | b')' | b'/'))
     {
         return None;
     }
@@ -1026,6 +1027,48 @@ fn tail_is_inf(raw: &[u8], at: usize, vc: usize) -> bool {
     })
 }
 
+/// 条目与挂点段**共用**的那段块链：从 `at` 起跳 `u92` / `mat64` / 影响表，
+/// 返回第一个「不是块」的位置；`raw` 读不动时返回 `None`。
+///
+/// `tr` 只给诊断：传 `Some` 时把「哪一种块、在哪一点」记下来。
+/// **走法本体与探针共用这一份实现**——98 补我另抄了一份循环，结果它和主干报出不同的卡点
+/// （轨迹 41878 vs 走法 42182），那种诊断比没有诊断更坏，所以轨迹挂在这里而不是另写走法。
+fn tail_skip_blocks(
+    raw: &[u8],
+    mut p: usize,
+    vc: usize,
+    mut tr: Option<&mut Vec<(&'static str, usize)>>,
+) -> Option<usize> {
+    loop {
+        if tail_is_u92(raw, p) {
+            if let Some(t) = tr.as_deref_mut() {
+                t.push(("u92", p));
+            }
+            p += 88;
+            continue;
+        }
+        if tail_is_mat64(raw, p) {
+            if let Some(t) = tr.as_deref_mut() {
+                t.push(("mat64", p));
+            }
+            p += 64;
+            continue;
+        }
+        let n = tail_u32(raw, p)?;
+        if tail_is_inf(raw, p, vc) {
+            if let Some(t) = tr.as_deref_mut() {
+                t.push(("inf", p));
+            }
+            p += 4 + 8 * n as usize;
+            continue;
+        }
+        if let Some(t) = tr.as_deref_mut() {
+            t.push(("break", p));
+        }
+        return Some(p);
+    }
+}
+
 /// 试探一个条目；失败时带出**死在哪一步**（只给普查用，判据与 `tail_try_entry` 一字不差）。
 /// 开头那条 96B 记录只在「它的名字 == 条目名」时才算本条目的
 /// （否则是 origin/top 场景前奏，由调用方按裸记录跳过）。
@@ -1033,28 +1076,17 @@ fn tail_try_entry_why(
     raw: &[u8],
     at: usize,
     vc: usize,
+    mut tr: Option<&mut Vec<(&'static str, usize)>>,
 ) -> Result<(TailEntry, usize), (&'static str, usize, usize)> {
     let mut p = at;
     let own = tail_record_at(raw, p);
     if own.is_some() {
+        if let Some(t) = tr.as_deref_mut() {
+            t.push(("own96", p));
+        }
         p += NODE_RECORD;
     }
-    loop {
-        if tail_is_u92(raw, p) {
-            p += 88;
-            continue;
-        }
-        if tail_is_mat64(raw, p) {
-            p += 64;
-            continue;
-        }
-        let n = tail_u32(raw, p).ok_or(("block-chain-unreadable", 0, 0))?;
-        if tail_is_inf(raw, p, vc) {
-            p += 4 + 8 * n as usize;
-            continue;
-        }
-        break;
-    }
+    p = tail_skip_blocks(raw, p, vc, tr).ok_or(("block-chain-unreadable", 0, p))?;
     let flag = tail_u32(raw, p).ok_or(("flag-unreadable", 0, p))?;
     // 91 补把校验加回来：实测条目标志只有 `1`（普通条目）与 `-1`（根条目）。
     // 之前 `let _ = flag;` 不校验 ⇒ 走法顺着一串零字滑（`tail_is_inf` 对 `n == 0` 直接返回真、
@@ -1102,7 +1134,7 @@ fn tail_try_entry_why(
 
 /// 走法用的入口：失败原因抹平成 `None`（走法只关心成不成立）。
 fn tail_try_entry(raw: &[u8], at: usize, vc: usize) -> Option<(TailEntry, usize)> {
-    tail_try_entry_why(raw, at, vc).ok()
+    tail_try_entry_why(raw, at, vc, None).ok()
 }
 
 /// 普查用：在 `at` 处按条目文法试一次，只回答「死在哪一步」的短标签
@@ -1114,7 +1146,7 @@ pub fn tail_stuck_why(raw: &[u8], at: usize) -> &'static str {
 /// 同 [`tail_stuck_why`]，但把**当时读到的子节点数**与**死在哪个偏移**一起带出来
 /// （不是孩子表那两类失败时后两项为 0）。仍只读数：判据与走法一字不差。
 pub fn tail_stuck_detail(raw: &[u8], at: usize) -> (&'static str, usize, usize) {
-    match tail_try_entry_why(raw, at, vertex_count(raw)) {
+    match tail_try_entry_why(raw, at, vertex_count(raw), None) {
         Ok(_) => ("ok", 0, 0),
         Err(f) => f,
     }
@@ -1306,30 +1338,67 @@ fn tail_walk_trace(
     start: usize,
     vc: usize,
 ) -> (Option<(Vec<TailEntry>, Vec<SocketEntry>)>, usize) {
+    tail_walk_traced(raw, start, vc, None)
+}
+
+/// 同一个走法，但可以带一只 `tr`：每进一步就记下「哪一种块、在哪一点」。
+/// **只有一份走法实现**（98 补的教训），探针要的轨迹就从这里出，主干自己传 `None`。
+fn tail_walk_traced(
+    raw: &[u8],
+    start: usize,
+    vc: usize,
+    mut tr: Option<&mut Vec<(&'static str, usize)>>,
+) -> (Option<(Vec<TailEntry>, Vec<SocketEntry>)>, usize) {
     let mut p = start;
     let mut entries = Vec::new();
     let mut sockets = Vec::new();
     while p < raw.len() {
-        if let Some((e, np)) = tail_try_entry(raw, p, vc) {
+        let got = tail_try_entry_why(raw, p, vc, tr.as_deref_mut()).ok();
+        if let Some((e, np)) = got {
+            if let Some(t) = tr.as_deref_mut() {
+                t.push(("entry", p));
+            }
             entries.push(e);
             p = np;
             continue;
         }
         if tail_record_at(raw, p).is_some() {
+            if let Some(t) = tr.as_deref_mut() {
+                t.push(("bare96", p));
+            }
             p += NODE_RECORD; // 场景前奏：origin / top，只有记录没有条目尾
             continue;
         }
-        if let Some((s, np)) = tail_try_sockets(raw, p, vc) {
+        let sok = tail_try_sockets(raw, p, vc);
+        if let Some((s, np)) = sok {
+            if let Some(t) = tr.as_deref_mut() {
+                t.push(("sockets", p));
+            }
             sockets = s;
             p = np;
             break;
         }
+        if let Some(t) = tr.as_deref_mut() {
+            t.push(("stalled", p));
+        }
         return (None, p);
     }
     if p != raw.len() {
+        if let Some(t) = tr.as_deref_mut() {
+            t.push(("not-eof", p));
+        }
         return (None, p);
     }
     (Some((entries, sockets)), p)
+}
+
+/// 探针用：从 `start` 起按**主干同一条走法**走一遍，带回每一步的记录点与最终落点。
+/// 与 `hierarchy_stuck` 的 `stopped` 必然一致——它就是同一段代码（98 补：另写一份时两者差 304 字节）。
+pub fn tail_walk_steps(raw: &[u8], start: usize) -> (Vec<(&'static str, usize)>, usize) {
+    let vc = vertex_count(raw);
+    let mut tr: Vec<(&'static str, usize)> = Vec::new();
+    let (_, stopped) = tail_walk_traced(raw, start, vc, Some(&mut tr));
+    (tr, stopped)
 }
 
 /// 尾部起点候选：`(origin 记录起点, -1 根条目起点)`。

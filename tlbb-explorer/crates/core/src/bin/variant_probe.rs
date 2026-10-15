@@ -26,7 +26,7 @@ use rusqlite::{Connection, OpenFlags};
 use tlbb_core::jpak::Pak;
 use tlbb_core::payload;
 use tlbb_core::preview::rest;
-use tlbb_core::preview::{bone_count, hierarchy_stuck, parse_ani, parse_hierarchy, parse_nodes, parse_nodes_variant, rest_poses, tail_inf_audit, tail_stuck_detail, pose};
+use tlbb_core::preview::{bone_count, hierarchy_stuck, parse_ani, parse_hierarchy, parse_nodes, parse_nodes_variant, rest_poses, tail_inf_audit, tail_stuck_detail, tail_walk_steps, pose};
 
 fn locate(con: &Connection, name: &str) -> Option<(u64, String)> {
     let mut stmt = con
@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -996,6 +996,51 @@ fn main() {
                 forest.map_or("None".to_string(), |n| format!("{n} 根节点")),
                 n_root
             );
+        }
+        return;
+    }
+
+    if mode == "steps" {
+        // 98 补的正确做法：轨迹挂在**主干那一条走法**上（`tail_walk_steps` 调的就是
+        // `tail_walk_traced`，与 `hierarchy_stuck` 同一份实现），所以步子的落点必须与
+        // 普查报的卡点**相同**——不同就是我自己写错了，不用往下读。
+        let paths = mesh_paths(&con, &batch, limit);
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            if parse_nodes(&raw).is_empty() || parse_hierarchy(&raw).is_some() {
+                continue;
+            }
+            let Some(sp) = hierarchy_stuck(&raw) else {
+                println!("\n{name} · 拿不到卡点（0x110 读不出）");
+                continue;
+            };
+            let (steps, stopped) = tail_walk_steps(&raw, sp.start);
+            let n = steps.len();
+            println!(
+                "\n{name} · 大小 {} · 起点 {} · 普查报的卡点 {} · 轨迹落点 {} · 共 {n} 步{}",
+                raw.len(),
+                sp.start,
+                sp.stopped,
+                stopped,
+                if stopped == sp.stopped { " ✓一致" } else { " ✗不一致（我写错了）" }
+            );
+            for (kind, at) in steps.iter().rev().take(20).rev() {
+                let w: Vec<String> = (0..4)
+                    .map(|k| {
+                        raw.get(at + 4 * k..at + 4 * k + 4)
+                            .and_then(|b| <[u8; 4]>::try_from(b).ok())
+                            .map(u32::from_le_bytes)
+                            .map(|v| v.to_string())
+                            .unwrap_or_default()
+                    })
+                    .collect();
+                println!(
+                    "  {kind:8} @{at}（相对起点 +{}）· 该处 4 个 u32 [{}]",
+                    at - sp.start,
+                    w.join(", ")
+                );
+            }
         }
         return;
     }

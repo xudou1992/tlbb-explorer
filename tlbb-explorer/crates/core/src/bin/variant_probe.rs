@@ -26,7 +26,7 @@ use rusqlite::{Connection, OpenFlags};
 use tlbb_core::jpak::Pak;
 use tlbb_core::payload;
 use tlbb_core::preview::rest;
-use tlbb_core::preview::{bone_count, parse_ani, parse_hierarchy, parse_nodes, parse_nodes_variant, rest_poses, pose};
+use tlbb_core::preview::{bone_count, hierarchy_stuck, parse_ani, parse_hierarchy, parse_nodes, parse_nodes_variant, rest_poses, pose};
 
 fn locate(con: &Connection, name: &str) -> Option<(u64, String)> {
     let mut stmt = con
@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -896,6 +896,46 @@ fn main() {
             println!("  主干诊断：{}", match hierarchy_stuck(&raw) { Some(s) => format!("{s:?}"), None => "hierarchy_stuck 返回 None（连诊断都给不出）".to_string() });
         }
         println!("\n# 本次取样里「有记录但建不出树」点了 {shown} 份");
+        return;
+    }
+
+
+    if mode == "chaincluster" {
+        // 61 补的结论：246 份的断点形状**不止一种**，所以先聚类再谈成因。
+        // 指纹 = (eaten, declared, 卡点起 4 个 u32)；同指纹的份数与例子逐类打出来。
+        use std::collections::BTreeMap;
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut groups: BTreeMap<(usize, usize, [u32; 4]), (usize, String)> = BTreeMap::new();
+        let mut gap = 0usize;
+        let mut nostuck = 0usize;
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            if parse_nodes(&raw).is_empty() || parse_hierarchy(&raw).is_some() {
+                continue;
+            }
+            gap += 1;
+            let Some(sp) = hierarchy_stuck(&raw) else {
+                nostuck += 1;
+                continue;
+            };
+            let mut w = [0u32; 4];
+            for k in 0..4 {
+                if let Some(s) = raw.get(sp.stopped + 4 * k..sp.stopped + 4 * k + 4) {
+                    w[k] = u32::from_le_bytes(s.try_into().unwrap_or([0; 4]));
+                }
+            }
+            let e = groups.entry((sp.eaten, sp.declared, w)).or_insert((0, name.clone()));
+            e.0 += 1;
+        }
+        println!("# 有记录但链为零的 {gap} 份 · 其中连诊断都给不出的 {nostuck} 份");
+        let mut rows: Vec<_> = groups.into_iter().collect();
+        rows.sort_by(|a, b| b.1 .0.cmp(&a.1 .0));
+        println!("# 指纹（eaten, declared, 卡点起 4 个 u32）· 份数 · 一例");
+        for (k, (n, ex)) in rows.iter().take(15) {
+            println!("  {k:?} · {n} 份 · {ex}");
+        }
+        println!("# 不同指纹共 {} 种（前 15 种列出，长尾未逐条打）", rows.len());
         return;
     }
 

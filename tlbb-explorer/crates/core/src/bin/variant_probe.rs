@@ -1059,18 +1059,17 @@ fn main() {
                 };
                 *audit.entry(k).or_insert(0) += 1;
             }
-            if det.len() < 24 {
+            if label == "name1-unreadable" && dead >= 64 && det.len() < 60 {
                 let mut vals = Vec::new();
-                for k in 0..4 {
+                for k in 0..16 {
                     let v = raw
-                        .get(dead + 4 * k..dead + 4 * k + 4)
+                        .get(dead - 64 + 4 * k..dead - 60 + 4 * k)
                         .and_then(|b| <[u8; 4]>::try_from(b).ok())
                         .map_or(0.0f32, f32::from_le_bytes);
-                    vals.push(format!("{v:.5}"));
+                    vals.push(format!("{v:.4}"));
                 }
                 det.push(format!(
-                    "  {name} · {} 字节 · 死槽 {dead}(0x{dead:x}) · 该处 4 个 f32 [{}] · {label} · 卡点前吃了 {ccount}",
-                    raw.len(),
+                    "  {name} · 死槽 {dead}(0x{dead:x}) · 该条目声明孩子 {ccount} 个 · 死槽前 64 字节 16 个 f32 [{}]",
                     vals.join(", ")
                 ));
             }
@@ -1118,7 +1117,7 @@ fn main() {
         for r in &nam {
             println!("{r}");
         }
-        println!("\n# 逐份大小与死槽处 4 个 f32（拿来与解包副本对版本，前 {} 份）：", det.len());
+        println!("\n# name1 那格逐份：死槽前 64 字节的 16 个 f32（摆位型用，前 {} 份）：", det.len());
         for r in &det {
             println!("{r}");
         }

@@ -1,3 +1,41 @@
+  命中 w1351_pets_huanyizhiling_b7.mesh · bone71 差 2.842e-14 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_xuanhaima_b7.mesh · bone76 差 3.874e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_npc_xinmurongfu.mesh · bip001_luparmtwist001 差 2.384e-7 · 标准记录基向量长度 1.0000 · 标准带表 · 变体带表
+  命中 w1351_npc_xinmurongfu.mesh · bip001_ruparmtwist001 差 7.451e-9 · 标准记录基向量长度 1.0000 · 标准带表 · 变体带表
+  命中 w1351_pets_rongyanjushou_b7.mesh · bone013 差 1.192e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_rongyanjushou_b7.mesh · bone012 差 1.192e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_rongyanjushou_b7.mesh · bone011 差 1.639e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_rongyanjushou_b7.mesh · bone016 差 4.172e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_rongyanjushou_b7.mesh · bone015 差 3.316e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_rongyanjushou_b7.mesh · bone014 差 1.788e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_rongyanjushou_b7.mesh · bone003 差 2.384e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_zuoqi_wucai.mesh · zuowei 差 2.980e-8 · 标准记录基向量长度 1.0000 · 标准带表 · 变体无表
+  命中 w1351_model_xx_nan_mianju_x03.mesh · tx_bone 差 3.427e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_model_xx_nan_mianju_x02.mesh · tx_bone 差 5.660e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_model_xx_nan_mianju_x01.mesh · tx_bone 差 5.326e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_model_xx_nan_mianju_x01_01.mesh · tx_bone 差 5.326e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_xuanhaima_b5.mesh · bone14 差 3.874e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_xuanhaima_b1.mesh · bone002 差 3.874e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_xuanhaima_b3.mesh · bone002 差 3.874e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_xuanhaima_b0.mesh · bone015 差 3.874e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_rongyanjushou_b5.mesh · bone013 差 1.192e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_rongyanjushou_b5.mesh · bone012 差 1.192e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_rongyanjushou_b5.mesh · bone011 差 1.639e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_rongyanjushou_b5.mesh · bone016 差 4.172e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_rongyanjushou_b5.mesh · bone015 差 3.316e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_rongyanjushou_b5.mesh · bone014 差 1.788e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_rongyanjushou_b5.mesh · bone003 差 2.384e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_model_spider_h01.mesh · bone002 差 2.384e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_model_em_nan_sword01.mesh · bone02_m_mirror01 差 3.576e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_monster_huojingling_yifu_001.mesh · bone04 差 7.733e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_monster_huojingling_yifu_001.mesh · bone03 差 3.836e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_pets_yuanyang_b0.mesh · bone24 差 1.748e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_model_zhuahen_lf002.mesh · bone71 差 1.748e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体无表
+  命中 w1351_monster_huojingling_lian_001.mesh · bone04 差 7.733e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体无表
+  命中 w1351_monster_huojingling_lian_001.mesh · bone03 差 3.836e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体无表
+  命中 langhuanyudong_jt.mesh · bone001 差 1.192e-7 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_model_rlsz_z001.mesh · 000 差 0.000e0 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
+  命中 w1351_model_jianyinghu_idle03_guiji_c001.mesh · bone001 差 3.725e-9 · 标准记录基向量长度 1.0000 · 标准无表 · 变体带表
 
 # 读到 7996 份 · 同份同名可比 27760 根（总表 #1~#4 的全库人口）
 # **剔除标准记录是单位阵之后**，≤1e-6 命中：本身 38 · 转置 0 · 逆 0 · 逆的转置 9

@@ -798,6 +798,14 @@ fn main() {
                                 2 => h_i += 1,
                                 _ => h_it += 1,
                             }
+                            // 54 补留的尾巴：命中到底是哪些文件哪些骨，逐条点名（命中是个位数到几十，明细不会淹）
+                            if which == 0 {
+                                println!("  命中 {name} · {} 差 {d:.3e} · 标准记录基向量长度 {}{}{}",
+                                    v.name,
+                                    format!("{:.4}", (s.bind[0] * s.bind[0] + s.bind[1] * s.bind[1] + s.bind[2] * s.bind[2]).sqrt()),
+                                    if s.skin.is_some() { " · 标准带表" } else { " · 标准无表" },
+                                    if v.skin.is_some() { " · 变体带表" } else { " · 变体无表" });
+                            }
                         }
                     }
                     if which == 0 {

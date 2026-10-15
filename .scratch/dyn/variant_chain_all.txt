@@ -1,0 +1,740 @@
+
+w1351_cj_diao.mesh · 标准 59 条 · 声明 104 根 · 顶点 18041
+  主干诊断：StuckPoint { start: 698626, stopped: 871146, eaten: 11, declared: 104 }
+
+w1351_model_sl_nan_zhong_x02_2.mesh · 标准 1 条 · 声明 55 根 · 顶点 20554
+  主干诊断：StuckPoint { start: 798164, stopped: 975528, eaten: 55, declared: 55 }
+
+w1351_model_sl_nan_zhong_x02.mesh · 标准 1 条 · 声明 55 根 · 顶点 20554
+  主干诊断：StuckPoint { start: 798164, stopped: 975528, eaten: 55, declared: 55 }
+
+w1351_model_sl_nan_zhong_x01.mesh · 标准 1 条 · 声明 55 根 · 顶点 20554
+  主干诊断：StuckPoint { start: 798164, stopped: 975528, eaten: 55, declared: 55 }
+
+w1351_model_ymg02_nv_flzt_h001.mesh · 标准 86 条 · 声明 107 根 · 顶点 6931
+  主干诊断：StuckPoint { start: 285124, stopped: 420080, eaten: 42, declared: 107 }
+
+w1351_model_ymg02_nan_slbw_h003.mesh · 标准 86 条 · 声明 107 根 · 顶点 6931
+  主干诊断：StuckPoint { start: 285124, stopped: 420080, eaten: 42, declared: 107 }
+
+w1351_model_ymg02_nan_slbw_h002.mesh · 标准 86 条 · 声明 107 根 · 顶点 6931
+  主干诊断：StuckPoint { start: 285124, stopped: 420080, eaten: 42, declared: 107 }
+
+w1351_model_ymg02_jn_long_h001.mesh · 标准 85 条 · 声明 106 根 · 顶点 6931
+  主干诊断：StuckPoint { start: 285124, stopped: 419820, eaten: 41, declared: 106 }
+
+w1351_model_link_h01.mesh · 标准 1 条 · 声明 142 根 · 顶点 18176
+  主干诊断：StuckPoint { start: 763772, stopped: 942460, eaten: 142, declared: 142 }
+
+w1351_model_ymg02_jn_long_h005.mesh · 标准 85 条 · 声明 106 根 · 顶点 6931
+  主干诊断：StuckPoint { start: 306140, stopped: 440836, eaten: 41, declared: 106 }
+
+w1351_npc_biaoche3.mesh · 标准 76 条 · 声明 138 根 · 顶点 12852
+  主干诊断：StuckPoint { start: 507880, stopped: 508568, eaten: 3, declared: 138 }
+
+w1351_model_ymg02_nan_slbw_lg_h003.mesh · 标准 86 条 · 声明 107 根 · 顶点 5648
+  主干诊断：StuckPoint { start: 244068, stopped: 356008, eaten: 42, declared: 107 }
+
+w1351_model_ymg02_nv_flzt_lg_h001.mesh · 标准 86 条 · 声明 107 根 · 顶点 5648
+  主干诊断：StuckPoint { start: 244068, stopped: 356008, eaten: 42, declared: 107 }
+
+w1351_model_ymg02_nan_slbw_lg_h002.mesh · 标准 86 条 · 声明 107 根 · 顶点 5648
+  主干诊断：StuckPoint { start: 244068, stopped: 356008, eaten: 42, declared: 107 }
+
+w1351_npc_biaoche5.mesh · 标准 76 条 · 声明 138 根 · 顶点 11004
+  主干诊断：StuckPoint { start: 435568, stopped: 436256, eaten: 3, declared: 138 }
+
+w1351_model_ymg02_jn_long_lg_h005_1.mesh · 标准 85 条 · 声明 106 根 · 顶点 5648
+  主干诊断：StuckPoint { start: 265084, stopped: 376764, eaten: 41, declared: 106 }
+
+w1351_model_ymg02_jn_long_lg_h005.mesh · 标准 85 条 · 声明 106 根 · 顶点 5648
+  主干诊断：StuckPoint { start: 265084, stopped: 376764, eaten: 41, declared: 106 }
+
+w1351_model_cloud_h002.mesh · 标准 1 条 · 声明 43 根 · 顶点 6561
+  主干诊断：StuckPoint { start: 312636, stopped: 532776, eaten: 43, declared: 43 }
+
+w1351_model_ymg02_jn_long_lg_h001.mesh · 标准 85 条 · 声明 106 根 · 顶点 5648
+  主干诊断：StuckPoint { start: 244068, stopped: 355748, eaten: 41, declared: 106 }
+
+w1351_zuoqi_dafeng.mesh · 标准 76 条 · 声明 127 根 · 顶点 7047
+  主干诊断：StuckPoint { start: 305324, stopped: 314192, eaten: 6, declared: 127 }
+
+w1351_model_sl_cleave_h01.mesh · 标准 1 条 · 声明 229 根 · 顶点 16184
+  主干诊断：StuckPoint { start: 579820, stopped: 763176, eaten: 229, declared: 229 }
+
+w1351_npc_heiyirendage.mesh · 标准 68 条 · 声明 97 根 · 顶点 12039
+  主干诊断：StuckPoint { start: 410582, stopped: 411302, eaten: 3, declared: 97 }
+
+w1351_npc_xinxiaoyuanshan.mesh · 标准 118 条 · 声明 161 根 · 顶点 6047
+  主干诊断：StuckPoint { start: 241106, stopped: 244906, eaten: 5, declared: 161 }
+
+w1351_pets_xiaohualing_b7.mesh · 标准 159 条 · 声明 240 根 · 顶点 6270
+  主干诊断：StuckPoint { start: 259540, stopped: 297164, eaten: 35, declared: 240 }
+
+w1351_zuoqi_xingchenkun_lan.mesh · 标准 59 条 · 声明 106 根 · 顶点 5510
+  主干诊断：StuckPoint { start: 233556, stopped: 233724, eaten: 1, declared: 106 }
+
+w1351_pets_xiaohualing_b5.mesh · 标准 159 条 · 声明 240 根 · 顶点 4771
+  主干诊断：StuckPoint { start: 200648, stopped: 232168, eaten: 35, declared: 240 }
+
+w1351_npc_biaoche2.mesh · 标准 42 条 · 声明 75 根 · 顶点 5327
+  主干诊断：StuckPoint { start: 211568, stopped: 212224, eaten: 3, declared: 75 }
+
+w1351_new_npc_dingchunqiu.mesh · 标准 105 条 · 声明 149 根 · 顶点 4613
+  主干诊断：StuckPoint { start: 197676, stopped: 312216, eaten: 149, declared: 149 }
+
+w1351_npc_xiaoyuanshan.mesh · 标准 97 条 · 声明 137 根 · 顶点 4084
+  主干诊断：StuckPoint { start: 168136, stopped: 172784, eaten: 5, declared: 137 }
+
+w1351_model_hdb_dilie_lf001.mesh · 标准 1 条 · 声明 57 根 · 顶点 9352
+  主干诊断：StuckPoint { start: 332572, stopped: 420776, eaten: 57, declared: 57 }
+
+w1351_pets_xiaohualing_b3.mesh · 标准 99 条 · 声明 151 根 · 顶点 4175
+  主干诊断：StuckPoint { start: 178480, stopped: 205848, eaten: 35, declared: 151 }
+
+w1351_pets_xiaomuling_b7.mesh · 标准 59 条 · 声明 102 根 · 顶点 4113
+  主干诊断：StuckPoint { start: 156092, stopped: 158696, eaten: 6, declared: 102 }
+
+w1351_model_ymg01_jt02_h003.mesh · 标准 97 条 · 声明 135 根 · 顶点 3787
+  主干诊断：StuckPoint { start: 167244, stopped: 171244, eaten: 5, declared: 135 }
+
+w1351_model_pmf_s012.mesh · 标准 1 条 · 声明 19 根 · 顶点 11241
+  主干诊断：StuckPoint { start: 390100, stopped: 484624, eaten: 19, declared: 19 }
+
+w1351_model_zq_fish_h001.mesh · 标准 39 条 · 声明 89 根 · 顶点 3328
+  主干诊断：StuckPoint { start: 156156, stopped: 156356, eaten: 1, declared: 89 }
+
+w1351_zuoqi_maisuima.mesh · 标准 34 条 · 声明 62 根 · 顶点 4377
+  主干诊断：StuckPoint { start: 178812, stopped: 179436, eaten: 3, declared: 62 }
+
+w1351_model_boss_cj_z005.mesh · 标准 1 条 · 声明 0 根 · 顶点 4257
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_bird_lf001.mesh · 标准 99 条 · 声明 134 根 · 顶点 3563
+  主干诊断：StuckPoint { start: 160620, stopped: 166036, eaten: 7, declared: 134 }
+
+w1351_pets_xiaohualing_b1.mesh · 标准 99 条 · 声明 151 根 · 顶点 3244
+  主干诊断：StuckPoint { start: 138136, stopped: 162552, eaten: 35, declared: 151 }
+
+w1351_pets_xiaohualing_b0.mesh · 标准 99 条 · 声明 151 根 · 顶点 3307
+  主干诊断：StuckPoint { start: 140032, stopped: 164696, eaten: 35, declared: 151 }
+
+w1351_pets_rongyanjushou_b7.mesh · 标准 46 条 · 声明 161 根 · 顶点 3568
+  主干诊断：StuckPoint { start: 138640, stopped: 143680, eaten: 19, declared: 161 }
+
+w1351_pets_mofamifeng_b7.mesh · 标准 52 条 · 声明 101 根 · 顶点 3033
+  主干诊断：StuckPoint { start: 125424, stopped: 133652, eaten: 12, declared: 101 }
+
+w1351_boss_sysz_fenwujiou.mesh · 标准 60 条 · 声明 89 根 · 顶点 3037
+  主干诊断：StuckPoint { start: 128084, stopped: 128740, eaten: 3, declared: 89 }
+
+w1351_model_hxw_stone_h01.mesh · 标准 2 条 · 声明 60 根 · 顶点 6280
+  主干诊断：StuckPoint { start: 218252, stopped: 282692, eaten: 60, declared: 60 }
+
+w1351_model_boss_cjdl_z001.mesh · 标准 1 条 · 声明 0 根 · 顶点 2880
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_boss_cj_z001.mesh · 标准 1 条 · 声明 0 根 · 顶点 2880
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ls_gr_zd_z02.mesh · 标准 2 条 · 声明 0 根 · 顶点 7768
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_npc_suge_yifu_001.mesh · 标准 38 条 · 声明 60 根 · 顶点 2066
+  主干诊断：StuckPoint { start: 82162, stopped: 82978, eaten: 3, declared: 60 }
+
+w1351_new_npc_haolaizi.mesh · 标准 40 条 · 声明 62 根 · 顶点 2029
+  主干诊断：StuckPoint { start: 85692, stopped: 94392, eaten: 8, declared: 62 }
+
+w1351_pets_rongyanjushou_b5.mesh · 标准 46 条 · 声明 161 根 · 顶点 2691
+  主干诊断：StuckPoint { start: 104816, stopped: 109856, eaten: 19, declared: 161 }
+
+w1351_new_npc_shenhanxiang.mesh · 标准 34 条 · 声明 54 根 · 顶点 2071
+  主干诊断：StuckPoint { start: 90636, stopped: 99900, eaten: 7, declared: 54 }
+
+w1351_pets_niulangzhinv_b0.mesh · 标准 57 条 · 声明 98 根 · 顶点 2057
+  主干诊断：StuckPoint { start: 87456, stopped: 90888, eaten: 7, declared: 98 }
+
+w1351_model_sj_light_w002.mesh · 标准 2 条 · 声明 0 根 · 顶点 3582
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_gr_light_h001.mesh · 标准 2 条 · 声明 0 根 · 顶点 3208
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_npc_dushaokang_yifu_001.mesh · 标准 40 条 · 声明 58 根 · 顶点 1678
+  主干诊断：StuckPoint { start: 66988, stopped: 67804, eaten: 3, declared: 58 }
+
+w1351_model_hxw_h05.mesh · 标准 1 条 · 声明 0 根 · 顶点 6340
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_zuoqi_hunlima2.mesh · 标准 30 条 · 声明 52 根 · 顶点 1715
+  主干诊断：StuckPoint { start: 70188, stopped: 71328, eaten: 4, declared: 52 }
+
+w1351_new_npc_linyan_01.mesh · 标准 32 条 · 声明 51 根 · 顶点 1830
+  主干诊断：StuckPoint { start: 78636, stopped: 84708, eaten: 7, declared: 51 }
+
+w1351_new_npc_shibao.mesh · 标准 32 条 · 声明 51 根 · 顶点 1780
+  主干诊断：StuckPoint { start: 76684, stopped: 82756, eaten: 7, declared: 51 }
+
+w1351_new_npc_xuanci.mesh · 标准 40 条 · 声明 68 根 · 顶点 2172
+  主干诊断：StuckPoint { start: 88828, stopped: 96084, eaten: 7, declared: 68 }
+
+w1351_model_sj_light_w001.mesh · 标准 2 条 · 声明 0 根 · 顶点 3208
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_gb_long_h001.mesh · 标准 36 条 · 声明 55 根 · 顶点 1551
+  主干诊断：StuckPoint { start: 65356, stopped: 65356, eaten: 0, declared: 55 }
+
+w1351_model_gbnan_long_h002.mesh · 标准 36 条 · 声明 55 根 · 顶点 1551
+  主干诊断：StuckPoint { start: 65356, stopped: 65356, eaten: 0, declared: 55 }
+
+w1351_new_npc_zhaixingzi.mesh · 标准 34 条 · 声明 53 根 · 顶点 1724
+  主干诊断：StuckPoint { start: 73868, stopped: 84792, eaten: 8, declared: 53 }
+
+w1351_boss_sysz_fenxiu.mesh · 标准 28 条 · 声明 45 根 · 顶点 1834
+  主干诊断：StuckPoint { start: 77812, stopped: 78436, eaten: 3, declared: 45 }
+
+w1351_boss_sysz_fenti.mesh · 标准 28 条 · 声明 45 根 · 顶点 1834
+  主干诊断：StuckPoint { start: 77812, stopped: 78436, eaten: 3, declared: 45 }
+
+w1351_new_npc_liuzhongfu.mesh · 标准 39 条 · 声明 61 根 · 顶点 1344
+  主干诊断：StuckPoint { start: 57852, stopped: 63100, eaten: 7, declared: 61 }
+
+w1351_model_ui_z005.mesh · 标准 4 条 · 声明 0 根 · 顶点 2216
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_new_npc_saodiseng.mesh · 标准 33 条 · 声明 52 根 · 顶点 1493
+  主干诊断：StuckPoint { start: 63244, stopped: 68788, eaten: 7, declared: 52 }
+
+w1351_boss_shuangying_yifu_001.mesh · 标准 66 条 · 声明 103 根 · 顶点 1065
+  主干诊断：StuckPoint { start: 42164, stopped: 66012, eaten: 29, declared: 103 }
+
+w1351_model_stone_lf005.mesh · 标准 1 条 · 声明 72 根 · 顶点 1267
+  主干诊断：StuckPoint { start: 58796, stopped: 85868, eaten: 72, declared: 72 }
+
+w1351_npc_lulaoda_yifu_001.mesh · 标准 31 条 · 声明 47 根 · 顶点 1053
+  主干诊断：StuckPoint { start: 42164, stopped: 42980, eaten: 3, declared: 47 }
+
+w1351_boss_zhizhuwang.mesh · 标准 62 条 · 声明 78 根 · 顶点 1059
+  主干诊断：StuckPoint { start: 43856, stopped: 72220, eaten: 56, declared: 78 }
+
+w1351_model_chuangjue_h001.mesh · 标准 33 条 · 声明 45 根 · 顶点 986
+  主干诊断：StuckPoint { start: 38070, stopped: 66422, eaten: 45, declared: 45 }
+
+w1351_model_hxw_qmlw_z004.mesh · 标准 2 条 · 声明 0 根 · 顶点 1225
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_mhsn_nvsd01.mesh · 标准 30 条 · 声明 42 根 · 顶点 1188
+  主干诊断：StuckPoint { start: 47804, stopped: 78584, eaten: 42, declared: 42 }
+
+w1351_model_qf_cy_h03.mesh · 标准 3 条 · 声明 0 根 · 顶点 1248
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_em_nan_z001.mesh · 标准 18 条 · 声明 0 根 · 顶点 1250
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_boss_cj_z002.mesh · 标准 1 条 · 声明 0 根 · 顶点 1105
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_mhsn_nvhuan01.mesh · 标准 30 条 · 声明 42 根 · 顶点 1056
+  主干诊断：StuckPoint { start: 43404, stopped: 74168, eaten: 42, declared: 42 }
+
+w1351_model_boss_cjdl_z003.mesh · 标准 1 条 · 声明 0 根 · 顶点 1040
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_new_npc_aihu.mesh · 标准 23 条 · 声明 36 根 · 顶点 892
+  主干诊断：StuckPoint { start: 38828, stopped: 43420, eaten: 11, declared: 36 }
+
+w1351_model_mhsn_nvdd01.mesh · 标准 31 条 · 声明 43 根 · 顶点 965
+  主干诊断：StuckPoint { start: 39588, stopped: 68572, eaten: 43, declared: 43 }
+
+w1351_model_qunmoluanwu_h001.mesh · 标准 25 条 · 声明 31 根 · 顶点 869
+  主干诊断：StuckPoint { start: 33450, stopped: 55530, eaten: 31, declared: 31 }
+
+w1351_new_npc_pochen.mesh · 标准 23 条 · 声明 40 根 · 顶点 886
+  主干诊断：StuckPoint { start: 38700, stopped: 55620, eaten: 33, declared: 40 }
+
+w1351_model_mhsn_nandd01.mesh · 标准 30 条 · 声明 40 根 · 顶点 869
+  主干诊断：StuckPoint { start: 33450, stopped: 58030, eaten: 40, declared: 40 }
+
+w1351_model_boss_cj_z003.mesh · 标准 1 条 · 声明 0 根 · 顶点 2592
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_mhsn_nvshan01.mesh · 标准 31 条 · 声明 43 根 · 顶点 804
+  主干诊断：StuckPoint { start: 31808, stopped: 56984, eaten: 43, declared: 43 }
+
+w1351_model_gr_ljf_h02.mesh · 标准 2 条 · 声明 0 根 · 顶点 1025
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_heiyuan.mesh · 标准 24 条 · 声明 29 根 · 顶点 725
+  主干诊断：StuckPoint { start: 28800, stopped: 29940, eaten: 4, declared: 29 }
+
+w1351_model_hxw_h07.mesh · 标准 2 条 · 声明 0 根 · 顶点 936
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ui_z009.mesh · 标准 2 条 · 声明 0 根 · 顶点 875
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_boss_shuangying_toufa_001.mesh · 标准 66 条 · 声明 103 根 · 顶点 580
+  主干诊断：StuckPoint { start: 22420, stopped: 32028, eaten: 29, declared: 103 }
+
+w1351_boss_dunpaiyaoxing_yifu_001.mesh · 标准 25 条 · 声明 34 根 · 顶点 462
+  主干诊断：StuckPoint { start: 18620, stopped: 19436, eaten: 3, declared: 34 }
+
+w1351_model_ts_nv_pl_h01.mesh · 标准 2 条 · 声明 0 根 · 顶点 756
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ui_kuijia_z02.mesh · 标准 2 条 · 声明 0 根 · 顶点 836
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_em_nan_jt_posui_ani_x01.mesh · 标准 1 条 · 声明 30 根 · 顶点 1684
+  主干诊断：StuckPoint { start: 61420, stopped: 81740, eaten: 30, declared: 30 }
+
+w1351_boss_hubaoshenshou02.mesh · 标准 32 条 · 声明 40 根 · 顶点 670
+  主干诊断：StuckPoint { start: 26980, stopped: 35240, eaten: 12, declared: 40 }
+
+w1351_boss_hubaoshenshou03.mesh · 标准 32 条 · 声明 40 根 · 顶点 670
+  主干诊断：StuckPoint { start: 26980, stopped: 35240, eaten: 12, declared: 40 }
+
+w1351_boss_hubaoshenshou04.mesh · 标准 32 条 · 声明 40 根 · 顶点 670
+  主干诊断：StuckPoint { start: 26980, stopped: 35240, eaten: 12, declared: 40 }
+
+w1351_pets_zhizunshenshou_b0.mesh · 标准 33 条 · 声明 40 根 · 顶点 670
+  主干诊断：StuckPoint { start: 26692, stopped: 35240, eaten: 12, declared: 40 }
+
+w1351_boss_hubaoshenshou.mesh · 标准 32 条 · 声明 40 根 · 顶点 670
+  主干诊断：StuckPoint { start: 26884, stopped: 35240, eaten: 12, declared: 40 }
+
+w1351_model_zq_jayx_c01.mesh · 标准 2 条 · 声明 0 根 · 顶点 648
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_tubalu_yifu_001.mesh · 标准 24 条 · 声明 30 根 · 顶点 704
+  主干诊断：StuckPoint { start: 27768, stopped: 45524, eaten: 30, declared: 30 }
+
+w1351_monster_baihuojisi_yifu_001.mesh · 标准 24 条 · 声明 30 根 · 顶点 548
+  主干诊断：StuckPoint { start: 22188, stopped: 42480, eaten: 30, declared: 30 }
+
+w1351_monster_shifuniao.mesh · 标准 39 条 · 声明 58 根 · 顶点 517
+  主干诊断：StuckPoint { start: 20866, stopped: 41878, eaten: 58, declared: 58 }
+
+w1351_monster_baihuoshizhe_yifu_001.mesh · 标准 24 条 · 声明 30 根 · 顶点 571
+  主干诊断：StuckPoint { start: 23356, stopped: 44792, eaten: 30, declared: 30 }
+
+w1351_model_ymg_xys_z002.mesh · 标准 2 条 · 声明 0 根 · 顶点 650
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ui_z011.mesh · 标准 2 条 · 声明 0 根 · 顶点 696
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_eyubangdashou_yifu_001.mesh · 标准 25 条 · 声明 32 根 · 顶点 395
+  主干诊断：StuckPoint { start: 16028, stopped: 28484, eaten: 25, declared: 32 }
+
+w1351_monster_eyubangdashou_lian_001.mesh · 标准 24 条 · 声明 32 根 · 顶点 403
+  主干诊断：StuckPoint { start: 16516, stopped: 29196, eaten: 25, declared: 32 }
+
+w1351_pets_xiongmao_b0_yifu_001.mesh · 标准 25 条 · 声明 44 根 · 顶点 415
+  主干诊断：StuckPoint { start: 17068, stopped: 38852, eaten: 44, declared: 44 }
+
+w1351_monster_tengjiayongshi_yifu_001.mesh · 标准 21 条 · 声明 29 根 · 顶点 555
+  主干诊断：StuckPoint { start: 21716, stopped: 36484, eaten: 27, declared: 29 }
+
+w1351_monster_eyubangshashou_yifu_001.mesh · 标准 24 条 · 声明 32 根 · 顶点 430
+  主干诊断：StuckPoint { start: 17596, stopped: 32640, eaten: 32, declared: 32 }
+
+w1351_model_boss_cjdl_z002.mesh · 标准 1 条 · 声明 0 根 · 顶点 539
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_eyubanghunhun_yifu_001.mesh · 标准 24 条 · 声明 32 根 · 顶点 361
+  主干诊断：StuckPoint { start: 14932, stopped: 26836, eaten: 25, declared: 32 }
+
+w1351_wuqi_t_bihaiyintao.mesh · 标准 3 条 · 声明 0 根 · 顶点 733
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_eyubangtangzhu_lian_001.mesh · 标准 24 条 · 声明 32 根 · 顶点 409
+  主干诊断：StuckPoint { start: 16756, stopped: 31464, eaten: 32, declared: 32 }
+
+w1351_npc_chengyi_yifu_001.mesh · 标准 21 条 · 声明 28 根 · 顶点 451
+  主干诊断：StuckPoint { start: 18044, stopped: 23820, eaten: 9, declared: 28 }
+
+w1351_model_zq_jayx_c03.mesh · 标准 2 条 · 声明 0 根 · 顶点 1536
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_liaoguosaman_yifu_001.mesh · 标准 24 条 · 声明 30 根 · 顶点 466
+  主干诊断：StuckPoint { start: 19204, stopped: 35168, eaten: 30, declared: 30 }
+
+w1351_monster_xiyusaman_yifu_001.mesh · 标准 24 条 · 声明 30 根 · 顶点 466
+  主干诊断：StuckPoint { start: 19204, stopped: 35168, eaten: 30, declared: 30 }
+
+w1351_monster_xiyuwuyi_yifu_001.mesh · 标准 23 条 · 声明 30 根 · 顶点 466
+  主干诊断：StuckPoint { start: 19204, stopped: 35072, eaten: 30, declared: 30 }
+
+w1351_pets_bianfu_b0.mesh · 标准 41 条 · 声明 63 根 · 顶点 488
+  主干诊断：StuckPoint { start: 18912, stopped: 30612, eaten: 28, declared: 63 }
+
+w1351_nh_yezhishusan_001.mesh · 标准 1 条 · 声明 0 根 · 顶点 559
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_tengjiazei_yifu_001.mesh · 标准 24 条 · 声明 30 根 · 顶点 469
+  主干诊断：StuckPoint { start: 18724, stopped: 33312, eaten: 30, declared: 30 }
+
+w1351_model_gr_ll_z003.mesh · 标准 2 条 · 声明 0 根 · 顶点 1256
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_hxw_s001.mesh · 标准 2 条 · 声明 0 根 · 顶点 500
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_npc_duanzhengming_yifu_001.mesh · 标准 23 条 · 声明 27 根 · 顶点 419
+  主干诊断：StuckPoint { start: 16764, stopped: 18268, eaten: 5, declared: 27 }
+
+w1351_monster_xueshanlieren_yifu_001.mesh · 标准 20 条 · 声明 28 根 · 顶点 405
+  主干诊断：StuckPoint { start: 16388, stopped: 29376, eaten: 26, declared: 28 }
+
+w1351_monster_touliezhe_yifu_001.mesh · 标准 20 条 · 声明 28 根 · 顶点 405
+  主干诊断：StuckPoint { start: 16388, stopped: 29376, eaten: 26, declared: 28 }
+
+w1351_model_hxw_h02.mesh · 标准 2 条 · 声明 0 根 · 顶点 496
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_boss_sangtugong_yifu_001.mesh · 标准 24 条 · 声明 30 根 · 顶点 365
+  主干诊断：StuckPoint { start: 15168, stopped: 31228, eaten: 30, declared: 30 }
+
+w1351_model_gr_ll_z001.mesh · 标准 2 条 · 声明 0 根 · 顶点 425
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_gr_ll_z002.mesh · 标准 2 条 · 声明 0 根 · 顶点 425
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_lichonggui_yifu_001.mesh · 标准 26 条 · 声明 32 根 · 顶点 383
+  主干诊断：StuckPoint { start: 15144, stopped: 29644, eaten: 28, declared: 32 }
+
+w1351_npc_hanshizhong_yifu_001.mesh · 标准 18 条 · 声明 23 根 · 顶点 278
+  主干诊断：StuckPoint { start: 11400, stopped: 23672, eaten: 23, declared: 23 }
+
+w1351_ani_model_pets_xuanhaima_idle02_h001.mesh · 标准 1 条 · 声明 2 根 · 顶点 559
+  主干诊断：StuckPoint { start: 25852, stopped: 26184, eaten: 2, declared: 2 }
+
+w1351_model_hxw_h08.mesh · 标准 2 条 · 声明 0 根 · 顶点 434
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_gb_sp_h01.mesh · 标准 18 条 · 声明 0 根 · 顶点 459
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_bx_ui_z05.mesh · 标准 2 条 · 声明 0 根 · 顶点 501
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_hxw_qmlw_z001.mesh · 标准 2 条 · 声明 0 根 · 顶点 1140
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_pets_yanzi_b0.mesh · 标准 27 条 · 声明 44 根 · 顶点 264
+  主干诊断：StuckPoint { start: 10784, stopped: 24964, eaten: 40, declared: 44 }
+
+w1351_monster_baihuojisi_lian_001.mesh · 标准 24 条 · 声明 30 根 · 顶点 326
+  主干诊断：StuckPoint { start: 13104, stopped: 24812, eaten: 30, declared: 30 }
+
+w1351_model_ymg_xys_z001.mesh · 标准 2 条 · 声明 0 根 · 顶点 325
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_hxw_h01.mesh · 标准 2 条 · 声明 0 根 · 顶点 378
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_eyubangdashou_shoutao_001.mesh · 标准 24 条 · 声明 32 根 · 顶点 254
+  主干诊断：StuckPoint { start: 10092, stopped: 18916, eaten: 25, declared: 32 }
+
+w1351_model_bx_ui_z06.mesh · 标准 2 条 · 声明 0 根 · 顶点 404
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_pets_wugui_b0_yifu_001.mesh · 标准 17 条 · 声明 21 根 · 顶点 344
+  主干诊断：StuckPoint { start: 13656, stopped: 23952, eaten: 21, declared: 21 }
+
+w1351_model_sj_bq_w004.mesh · 标准 2 条 · 声明 0 根 · 顶点 395
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ymg_hyrdg_dg_c011.mesh · 标准 2 条 · 声明 0 根 · 顶点 430
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ls_gr_zd_z01.mesh · 标准 2 条 · 声明 0 根 · 顶点 822
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_zq_jayx_c02.mesh · 标准 2 条 · 声明 0 根 · 顶点 275
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ymg_hyrdg_dg_c009.mesh · 标准 2 条 · 声明 0 根 · 顶点 264
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ymg_hyrdg_dg_c010.mesh · 标准 2 条 · 声明 0 根 · 顶点 264
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_bx_ui_z04.mesh · 标准 2 条 · 声明 0 根 · 顶点 326
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_liaoguosaman_lian_001.mesh · 标准 24 条 · 声明 30 根 · 顶点 190
+  主干诊断：StuckPoint { start: 7696, stopped: 18316, eaten: 30, declared: 30 }
+
+w1351_monster_xiyusaman_lian_001.mesh · 标准 24 条 · 声明 30 根 · 顶点 190
+  主干诊断：StuckPoint { start: 7696, stopped: 18316, eaten: 30, declared: 30 }
+
+w1351_monster_xiyuwuyi_lian_001.mesh · 标准 23 条 · 声明 30 根 · 顶点 190
+  主干诊断：StuckPoint { start: 7696, stopped: 18220, eaten: 30, declared: 30 }
+
+w1351_model_hxw_qmlw_z003.mesh · 标准 2 条 · 声明 0 根 · 顶点 245
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_eyubangtangzhu_yifu_001.mesh · 标准 24 条 · 声明 32 根 · 顶点 163
+  主干诊断：StuckPoint { start: 6976, stopped: 17748, eaten: 32, declared: 32 }
+
+w1351_model_shubennan_c02.mesh · 标准 1 条 · 声明 0 根 · 顶点 240
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ymg_hyrdg_dg_c00405.mesh · 标准 2 条 · 声明 0 根 · 顶点 246
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_hxw_fss_z002.mesh · 标准 2 条 · 声明 0 根 · 顶点 231
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ymg_hyrdg_dg_c00401.mesh · 标准 2 条 · 声明 0 根 · 顶点 246
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ymg_hyrdg_dg_c00402.mesh · 标准 2 条 · 声明 0 根 · 顶点 246
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ymg_hyrdg_dg_c00403.mesh · 标准 2 条 · 声明 0 根 · 顶点 246
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ymg_hyrdg_dg_c00404.mesh · 标准 2 条 · 声明 0 根 · 顶点 246
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_tengjiazei_lian_001.mesh · 标准 24 条 · 声明 30 根 · 顶点 193
+  主干诊断：StuckPoint { start: 7948, stopped: 18184, eaten: 30, declared: 30 }
+
+w1351_model_sj_bq_w003.mesh · 标准 2 条 · 声明 0 根 · 顶点 296
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_tubalu_lian_001.mesh · 标准 24 条 · 声明 30 根 · 顶点 193
+  主干诊断：StuckPoint { start: 7948, stopped: 18184, eaten: 30, declared: 30 }
+
+w1351_monster_eyubanghunhun_shoutao_001.mesh · 标准 24 条 · 声明 32 根 · 顶点 202
+  主干诊断：StuckPoint { start: 8104, stopped: 17424, eaten: 25, declared: 32 }
+
+w1351_model_ymg_dg_h001.mesh · 标准 2 条 · 声明 0 根 · 顶点 245
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_npc_hanshizhong_lian_001.mesh · 标准 18 条 · 声明 23 根 · 顶点 140
+  主干诊断：StuckPoint { start: 5988, stopped: 14116, eaten: 23, declared: 23 }
+
+xiangzi_putong.mesh · 标准 1 条 · 声明 0 根 · 顶点 409
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_boss_shuangying_lian_001.mesh · 标准 66 条 · 声明 103 根 · 顶点 27
+  主干诊断：StuckPoint { start: 1376, stopped: 9272, eaten: 29, declared: 103 }
+
+w1351_model_sj_qiu_w005.mesh · 标准 2 条 · 声明 0 根 · 顶点 274
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_hxw_ql_h001.mesh · 标准 2 条 · 声明 0 根 · 顶点 231
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_xueshanlieren_lian_001.mesh · 标准 20 条 · 声明 28 根 · 顶点 147
+  主干诊断：StuckPoint { start: 6260, stopped: 14232, eaten: 26, declared: 28 }
+
+w1351_monster_touliezhe_lian_001.mesh · 标准 20 条 · 声明 28 根 · 顶点 147
+  主干诊断：StuckPoint { start: 6260, stopped: 14232, eaten: 26, declared: 28 }
+
+w1351_npc_liuzhongfu_xiezi_001.mesh · 标准 18 条 · 声明 23 根 · 顶点 132
+  主干诊断：StuckPoint { start: 5540, stopped: 13764, eaten: 23, declared: 23 }
+
+w1351_model_ui_z004.mesh · 标准 2 条 · 声明 0 根 · 顶点 216
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ui_z002.mesh · 标准 2 条 · 声明 0 根 · 顶点 492
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_boss_dunpaiyaoxing_lian_001.mesh · 标准 25 条 · 声明 34 根 · 顶点 95
+  主干诊断：StuckPoint { start: 4284, stopped: 5100, eaten: 3, declared: 34 }
+
+w1351_monster_eyubangshashou_shoutao_001.mesh · 标准 24 条 · 声明 32 根 · 顶点 142
+  主干诊断：StuckPoint { start: 5740, stopped: 15200, eaten: 32, declared: 32 }
+
+w1351_model_ls_huan_z001.mesh · 标准 2 条 · 声明 0 根 · 顶点 172
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_lichonggui_lian_001.mesh · 标准 26 条 · 声明 32 根 · 顶点 114
+  主干诊断：StuckPoint { start: 4820, stopped: 13992, eaten: 28, declared: 32 }
+
+w1351_monster_lichonggui_shoutao_001.mesh · 标准 26 条 · 声明 32 根 · 顶点 122
+  主干诊断：StuckPoint { start: 5412, stopped: 13248, eaten: 28, declared: 32 }
+
+w1351_model_shubennv_c02.mesh · 标准 1 条 · 声明 0 根 · 顶点 198
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_tengjiayongshi_lian_011.mesh · 标准 21 条 · 声明 29 根 · 顶点 113
+  主干诊断：StuckPoint { start: 4740, stopped: 13276, eaten: 27, declared: 29 }
+
+w1351_ll_zonglvxiaozhi_001.mesh · 标准 1 条 · 声明 0 根 · 顶点 247
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_lxx_h001.mesh · 标准 2 条 · 声明 0 根 · 顶点 168
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_shubennan_c03.mesh · 标准 1 条 · 声明 0 根 · 顶点 168
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ui_z007.mesh · 标准 4 条 · 声明 0 根 · 顶点 198
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_hxw_h06.mesh · 标准 1 条 · 声明 0 根 · 顶点 272
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_baihuoshizhe_shoutao_001.mesh · 标准 24 条 · 声明 30 根 · 顶点 126
+  主干诊断：StuckPoint { start: 5276, stopped: 14800, eaten: 30, declared: 30 }
+
+w1351_model_ui_z008.mesh · 标准 4 条 · 声明 0 根 · 顶点 198
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ui_z003.mesh · 标准 2 条 · 声明 0 根 · 顶点 380
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_yzlg_z001.mesh · 标准 2 条 · 声明 0 根 · 顶点 150
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_yzlg_z002.mesh · 标准 2 条 · 声明 0 根 · 顶点 150
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ygsb_lg_z001.mesh · 标准 2 条 · 声明 0 根 · 顶点 150
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_boss_sangtugong_lian_001.mesh · 标准 24 条 · 声明 30 根 · 顶点 83
+  主干诊断：StuckPoint { start: 3552, stopped: 12068, eaten: 30, declared: 30 }
+
+w1351_shimen_saozhou001.mesh · 标准 1 条 · 声明 0 根 · 顶点 131
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_hxw_fss_z001.mesh · 标准 2 条 · 声明 0 根 · 顶点 360
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_ymg_songjunqi_001.mesh · 标准 1 条 · 声明 0 根 · 顶点 210
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_xueshanlieren_shoutao_001.mesh · 标准 20 条 · 声明 28 根 · 顶点 62
+  主干诊断：StuckPoint { start: 2772, stopped: 10064, eaten: 26, declared: 28 }
+
+w1351_monster_touliezhe_shoutao_001.mesh · 标准 20 条 · 声明 28 根 · 顶点 62
+  主干诊断：StuckPoint { start: 2772, stopped: 10064, eaten: 26, declared: 28 }
+
+w1351_boss_dunpaiyaoxing_shoutao_001.mesh · 标准 25 条 · 声明 34 根 · 顶点 38
+  主干诊断：StuckPoint { start: 1932, stopped: 2748, eaten: 3, declared: 34 }
+
+w1351_model_hxw_h03.mesh · 标准 2 条 · 声明 0 根 · 顶点 126
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_slash_z001.mesh · 标准 2 条 · 声明 0 根 · 顶点 104
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_slash_z002.mesh · 标准 2 条 · 声明 0 根 · 顶点 104
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ls_ydcz_z001.mesh · 标准 2 条 · 声明 0 根 · 顶点 136
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_monster_tengjiayongshi_shoutao_001.mesh · 标准 21 条 · 声明 29 根 · 顶点 37
+  主干诊断：StuckPoint { start: 1840, stopped: 9192, eaten: 27, declared: 29 }
+
+w1351_model_tianwaifeixian_h001.mesh · 标准 6 条 · 声明 10 根 · 顶点 50
+  主干诊断：StuckPoint { start: 3840, stopped: 4008, eaten: 1, declared: 10 }
+
+w1351_model_baiheliangchi_h001.mesh · 标准 6 条 · 声明 10 根 · 顶点 50
+  主干诊断：StuckPoint { start: 3840, stopped: 4008, eaten: 1, declared: 10 }
+
+w1351_model_zq_jayx_c04.mesh · 标准 2 条 · 声明 0 根 · 顶点 98
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_ll_qizhishi_001.mesh · 标准 1 条 · 声明 0 根 · 顶点 114
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ymg_hyrdg_dg_c008.mesh · 标准 2 条 · 声明 0 根 · 顶点 100
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ui_z006.mesh · 标准 4 条 · 声明 0 根 · 顶点 128
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_shenghuo_kuangchu.mesh · 标准 1 条 · 声明 0 根 · 顶点 116
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_bx_ui_z01.mesh · 标准 2 条 · 声明 0 根 · 顶点 176
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_niujiao_z002.mesh · 标准 2 条 · 声明 0 根 · 顶点 82
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ls_z001.mesh · 标准 2 条 · 声明 0 根 · 顶点 139
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_niujiao_z001.mesh · 标准 2 条 · 声明 0 根 · 顶点 64
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_ll_lanweiqi_001.mesh · 标准 1 条 · 声明 0 根 · 顶点 88
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_ll_lanweiqier_001.mesh · 标准 1 条 · 声明 0 根 · 顶点 88
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_fasheqi_h001.mesh · 标准 2 条 · 声明 2 根 · 顶点 82
+  主干诊断：StuckPoint { start: 3388, stopped: 3720, eaten: 2, declared: 2 }
+
+w1351_wuqi_t_danduan_0205.mesh · 标准 1 条 · 声明 0 根 · 顶点 73
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ymg_xys_z003.mesh · 标准 2 条 · 声明 0 根 · 顶点 68
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_shenghuo_caiyaolian.mesh · 标准 1 条 · 声明 0 根 · 顶点 75
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_gb_long_h01.mesh · 标准 18 条 · 声明 0 根 · 顶点 72
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_ll_hongweiqi_001.mesh · 标准 1 条 · 声明 0 根 · 顶点 53
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_yuanzhu_z001.mesh · 标准 2 条 · 声明 0 根 · 顶点 51
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_bx_ui_z02.mesh · 标准 2 条 · 声明 0 根 · 顶点 64
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_mllg_z002.mesh · 标准 2 条 · 声明 0 根 · 顶点 24
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_t_canying_h003.mesh · 标准 17 条 · 声明 0 根 · 顶点 15
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_kongmo_001.mesh · 标准 3 条 · 声明 4 根 · 顶点 24
+  主干诊断：StuckPoint { start: 1144, stopped: 2188, eaten: 4, declared: 4 }
+
+w1351_model_kongmo_rlsz.mesh · 标准 3 条 · 声明 4 根 · 顶点 24
+  主干诊断：StuckPoint { start: 1144, stopped: 2188, eaten: 4, declared: 4 }
+
+w1351_model_kongmo_002.mesh · 标准 3 条 · 声明 4 根 · 顶点 24
+  主干诊断：StuckPoint { start: 1144, stopped: 2188, eaten: 4, declared: 4 }
+
+w1351_model_kongmo_003.mesh · 标准 3 条 · 声明 4 根 · 顶点 24
+  主干诊断：StuckPoint { start: 1144, stopped: 2188, eaten: 4, declared: 4 }
+
+w1351_shenghuo_yugan.mesh · 标准 1 条 · 声明 0 根 · 顶点 25
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ui_z001.mesh · 标准 2 条 · 声明 0 根 · 顶点 12
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ui_z010.mesh · 标准 2 条 · 声明 0 根 · 顶点 9
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_bx_ui_z03.mesh · 标准 2 条 · 声明 0 根 · 顶点 12
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ls_sjyj_z002.mesh · 标准 2 条 · 声明 0 根 · 顶点 6
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+w1351_model_ls_sjyj_z001.mesh · 标准 2 条 · 声明 0 根 · 顶点 3
+  主干诊断：hierarchy_stuck 返回 None（连诊断都给不出）
+
+# 本次取样里「有记录但建不出树」点了 246 份

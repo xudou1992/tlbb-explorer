@@ -883,7 +883,7 @@ fn main() {
                 continue;
             }
             shown += 1;
-            if shown > 8 {
+            if shown > 9999 {
                 break;
             }
             let stdn = parse_nodes(&raw);

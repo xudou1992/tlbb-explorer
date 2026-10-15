@@ -1,0 +1,15 @@
+
+# gapdead · 以 dead 为锚重量的 31 份族（共 6 份）
+  w1351_model_gb_long_h001.mesh · child-name-unreadable cc=1 · stopped 65356 → dead 65428 · dead→条目头跨 480（mod16 0）· 段尾是 u92 · 审 dead：表长 12592/顶点 1551/坏 id 0/坏权重 0
+  w1351_model_gbnan_long_h002.mesh · child-name-unreadable cc=1 · stopped 65356 → dead 65428 · dead→条目头跨 480（mod16 0）· 段尾是 u92 · 审 dead：表长 12592/顶点 1551/坏 id 0/坏权重 0
+  w1351_boss_shuangying_yifu_001.mesh · child-name-unreadable cc=11 · stopped 66012 → dead 66344 · dead→条目头跨 540（mod16 12）· 段尾是 u92 · 审 dead：表长 13420/顶点 1065/坏 id 0/坏权重 0
+  w1351_boss_zhizhuwang.mesh · child-name-unreadable cc=1 · stopped 72220 → dead 72568 · dead→条目头跨 568（mod16 8）· 段尾是 u92 · 审 dead：表长 13175/顶点 1059/坏 id 0/坏权重 0
+  w1351_boss_shuangying_toufa_001.mesh · child-name-unreadable cc=11 · stopped 32028 → dead 32608 · dead→条目头跨 3460（mod16 4）· 段尾是 u92 · 审 dead：表长 13420/顶点 580/坏 id 0/坏权重 0
+  w1351_boss_shuangying_lian_001.mesh · child-name-unreadable cc=11 · stopped 9272 → dead 9468 · dead→条目头跨 476（mod16 12）· 段尾是 u92 · 审 dead：表长 13420/顶点 27/坏 id 0/坏权重 0
+# D mod 16：0×2  4×1  8×1  12×2
+# 段尾 88 是 u92 的：6 / 6
+# dead 那一点当表审的原因
+  16 份 · dead 不可用（block-chain-unreadable）
+  27 份 · dead 不可用（flag-not-1）
+  5 份 · dead 之后已无条目头
+  6 份 · 整表越界

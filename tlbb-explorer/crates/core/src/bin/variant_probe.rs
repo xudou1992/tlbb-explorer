@@ -26,7 +26,7 @@ use rusqlite::{Connection, OpenFlags};
 use tlbb_core::jpak::Pak;
 use tlbb_core::payload;
 use tlbb_core::preview::rest;
-use tlbb_core::preview::{bone_count, hierarchy_stuck, parse_ani, parse_hierarchy, parse_nodes, parse_nodes_variant, rest_poses, tail_inf_audit, tail_stuck_detail, tail_walk_steps, tail_first_entry_head, pose};
+use tlbb_core::preview::{bone_count, hierarchy_stuck, parse_ani, parse_hierarchy, parse_nodes, parse_nodes_variant, rest_poses, tail_inf_audit, tail_stuck_detail, tail_walk_steps, tail_is_u92, tail_first_entry_head, pose};
 
 fn locate(con: &Connection, name: &str) -> Option<(u64, String)> {
     let mut stmt = con
@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -1126,6 +1126,87 @@ fn main() {
         }
         println!("# 判否原因分桶");
         for (k, v) in &tally {
+            println!("  {v} 份 · {k}");
+        }
+        return;
+    }
+
+    if mode == "gapdead" {
+        // 117 补认的锚点错：`hierarchy_stuck` 的 `stopped` 是**外层条目尝试的进入点**，
+        // 块链推进后的断点是 `tail_stuck_detail` 的第三个返回值 `dead`（107 补就写过两者可差几百字节）。
+        // 这一档把同一个长度统计**换成 dead 重量一遍**：dead → 下一个条目头跨几字节、
+        // 段尾 88 字节是不是 u92、dead 那一点当影响表审的话卡在哪一条。
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut modd: BTreeMap<usize, usize> = BTreeMap::new();
+        let mut u92tail = 0usize;
+        let mut reasons: BTreeMap<String, usize> = BTreeMap::new();
+        let mut rows: Vec<String> = Vec::new();
+        let mut n = 0usize;
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            if parse_nodes(&raw).is_empty() || parse_hierarchy(&raw).is_some() {
+                continue;
+            }
+            let Some(sp) = hierarchy_stuck(&raw) else { continue };
+            let (why, cc, dead) = tail_stuck_detail(&raw, sp.stopped);
+            if dead == 0 || dead <= sp.stopped || dead >= raw.len() {
+                *reasons.entry(format!("dead 不可用（{why}）")).or_insert(0) += 1;
+                continue;
+            }
+            let Some(h) = tail_first_entry_head(&raw, dead) else {
+                *reasons.entry("dead 之后已无条目头".to_string()).or_insert(0) += 1;
+                continue;
+            };
+            if h <= dead {
+                continue;
+            }
+            let d = h - dead;
+            n += 1;
+            *modd.entry(d % 16).or_insert(0) += 1;
+            let ut = h >= 88 && tail_is_u92(&raw, h - 88);
+            if ut {
+                u92tail += 1;
+            }
+            let (tn, vc, bad_id, bad_w, oob) = tail_inf_audit(&raw, dead);
+            let rk = if oob {
+                "整表越界"
+            } else if tn == 0 {
+                "表长 0"
+            } else if tn > 200_000 {
+                "头字是浮点位型（不是表长）"
+            } else if tn > vc {
+                "表长 > 顶点数"
+            } else if bad_id == 0 && bad_w == 0 {
+                "表本身合格（那它就不该拦住）"
+            } else if bad_w > 0 {
+                "权重不合格（NaN 族）"
+            } else {
+                "id 不合格"
+            };
+            *reasons.entry(rk.to_string()).or_insert(0) += 1;
+            if rows.len() < 34 {
+                rows.push(format!(
+                    "  {name} · {why} cc={cc} · stopped {st} → dead {dd} · dead→条目头跨 {d}（mod16 {}）· 段尾{}是 u92 · 审 dead：表长 {tn}/顶点 {vc}/坏 id {bad_id}/坏权重 {bad_w}",
+                    d % 16,
+                    if ut { "" } else { "**不**" },
+                    st = sp.stopped,
+                    dd = dead
+                ));
+            }
+        }
+        println!("
+# gapdead · 以 dead 为锚重量的 31 份族（共 {n} 份）");
+        for r in rows {
+            println!("{r}");
+        }
+        println!(
+            "# D mod 16：{}",
+            modd.iter().map(|(m, c)| format!("{m}×{c}")).collect::<Vec<_>>().join("  ")
+        );
+        println!("# 段尾 88 是 u92 的：{u92tail} / {n}");
+        println!("# dead 那一点当表审的原因");
+        for (k, v) in &reasons {
             println!("  {v} 份 · {k}");
         }
         return;

@@ -909,7 +909,7 @@ fn tail_record_at(raw: &[u8], at: usize) -> Option<(&str, [f32; 16])> {
 
 /// 对角块 88B：`[d,0,0,0,0]×3 + [1.0,0,0,0] + [100,100,100]`。
 /// 它的前 64B 恰好也是一张合法的「对角矩阵」，所以**必须先于局部矩阵判**。
-fn tail_is_u92(raw: &[u8], at: usize) -> bool {
+pub fn tail_is_u92(raw: &[u8], at: usize) -> bool {
     let Some(d) = tail_f32(raw, at) else { return false };
     if !(0.9..=1.1).contains(&d) {
         return false;

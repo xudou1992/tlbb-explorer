@@ -1009,6 +1009,8 @@ fn main() {
         // 45 那格（条目全对、死在孩子表某槽）单独摊字节：死在哪个偏移、当时读到几个孩子、其后 8 个 u32。
         let mut kid: Vec<String> = Vec::new();
         let mut nam: Vec<String> = Vec::new();
+        // 87 补那条矛盾要用「census 读到的字节 vs 解包副本」定版本：这里逐份带上大小与死槽处 4 个 f32。
+        let mut det: Vec<String> = Vec::new();
         let (mut files, mut gap, mut nos) = (0usize, 0usize, 0usize);
         for p in &paths {
             let name = p.rsplit('/').next().unwrap_or("").to_string();
@@ -1034,6 +1036,21 @@ fn main() {
             };
             let e = tally.entry(label.to_string()).or_insert((0, name.clone()));
             e.0 += 1;
+            if det.len() < 24 {
+                let mut vals = Vec::new();
+                for k in 0..4 {
+                    let v = raw
+                        .get(dead + 4 * k..dead + 4 * k + 4)
+                        .and_then(|b| <[u8; 4]>::try_from(b).ok())
+                        .map_or(0.0f32, f32::from_le_bytes);
+                    vals.push(format!("{v:.5}"));
+                }
+                det.push(format!(
+                    "  {name} · {} 字节 · 死槽 {dead}(0x{dead:x}) · 该处 4 个 f32 [{}] · {label} · 卡点前吃了 {ccount}",
+                    raw.len(),
+                    vals.join(", ")
+                ));
+            }
             if (label == "child-name-unreadable" && kid.len() < 6)
                 || (label == "name1-unreadable" && nam.len() < 10)
             {
@@ -1076,6 +1093,10 @@ fn main() {
         }
         println!("\n# 「读不出第一个名字」那格的死槽字节（前 {} 份）：", nam.len());
         for r in &nam {
+            println!("{r}");
+        }
+        println!("\n# 逐份大小与死槽处 4 个 f32（拿来与解包副本对版本，前 {} 份）：", det.len());
+        for r in &det {
             println!("{r}");
         }
         return;

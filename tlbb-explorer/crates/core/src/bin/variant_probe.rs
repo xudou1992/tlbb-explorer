@@ -1074,7 +1074,7 @@ fn main() {
                 ));
             }
             if (label == "child-name-unreadable" && kid.len() < 6)
-                || (label == "name1-unreadable" && nam.len() < 10)
+                || ((label == "name1-unreadable" || label == "flag-not-1") && nam.len() < 12)
             {
                 let w = |i: usize| -> u32 {
                     raw.get(dead + 4 * i..dead + 4 * i + 4)
@@ -1113,7 +1113,10 @@ fn main() {
         for r in &kid {
             println!("{r}");
         }
-        println!("\n# 「读不出第一个名字」那格的死槽字节（前 {} 份）：", nam.len());
+        println!(
+            "\n# 「读不出第一个名字」与「标志不是 1/-1」两格的**卡点字及其后 96 字节**（前 {} 份）：",
+            nam.len()
+        );
         for r in &nam {
             println!("{r}");
         }

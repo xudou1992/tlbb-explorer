@@ -187,9 +187,9 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus")
     {
-        eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus] 干名[,...]");
+        eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus --batch=路径片段 [--limit=N]");
         std::process::exit(2);
     }
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -732,6 +732,100 @@ fn main() {
              # 不恒定那些份里，极差最大的轴：X {} · Y {} · Z {}\n\
              # 镜像对 {pairs} 组：X 反号 {p_x_flip} · Y 反号 {p_y_flip} · Z 反号 {p_z_flip} · 三分量都同 {p_same} · 其余形态 {p_other}",
             axis_max[0], axis_max[1], axis_max[2]
+        );
+        return;
+    }
+
+
+    if mode == "stdcensus" {
+        // 总表 #1~#4 当时只有 3 份文件、46 个同名对比，而 #1 后来在全库跑出过「只差 1~4 个 ULP」的相等
+        // ⇒ 这四行的小样本结论必须铺成全库。口径同 `same`：变体记录 vs **同份**标准记录，
+        // 四个候选（本身 / 转置 / 逆 / 逆的转置），命中阈值 ≤1e-6；#1 再按量级分桶。
+        fn transposed(m: &[f32; 16]) -> [f32; 16] {
+            let mut t = [0f32; 16];
+            for r in 0..4 {
+                for c in 0..4 {
+                    t[c * 4 + r] = m[r * 4 + c];
+                }
+            }
+            t
+        }
+        let paths = mesh_paths(&con, &batch, limit);
+        let (mut files, mut cmpd) = (0usize, 0usize);
+        let (mut h_self, mut h_t, mut h_i, mut h_it) = (0usize, 0usize, 0usize, 0usize);
+        let (mut b_1e6, mut b_1e4, mut b_1e2, mut b_1e1) = (0usize, 0usize, 0usize, 0usize);
+        let mut best: Option<f64> = None;
+        let mut best_at = String::new();
+        let mut id_hits: Option<usize> = None;
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            files += 1;
+            let var = parse_nodes_variant(&raw);
+            if var.is_empty() {
+                continue;
+            }
+            let stdn = parse_nodes(&raw);
+            for v in &var {
+                let Some(s) = stdn.iter().find(|x| x.name == v.name) else { continue };
+                cmpd += 1;
+                let inv = pose::mat_inverse_affine(&s.bind);
+                for (which, cand) in [
+                    (0usize, Some(s.bind)),
+                    (1, Some(transposed(&s.bind))),
+                    (2, inv),
+                    (3, inv.map(|m| transposed(&m))),
+                ] {
+                    let d = match cand.and_then(|c| diff(&v.bind, &c, &slots16())) {
+                        Some(d) => d,
+                        None => continue,
+                    };
+                    if d <= 1e-6 {
+                        // 单位阵的四种候选重合（I⁻¹ = Iᵀ = I），命中不带信息 ⇒ 拆开数。
+                        let is_id = |m: &[f32; 16]| {
+                            (0..16).all(|k| {
+                                let want = if k % 5 == 0 { 1.0 } else { 0.0 };
+                                (m[k] - want).abs() <= 1e-6
+                            })
+                        };
+                        let id_std = is_id(&s.bind);
+                        if id_std {
+                            *id_hits.get_or_insert(0) += 1;
+                        } else {
+                            match which {
+                                0 => h_self += 1,
+                                1 => h_t += 1,
+                                2 => h_i += 1,
+                                _ => h_it += 1,
+                            }
+                        }
+                    }
+                    if which == 0 {
+                        if d <= 1e-6 {
+                            b_1e6 += 1;
+                        } else if d <= 1e-4 {
+                            b_1e4 += 1;
+                        } else if d <= 1e-2 {
+                            b_1e2 += 1;
+                        } else if d <= 1e-1 {
+                            b_1e1 += 1;
+                        }
+                        if best.map_or(true, |x| d < x) {
+                            best = Some(d);
+                            best_at = format!("{name} · {}", v.name);
+                        }
+                    }
+                }
+            }
+        }
+        println!(
+            "\n# 读到 {files} 份 · 同份同名可比 {cmpd} 根（总表 #1~#4 的全库人口）\n\
+             # **剔除标准记录是单位阵之后**，≤1e-6 命中：本身 {h_self} · 转置 {h_t} · 逆 {h_i} · 逆的转置 {h_it}\n\
+             # 单位阵命中（无信息，四种候选天然重合）：{} 个\n\
+             # 「本身」这条按量级分桶（含单位阵）：≤1e-6 {b_1e6} · ≤1e-4 {b_1e4} · ≤1e-2 {b_1e2} · ≤1e-1 {b_1e1}\n\
+             # 「本身」最接近的一根：{}（{best_at}）",
+            id_hits.unwrap_or(0),
+            best.map_or("无可比".to_string(), |d| format!("{d:.3e}"))
         );
         return;
     }

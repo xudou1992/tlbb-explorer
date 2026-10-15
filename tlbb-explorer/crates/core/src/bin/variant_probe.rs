@@ -1096,6 +1096,27 @@ fn main() {
                 stopped,
                 if stopped == sp.stopped { " ✓一致" } else { " ✗不一致（我写错了）" }
             );
+            // 空隙统计：每条「条目吃完(entry_end)」到下一个轨迹点之间剩几字节——这是 109/111 补要找的拦路块。
+            let mut gaps: BTreeMap<usize, usize> = BTreeMap::new();
+            for (i, (kind, at)) in steps.iter().enumerate() {
+                if *kind != "entry_end" {
+                    continue;
+                }
+                let nxt = steps.get(i + 1).map(|(_, p)| *p).unwrap_or(stopped);
+                *gaps.entry(nxt.saturating_sub(*at)).or_insert(0) += 1;
+            }
+            if !gaps.is_empty() {
+                let mut gs: Vec<(usize, usize)> = gaps.into_iter().collect();
+                gs.sort_by(|a, b| b.1.cmp(&a.1));
+                println!(
+                    "  空隙分布（条目吃完 → 下一个轨迹点，字节 ×次数，前 10 项）：{}",
+                    gs.iter()
+                        .take(10)
+                        .map(|(g, c)| format!("{g}×{c}"))
+                        .collect::<Vec<_>>()
+                        .join("  ")
+                );
+            }
             for (kind, at) in steps.iter().rev().take(20).rev() {
                 let w: Vec<String> = (0..4)
                     .map(|k| {

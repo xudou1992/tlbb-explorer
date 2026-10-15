@@ -1378,6 +1378,10 @@ fn tail_walk_traced(
         if let Some((e, np)) = got {
             if let Some(t) = tr.as_deref_mut() {
                 t.push(("entry", p));
+                // 109/111 补要的那个量：条目自己吃到哪儿结束（`np`）。
+                // 有了它，「上一条结束 → 下一条开始」之间那段空隙就能由**主干**报出来，
+                // 不必在外面重算长度（本班两次翻车都是这么来的）。
+                t.push(("entry_end", np));
             }
             entries.push(e);
             p = np;
@@ -1393,7 +1397,9 @@ fn tail_walk_traced(
         let sok = tail_try_sockets(raw, p, vc);
         if let Some((s, np)) = sok {
             if let Some(t) = tr.as_deref_mut() {
-                t.push(("sockets", p));
+                // 印的是**外层进入点**，不是真正命中的段头位置（段头可能由 EOF 反推在更后面找到）。
+                // 标签里写明 `from`，免得读轨迹的人以为挂点段头就在这一点上（112 补自纠）。
+                t.push(("sockets_from", p));
             }
             sockets = s;
             p = np;

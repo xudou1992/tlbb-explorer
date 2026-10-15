@@ -946,6 +946,10 @@ fn main() {
         // 「链解得出 2,549/7,996」，没把解不出的分成「本来就没骨架」与「有记录建不出树」两类。
         let paths = mesh_paths(&con, &batch, limit);
         let (mut files, mut std_gt0, mut gap, mut both0) = (0usize, 0usize, 0usize, 0usize);
+        // 58 补留下的对账尾巴：「链解得出 2,549」比「有记录且链解得出 2,530」多 19 份，
+        // 这 19 份应当是**没有标准记录却解得出链**的——当场数出来点名，别留给下一班猜。
+        let (mut no_std_with_chain, mut nswc_ex) = (0usize, Vec::new());
+        let mut std_with_chain = 0usize;
         let mut examples: Vec<String> = Vec::new();
         let mut gap_declared = 0usize;
         for p in &paths {
@@ -962,6 +966,16 @@ fn main() {
             if !stdn.is_empty() {
                 std_gt0 += 1;
             }
+            if clen > 0 {
+                if stdn.is_empty() {
+                    no_std_with_chain += 1;
+                    if nswc_ex.len() < 6 {
+                        nswc_ex.push(format!("{name}(链 {clen} 根)"));
+                    }
+                } else {
+                    std_with_chain += 1;
+                }
+            }
             if !stdn.is_empty() && clen == 0 {
                 gap += 1;
                 gap_declared += bone_count(&raw).unwrap_or(0);
@@ -975,6 +989,11 @@ fn main() {
              （这两者都为零的 {both0} 份）\n\
              # 那 {gap} 份头部声明骨数合计 {gap_declared}\n# 例子：{}",
             examples.join(" · ")
+        );
+        println!(
+            "# 对账：有记录且链解得出 {std_with_chain} 份 · **没记录却链解得出 {no_std_with_chain} 份**（合计链解得出 {}）\n# 后者的例子：{}",
+            std_with_chain + no_std_with_chain,
+            if nswc_ex.is_empty() { "无".to_string() } else { nswc_ex.join(" · ") }
         );
         return;
     }

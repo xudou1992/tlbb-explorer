@@ -1,0 +1,26 @@
+
+w1351_model_ymg02_nv_flzt_h001.mesh · 标准 86 条 · 声明 107 根 · 顶点 6931
+  主干诊断：StuckPoint { start: 285124, stopped: 420080, eaten: 42, declared: 107 }
+
+w1351_model_ymg02_nan_slbw_h003.mesh · 标准 86 条 · 声明 107 根 · 顶点 6931
+  主干诊断：StuckPoint { start: 285124, stopped: 420080, eaten: 42, declared: 107 }
+
+w1351_model_ymg02_nan_slbw_h002.mesh · 标准 86 条 · 声明 107 根 · 顶点 6931
+  主干诊断：StuckPoint { start: 285124, stopped: 420080, eaten: 42, declared: 107 }
+
+w1351_model_ymg02_jn_long_h001.mesh · 标准 85 条 · 声明 106 根 · 顶点 6931
+  主干诊断：StuckPoint { start: 285124, stopped: 419820, eaten: 41, declared: 106 }
+
+w1351_model_ymg02_jn_long_h005.mesh · 标准 85 条 · 声明 106 根 · 顶点 6931
+  主干诊断：StuckPoint { start: 306140, stopped: 440836, eaten: 41, declared: 106 }
+
+w1351_model_ymg02_nan_slbw_lg_h003.mesh · 标准 86 条 · 声明 107 根 · 顶点 5648
+  主干诊断：StuckPoint { start: 244068, stopped: 356008, eaten: 42, declared: 107 }
+
+w1351_model_ymg02_nv_flzt_lg_h001.mesh · 标准 86 条 · 声明 107 根 · 顶点 5648
+  主干诊断：StuckPoint { start: 244068, stopped: 356008, eaten: 42, declared: 107 }
+
+w1351_model_ymg02_nan_slbw_lg_h002.mesh · 标准 86 条 · 声明 107 根 · 顶点 5648
+  主干诊断：StuckPoint { start: 244068, stopped: 356008, eaten: 42, declared: 107 }
+
+# 本次取样里「有记录但建不出树」点了 9 份

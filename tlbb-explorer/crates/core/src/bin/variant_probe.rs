@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -863,6 +863,39 @@ fn main() {
             best.map_or("无可比".to_string(), |d| format!("{d:.3e}")),
             narrow_seen.len()
         );
+        return;
+    }
+
+
+    if mode == "whychain" {
+        // 58 补那 246 份为什么建不出树——只问主干自己（`hierarchy_stuck` 就是它的诊断口），
+        // 不另造第二套判据。取前 N 份「有记录但链为零」的份，把它卡在哪一步原样打出来。
+        use tlbb_core::preview::hierarchy_stuck;
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut shown = 0usize;
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            if parse_nodes(&raw).is_empty() {
+                continue;
+            }
+            if parse_hierarchy(&raw).is_some() {
+                continue;
+            }
+            shown += 1;
+            if shown > 8 {
+                break;
+            }
+            let stdn = parse_nodes(&raw);
+            println!(
+                "\n{name} · 标准 {} 条 · 声明 {} 根 · 顶点 {}",
+                stdn.len(),
+                bone_count(&raw).unwrap_or(0),
+                u32::from_le_bytes(raw[0x8C..0x90].try_into().unwrap_or([0; 4]))
+            );
+            println!("  主干诊断：{}", match hierarchy_stuck(&raw) { Some(s) => format!("{s:?}"), None => "hierarchy_stuck 返回 None（连诊断都给不出）".to_string() });
+        }
+        println!("\n# 本次取样里「有记录但建不出树」点了 {shown} 份");
         return;
     }
 

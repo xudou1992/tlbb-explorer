@@ -26,7 +26,7 @@ use rusqlite::{Connection, OpenFlags};
 use tlbb_core::jpak::Pak;
 use tlbb_core::payload;
 use tlbb_core::preview::rest;
-use tlbb_core::preview::{bone_count, hierarchy_stuck, parse_ani, parse_hierarchy, parse_nodes, parse_nodes_variant, rest_poses, tail_stuck_detail, pose};
+use tlbb_core::preview::{bone_count, hierarchy_stuck, parse_ani, parse_hierarchy, parse_nodes, parse_nodes_variant, rest_poses, tail_inf_audit, tail_stuck_detail, pose};
 
 fn locate(con: &Connection, name: &str) -> Option<(u64, String)> {
     let mut stmt = con
@@ -1011,6 +1011,8 @@ fn main() {
         let mut nam: Vec<String> = Vec::new();
         // 87 补那条矛盾要用「census 读到的字节 vs 解包副本」定版本：这里逐份带上大小与死槽处 4 个 f32。
         let mut det: Vec<String> = Vec::new();
+        // 88 补那一刀：name1 那格把「死槽前一字」当表长读，数出权重/id 各有几个不合格。
+        let mut audit: BTreeMap<String, usize> = BTreeMap::new();
         let (mut files, mut gap, mut nos) = (0usize, 0usize, 0usize);
         for p in &paths {
             let name = p.rsplit('/').next().unwrap_or("").to_string();
@@ -1036,6 +1038,27 @@ fn main() {
             };
             let e = tally.entry(label.to_string()).or_insert((0, name.clone()));
             e.0 += 1;
+            if label == "name1-unreadable" && dead >= 4 {
+                let (n, vc, bad_id, bad_w, oob) = tail_inf_audit(&raw, dead - 4);
+                let k = if oob {
+                    "整表越界（长度放不下）".to_string()
+                } else if n == 0 {
+                    "表长 0（空表本该过判据）".to_string()
+                } else if n > vc {
+                    format!("表长 {n} > 顶点数 {vc}")
+                } else if bad_id == 0 && bad_w == 0 {
+                    "四条全合格——那不该判否（待查）".to_string()
+                } else if bad_w == 1 && bad_id == 0 {
+                    "只 1 个权重不合格 · id 全合".to_string()
+                } else if bad_w <= 5 {
+                    "权重 2~5 个不合格".to_string()
+                } else if bad_w == 0 {
+                    "只有 id 不合格（重复或越界）".to_string()
+                } else {
+                    format!("权重 {bad_w} 个不合格 · id {bad_id}")
+                };
+                *audit.entry(k).or_insert(0) += 1;
+            }
             if det.len() < 24 {
                 let mut vals = Vec::new();
                 for k in 0..4 {
@@ -1098,6 +1121,12 @@ fn main() {
         println!("\n# 逐份大小与死槽处 4 个 f32（拿来与解包副本对版本，前 {} 份）：", det.len());
         for r in &det {
             println!("{r}");
+        }
+        println!("\n# name1 那格按「死槽前一字 = 表长」审 id 与权重（份数 · 类别）：");
+        let mut ar: Vec<(String, usize)> = audit.into_iter().collect();
+        ar.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(&b.0)));
+        for (k, v) in ar {
+            println!("  {v:4} 份 · {k}");
         }
         return;
     }

@@ -1115,6 +1115,48 @@ pub fn tail_stuck_detail(raw: &[u8], at: usize) -> (&'static str, usize, usize) 
     }
 }
 
+/// 普查用：把 `at` 处「看着像影响表却没过了判据」的那点摊开**数清楚**——
+/// 返回 `(表长 n, 顶点数 vc, id 不合格个数, 权重不合格个数, 整表是否越界)`。
+/// 与 `tail_is_inf` 用同一批取值口径，但**不短路**，而且把 `n > vc` 这条单列出来
+/// （89 补：54 那格里 51 份的 id 与权重全合格，能拒它的就只剩这一条）。只读数。
+pub fn tail_inf_audit(raw: &[u8], at: usize) -> (usize, usize, usize, usize, bool) {
+    let vc = vertex_count(raw);
+    let Some(n) = tail_u32(raw, at) else {
+        return (0, vc, 0, 0, true);
+    };
+    let n = n as usize;
+    if n == 0 || n > 200_000 {
+        return (n, vc, 0, 0, false);
+    }
+    if at + 4 + 8 * n > raw.len() {
+        return (n, vc, 0, 0, true);
+    }
+    let mut bad_id = 0usize;
+    let mut seen = std::collections::HashSet::with_capacity(n.min(1024));
+    for k in 0..n {
+        match tail_u32(raw, at + 4 + 4 * k) {
+            Some(v) => {
+                if v as usize >= vc || !seen.insert(v) {
+                    bad_id += 1;
+                }
+            }
+            None => bad_id += 1,
+        }
+    }
+    let mut bad_w = 0usize;
+    for k in 0..n {
+        match tail_f32(raw, at + 4 + 4 * n + 4 * k) {
+            Some(w) => {
+                if !(w.is_finite() && (-1e-3..=1.001).contains(&w)) {
+                    bad_w += 1;
+                }
+            }
+            None => bad_w += 1,
+        }
+    }
+    (n, vc, bad_id, bad_w, false)
+}
+
 /// 挂点段：`[块]* [u32 标志][u32 挂点数][挂点数 × (tx_名 char32 + 骨名 char32 + 矩阵)]`。
 /// 收束判据两条，**缺一不可**：
 /// 1. 标志恰为 `1`（实测挂点段标志恒 1；`-1` 只出现在根条目）；

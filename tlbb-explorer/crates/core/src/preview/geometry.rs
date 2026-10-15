@@ -1155,31 +1155,94 @@ fn tail_try_sockets(raw: &[u8], mut p: usize, vc: usize) -> Option<(Vec<SocketEn
 }
 
 /// 在 `at` 这一点试收挂点段（不推进块链）。标志不是 1、或收不到 EOF 分毫不差 → `None`。
+///
+/// 两种编码同一条文法，差别只在**第一个字段的长度**（84 补实测）：
+/// * ASCII 名：字段就是老的 32 字节 ⇒ 整条 128，`count × 128` 正好收到 EOF（老口径，一个字没改）。
+/// * GBK 中文标签：字段长 `32 + 字数`（5 字→37、6 字→38）⇒ 整条 `128 + 字数`，
+///   所以 `n×128` 那条锚**永远不成立**——65 份「读不出第一个名字」就卡在这（走法在表头处
+///   既收不下挂点段、又把 `[u32 count]` 当名字读）。
 fn tail_sockets_at(raw: &[u8], at: usize) -> Option<(Vec<SocketEntry>, usize)> {
     if tail_u32(raw, at) != Some(1) {
         return None;
     }
     let count = tail_u32(raw, at + 4)? as usize;
-    let end = (at + 8).checked_add(count.checked_mul(128)?)?;
-    if count > 4096 || end != raw.len() {
+    if count > 4096 {
         return None;
     }
+    let end = (at + 8).checked_add(count.checked_mul(128)?)?;
+    if end == raw.len() {
+        // 老口径：定长 128，逐条两条名字 + 一个 64B 矩阵。
+        let mut p = at + 8;
+        let mut out = Vec::with_capacity(count);
+        for _ in 0..count {
+            let name = tail_name_at(raw, p)?.to_string();
+            let bone = tail_name_at(raw, p + 32)?.to_string();
+            let mut m = [0f32; 16];
+            for k in 0..16 {
+                m[k] = tail_f32(raw, p + 64 + k * 4)?;
+            }
+            if !m.iter().all(|v| v.is_finite() && v.abs() < 1e7) || (m[15] - 1.0).abs() > 1e-3 {
+                return None;
+            }
+            out.push(SocketEntry { name, bone, bind: m });
+            p += 128;
+        }
+        return Some((out, p));
+    }
+    // 变长那条：逐条读「标签字段 + 32B 挂骨名 + 64B 矩阵」，走完必须正好落在文件尾。
     let mut p = at + 8;
     let mut out = Vec::with_capacity(count);
     for _ in 0..count {
-        let name = tail_name_at(raw, p)?.to_string();
-        let bone = tail_name_at(raw, p + 32)?.to_string();
+        let (label, field) = tail_socket_label(raw, p)?;
+        p += field;
+        let bone = tail_name_at(raw, p)?.to_string();
+        p += 32;
         let mut m = [0f32; 16];
         for k in 0..16 {
-            m[k] = tail_f32(raw, p + 64 + k * 4)?;
+            m[k] = tail_f32(raw, p + k * 4)?;
         }
+        p += 64;
         if !m.iter().all(|v| v.is_finite() && v.abs() < 1e7) || (m[15] - 1.0).abs() > 1e-3 {
             return None;
         }
-        out.push(SocketEntry { name, bone, bind: m });
-        p += 128;
+        out.push(SocketEntry {
+            name: label,
+            bone,
+            bind: m,
+        });
+    }
+    if p != raw.len() {
+        return None;
     }
     Some((out, p))
+}
+
+/// 挂点段第一个字段：NUL 结尾的字符串。纯 ASCII ⇒ 老的 32 字节；
+/// 含双字节（GBK）⇒ `32 + 字符数`（实测 5 字标签字段 37、6 字 38，两条记录长 133 / 134）。
+fn tail_socket_label(raw: &[u8], at: usize) -> Option<(String, usize)> {
+    let win = raw.get(at..at + 96)?;
+    let nul = win.iter().position(|&c| c == 0)?;
+    if !(3..=95).contains(&nul) {
+        return None;
+    }
+    let bytes = &win[..nul];
+    if nul <= 31 && bytes.iter().all(|c| c.is_ascii()) {
+        return Some((String::from_utf8_lossy(bytes).into_owned(), 32));
+    }
+    // 双字节标签：字节数必须是偶数（GBK 成对），字段长 = 32 + 字数。
+    if bytes.len() % 2 != 0 || bytes.iter().any(|c| *c < 0x80) {
+        return None;
+    }
+    let chars = bytes.len() / 2;
+    let field = 32usize.checked_add(chars)?;
+    if field > 96 {
+        return None;
+    }
+    let (cow, _, bad) = encoding_rs::GBK.decode(bytes);
+    if bad {
+        return None;
+    }
+    Some((cow.into_owned(), field))
 }
 
 /// 从 `start`（origin 记录）走到 EOF：前奏记录 + 条目 × N + 挂点段。

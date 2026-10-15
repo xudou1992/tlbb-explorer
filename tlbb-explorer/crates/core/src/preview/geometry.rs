@@ -839,7 +839,9 @@ fn tail_name_at(raw: &[u8], at: usize) -> Option<&str> {
         return None;
     }
     let prev = raw[at - 1];
-    if prev.is_ascii_alphanumeric() || matches!(prev, b'_' | b'-' | b'.') {
+    // 括号算名字字符：实测有孩子的名字是 `bone001(mirrored)` 这种（32B 槽、NUL 结尾、
+    // 其余真填 0），字符集不收括号 ⇒ 条目走到孩子表第一个就断。79/80 补，全库 45 份。
+    if prev.is_ascii_alphanumeric() || matches!(prev, b'_' | b'-' | b'.' | b'(' | b')') {
         return None;
     }
     let nb = &raw[at..at + 32];
@@ -849,7 +851,7 @@ fn tail_name_at(raw: &[u8], at: usize) -> Option<&str> {
     }
     if !nb[..end]
         .iter()
-        .all(|c| c.is_ascii_alphanumeric() || matches!(c, b'_' | b'-' | b'.'))
+        .all(|c| c.is_ascii_alphanumeric() || matches!(c, b'_' | b'-' | b'.' | b'(' | b')'))
     {
         return None;
     }

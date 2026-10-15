@@ -1042,7 +1042,7 @@ fn main() {
                 };
                 let words: Vec<String> = (0..8).map(|i| format!("{}", w(i))).collect();
                 let mut asc = String::new();
-                for k in 0..40 {
+                for k in 0..96 {
                     match raw.get(dead + k) {
                         Some(&b) if (0x20..0x7f).contains(&b) => asc.push(b as char),
                         Some(_) => asc.push('.'),
@@ -1050,7 +1050,7 @@ fn main() {
                     }
                 }
                 kid.push(format!(
-                    "  {name} · 声明孩子 {ccount} 个 · 死槽偏移 {dead}(0x{dead:x}) · 其后 8 个 u32 [{}] · ASCII「{asc}」",
+                    "  {name} · 声明孩子 {ccount} 个 · 死槽偏移 {dead}(0x{dead:x}) · 其后 8 个 u32 [{}]\n    +0..96 ASCII「{asc}」",
                     words.join(", ")
                 ));
             }

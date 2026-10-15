@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -1047,6 +1047,87 @@ fn main() {
             "# D÷16（组数）分布：{}",
             groups.iter().map(|(g, c)| format!("{g}×{c}")).collect::<Vec<_>>().join("  ")
         );
+        return;
+    }
+
+    if mode == "infgap" {
+        // 116 补定下的那一刀：31 份拦路段头部那张表，**到底是哪一条判据把它判否**。
+        // 用的就是主干现成的只读审计口 `tail_inf_audit`（77 补起就有），不在探针里重算判据。
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut tally: BTreeMap<String, usize> = BTreeMap::new();
+        let mut rows: Vec<String> = Vec::new();
+        let mut n = 0usize;
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            if parse_nodes(&raw).is_empty() || parse_hierarchy(&raw).is_some() {
+                continue;
+            }
+            let Some(sp) = hierarchy_stuck(&raw) else { continue };
+            let Some(h) = tail_first_entry_head(&raw, sp.stopped) else { continue };
+            if h <= sp.stopped {
+                continue;
+            }
+            let d = h - sp.stopped;
+            let (tn, vc, bad_id, bad_w, oob) = tail_inf_audit(&raw, sp.stopped);
+            n += 1;
+            let key = if oob {
+                "整表越界（长度放不下）".to_string()
+            } else if tn == 0 {
+                "表长 0".to_string()
+            } else if tn > 200_000 {
+                format!("表长 {tn} 大得离谱（头字不是表长）")
+            } else if tn > vc {
+                format!("表长 {tn} > 顶点数 {vc}")
+            } else if bad_id == 0 && bad_w == 0 {
+                "四条全合格（那不该判否，待查）".to_string()
+            } else if bad_id > 0 && bad_w == 0 {
+                format!("id 有 {bad_id}/{tn} 个不合格（越界或重复），权重全合")
+            } else if bad_id == 0 && bad_w > 0 {
+                format!("权重有 {bad_w}/{tn} 个不合格（区间外或非有限），id 全合")
+            } else {
+                format!("id {bad_id} 与权重 {bad_w} 都不合格")
+            };
+            *tally.entry(key.clone()).or_insert(0) += 1;
+            // 权重不合格的那族：把**不合格的值本身**打出来（判否原因定了才谈放宽——
+            // 是 1.0000002 那种浮点噪声，还是 1.5 / 负数那种「语义就不是 0..1」，修法完全不同）。
+            if bad_w > 0 && rows.len() < 40 {
+                let mut bad: Vec<String> = Vec::new();
+                let mut lo = f32::MAX;
+                let mut hi = f32::MIN;
+                for k in 0..tn {
+                    if let Some(w) = raw_f32_at(&raw, sp.stopped + 4 + 4 * tn + 4 * k) {
+                        lo = lo.min(w);
+                        hi = hi.max(w);
+                        if !(w.is_finite() && (-1e-3..=1.001).contains(&w)) && bad.len() < 10 {
+                            bad.push(format!("{k}:{w}"));
+                        }
+                    }
+                }
+                rows.push(format!(
+                    "  {} · 表长 {tn} · 权重全部区间 [{lo:.5}, {hi:.5}] · 不合格 {bad_w} 个（前 10 个 下标:值）{}",
+                    name,
+                    bad.join(" ")
+                ));
+                *tally.entry("有权重不合格（值已点名）".to_string()).or_insert(0) += 1;
+                continue;
+            }
+            if rows.len() < 40 {
+                rows.push(format!(
+                    "  {} · 跨 {} 字节 · 头字当表长 = {} · 顶点数 {} · id 不合格 {} · 权重不合格 {}",
+                    name, d, tn, vc, bad_id, bad_w
+                ));
+            }
+        }
+        println!("
+# infgap · 31 份拦路段头部那张表的判否原因（读的是卡点那一点的头字）· 共 {n} 份");
+        for r in rows {
+            println!("{r}");
+        }
+        println!("# 判否原因分桶");
+        for (k, v) in &tally {
+            println!("  {v} 份 · {k}");
+        }
         return;
     }
 
@@ -2027,6 +2108,10 @@ fn main() {
 /// 数一段字节里有几个「标志 1 + 同名隔 32 两遍」的条目头。
 /// 这条扫描**故意不复用主干判据**（`sockjump` 要独立于主干，否则用它自己的判据
 /// 证明它自己没漏东西，等于没证）；字符集与主干 `tail_name_at` 同宽。
+fn raw_f32_at(raw: &[u8], at: usize) -> Option<f32> {
+    raw.get(at..at + 4).map(|s| f32::from_le_bytes(<[u8; 4]>::try_from(s).unwrap()))
+}
+
 fn entry_heads_in(raw: &[u8], lo: usize, hi: usize) -> usize {
     fn nm(raw: &[u8], s: usize) -> Option<(usize, Vec<u8>)> {
         let mut i = s;

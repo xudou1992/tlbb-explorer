@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -936,6 +936,46 @@ fn main() {
             println!("  {k:?} · {n} 份 · {ex}");
         }
         println!("# 不同指纹共 {} 种（前 15 种列出，长尾未逐条打）", rows.len());
+        return;
+    }
+
+
+    if mode == "whyerr" {
+        // 65 补留的最短一步：`hierarchy_forest` 返回 `Result<_, &'static str>`，
+        // 那句人话就是主干自己对「为什么建不出树」的回答——把它按消息聚类，别再猜形状。
+        use std::collections::BTreeMap;
+        use tlbb_core::preview::hierarchy_forest;
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut by_msg: BTreeMap<&'static str, (usize, String)> = BTreeMap::new();
+        let mut files = 0usize;
+        let mut ok = 0usize;
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            if parse_nodes(&raw).is_empty() || parse_hierarchy(&raw).is_some() {
+                continue;
+            }
+            files += 1;
+            match hierarchy_forest(&raw) {
+                Ok(h) => {
+                    ok += 1;
+                    let e = by_msg.entry("（forest 能建，只是不多根）").or_insert((0, name.clone()));
+                    e.0 += 1;
+                    let _ = h;
+                }
+                Err(msg) => {
+                    let e = by_msg.entry(msg).or_insert((0, name.clone()));
+                    e.0 += 1;
+                }
+            }
+        }
+        println!("# 有记录但 parse_hierarchy 为零的 {files} 份 · 其中 forest 能建的 {ok} 份");
+        let mut rows: Vec<_> = by_msg.into_iter().collect();
+        rows.sort_by(|a, b| b.1 .0.cmp(&a.1 .0));
+        println!("# 主干自己给的人话（按份数）：");
+        for (msg, (n, ex)) in &rows {
+            println!("  {n:>5} 份 · {msg} · 例 {ex}");
+        }
         return;
     }
 

@@ -1,0 +1,4 @@
+
+# 读到 7996 份 · 标准记录 >0 的 2776 份 · **有标准记录但链建不出树的 246 份**（这两者都为零的 5201 份）
+# 那 246 份头部声明骨数合计 8748
+# 例子：w1351_cj_diao.mesh(标准 59 条) · w1351_model_sl_nan_zhong_x02_2.mesh(标准 1 条) · w1351_model_sl_nan_zhong_x02.mesh(标准 1 条) · w1351_model_sl_nan_zhong_x01.mesh(标准 1 条) · w1351_model_ymg02_nv_flzt_h001.mesh(标准 86 条) · w1351_model_ymg02_nan_slbw_h003.mesh(标准 86 条) · w1351_model_ymg02_nan_slbw_h002.mesh(标准 86 条) · w1351_model_ymg02_jn_long_h001.mesh(标准 85 条) · w1351_model_link_h01.mesh(标准 1 条) · w1351_model_ymg02_jn_long_h005.mesh(标准 85 条) · w1351_npc_biaoche3.mesh(标准 76 条) · w1351_model_ymg02_nan_slbw_lg_h003.mesh(标准 86 条)

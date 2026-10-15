@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -862,6 +862,46 @@ fn main() {
             id_hits.unwrap_or(0),
             best.map_or("无可比".to_string(), |d| format!("{d:.3e}")),
             narrow_seen.len()
+        );
+        return;
+    }
+
+
+    if mode == "chaingap" {
+        // 57 补冒出来的口子：有些份**标准记录一大把，`parse_hierarchy` 却给不出树**
+        // （b5/b7：46 条记录、chainLen=0）。骨架页与骨线都吃这条，之前只报过
+        // 「链解得出 2,549/7,996」，没把解不出的分成「本来就没骨架」与「有记录建不出树」两类。
+        let paths = mesh_paths(&con, &batch, limit);
+        let (mut files, mut std_gt0, mut gap, mut both0) = (0usize, 0usize, 0usize, 0usize);
+        let mut examples: Vec<String> = Vec::new();
+        let mut gap_declared = 0usize;
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            files += 1;
+            let stdn = parse_nodes(&raw);
+            let chain = parse_hierarchy(&raw);
+            let clen = chain.map_or(0, |h| h.bones.len());
+            if stdn.is_empty() && clen == 0 {
+                both0 += 1;
+                continue;
+            }
+            if !stdn.is_empty() {
+                std_gt0 += 1;
+            }
+            if !stdn.is_empty() && clen == 0 {
+                gap += 1;
+                gap_declared += bone_count(&raw).unwrap_or(0);
+                if examples.len() < 12 {
+                    examples.push(format!("{name}(标准 {} 条)", stdn.len()));
+                }
+            }
+        }
+        println!(
+            "\n# 读到 {files} 份 · 标准记录 >0 的 {std_gt0} 份 · **有标准记录但链建不出树的 {gap} 份**\
+             （这两者都为零的 {both0} 份）\n\
+             # 那 {gap} 份头部声明骨数合计 {gap_declared}\n# 例子：{}",
+            examples.join(" · ")
         );
         return;
     }

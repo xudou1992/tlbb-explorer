@@ -1055,8 +1055,13 @@ fn tail_try_entry_why(
         }
         break;
     }
-    let flag = tail_u32(raw, p).ok_or(("flag-unreadable", 0, 0))?;
-    let _ = flag; // 实测恒 1 / 根 -1；不是父索引，不解释
+    let flag = tail_u32(raw, p).ok_or(("flag-unreadable", 0, p))?;
+    // 91 补把校验加回来：实测条目标志只有 `1`（普通条目）与 `-1`（根条目）。
+    // 之前 `let _ = flag;` 不校验 ⇒ 走法顺着一串零字滑（`tail_is_inf` 对 `n == 0` 直接返回真、
+    // 每次只前进 4 字节），滑到第一个非零字就把**某个浮点的位型**当标志吞掉 ⇒ 44/54 份卡在这。
+    if flag != 1 && flag != u32::MAX {
+        return Err(("flag-not-1", 0, p));
+    }
     p += 4;
     let nm1 = tail_name_at(raw, p).ok_or(("name1-unreadable", 0, p))?;
     let nm2 = tail_name_at(raw, p + 32).ok_or(("name2-unreadable", 0, p + 32))?;

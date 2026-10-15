@@ -1013,6 +1013,8 @@ fn main() {
         let mut det: Vec<String> = Vec::new();
         // 88 补那一刀：name1 那格把「死槽前一字」当表长读，数出权重/id 各有几个不合格。
         let mut audit: BTreeMap<String, usize> = BTreeMap::new();
+        let mut fblock: Vec<String> = Vec::new();
+        let mut fgap: BTreeMap<String, usize> = BTreeMap::new();
         let (mut files, mut gap, mut nos) = (0usize, 0usize, 0usize);
         for p in &paths {
             let name = p.rsplit('/').next().unwrap_or("").to_string();
@@ -1101,6 +1103,79 @@ fn main() {
                     kid.push(row);
                 }
             }
+            // 93 补那一刀：flag-not-1 这 53 份单独一节——从卡点字往后 1024 字节里
+            // 数出所有「ASCII 串 + 紧跟 NUL」的位置，看条目在哪一格重新起、中间夹了多长。
+            if label == "flag-not-1" && fblock.len() < 12 {
+                let hi = (dead + 1024).min(raw.len());
+                let mut hits: Vec<(usize, String)> = Vec::new();
+                let mut k = dead;
+                while k < hi {
+                    let c = raw[k];
+                    let isname = c.is_ascii_alphanumeric() || matches!(c, b'_' | b'-' | b'.' | b'(' | b')');
+                    if isname {
+                        let s = k;
+                        while k < hi
+                            && (raw[k].is_ascii_alphanumeric()
+                                || matches!(raw[k], b'_' | b'-' | b'.' | b'(' | b')'))
+                        {
+                            k += 1;
+                        }
+                        if k - s >= 3 && raw.get(k) == Some(&0) {
+                            hits.push((s - dead, String::from_utf8_lossy(&raw[s..k]).into_owned()));
+                        }
+                    } else {
+                        k += 1;
+                    }
+                }
+                fblock.push(format!(
+                    "  {name} · 卡点字 {dead}(0x{dead:x}) · 往后 1024 字节里的名字段（前 8 个）：{}",
+                    hits.iter()
+                        .take(8)
+                        .map(|(o, t)| format!("+{o} {t}"))
+                        .collect::<Vec<_>>()
+                        .join(" · ")
+                ));
+            }
+            // 全库分桶（不靠 12 份样本）：往后第一个结构是条目还是挂点、它在卡点字后多少字节。
+            if label == "flag-not-1" {
+                let hi = (dead + 1024).min(raw.len());
+                let mut offs: Vec<(usize, String)> = Vec::new();
+                let mut k = dead;
+                while k < hi && offs.len() < 4 {
+                    let c = raw[k];
+                    let isname = c.is_ascii_alphanumeric() || matches!(c, b'_' | b'-' | b'.' | b'(' | b')');
+                    if isname {
+                        let s = k;
+                        while k < hi
+                            && (raw[k].is_ascii_alphanumeric()
+                                || matches!(raw[k], b'_' | b'-' | b'.' | b'(' | b')'))
+                        {
+                            k += 1;
+                        }
+                        if k - s >= 3 && raw.get(k) == Some(&0) {
+                            offs.push((s - dead, String::from_utf8_lossy(&raw[s..k]).into_owned()));
+                        }
+                    } else {
+                        k += 1;
+                    }
+                }
+                let key = match (offs.first(), offs.get(1)) {
+                    (None, _) => "往后 1024 字节里没有名字段".to_string(),
+                    (Some((o0, n0)), Some((o1, n1))) => {
+                        let step = o1.saturating_sub(*o0);
+                        let kind = if step == 32 && n0 == n1 {
+                            "条目（同名隔 32 两遍）"
+                        } else if step == 32 {
+                            "挂点（名 + 骨名，隔 32）"
+                        } else {
+                            "别的（首两段不同距或不同名）"
+                        };
+                        format!("{kind} · 首个在 +{o0}")
+                    }
+                    (Some((o0, _)), None) => format!("只找到 1 段名字 · 在 +{o0}"),
+                };
+                *fgap.entry(key).or_insert(0) += 1;
+            }
         }
         let mut rows: Vec<(String, (usize, String))> = tally.into_iter().collect();
         rows.sort_by(|a, b| b.1.0.cmp(&a.1.0).then_with(|| a.0.cmp(&b.0)));
@@ -1123,6 +1198,16 @@ fn main() {
         println!("\n# name1 那格逐份：死槽前 64 字节的 16 个 f32（摆位型用，前 {} 份）：", det.len());
         for r in &det {
             println!("{r}");
+        }
+        println!("\n# flag-not-1 那格逐份：卡点字往后 1024 字节里的名字段在哪（前 {} 份）：", fblock.len());
+        for r in &fblock {
+            println!("{r}");
+        }
+        println!("\n# flag-not-1 那格**全库**分桶（往后第一个结构是什么 · 它在卡点字后多少字节）：");
+        let mut fr: Vec<(String, usize)> = fgap.into_iter().collect();
+        fr.sort_by(|a, b| b.1.cmp(&a.1));
+        for (k, v) in fr {
+            println!("  {v:4} 份 · {k}");
         }
         println!("\n# name1 那格按「死槽前一字 = 表长」审 id 与权重（份数 · 类别）：");
         let mut ar: Vec<(String, usize)> = audit.into_iter().collect();

@@ -1209,12 +1209,49 @@ pub fn tail_inf_audit(raw: &[u8], at: usize) -> (usize, usize, usize, usize, boo
 /// （现场例 `w1351_pvpcaiji_mie.mesh`：真头 0x174c = `[u32 1][u32 1]` + 1 条 128B
 /// `tx_001`→`Bone001`，正好收到 EOF 0x17d4）。
 /// 除此之外**一条判据都没放宽**：条目/记录/块/影响表/树闸门与起点候选全部原样。
-fn tail_try_sockets(raw: &[u8], at: usize, vc: usize) -> Option<(Vec<SocketEntry>, usize)> {
+/// 从 `from` 起（每 4 字节一档）找**最近的一个真条目头**：标志 1 或 `u32::MAX`，
+/// 紧跟同一个名字隔 32 出现两遍。找不到返回 `None`。
+///
+/// 只给 EOF 反推当闸门用。113 补实测：`bird_lf001` 的链条断在 166,036，反推命中的段头在
+/// 268,228（文件尾那个 `[1, 0]`＝**零条挂点的空段**），中间 102,192 字节里躺着 **127 个真条目头**——
+/// 走法据此把「没读到的那段」当成挂点段吞了，普查还把卡点报成「走到 EOF」。
+/// 名字判据直接用 `tail_name_at`（与条目解析同一份，不另抄字符集）。
+fn tail_first_entry_head(raw: &[u8], from: usize) -> Option<usize> {
+    let mut k = from;
+    while k + 68 <= raw.len() {
+        let f = tail_u32(raw, k)?;
+        if f == 1 || f == u32::MAX {
+            if let Some(a) = tail_name_at(raw, k + 4) {
+                if tail_name_at(raw, k + 36) == Some(a) {
+                    return Some(k);
+                }
+            }
+        }
+        k += 4;
+    }
+    None
+}
+
+fn tail_try_sockets(
+    raw: &[u8],
+    at: usize,
+    vc: usize,
+    mut tr: Option<&mut Vec<(&'static str, usize)>>,
+) -> Option<(Vec<SocketEntry>, usize)> {
+    // 段头命中位置与条数只给轨迹看（判据一字未动）：`sock_hdr` 是**真正命中的段头**，
+    // 不是外层进入点——113 补就是靠这两个数才发现走法一步跳了 102,192 字节（`bird_lf001`）。
+    let hit = |got: (Vec<SocketEntry>, usize), hdr: usize, t: Option<&mut Vec<(&'static str, usize)>>| {
+        if let Some(t) = t {
+            t.push(("sock_hdr", hdr));
+            t.push(("sock_n", got.0.len()));
+        }
+        Some(got)
+    };
     let mut p = at;
     loop {
         // 块链上每个可能的收束位置都试一次（含起点本身）。
         if let Some(got) = tail_sockets_at(raw, p) {
-            return Some(got);
+            return hit(got, p, tr.as_deref_mut());
         }
         if tail_is_u92(raw, p) {
             p += 88;
@@ -1234,6 +1271,8 @@ fn tail_try_sockets(raw: &[u8], at: usize, vc: usize) -> Option<(Vec<SocketEntry
         // 是走法的 `p` 滑过了头（`bird_lf001` 段头在 268228、`p` 却落在 268232——
         // 那个 `1` 被前一块吞在块尾）。老编码里段头必在 `len − 8 − 128×count`，
         // 所以定位不必指望块链滑到哪：**只往前找（`q ≥ at`）**，回头会把走法绕死。
+        // 反推的闸门：脚下往后**最近的真条目头**之前不许越过（`None` = 那段里没条目，随便反推）。
+        let gate = tail_first_entry_head(raw, at);
         for c in 0..=4096usize {
             let q = match raw.len().checked_sub(8 + 128 * c) {
                 Some(v) => v,
@@ -1242,11 +1281,16 @@ fn tail_try_sockets(raw: &[u8], at: usize, vc: usize) -> Option<(Vec<SocketEntry
             if q < at {
                 break;
             }
+            if let Some(h) = gate {
+                if q > h {
+                    continue;
+                }
+            }
             if tail_u32(raw, q) != Some(1) || tail_u32(raw, q + 4) != Some(c as u32) {
                 continue;
             }
             if let Some(got) = tail_sockets_at(raw, q) {
-                return Some(got);
+                return hit(got, q, tr.as_deref_mut());
             }
         }
         // 反推也命不中：这个点不是挂点段，整段失败。
@@ -1394,11 +1438,12 @@ fn tail_walk_traced(
             p += NODE_RECORD; // 场景前奏：origin / top，只有记录没有条目尾
             continue;
         }
-        let sok = tail_try_sockets(raw, p, vc);
+        let sok = tail_try_sockets(raw, p, vc, tr.as_deref_mut());
         if let Some((s, np)) = sok {
             if let Some(t) = tr.as_deref_mut() {
                 // 印的是**外层进入点**，不是真正命中的段头位置（段头可能由 EOF 反推在更后面找到）。
                 // 标签里写明 `from`，免得读轨迹的人以为挂点段头就在这一点上（112 补自纠）。
+                // 真正命中的段头与条数由 `tail_try_sockets` 自己推在更早的两步里（`sock_hdr`/`sock_n`）。
                 t.push(("sockets_from", p));
             }
             sockets = s;

@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -1000,6 +1000,71 @@ fn main() {
         return;
     }
 
+    if mode == "sockjump" {
+        // 112 补的正确那一刀：走法「滑到 EOF」到底是不是**一步跨过去的**。
+        // 主干里 `tail_sockets_at` 只在「段尾正好等于文件大小」时才算命中，所以段头一旦
+        // 由 EOF 反推在别处找到，走法就从脚下直接跳到 EOF——中间那些字节一个条目都没读。
+        // 这里全库数三件事：① 段头就在脚下 vs 段头在远处；② 远处那段里有几个真条目头；
+        // ③ 这类跳步发生在**已经解得出骨架**的份里有多少（那批是要盯的假阳性，不是要救的漏网）。
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut tally: BTreeMap<String, usize> = BTreeMap::new();
+        let mut with_heads: Vec<String> = Vec::new();
+        let mut clean: Vec<String> = Vec::new();
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            if parse_nodes(&raw).is_empty() {
+                continue;
+            }
+            let Some(sp) = hierarchy_stuck(&raw) else { continue };
+            let (steps, _) = tail_walk_steps(&raw, sp.start);
+            let hdr = steps.iter().find(|(k, _)| *k == "sock_hdr").map(|(_, v)| *v);
+            let from = steps.iter().find(|(k, _)| *k == "sockets_from").map(|(_, v)| *v);
+            let sn = steps.iter().find(|(k, _)| *k == "sock_n").map(|(_, v)| *v).unwrap_or(0);
+            let ok = parse_hierarchy(&raw).is_some();
+            let st = if ok { "成功" } else { "失败" };
+            let Some(h) = hdr else {
+                *tally.entry(format!("{st} · 没收上挂点段")).or_insert(0) += 1;
+                continue;
+            };
+            let f = from.unwrap_or(h);
+            let gap = h.saturating_sub(f);
+            let kind = if gap == 0 { "段头就在脚下" } else { "段头在远处" };
+            let nkind = if sn == 0 { "空挂点段" } else { "有挂点" };
+            *tally.entry(format!("{st} · {kind} · {nkind}")).or_insert(0) += 1;
+            if gap > 256 {
+                let hh = entry_heads_in(&raw, f, h);
+                let line = format!(
+                    "  {st} · {name} · 跳 {} 字节（{f}→{h}）· 其中条目头 {hh} 个 · 吃了 {} 条/声明 {} 根",
+                    h - f,
+                    sp.eaten,
+                    sp.declared
+                );
+                if hh > 0 {
+                    if with_heads.len() < 24 {
+                        with_heads.push(line);
+                    }
+                } else if ok && clean.len() < 8 {
+                    clean.push(line);
+                }
+            }
+        }
+        println!("
+# sockjump · 有标准记录且拿到卡点的份，按「挂点段头在哪里命中」分桶");
+        for (k, v) in &tally {
+            println!("  {k} · {v}");
+        }
+        println!("# 段头在远处且跳过的段落里有真条目头的（前 24 份）");
+        for l in with_heads {
+            println!("{l}");
+        }
+        println!("# 已经解得出骨架、跳过段落里却没条目头（无害跳步的例子，前 8 份）");
+        for l in clean {
+            println!("{l}");
+        }
+        return;
+    }
+
     if mode == "countgate" {
         // 107 补定的那条数：全库有多少份是「走到 EOF 但条目数 != 声明骨数」，
         // 差额能不能由「只有 96B 记录、没有条目尾的骨」解释。
@@ -1096,28 +1161,68 @@ fn main() {
                 stopped,
                 if stopped == sp.stopped { " ✓一致" } else { " ✗不一致（我写错了）" }
             );
-            // 空隙统计：每条「条目吃完(entry_end)」到下一个轨迹点之间剩几字节——这是 109/111 补要找的拦路块。
-            let mut gaps: BTreeMap<usize, usize> = BTreeMap::new();
+            // 112 补那条「空隙 0×7」是探针自己的错：`entry_end` 推的就是下一步的进入点，
+            // 两者相减**恒等于 0**，什么也证明不了。改成量**每一步自己吃掉多少字节**
+            // （相邻两步的偏移差），一步跨几万字节才是「整段被吞」的证据。
+            let mut adv: BTreeMap<&str, Vec<usize>> = BTreeMap::new();
+            let mut jumps: Vec<(usize, &str, usize, usize)> = Vec::new();
             for (i, (kind, at)) in steps.iter().enumerate() {
-                if *kind != "entry_end" {
+                if matches!(*kind, "sock_n" | "sockets_from") {
                     continue;
                 }
-                let nxt = steps.get(i + 1).map(|(_, p)| *p).unwrap_or(stopped);
-                *gaps.entry(nxt.saturating_sub(*at)).or_insert(0) += 1;
+                if let Some((nk, np)) = steps.get(i + 1) {
+                    if matches!(*nk, "sock_n" | "sockets_from") {
+                        continue;
+                    }
+                    let d = np.saturating_sub(*at);
+                    adv.entry(*kind).or_default().push(d);
+                    if d > 2048 {
+                        jumps.push((d, *kind, *at, *np));
+                    }
+                }
             }
-            if !gaps.is_empty() {
-                let mut gs: Vec<(usize, usize)> = gaps.into_iter().collect();
-                gs.sort_by(|a, b| b.1.cmp(&a.1));
-                println!(
-                    "  空隙分布（条目吃完 → 下一个轨迹点，字节 ×次数，前 10 项）：{}",
-                    gs.iter()
-                        .take(10)
-                        .map(|(g, c)| format!("{g}×{c}"))
-                        .collect::<Vec<_>>()
-                        .join("  ")
-                );
+            let hdr = steps.iter().rfind(|(k, _)| *k == "sock_hdr").map(|(_, p)| *p);
+            let from = steps
+                .iter()
+                .rfind(|(k, _)| *k == "sockets_from")
+                .map(|(_, p)| *p);
+            let sn = steps
+                .iter()
+                .rfind(|(k, _)| *k == "sock_n")
+                .map(|(_, p)| *p);
+            println!(
+                "  挂点段头命中 {} · 距走法停下那点 {} 字节 · 收到 {} 条挂点",
+                hdr.map_or("（没命中）".to_string(), |h| h.to_string()),
+                match (hdr, from) {
+                    (Some(h), Some(f)) => h.saturating_sub(f),
+                    _ => 0,
+                },
+                sn.unwrap_or(0)
+            );
+            if !jumps.is_empty() {
+                for (d, kind, a, np) in jumps.iter().take(6) {
+                    println!("  ⚠ 单步吞 {d} 字节：{kind} @{a} → {np}");
+                }
             }
+            let mut tops: Vec<(usize, &str)> = adv
+                .iter()
+                .map(|(k, v)| (v.iter().max().copied().unwrap_or(0), *k))
+                .collect();
+            tops.sort_by(|a, b| b.0.cmp(&a.0));
+            println!(
+                "  各类块单步最大吞量：{}",
+                tops.iter()
+                    .take(6)
+                    .map(|(d, k)| format!("{k} {d}"))
+                    .collect::<Vec<_>>()
+                    .join(" · ")
+            );
             for (kind, at) in steps.iter().rev().take(20).rev() {
+                // `sock_n` 装的是条数不是偏移，别拿它去减起点（会下溢出成天文数字）。
+                if *kind == "sock_n" {
+                    println!("  {kind:8} = {at} 条挂点");
+                    continue;
+                }
                 let w: Vec<String> = (0..4)
                     .map(|k| {
                         raw.get(at + 4 * k..at + 4 * k + 4)
@@ -1867,4 +1972,48 @@ fn main() {
         "\n{tag}口径 · {grand} 个同名对比里等于各候选的个数：{:?}（判据：差 ≤1e-6）",
         totals
     );
+}
+
+/// 数一段字节里有几个「标志 1 + 同名隔 32 两遍」的条目头。
+/// 这条扫描**故意不复用主干判据**（`sockjump` 要独立于主干，否则用它自己的判据
+/// 证明它自己没漏东西，等于没证）；字符集与主干 `tail_name_at` 同宽。
+fn entry_heads_in(raw: &[u8], lo: usize, hi: usize) -> usize {
+    fn nm(raw: &[u8], s: usize) -> Option<(usize, Vec<u8>)> {
+        let mut i = s;
+        while i < raw.len() && i < s + 32 {
+            let c = raw[i];
+            if c == 0 {
+                if i == s {
+                    return None;
+                }
+                return Some((i - s, raw[s..i].to_vec()));
+            }
+            if !(c.is_ascii_alphanumeric()
+                || matches!(c, b'_' | b'-' | b'.' | b'(' | b')' | b'/'))
+            {
+                return None;
+            }
+            i += 1;
+        }
+        None
+    }
+    let hi = hi.min(raw.len());
+    let mut out = 0usize;
+    let mut k = lo.min(hi);
+    while k + 68 <= hi {
+        let f = u32::from_le_bytes(raw[k..k + 4].try_into().unwrap());
+        if f == 1 || f == u32::MAX {
+            if let Some((l1, a)) = nm(raw, k + 4) {
+                if let Some((l2, b)) = nm(raw, k + 36) {
+                    if l1 == l2 && a == b {
+                        out += 1;
+                        k += 68;
+                        continue;
+                    }
+                }
+            }
+        }
+        k += 4;
+    }
+    out
 }

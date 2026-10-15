@@ -1209,7 +1209,8 @@ pub fn tail_inf_audit(raw: &[u8], at: usize) -> (usize, usize, usize, usize, boo
 /// （现场例 `w1351_pvpcaiji_mie.mesh`：真头 0x174c = `[u32 1][u32 1]` + 1 条 128B
 /// `tx_001`→`Bone001`，正好收到 EOF 0x17d4）。
 /// 除此之外**一条判据都没放宽**：条目/记录/块/影响表/树闸门与起点候选全部原样。
-fn tail_try_sockets(raw: &[u8], mut p: usize, vc: usize) -> Option<(Vec<SocketEntry>, usize)> {
+fn tail_try_sockets(raw: &[u8], at: usize, vc: usize) -> Option<(Vec<SocketEntry>, usize)> {
+    let mut p = at;
     loop {
         // 块链上每个可能的收束位置都试一次（含起点本身）。
         if let Some(got) = tail_sockets_at(raw, p) {
@@ -1228,7 +1229,27 @@ fn tail_try_sockets(raw: &[u8], mut p: usize, vc: usize) -> Option<(Vec<SocketEn
             p += 4 + 8 * n as usize;
             continue;
         }
-        // 块链走到头还没收上：这个点不是挂点段，整段失败。
+        // 块链走到头还没收上：**改用 EOF 反推**找挂点段头。
+        // 100/101 补实测：53 那格 12 份里 11 份的挂点段完全合现有文法，
+        // 是走法的 `p` 滑过了头（`bird_lf001` 段头在 268228、`p` 却落在 268232——
+        // 那个 `1` 被前一块吞在块尾）。老编码里段头必在 `len − 8 − 128×count`，
+        // 所以定位不必指望块链滑到哪：**只往前找（`q ≥ at`）**，回头会把走法绕死。
+        for c in 0..=4096usize {
+            let q = match raw.len().checked_sub(8 + 128 * c) {
+                Some(v) => v,
+                None => break,
+            };
+            if q < at {
+                break;
+            }
+            if tail_u32(raw, q) != Some(1) || tail_u32(raw, q + 4) != Some(c as u32) {
+                continue;
+            }
+            if let Some(got) = tail_sockets_at(raw, q) {
+                return Some(got);
+            }
+        }
+        // 反推也命不中：这个点不是挂点段，整段失败。
         return None;
     }
 }

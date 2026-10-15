@@ -1,0 +1,8 @@
+
+# 读到 7996 份 · 有标准记录但建不出树 246 份 · 其中拿不到卡点 106 份
+# 卡点处「死在哪一步」（份数 · 标签 · 一例）：
+   106 份 · no-stuck-point(0x110 读不出) · 例 w1351_model_boss_cj_z005.mesh
+    80 份 · name1-unreadable · 例 w1351_model_ymg02_nv_flzt_h001.mesh
+    45 份 · child-name-unreadable · 例 w1351_cj_diao.mesh
+    13 份 · walked-to-eof(卡的是树闸门) · 例 w1351_model_sl_nan_zhong_x02_2.mesh
+     2 份 · entry-never-starts · 例 w1351_model_gb_long_h001.mesh

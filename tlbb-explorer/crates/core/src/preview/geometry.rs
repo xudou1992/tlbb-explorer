@@ -1001,9 +1001,14 @@ fn tail_is_inf(raw: &[u8], at: usize, vc: usize) -> bool {
     })
 }
 
-/// 试探一个条目。开头那条 96B 记录只在「它的名字 == 条目名」时才算本条目的
+/// 试探一个条目；失败时带出**死在哪一步**（只给普查用，判据与 `tail_try_entry` 一字不差）。
+/// 开头那条 96B 记录只在「它的名字 == 条目名」时才算本条目的
 /// （否则是 origin/top 场景前奏，由调用方按裸记录跳过）。
-fn tail_try_entry(raw: &[u8], at: usize, vc: usize) -> Option<(TailEntry, usize)> {
+fn tail_try_entry_why(
+    raw: &[u8],
+    at: usize,
+    vc: usize,
+) -> Result<(TailEntry, usize), &'static str> {
     let mut p = at;
     let own = tail_record_at(raw, p);
     if own.is_some() {
@@ -1018,30 +1023,30 @@ fn tail_try_entry(raw: &[u8], at: usize, vc: usize) -> Option<(TailEntry, usize)
             p += 64;
             continue;
         }
-        let n = tail_u32(raw, p)?;
+        let n = tail_u32(raw, p).ok_or("block-chain-unreadable")?;
         if tail_is_inf(raw, p, vc) {
             p += 4 + 8 * n as usize;
             continue;
         }
         break;
     }
-    let flag = tail_u32(raw, p)?;
+    let flag = tail_u32(raw, p).ok_or("flag-unreadable")?;
     let _ = flag; // 实测恒 1 / 根 -1；不是父索引，不解释
     p += 4;
-    let nm1 = tail_name_at(raw, p)?;
-    let nm2 = tail_name_at(raw, p + 32)?;
+    let nm1 = tail_name_at(raw, p).ok_or("name1-unreadable")?;
+    let nm2 = tail_name_at(raw, p + 32).ok_or("name2-unreadable")?;
     if nm1 != nm2 {
-        return None;
+        return Err("names-differ");
     }
     if let Some((rn, _)) = own {
         if rn != nm1 {
-            return None;
+            return Err("own-record-name-differs");
         }
     }
     p += 64;
-    let c = tail_u32(raw, p)? as usize;
+    let c = tail_u32(raw, p).ok_or("child-count-unreadable")? as usize;
     if c > 4096 {
-        return None;
+        return Err("child-count-too-big");
     }
     p += 4;
     let mut children = Vec::with_capacity(c);
@@ -1050,12 +1055,12 @@ fn tail_try_entry(raw: &[u8], at: usize, vc: usize) -> Option<(TailEntry, usize)
             children.push((cn.to_string(), Some(cm)));
             p += NODE_RECORD;
         } else {
-            let cn = tail_name_at(raw, p)?;
+            let cn = tail_name_at(raw, p).ok_or("child-name-unreadable")?;
             children.push((cn.to_string(), None));
             p += 32;
         }
     }
-    Some((
+    Ok((
         TailEntry {
             name: nm1.to_string(),
             own_bind: own.map(|(_, m)| m),
@@ -1063,6 +1068,20 @@ fn tail_try_entry(raw: &[u8], at: usize, vc: usize) -> Option<(TailEntry, usize)
         },
         p,
     ))
+}
+
+/// 走法用的入口：失败原因抹平成 `None`（走法只关心成不成立）。
+fn tail_try_entry(raw: &[u8], at: usize, vc: usize) -> Option<(TailEntry, usize)> {
+    tail_try_entry_why(raw, at, vc).ok()
+}
+
+/// 普查用：在 `at` 处按条目文法试一次，只回答「死在哪一步」的短标签
+/// （`ok` = 这一步能成条目）。与走法共用同一个判据函数，不改任何东西。
+pub fn tail_stuck_why(raw: &[u8], at: usize) -> &'static str {
+    match tail_try_entry_why(raw, at, vertex_count(raw)) {
+        Ok(_) => "ok",
+        Err(r) => r,
+    }
 }
 
 /// 挂点段：`[块]* [u32 标志][u32 挂点数][挂点数 × (tx_名 char32 + 骨名 char32 + 矩阵)]`。

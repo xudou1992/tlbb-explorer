@@ -23,7 +23,8 @@ pub use effect::{parse_pu, Effect, EffectNames, PuRecord};
 
 pub use geometry::{
     bone_count, hierarchy_forest, hierarchy_stuck, hierarchy_try, node_names, parse_forest,
-    parse_nodes_variant, root_count, tail_entries, parse_geometry, parse_hierarchy, parse_mesh,
+    parse_nodes_variant, root_count, tail_entries, tail_stuck_why, parse_geometry,
+    parse_hierarchy, parse_mesh,
     parse_nodes, BoneNode, MeshGeometry, MeshLayout, Node, SkeletonHierarchy, SocketEntry,
     SkinInfluence, StuckPoint,
 };

@@ -26,7 +26,7 @@ use rusqlite::{Connection, OpenFlags};
 use tlbb_core::jpak::Pak;
 use tlbb_core::payload;
 use tlbb_core::preview::rest;
-use tlbb_core::preview::{bone_count, hierarchy_stuck, parse_ani, parse_hierarchy, parse_nodes, parse_nodes_variant, rest_poses, pose};
+use tlbb_core::preview::{bone_count, hierarchy_stuck, parse_ani, parse_hierarchy, parse_nodes, parse_nodes_variant, rest_poses, tail_stuck_why, pose};
 
 fn locate(con: &Connection, name: &str) -> Option<(u64, String)> {
     let mut stmt = con
@@ -187,10 +187,10 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
-        eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus --batch=路径片段 [--limit=N]");
+        eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
         std::process::exit(2);
     }
     let db = root.join(".scratch/resources.db");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -996,6 +996,48 @@ fn main() {
                 forest.map_or("None".to_string(), |n| format!("{n} 根节点")),
                 n_root
             );
+        }
+        return;
+    }
+
+    if mode == "whytail" {
+        // 77 补定下来的下一刀形状：卡点报出来的是**条目起点**（外层只在「这个位置当条目
+        // 解析失败」时返回 p），不是断点。于是拿主干**同一个判据函数**在那一点再试一次，
+        // 问它「死在哪一步」。只读数——主干一条判据都没改，建树行为不变。
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut tally: BTreeMap<String, (usize, String)> = BTreeMap::new();
+        let (mut files, mut gap, mut nos) = (0usize, 0usize, 0usize);
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            files += 1;
+            if parse_nodes(&raw).is_empty() || parse_hierarchy(&raw).is_some() {
+                continue;
+            }
+            gap += 1;
+            let why = match hierarchy_stuck(&raw) {
+                None => {
+                    nos += 1;
+                    "no-stuck-point(0x110 读不出)"
+                }
+                Some(sp) if sp.stopped >= raw.len() => "walked-to-eof(卡的是树闸门)",
+                Some(sp) => {
+                    if sp.eaten == 0 {
+                        "entry-never-starts"
+                    } else {
+                        tail_stuck_why(&raw, sp.stopped)
+                    }
+                }
+            };
+            let e = tally.entry(why.to_string()).or_insert((0, name.clone()));
+            e.0 += 1;
+        }
+        let mut rows: Vec<(String, (usize, String))> = tally.into_iter().collect();
+        rows.sort_by(|a, b| b.1.0.cmp(&a.1.0).then_with(|| a.0.cmp(&b.0)));
+        println!("\n# 读到 {files} 份 · 有标准记录但建不出树 {gap} 份 · 其中拿不到卡点 {nos} 份");
+        println!("# 卡点处「死在哪一步」（份数 · 标签 · 一例）：");
+        for (k, (n, ex)) in rows {
+            println!("  {n:4} 份 · {k} · 例 {ex}");
         }
         return;
     }

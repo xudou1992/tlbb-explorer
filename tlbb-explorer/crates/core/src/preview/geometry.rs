@@ -465,6 +465,9 @@ fn read_node(raw: &[u8], at: usize) -> Option<Node> {
 /// 切出来的假记录——`bip01_l_finger0` 被读成 `1_l_finger0`，本机真撞到过）、
 /// 3~31 个可打印字符、NUL 结尾、剩余必须真填 0（浮点流里撞出一段可打印 ASCII
 /// 后面跟着的不会是 0）。返回不含 NUL 的名字字节。
+///
+/// 括号**不**在字符集里（实测有孩子槽躺着 `bone001(mirrored)`，见 79 补——但走法用的
+/// 是另一份判据 `tail_name_at`，这里放宽一个数都不会动，别照 79 补再抄一遍）。
 fn name_field(raw: &[u8], at: usize) -> Option<&[u8]> {
     let name_bytes = raw.get(at..at + NAME_FIELD)?;
     if at > 0 {
@@ -1008,7 +1011,7 @@ fn tail_try_entry_why(
     raw: &[u8],
     at: usize,
     vc: usize,
-) -> Result<(TailEntry, usize), &'static str> {
+) -> Result<(TailEntry, usize), (&'static str, usize, usize)> {
     let mut p = at;
     let own = tail_record_at(raw, p);
     if own.is_some() {
@@ -1023,30 +1026,30 @@ fn tail_try_entry_why(
             p += 64;
             continue;
         }
-        let n = tail_u32(raw, p).ok_or("block-chain-unreadable")?;
+        let n = tail_u32(raw, p).ok_or(("block-chain-unreadable", 0, 0))?;
         if tail_is_inf(raw, p, vc) {
             p += 4 + 8 * n as usize;
             continue;
         }
         break;
     }
-    let flag = tail_u32(raw, p).ok_or("flag-unreadable")?;
+    let flag = tail_u32(raw, p).ok_or(("flag-unreadable", 0, 0))?;
     let _ = flag; // 实测恒 1 / 根 -1；不是父索引，不解释
     p += 4;
-    let nm1 = tail_name_at(raw, p).ok_or("name1-unreadable")?;
-    let nm2 = tail_name_at(raw, p + 32).ok_or("name2-unreadable")?;
+    let nm1 = tail_name_at(raw, p).ok_or(("name1-unreadable", 0, 0))?;
+    let nm2 = tail_name_at(raw, p + 32).ok_or(("name2-unreadable", 0, 0))?;
     if nm1 != nm2 {
-        return Err("names-differ");
+        return Err(("names-differ", 0, 0));
     }
     if let Some((rn, _)) = own {
         if rn != nm1 {
-            return Err("own-record-name-differs");
+            return Err(("own-record-name-differs", 0, 0));
         }
     }
     p += 64;
-    let c = tail_u32(raw, p).ok_or("child-count-unreadable")? as usize;
+    let c = tail_u32(raw, p).ok_or(("child-count-unreadable", 0, 0))? as usize;
     if c > 4096 {
-        return Err("child-count-too-big");
+        return Err(("child-count-too-big", c, p));
     }
     p += 4;
     let mut children = Vec::with_capacity(c);
@@ -1055,7 +1058,7 @@ fn tail_try_entry_why(
             children.push((cn.to_string(), Some(cm)));
             p += NODE_RECORD;
         } else {
-            let cn = tail_name_at(raw, p).ok_or("child-name-unreadable")?;
+            let cn = tail_name_at(raw, p).ok_or(("child-name-unreadable", c, p))?;
             children.push((cn.to_string(), None));
             p += 32;
         }
@@ -1078,9 +1081,15 @@ fn tail_try_entry(raw: &[u8], at: usize, vc: usize) -> Option<(TailEntry, usize)
 /// 普查用：在 `at` 处按条目文法试一次，只回答「死在哪一步」的短标签
 /// （`ok` = 这一步能成条目）。与走法共用同一个判据函数，不改任何东西。
 pub fn tail_stuck_why(raw: &[u8], at: usize) -> &'static str {
+    tail_stuck_detail(raw, at).0
+}
+
+/// 同 [`tail_stuck_why`]，但把**当时读到的子节点数**与**死在哪个偏移**一起带出来
+/// （不是孩子表那两类失败时后两项为 0）。仍只读数：判据与走法一字不差。
+pub fn tail_stuck_detail(raw: &[u8], at: usize) -> (&'static str, usize, usize) {
     match tail_try_entry_why(raw, at, vertex_count(raw)) {
-        Ok(_) => "ok",
-        Err(r) => r,
+        Ok(_) => ("ok", 0, 0),
+        Err(f) => f,
     }
 }
 

@@ -26,7 +26,7 @@ use rusqlite::{Connection, OpenFlags};
 use tlbb_core::jpak::Pak;
 use tlbb_core::payload;
 use tlbb_core::preview::rest;
-use tlbb_core::preview::{bone_count, hierarchy_stuck, parse_ani, parse_hierarchy, parse_nodes, parse_nodes_variant, rest_poses, tail_stuck_why, pose};
+use tlbb_core::preview::{bone_count, hierarchy_stuck, parse_ani, parse_hierarchy, parse_nodes, parse_nodes_variant, rest_poses, tail_stuck_detail, pose};
 
 fn locate(con: &Connection, name: &str) -> Option<(u64, String)> {
     let mut stmt = con
@@ -1006,6 +1006,8 @@ fn main() {
         // 问它「死在哪一步」。只读数——主干一条判据都没改，建树行为不变。
         let paths = mesh_paths(&con, &batch, limit);
         let mut tally: BTreeMap<String, (usize, String)> = BTreeMap::new();
+        // 45 那格（条目全对、死在孩子表某槽）单独摊字节：死在哪个偏移、当时读到几个孩子、其后 8 个 u32。
+        let mut kid: Vec<String> = Vec::new();
         let (mut files, mut gap, mut nos) = (0usize, 0usize, 0usize);
         for p in &paths {
             let name = p.rsplit('/').next().unwrap_or("").to_string();
@@ -1015,22 +1017,43 @@ fn main() {
                 continue;
             }
             gap += 1;
-            let why = match hierarchy_stuck(&raw) {
+            let (label, ccount, dead) = match hierarchy_stuck(&raw) {
                 None => {
                     nos += 1;
-                    "no-stuck-point(0x110 读不出)"
+                    ("no-stuck-point(0x110 读不出)", 0usize, 0usize)
                 }
-                Some(sp) if sp.stopped >= raw.len() => "walked-to-eof(卡的是树闸门)",
+                Some(sp) if sp.stopped >= raw.len() => ("walked-to-eof(卡的是树闸门)", 0, 0),
                 Some(sp) => {
                     if sp.eaten == 0 {
-                        "entry-never-starts"
+                        ("entry-never-starts", 0, 0)
                     } else {
-                        tail_stuck_why(&raw, sp.stopped)
+                        tail_stuck_detail(&raw, sp.stopped)
                     }
                 }
             };
-            let e = tally.entry(why.to_string()).or_insert((0, name.clone()));
+            let e = tally.entry(label.to_string()).or_insert((0, name.clone()));
             e.0 += 1;
+            if label == "child-name-unreadable" && kid.len() < 12 {
+                let w = |i: usize| -> u32 {
+                    raw.get(dead + 4 * i..dead + 4 * i + 4)
+                        .and_then(|b| <[u8; 4]>::try_from(b).ok())
+                        .map(u32::from_le_bytes)
+                        .unwrap_or(0)
+                };
+                let words: Vec<String> = (0..8).map(|i| format!("{}", w(i))).collect();
+                let mut asc = String::new();
+                for k in 0..40 {
+                    match raw.get(dead + k) {
+                        Some(&b) if (0x20..0x7f).contains(&b) => asc.push(b as char),
+                        Some(_) => asc.push('.'),
+                        None => break,
+                    }
+                }
+                kid.push(format!(
+                    "  {name} · 声明孩子 {ccount} 个 · 死槽偏移 {dead}(0x{dead:x}) · 其后 8 个 u32 [{}] · ASCII「{asc}」",
+                    words.join(", ")
+                ));
+            }
         }
         let mut rows: Vec<(String, (usize, String))> = tally.into_iter().collect();
         rows.sort_by(|a, b| b.1.0.cmp(&a.1.0).then_with(|| a.0.cmp(&b.0)));
@@ -1038,6 +1061,10 @@ fn main() {
         println!("# 卡点处「死在哪一步」（份数 · 标签 · 一例）：");
         for (k, (n, ex)) in rows {
             println!("  {n:4} 份 · {k} · 例 {ex}");
+        }
+        println!("\n# 孩子表那格的死槽字节（前 {} 份 · 偏移是绝对位置）：", kid.len());
+        for r in &kid {
+            println!("{r}");
         }
         return;
     }

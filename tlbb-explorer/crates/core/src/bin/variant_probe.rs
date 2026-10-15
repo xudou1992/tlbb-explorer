@@ -187,9 +187,9 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus")
     {
-        eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr] 干名[,...]");
+        eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus --batch=路径片段 [--limit=N]");
         std::process::exit(2);
     }
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -736,6 +736,80 @@ fn main() {
         return;
     }
 
+
+    if mode == "localcensus" {
+        // 总表 #9（「变体 = 由标准世界值沿父链推出的局部变换」）当时只在 3 份文件 24 根骨上否的，
+        // 而今天已经三次栽在「小样本当通则」上。这里铺到全库：同一判据、同一口径，只是人口换成 7,996 份。
+        fn mul(a: &[f32; 16], b: &[f32; 16]) -> [f32; 16] {
+            let mut o = [0f32; 16];
+            for r in 0..4 {
+                for c in 0..4 {
+                    let mut s = 0f32;
+                    for k in 0..4 {
+                        s += a[r * 4 + k] * b[k * 4 + c];
+                    }
+                    o[r * 4 + c] = s;
+                }
+            }
+            o
+        }
+        let paths = mesh_paths(&con, &batch, limit);
+        let (mut files, mut cmpd, mut hit_tight, mut hit_loose, mut hit_1e2) =
+            (0usize, 0usize, 0usize, 0usize, 0usize);
+        let mut best: Option<f64> = None;
+        let mut best_at = String::new();
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            files += 1;
+            let var = parse_nodes_variant(&raw);
+            if var.is_empty() {
+                continue;
+            }
+            let h = match parse_hierarchy(&raw) {
+                Some(h) => h,
+                None => continue,
+            };
+            let stdn = parse_nodes(&raw);
+            let bind_of = |nm: &str| stdn.iter().find(|n| n.name == nm).map(|n| n.bind);
+            for v in &var {
+                let bi = match h.bones.iter().position(|b| b.name == v.name) {
+                    Some(i) => i,
+                    None => continue,
+                };
+                let pi = match h.bones[bi].parent {
+                    Some(i) => i,
+                    None => continue,
+                };
+                let (Some(wc), Some(wp)) = (bind_of(&v.name), bind_of(&h.bones[pi].name)) else { continue };
+                let (Some(w_c), Some(w_p)) = (pose::mat_inverse_affine(&wc), pose::mat_inverse_affine(&wp)) else { continue };
+                let l = mul(&w_c, &w_p);
+                let d = match diff(&v.bind, &l, &slots16()) {
+                    Some(d) => d,
+                    None => continue,
+                };
+                cmpd += 1;
+                if d <= 1e-4 {
+                    hit_tight += 1;
+                } else if d <= 1e-2 {
+                    hit_1e2 += 1;
+                } else if d <= 1e-1 {
+                    hit_loose += 1;
+                }
+                if best.map_or(true, |b| d < b) {
+                    best = Some(d);
+                    best_at = format!("{name} · {}", v.name);
+                }
+            }
+        }
+        println!(
+            "\n# 读到 {files} 份 · 可比的「变体 vs 父链推出的局部」{cmpd} 根\n\
+             # 命中：≤1e-4 {hit_tight} · ≤1e-2 {hit_1e2} · ≤1e-1 {hit_loose}\n\
+             # 最接近的一根：{}（{best_at}）",
+            best.map_or("无可比".to_string(), |d| format!("{d:.6}"))
+        );
+        return;
+    }
 
     if mode == "mirr" {
         // 最后一个没在全库验过的结构性预言：变体块若真是「这份网格的绑定矩阵」，

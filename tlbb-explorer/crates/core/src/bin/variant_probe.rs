@@ -940,6 +940,26 @@ fn main() {
     }
 
 
+    if mode == "roots" {
+        // 64 补那个嫌疑的最后一步：`tubalu` 那类走完条目却建不出树，是不是**多根并列**？
+        // `parse_hierarchy` 要求恰好单根，而 `parse_forest` 放开这一条 ⇒ 两份都调，再数根。
+        use tlbb_core::preview::{parse_forest, root_count};
+        for ld in &loaded {
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &ld.file) else { continue };
+            let n_root = root_count(&raw);
+            let forest = parse_forest(&raw).map(|h| h.bones.len());
+            println!(
+                "  {} · 标准 {} 条 · parse_hierarchy {} · parse_forest {} · root_count {:?}",
+                ld.file,
+                ld.std_nodes.len(),
+                if parse_hierarchy(&raw).is_some() { "成树" } else { "None" },
+                forest.map_or("None".to_string(), |n| format!("{n} 根节点")),
+                n_root
+            );
+        }
+        return;
+    }
+
     if mode == "chaingap" {
         // 57 补冒出来的口子：有些份**标准记录一大把，`parse_hierarchy` 却给不出树**
         // （b5/b7：46 条记录、chainLen=0）。骨架页与骨线都吃这条，之前只报过

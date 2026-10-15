@@ -1216,7 +1216,7 @@ pub fn tail_inf_audit(raw: &[u8], at: usize) -> (usize, usize, usize, usize, boo
 /// 268,228（文件尾那个 `[1, 0]`＝**零条挂点的空段**），中间 102,192 字节里躺着 **127 个真条目头**——
 /// 走法据此把「没读到的那段」当成挂点段吞了，普查还把卡点报成「走到 EOF」。
 /// 名字判据直接用 `tail_name_at`（与条目解析同一份，不另抄字符集）。
-fn tail_first_entry_head(raw: &[u8], from: usize) -> Option<usize> {
+pub fn tail_first_entry_head(raw: &[u8], from: usize) -> Option<usize> {
     let mut k = from;
     while k + 68 <= raw.len() {
         let f = tail_u32(raw, k)?;

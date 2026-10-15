@@ -26,7 +26,7 @@ use rusqlite::{Connection, OpenFlags};
 use tlbb_core::jpak::Pak;
 use tlbb_core::payload;
 use tlbb_core::preview::rest;
-use tlbb_core::preview::{bone_count, hierarchy_stuck, parse_ani, parse_hierarchy, parse_nodes, parse_nodes_variant, rest_poses, tail_inf_audit, tail_stuck_detail, tail_walk_steps, pose};
+use tlbb_core::preview::{bone_count, hierarchy_stuck, parse_ani, parse_hierarchy, parse_nodes, parse_nodes_variant, rest_poses, tail_inf_audit, tail_stuck_detail, tail_walk_steps, tail_first_entry_head, pose};
 
 fn locate(con: &Connection, name: &str) -> Option<(u64, String)> {
     let mut stmt = con
@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -997,6 +997,56 @@ fn main() {
                 n_root
             );
         }
+        return;
+    }
+
+    if mode == "gap16" {
+        // 114 补把 32 份的现场找回来之后要数的那个量：**卡点 → 下一个条目头**到底几个字节，
+        // 是不是 16 的整倍数、能不能由「这条骨有几个孩子 / 这份有几根骨」算出来。
+        // 下一个条目头用**主干那个** `tail_first_entry_head` 找（不在探针里另抄判据，98 补教训）。
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut rows: Vec<String> = Vec::new();
+        let mut mod16: BTreeMap<usize, usize> = BTreeMap::new();
+        let mut groups: BTreeMap<usize, usize> = BTreeMap::new();
+        let mut n = 0usize;
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            if parse_nodes(&raw).is_empty() || parse_hierarchy(&raw).is_some() {
+                continue;
+            }
+            let Some(sp) = hierarchy_stuck(&raw) else { continue };
+            let Some(h) = tail_first_entry_head(&raw, sp.stopped) else { continue };
+            if h <= sp.stopped {
+                continue;
+            }
+            let d = h - sp.stopped;
+            n += 1;
+            *mod16.entry(d % 16).or_insert(0) += 1;
+            *groups.entry(d / 16).or_insert(0) += 1;
+            rows.push(format!(
+                "  {name} · 卡点 {} → 条目头 {h} · 跨 {d} 字节（mod16 {}，{d}÷16 = {}）· 吃了 {} 条 / 声明 {} 根 / 记录 {} 条 / 大小 {}",
+                sp.stopped,
+                d % 16,
+                d / 16,
+                sp.eaten,
+                sp.declared,
+                parse_nodes(&raw).len(),
+                raw.len()
+            ));
+        }
+        println!("\n# gap16 · 有真卡点且卡点之后还找得到条目头的 {n} 份");
+        for r in rows {
+            println!("{r}");
+        }
+        println!(
+            "# D mod 16 分布：{}",
+            mod16.iter().map(|(m, c)| format!("{m}×{c}")).collect::<Vec<_>>().join("  ")
+        );
+        println!(
+            "# D÷16（组数）分布：{}",
+            groups.iter().map(|(g, c)| format!("{g}×{c}")).collect::<Vec<_>>().join("  ")
+        );
         return;
     }
 

@@ -757,6 +757,12 @@ fn main() {
         let mut best: Option<f64> = None;
         let mut best_at = String::new();
         let mut id_hits: Option<usize> = None;
+        // 55 补那条窄规则的**真实体量**：命中的那些骨，变体表覆盖多少顶点、
+        // 其中有多少是该份标准那套没覆盖到的（骨数不等于顶点数，决策要的是后者）。
+        let mut narrow_bones = 0usize;
+        let mut narrow_verts_new = 0usize;
+        let mut narrow_files = 0usize;
+        let mut narrow_seen: Vec<String> = Vec::new();
         for p in &paths {
             let name = p.rsplit('/').next().unwrap_or("").to_string();
             let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
@@ -766,6 +772,12 @@ fn main() {
                 continue;
             }
             let stdn = parse_nodes(&raw);
+            let mut std_cov: std::collections::HashSet<u32> = std::collections::HashSet::new();
+            for nd in &stdn {
+                if let Some(sk) = &nd.skin {
+                    std_cov.extend(sk.vertices.iter().copied());
+                }
+            }
             for v in &var {
                 let Some(s) = stdn.iter().find(|x| x.name == v.name) else { continue };
                 cmpd += 1;
@@ -800,6 +812,20 @@ fn main() {
                             }
                             // 54 补留的尾巴：命中到底是哪些文件哪些骨，逐条点名（命中是个位数到几十，明细不会淹）
                             if which == 0 {
+                                // 窄规则体量：标准那条没表、变体这条有表 ⇒ 表能白捡多少顶点
+                                if s.skin.is_none() {
+                                    if let Some(sk) = &v.skin {
+                                        narrow_bones += 1;
+                                        for &vv in &sk.vertices {
+                                            if std_cov.insert(vv) {
+                                                narrow_verts_new += 1;
+                                            }
+                                        }
+                                        if !narrow_seen.contains(&name) {
+                                            narrow_seen.push(name.clone());
+                                        }
+                                    }
+                                }
                                 println!("  命中 {name} · {} 差 {d:.3e} · 标准记录基向量长度 {}{}{}",
                                     v.name,
                                     format!("{:.4}", (s.bind[0] * s.bind[0] + s.bind[1] * s.bind[1] + s.bind[2] * s.bind[2]).sqrt()),
@@ -831,9 +857,11 @@ fn main() {
              # **剔除标准记录是单位阵之后**，≤1e-6 命中：本身 {h_self} · 转置 {h_t} · 逆 {h_i} · 逆的转置 {h_it}\n\
              # 单位阵命中（无信息，四种候选天然重合）：{} 个\n\
              # 「本身」这条按量级分桶（含单位阵）：≤1e-6 {b_1e6} · ≤1e-4 {b_1e4} · ≤1e-2 {b_1e2} · ≤1e-1 {b_1e1}\n\
-             # 「本身」最接近的一根：{}（{best_at}）",
+             # 「本身」最接近的一根：{}（{best_at}）\n\
+             # 窄规则体量（命中里「标准无表 + 变体带表」那一档）：骨 {narrow_bones} · 文件 {} · 白捡顶点 {narrow_verts_new}",
             id_hits.unwrap_or(0),
-            best.map_or("无可比".to_string(), |d| format!("{d:.3e}"))
+            best.map_or("无可比".to_string(), |d| format!("{d:.3e}")),
+            narrow_seen.len()
         );
         return;
     }

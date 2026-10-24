@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "nodegap" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "nodegap" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -1818,6 +1818,33 @@ fn main() {
         println!("
 # nodegap · 树能建的 {files} 份里，树比记录多的 {gap_files} 份（合计少 {gap_bones} 根骨）");
         for (_, r) in worst.iter().take(8) { println!("  {r}"); }
+        return;
+    }
+
+    if mode == "anicheck" {
+        // 独立旁证：已解出树的骨名有多少能在同目录 `.ani` 的轨道名单里找到（只读）。
+        // 覆盖率低的份要人工看，别默认树是对的。
+        let paths = mesh_paths(&con, &batch, limit);
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            let Some(h) = parse_hierarchy(&raw) else { continue };
+            let mut tracks: std::collections::HashSet<String> = std::collections::HashSet::new();
+            for an in anim_names_for(&con, p) {
+                if let Some(a) = bytes_of(&con, &root, &mut paks, &an).and_then(|b| parse_ani(&b)) {
+                    for t in a.tracks { tracks.insert(t.bone.to_ascii_lowercase()); }
+                }
+            }
+            if tracks.is_empty() {
+                println!("{name} · 骨 {} · 同目录没有 .ani", h.bones.len());
+                continue;
+            }
+            let hit = h.bones.iter().filter(|b| tracks.contains(&b.name.to_ascii_lowercase())).count();
+            println!(
+                "{name} · 骨 {} · .ani 轨道 {} · 命中 {}（{:.1}%）",
+                h.bones.len(), tracks.len(), hit, 100.0 * hit as f64 / h.bones.len().max(1) as f64
+            );
+        }
         return;
     }
 

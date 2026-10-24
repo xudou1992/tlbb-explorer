@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -1670,6 +1670,42 @@ fn main() {
         println!("
 # unknownkid · 有对不上孩子名的份 {n}");
         for r in rows { println!("{r}"); }
+        return;
+    }
+
+    if mode == "ske" {
+        // 只读：把同目录的 .ske（JBCF 容器）用仓库现成的 `jbcf::parse` 解出来，列出字符串表。
+        let paths = mesh_paths(&con, &batch, limit);
+        for p in &paths {
+            let dir = p.rsplit_once('/').map(|(d, _)| d.to_string()).unwrap_or_default();
+            let stem = p.rsplit('/').next().unwrap_or("").trim_end_matches(".mesh").to_string();
+            let ske = con
+                .prepare("SELECT coalesce(path,'') FROM resources WHERE ext='.ske' AND path LIKE ?1 LIMIT 1")
+                .ok()
+                .and_then(|mut st| st.query_row([format!("%{dir}/%")], |r| r.get::<_, String>(0)).ok());
+            let Some(ske_path) = ske else {
+                println!("{stem} · 同目录没有 .ske（{dir}）");
+                continue;
+            };
+            let name = ske_path.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else {
+                println!("{stem} · 取不到 {}", name);
+                continue;
+            };
+            match tlbb_core::jbcf::parse(&raw) {
+                Ok(j) => {
+                    println!(
+                        "
+{} · 大小 {} · body_len {} · root_size {} · strtab_at {} · flag {} · 字符串 {} 条",
+                        name, raw.len(), j.body_len, j.root_size, j.strtab_at, j.flag, j.strings.len()
+                    );
+                    for s in j.strings.iter().take(120) {
+                        println!("   {}", s.text);
+                    }
+                }
+                Err(e) => println!("{name} · jbcf 解不出：{e:?}"),
+            }
+        }
         return;
     }
 

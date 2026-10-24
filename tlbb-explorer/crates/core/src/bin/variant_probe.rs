@@ -2274,7 +2274,7 @@ fn main() {
     if mode == "purec" {
         // 打真 .pu 的参数记录流：(cls, fld) 与载荷首词；给「属性表 B 连号」做连接。
         let mut names: Vec<String> = Vec::new();
-        if let Ok(mut st) = con.prepare("SELECT path FROM resources WHERE ext='.pu' AND stored > 0 LIMIT 400") {
+        if let Ok(mut st) = con.prepare("SELECT path FROM resources WHERE ext='.pu' AND stored > 0 LIMIT 20000") {
             if let Ok(rows) = st.query_map([], |r| r.get::<_, String>(0)) {
                 for r in rows.flatten() {
                     names.push(r.rsplit('/').next().unwrap_or("").to_string());

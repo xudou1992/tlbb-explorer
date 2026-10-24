@@ -1394,6 +1394,75 @@ fn tail_socket_label(raw: &[u8], at: usize) -> Option<(String, usize)> {
 
 /// 从 `start`（origin 记录）走到 EOF：前奏记录 + 条目 × N + 挂点段。
 /// 任何一段对不上、最后不恰好落在文件尾，都算失败。
+/// **客户端顺序**的尾部走法（137 补从 `sub_14073A190` 读出来的，逐行对过）。
+///
+/// 与 `tail_walk` 的区别只有「一根骨内部」怎么吃：
+/// ```
+/// （可选）哨兵 u32 = -1
+/// 每根骨：name32 · 第二份名字 32（客户端 seek 跳过）· 孩子数 4 · 孩子名 32×c
+///        · 矩阵 64 · 影响数 4 · id 4×n · 权重 4×n · 收尾 92（客户端原样读，不解释）
+/// ```
+/// 收尾 92 = 64 + 12 + 12 + 4，就是我们以前当「神秘附属块」的那段（120~123 补）。
+/// 只在**现有走法失败之后**才试这条路；矩阵不塞进 `own_bind`（它的语义没验），只用来过形状检查。
+fn tail_walk_client(
+    raw: &[u8],
+    start: usize,
+    declared: usize,
+) -> Option<(Vec<TailEntry>, Vec<SocketEntry>)> {
+    let mut p = start;
+    if tail_u32(raw, p) == Some(u32::MAX) {
+        p += 4;
+    }
+    let mut entries = Vec::with_capacity(declared);
+    for _ in 0..declared {
+        let name = tail_name_at(raw, p)?.to_string();
+        p += 64;
+        let c = tail_u32(raw, p)? as usize;
+        p += 4;
+        if c > 4096 {
+            return None;
+        }
+        let mut kids = Vec::with_capacity(c);
+        for _ in 0..c {
+            kids.push((tail_name_at(raw, p)?.to_string(), None));
+            p += 32;
+        }
+        for k in 0..16 {
+            let v = tail_f32(raw, p + 4 * k)?;
+            if !v.is_finite() || v.abs() > 1e7 {
+                return None;
+            }
+        }
+        p += 64;
+        let n = tail_u32(raw, p)? as usize;
+        p += 4;
+        if n > 200_000 {
+            return None;
+        }
+        p = p.checked_add(8 * n)?;
+        p = p.checked_add(92)?;
+        if p > raw.len() {
+            return None;
+        }
+        entries.push(TailEntry { name, own_bind: None, children: kids });
+    }
+    // 骨段之后：要么恰好到 EOF，要么是一小截零字（`bird_lf001` 实测最后 4 字节 = 0），
+    // 要么是挂点段且正好收到 EOF。别的都不认。
+    let mut zeros = 0usize;
+    while zeros < 8 && raw.get(p + zeros) == Some(&0) {
+        zeros += 1;
+    }
+    p += zeros;
+    let sockets = if p == raw.len() {
+        Vec::new()
+    } else if let Some((s, np)) = tail_try_sockets(raw, p, vertex_count(raw), None) {
+        if np == raw.len() { s } else { return None }
+    } else {
+        return None;
+    };
+    Some((entries, sockets))
+}
+
 fn tail_walk(raw: &[u8], start: usize, vc: usize) -> Option<(Vec<TailEntry>, Vec<SocketEntry>)> {
     tail_walk_trace(raw, start, vc).0
 }
@@ -1650,6 +1719,18 @@ fn hierarchy_impl(raw: &[u8], allow_forest: bool) -> Result<SkeletonHierarchy, &
             }
         }
     }
+    // 原走法一个都没走通时，按**客户端顺序**再试同一批起点（137 补）。
+    // 只在失败后启用 ⇒ 已解得的份一个字节都不受影响。
+    if walked.is_none() {
+        for start in tail_starts(raw).0.into_iter().chain(tail_starts(raw).1) {
+            if let Some(got) = tail_walk_client(raw, start, declared) {
+                if got.0.len() == declared {
+                    walked = Some(got);
+                    break;
+                }
+            }
+        }
+    }
     let (entries, sockets) = match walked {
         Some(g) => g,
         None => {
@@ -1683,9 +1764,9 @@ fn tree_from_entries(
             let Some(&j) = index.get(cn.as_str()) else {
                 return Err("孩子名单里有对不上条目的名字");
             };
-            if parent[j].is_some() {
-                return Err("有孩子被列了两次");
-            }
+            // 客户端读法（137 补，`sub_14073A190` 的 LABEL_48）：它按骨顺序把「孩子名 → 父索引」
+            // 直接写进运行时记录，**不查重** ⇒ 同一个孩子被两根骨各列一次时，**后列的那次覆盖**。
+            // 我们过去在这里直接判「有孩子被列了两次」，比客户端更严；现按客户端行为取后列者。
             parent[j] = Some(i);
         }
     }
@@ -1823,10 +1904,15 @@ mod tests {
         assert_eq!(got.bones.len(), 2);
         assert!(got.bones.iter().all(|b| b.parent.is_none()), "两根都该是根");
 
+        // 同一个孩子被两根骨各列一次：客户端读法（137 补，`sub_14073A190`）是把父索引直接写进记录、
+        // **不查重**⇒ 后列者覆盖。这里跟着客户端走：后列者为父，不再整体拒绝。
         let dup = [entry("r", &["k"]), entry("r2", &["k"]), entry("k", &[])];
+        let got = tree_from_entries(&dup, vec![], true).expect("后列者胜，应能建树");
+        let k = got.bones.iter().position(|b| b.name == "k").unwrap();
         assert_eq!(
-            tree_from_entries(&dup, vec![], true).err(),
-            Some("有孩子被列了两次")
+            got.bones[k].parent.map(|p| got.bones[p].name.as_str()),
+            Some("r2"),
+            "后列的那根骨（r2）应当成为父"
         );
         let bad = [entry("a", &["nope"])];
         assert_eq!(

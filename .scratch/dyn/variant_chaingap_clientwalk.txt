@@ -1,0 +1,6 @@
+
+# 读到 7996 份 · 标准记录 >0 的 2776 份 · **有标准记录但链建不出树的 149 份**（这两者都为零的 5201 份）
+# 那 149 份头部声明骨数合计 2471
+# 例子：w1351_model_sl_nan_zhong_x02_2.mesh(标准 1 条) · w1351_model_sl_nan_zhong_x02.mesh(标准 1 条) · w1351_model_sl_nan_zhong_x01.mesh(标准 1 条) · w1351_model_link_h01.mesh(标准 1 条) · w1351_model_cloud_h002.mesh(标准 1 条) · w1351_model_sl_cleave_h01.mesh(标准 1 条) · w1351_new_npc_dingchunqiu.mesh(标准 105 条) · w1351_model_hdb_dilie_lf001.mesh(标准 1 条) · w1351_pets_xiaohualing_b3.mesh(标准 99 条) · w1351_model_pmf_s012.mesh(标准 1 条) · w1351_model_boss_cj_z005.mesh(标准 1 条) · w1351_model_bird_lf001.mesh(标准 99 条)
+# 对账：有记录且链解得出 2627 份 · **没记录却链解得出 19 份**（合计链解得出 2646）
+# 后者的例子：w1351_model_wq_em_h001.mesh(链 1 根) · w1351_model_ui_kuijia_z01.mesh(链 1 根) · w1351_model_wq_xy_nan_h01.mesh(链 1 根) · w1351_model_sl_wuqi_h01.mesh(链 1 根) · w1351_model_wq_em_h01.mesh(链 1 根) · w1351_model_knife_h01.mesh(链 1 根)

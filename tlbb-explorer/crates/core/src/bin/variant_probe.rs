@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -1481,6 +1481,81 @@ fn main() {
                 let prev = if i > 0 { tr[i - 1] } else { "(第一条)" };
                 println!("   #{i:<4} {:<18} 紧跟在 {prev} 后", tr[i]);
             }
+        }
+        return;
+    }
+
+    if mode == "anisync" {
+        // 128 补留的那件：**轨道序到底是不是父链序**。只读数、不改判据：
+        // 拿「已建得出树」的份（主干给的 DFS 序 = `parse_hierarchy` 的 `bones` 顺序，文档写死是深度优先＝文件序）
+        // 与同名词干的 `.ani` 轨道序逐位比。若一致率高，轨道序才能当父子旁证；低就死心走运行时。
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut tally: BTreeMap<String, usize> = BTreeMap::new();
+        let mut rows: Vec<String> = Vec::new();
+        let mut cmp_n = 0usize;
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            let Some(h) = parse_hierarchy(&raw) else { continue };
+            if h.bones.len() < 6 {
+                continue;
+            }
+            let stem = name.trim_end_matches(".mesh");
+            let mut anis = anim_names_for(&con, p)
+                .into_iter()
+                .filter(|a| a.rsplit('/').next().unwrap_or("").trim_end_matches(".ani").starts_with(stem))
+                .collect::<Vec<_>>();
+            anis.sort();
+            let Some(aniname) = anis.into_iter().next() else { continue };
+            let Some(araw) = bytes_of(&con, &root, &mut paks, &aniname) else { continue };
+            let Some(an) = parse_ani(&araw) else { continue };
+            if an.tracks.len() != h.bones.len() {
+                *tally.entry(format!("轨道数 {} != 骨数 {}", an.tracks.len(), h.bones.len())).or_insert(0) += 1;
+                continue;
+            }
+            let m = an.tracks.len();
+            let same = (0..m).filter(|i| an.tracks[*i].bone == h.bones[*i].name).count();
+            let setsame = {
+                let mut a: Vec<String> = an.tracks.iter().map(|t| t.bone.clone()).collect();
+                let mut c: Vec<String> = h.bones.iter().map(|n| n.name.clone()).collect();
+                a.sort();
+                c.sort();
+                a == c
+            };
+            let bucket = if same == m {
+                "逐位全同"
+            } else if same * 10 >= m * 9 {
+                "逐位一致 >=90%"
+            } else if same * 10 >= m * 5 {
+                "逐位一致 50~90%"
+            } else if same * 2 >= m {
+                "逐位一致 25~50%"
+            } else {
+                "逐位一致 <25%"
+            };
+            let key = format!("{bucket}{}", if setsame { " · 名字集合相同" } else { " · 名字集合也不同" });
+            *tally.entry(key.clone()).or_insert(0) += 1;
+            cmp_n += 1;
+            if rows.len() < 12 && same < m {
+                rows.push(format!(
+                    "  {} · 骨/轨道 {} 条 · 逐位同 {} · 首个不同在 #{}：DFS={:?} 轨道={:?}",
+                    name,
+                    m,
+                    same,
+                    (0..m).find(|i| an.tracks[*i].bone != h.bones[*i].name).unwrap_or(0),
+                    h.bones[(0..m).find(|i| an.tracks[*i].bone != h.bones[*i].name).unwrap_or(0)].name,
+                    an.tracks[(0..m).find(|i| an.tracks[*i].bone != h.bones[*i].name).unwrap_or(0)].bone
+                ));
+            }
+        }
+        println!("
+# anisync · 可比（骨数==轨道数）{} 份 · 按逐位一致率分桶", cmp_n);
+        for (k, v) in &tally {
+            println!("  {v} 份 · {k}");
+        }
+        println!("# 不一致的例子（前 12 份）");
+        for r in rows {
+            println!("{r}");
         }
         return;
     }

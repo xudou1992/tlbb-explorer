@@ -1,0 +1,17 @@
+
+# anisync · 可比（骨数==轨道数）560 份 · 按逐位一致率分桶
+  1 份 · 轨道数 69 != 骨数 67
+  560 份 · 逐位一致 <25% · 名字集合也不同
+# 不一致的例子（前 12 份）
+  w1351_scsq_jianxia_001.mesh · 骨/轨道 13 条 · 逐位同 0 · 首个不同在 #0：DFS="000" 轨道="bone009"
+  w1351_model_hehua_h001_pbr.mesh · 骨/轨道 90 条 · 逐位同 0 · 首个不同在 #0：DFS="000" 轨道="bone002"
+  w1351_cj_diao.mesh · 骨/轨道 104 条 · 逐位同 1 · 首个不同在 #0：DFS="000" 轨道="bip001"
+  w1351_model_ymg02_jn_long_h002.mesh · 骨/轨道 211 条 · 逐位同 0 · 首个不同在 #0：DFS="000" 轨道="bone001"
+  w1351_model_tengji_h001.mesh · 骨/轨道 125 条 · 逐位同 0 · 首个不同在 #0：DFS="000" 轨道="bone01"
+  w1351_model_ymg02_jn_long_lg_h002.mesh · 骨/轨道 211 条 · 逐位同 0 · 首个不同在 #0：DFS="000" 轨道="bone001"
+  w1351_npc_biaoche4.mesh · 骨/轨道 138 条 · 逐位同 0 · 首个不同在 #0：DFS="000" 轨道="bip001"
+  w1351_model_spider_line_h002.mesh · 骨/轨道 21 条 · 逐位同 0 · 首个不同在 #0：DFS="000" 轨道="bone082"
+  w1351_model_spider_dsxj_h01.mesh · 骨/轨道 10 条 · 逐位同 0 · 首个不同在 #0：DFS="000" 轨道="bone001"
+  w1351_zuoqi_jinjiashi.mesh · 骨/轨道 93 条 · 逐位同 0 · 首个不同在 #0：DFS="000" 轨道="bip001"
+  w1351_model_spider_h03.mesh · 骨/轨道 10 条 · 逐位同 0 · 首个不同在 #0：DFS="000" 轨道="bone002"
+  w1351_model_spider_h04.mesh · 骨/轨道 10 条 · 逐位同 0 · 首个不同在 #0：DFS="000" 轨道="bone002"

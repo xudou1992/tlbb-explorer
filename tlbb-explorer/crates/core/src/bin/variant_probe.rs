@@ -1448,7 +1448,16 @@ fn main() {
         for p in &paths {
             let name = p.rsplit('/').next().unwrap_or("").to_string();
             // 动作与网格同目录（`<名>/ani/*.ani`），用现成的 `anim_names_for` 取，别自己拼
-            let Some(aniname) = anim_names_for(&con, p).into_iter().next() else { continue };
+            // 只取**同名词干**的动作：上一版取同目录第一个，结果 b7.mesh 配上了 b5_behit01.ani（串到别的变体）。
+            let stem = name.trim_end_matches(".mesh");
+            let mut anis = anim_names_for(&con, p)
+                .into_iter()
+                .filter(|a| {
+                    a.rsplit('/').next().unwrap_or("").trim_end_matches(".ani").starts_with(stem)
+                })
+                .collect::<Vec<_>>();
+            anis.sort();
+            let Some(aniname) = anis.into_iter().next() else { continue };
             let Some(araw) = bytes_of(&con, &root, &mut paks, &aniname) else { continue };
             let Some(an) = parse_ani(&araw) else { continue };
             let name = format!("{name} <- {}", aniname.rsplit('/').next().unwrap_or(""));

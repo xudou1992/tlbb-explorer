@@ -1,0 +1,20 @@
+
+w1351_pets_xiaohualing_b0.mesh <- w1351_pets_xiaohualing_b0_behit01.ani · 声明骨 151 · 帧 26 · 轨道 151 条 · 其中 boneNNN 型 102
+   #35   bone051            紧跟在 bip001_head 后
+   #37   bone049            紧跟在  后
+   #38   bone047            紧跟在 bone049 后
+   #39   bone046            紧跟在 bone047 后
+   #41   bone048            紧跟在  后
+   #44   bone055            紧跟在  后
+   #45   bone056            紧跟在 bone055 后
+   #46   bone057            紧跟在 bone056 后
+
+w1351_model_dingchunqiu_hand01.mesh <- w1351_model_dingchunqiu_hand01_skill02.ani · 声明骨 172 · 帧 61 · 轨道 172 条 · 其中 boneNNN 型 162
+   #1    bone145            紧跟在 008 后
+   #2    bone146            紧跟在 bone145 后
+   #3    bone147            紧跟在 bone146 后
+   #4    bone148            紧跟在 bone147 后
+   #5    bone149            紧跟在 bone148 后
+   #6    bone150            紧跟在 bone149 后
+   #7    bone151            紧跟在 bone150 后
+   #8    bone152            紧跟在 bone151 后

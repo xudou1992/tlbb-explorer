@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "nodegap" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "nodegap" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -1889,6 +1889,54 @@ fn main() {
         println!("
 # ske4gap · 0x110=0 且有记录的 {n} 份 · 同目录有 .ske 的 {has_ske} · .ske 里骨名样 >0 的 {with_bones}");
         for r in rows { println!("{r}"); }
+        return;
+    }
+
+    if mode == "virtroot" {
+        // ⑤ 的预演（只读）：对森林能建、单根口径拒的份，合成虚拟根后验证不变量。
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut n = 0usize;
+        let mut ok = 0usize;
+        let mut bad: Vec<String> = Vec::new();
+        let mut sample: Vec<String> = Vec::new();
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            if parse_nodes(&raw).is_empty() || parse_hierarchy(&raw).is_some() { continue }
+            let Ok(f) = tlbb_core::preview::hierarchy_forest(&raw) else { continue };
+            if f.bones.iter().filter(|b| b.parent.is_none()).count() < 2 { continue }
+            n += 1;
+            match tlbb_core::preview::hierarchy_with_virtual_root(&raw) {
+                Ok(v) => {
+                    let roots = v.bones.iter().filter(|b| b.parent.is_none()).count();
+                    let acyclic = {
+                        let mut good = true;
+                        for i in 0..v.bones.len() {
+                            let mut seen = std::collections::HashSet::new();
+                            let mut cur = Some(i);
+                            while let Some(c) = cur {
+                                if !seen.insert(c) { good = false; break }
+                                cur = v.bones[c].parent;
+                            }
+                            if !good { break }
+                        }
+                        good
+                    };
+                    let invariant = roots == 1 && v.bones.len() == f.bones.len() + 1 && acyclic;
+                    if invariant { ok += 1 } else {
+                        bad.push(format!("{name} · roots {roots} · 骨 {}→{} · 无环 {acyclic}", f.bones.len(), v.bones.len()));
+                    }
+                    if sample.len() < 6 {
+                        sample.push(format!("  {name} · 骨 {} → {}（+1 虚拟根 {}）", f.bones.len(), v.bones.len(), v.bones[0].name));
+                    }
+                }
+                Err(e) => bad.push(format!("{name} · 合成失败 {e}")),
+            }
+        }
+        println!("
+# virtroot · 多根件 {n} 份 · 不变量全过 {ok} · 不合格 {}", bad.len());
+        for r in sample { println!("{r}"); }
+        for r in bad.iter().take(8) { println!("  ✗ {r}"); }
         return;
     }
 

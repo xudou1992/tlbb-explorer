@@ -1719,6 +1719,54 @@ pub fn hierarchy_try(raw: &[u8]) -> Result<SkeletonHierarchy, &'static str> {
     hierarchy_impl(raw, false)
 }
 
+/// **可选**：把森林口径的结果合成单根（给导出/播放用；默认不接线，等⑤拍板）。
+///
+/// 做法：在最前面插入一个虚拟根 `__root__`（绑定矩阵取单位阵），把原来的每个根挂到它下面；
+/// 其余骨与父子关系原样保留。⇒ `W' = B·A⁻¹·W` 里这些根的父是单位阵，**重定基公式不用改**。
+///
+/// 已知限制（145/158 补实测）：多根件里多数**没有任何绑定矩阵**（`bind=None`），
+/// 虚拟根只解决「单根闸门」，不会凭空造出骨位；调用方必须如实标注位置缺失。
+pub fn hierarchy_with_virtual_root(raw: &[u8]) -> Result<SkeletonHierarchy, &'static str> {
+    let h = hierarchy_forest(raw)?;
+    Ok(wrap_with_virtual_root(h))
+}
+
+/// 纯变换：给森林套一个虚拟根（单测用；与 `hierarchy_with_virtual_root` 同一份实现）。
+fn wrap_with_virtual_root(h: SkeletonHierarchy) -> SkeletonHierarchy {
+    let roots: Vec<usize> = h
+        .bones
+        .iter()
+        .enumerate()
+        .filter(|(_, b)| b.parent.is_none())
+        .map(|(i, _)| i)
+        .collect();
+    if roots.len() == 1 {
+        return h;
+    }
+    let mut id = [0f32; 16];
+    id[0] = 1.0;
+    id[5] = 1.0;
+    id[10] = 1.0;
+    id[15] = 1.0;
+    let mut bones = Vec::with_capacity(h.bones.len() + 1);
+    bones.push(BoneNode {
+        name: "__root__".to_string(),
+        parent: None,
+        bind: Some(id),
+        children: roots.iter().map(|i| i + 1).collect(),
+    });
+    for (i, b) in h.bones.into_iter().enumerate() {
+        let parent = match b.parent {
+            Some(dad) => Some(dad + 1),
+            None => Some(0),
+        };
+        let children = b.children.iter().map(|c| c + 1).collect();
+        bones.push(BoneNode { name: b.name, parent, bind: b.bind, children });
+        let _ = i;
+    }
+    SkeletonHierarchy { bones, sockets: h.sockets }
+}
+
 /// [`hierarchy_try`] 的**允许森林**版本：尾部判据一条不少（走通 EOF、条目数 == 声明数、
 /// 不重名、孩子名对得上、无环、没有孩子被列两次），只放开「恰好一个根」这一条。
 ///
@@ -1921,6 +1969,37 @@ mod tests {
         assert_eq!(got.0[0].children[0].0, "bone1");
         assert_eq!(got.0[1].name, "bone1");
         assert_eq!(got.1.len(), 0, "没有挂点段");
+    }
+
+    /// 虚拟根变换：两棵并列的树 → 单根、骨数 +1、原根挂到虚拟根下、无环、绑定为单位阵。
+    #[test]
+    fn virtual_root_wraps_a_two_root_forest() {
+        let h = SkeletonHierarchy {
+            bones: vec![
+                BoneNode { name: "a".into(), parent: None, bind: None, children: vec![2] },
+                BoneNode { name: "b".into(), parent: None, bind: None, children: vec![] },
+                BoneNode { name: "c".into(), parent: Some(0), bind: None, children: vec![] },
+            ],
+            sockets: vec![],
+        };
+        let v = wrap_with_virtual_root(h);
+        assert_eq!(v.bones.len(), 4);
+        assert_eq!(v.bones.iter().filter(|b| b.parent.is_none()).count(), 1);
+        assert_eq!(v.bones[0].name, "__root__");
+        assert_eq!(v.bones[0].children, vec![1, 2], "原来的两个根都挂到虚拟根下");
+        assert_eq!(v.bones[1].parent, Some(0));
+        assert_eq!(v.bones[2].parent, Some(0));
+        assert_eq!(v.bones[3].parent, Some(1), "c 仍挂 a");
+        let m = v.bones[0].bind.expect("虚拟根该有单位阵绑定");
+        assert!((m[0] - 1.0).abs() < 1e-6 && (m[15] - 1.0).abs() < 1e-6);
+        for i in 0..v.bones.len() {
+            let mut seen = std::collections::HashSet::new();
+            let mut cur = Some(i);
+            while let Some(c) = cur {
+                assert!(seen.insert(c), "父链不该有环");
+                cur = v.bones[c].parent;
+            }
+        }
     }
 
     /// 挂点段的**4 字节头**（客户端 `sub_14073A940` 的读法，144 补）：

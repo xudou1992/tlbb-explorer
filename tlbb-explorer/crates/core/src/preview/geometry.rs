@@ -847,7 +847,10 @@ fn tail_name_at(raw: &[u8], at: usize) -> Option<&str> {
     }
     let nb = &raw[at..at + 32];
     let end = nb.iter().position(|&c| c == 0)?;
-    if end < 3 || end > 31 {
+    // 最小长度原来卡到 3：118 补实测 `shuangying`/`zhizhuwang`/`gb_long` 这 6 份的孩子名是
+    // **两个字符**（`l4`/`l3`/`l2`，死槽往后 96 字节实测「l4…l3…l2…」），被这条判成「读不出名字」。
+    // 与本日字符集那三条同族（括号 +38、`/` +1、变长 GBK +11）。放宽到 2，其余口径一字未动。
+    if end < 2 || end > 31 {
         return None;
     }
     if !nb[..end]

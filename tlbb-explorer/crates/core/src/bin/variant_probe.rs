@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "forestroots" | "sanity" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "nodegap" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "nodegap" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -1786,6 +1786,38 @@ fn main() {
         for (k, c) in v.iter().take(10) { println!("  {c:5} 份 · 根 {k}"); }
         println!("# 无绑定的例子");
         for r in rows { println!("{r}"); }
+        return;
+    }
+
+    if mode == "nodegap" {
+        // 骨架页的表格行来自 `parse_nodes`（96B 记录），父链来自 `parse_forest`。
+        // 若树里的骨比记录多，表格就会少显示骨。这一档量这个差（只读）。
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut files = 0usize;
+        let mut gap_files = 0usize;
+        let mut gap_bones = 0usize;
+        let mut rows: Vec<String> = Vec::new();
+        let mut worst: Vec<(usize, String)> = Vec::new();
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            let Ok(h) = tlbb_core::preview::hierarchy_forest(&raw) else { continue };
+            files += 1;
+            let nodes = parse_nodes(&raw).len();
+            if h.bones.len() > nodes {
+                gap_files += 1;
+                let d = h.bones.len() - nodes;
+                gap_bones += d;
+                worst.push((d, format!("{name} · 树 {} 根 / 记录 {} 条 · 少 {}", h.bones.len(), nodes, d)));
+                if rows.len() < 6 {
+                    rows.push(format!("  {name} · 树 {} / 记录 {}", h.bones.len(), nodes));
+                }
+            }
+        }
+        worst.sort_by(|a, b| b.0.cmp(&a.0));
+        println!("
+# nodegap · 树能建的 {files} 份里，树比记录多的 {gap_files} 份（合计少 {gap_bones} 根骨）");
+        for (_, r) in worst.iter().take(8) { println!("  {r}"); }
         return;
     }
 

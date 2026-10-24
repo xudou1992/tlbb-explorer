@@ -1,10 +1,10 @@
 {
   "不是单根": {
-    "n": 22,
-    "declared_sum": 1631,
-    "size_sum": 9286104,
-    "with_origin": 1,
-    "with_root_flag": 22,
+    "n": 28,
+    "declared_sum": 1802,
+    "size_sum": 9405632,
+    "with_origin": 7,
+    "with_root_flag": 28,
     "mesh_parse_fail": 0,
     "samples": [
       "D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_ani_model_qixiayingri_jian_c01/w1351_ani_model_qixiayingri_jian_c01.mesh (声明 15)",
@@ -33,34 +33,16 @@
       "D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_model_sl_nan_zhong_x02/w1351_model_sl_nan_zhong_x02_2.mesh\t55\t975528",
       "D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_model_stone_lf005/w1351_model_stone_lf005.mesh\t72\t85868",
       "D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_model_ymg01_stone01/w1351_model_ymg01_stone01.mesh\t38\t275868",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_pets_xiaohualing_b0/w1351_pets_xiaohualing_b0.mesh\t151\t228996",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_pets_xiaohualing_b0/w1351_pets_xiaohualing_b1.mesh\t151\t227500",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_pets_xiaohualing_b0/w1351_pets_xiaohualing_b3.mesh\t151\t284148",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_pets_xiongmao_b0/w1351_pets_xiongmao_b0_yifu_001.mesh\t44\t38852"
-    ]
-  },
-  "孩子名单里有对不上条目的名字": {
-    "n": 6,
-    "declared_sum": 171,
-    "size_sum": 119528,
-    "with_origin": 6,
-    "with_root_flag": 6,
-    "mesh_parse_fail": 0,
-    "samples": [
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_tengjiayongshi/w1351_monster_tengjiayongshi_lian_011.mesh (声明 29)",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_tengjiayongshi/w1351_monster_tengjiayongshi_shoutao_001.mesh (声明 29)",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_tengjiayongshi/w1351_monster_tengjiayongshi_yifu_001.mesh (声明 29)",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_touliezhe/w1351_monster_touliezhe_lian_001.mesh (声明 28)",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_touliezhe/w1351_monster_touliezhe_shoutao_001.mesh (声明 28)",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_touliezhe/w1351_monster_touliezhe_yifu_001.mesh (声明 28)"
-    ],
-    "rows": [
       "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_tengjiayongshi/w1351_monster_tengjiayongshi_lian_011.mesh\t29\t14184",
       "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_tengjiayongshi/w1351_monster_tengjiayongshi_shoutao_001.mesh\t29\t10100",
       "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_tengjiayongshi/w1351_monster_tengjiayongshi_yifu_001.mesh\t29\t37696",
       "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_touliezhe/w1351_monster_touliezhe_lian_001.mesh\t28\t15524",
       "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_touliezhe/w1351_monster_touliezhe_shoutao_001.mesh\t28\t11356",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_touliezhe/w1351_monster_touliezhe_yifu_001.mesh\t28\t30668"
+      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_touliezhe/w1351_monster_touliezhe_yifu_001.mesh\t28\t30668",
+      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_pets_xiaohualing_b0/w1351_pets_xiaohualing_b0.mesh\t151\t228996",
+      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_pets_xiaohualing_b0/w1351_pets_xiaohualing_b1.mesh\t151\t227500",
+      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_pets_xiaohualing_b0/w1351_pets_xiaohualing_b3.mesh\t151\t284148",
+      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_pets_xiongmao_b0/w1351_pets_xiongmao_b0_yifu_001.mesh\t44\t38852"
     ]
   },
   "尾部走不通（没有任何起点能读到文件末尾）": {

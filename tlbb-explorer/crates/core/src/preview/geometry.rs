@@ -1763,8 +1763,9 @@ fn tree_from_entries(
     let mut parent = vec![None::<usize>; entries.len()];
     for (i, e) in entries.iter().enumerate() {
         for (cn, _) in &e.children {
+            // 客户端（`sub_14073A190` LABEL_58）：孩子名查不到就跳过，不整体失败。
             let Some(&j) = index.get(cn.as_str()) else {
-                return Err("孩子名单里有对不上条目的名字");
+                continue;
             };
             // 客户端读法（137 补，`sub_14073A190` 的 LABEL_48）：它按骨顺序把「孩子名 → 父索引」
             // 直接写进运行时记录，**不查重** ⇒ 同一个孩子被两根骨各列一次时，**后列的那次覆盖**。
@@ -1795,9 +1796,11 @@ fn tree_from_entries(
     for e in entries {
         for (cn, cb) in &e.children {
             if let Some(m) = cb {
-                let j = index[cn.as_str()];
-                if binds[j].is_none() {
-                    binds[j] = Some(*m);
+                // 上一步可能跳过了查不到的孩子名 ⇒ 这里必须同样允许缺失，否则越界 panic。
+                if let Some(&j) = index.get(cn.as_str()) {
+                    if binds[j].is_none() {
+                        binds[j] = Some(*m);
+                    }
                 }
             }
         }
@@ -1812,7 +1815,7 @@ fn tree_from_entries(
             children: e
                 .children
                 .iter()
-                .map(|(cn, _)| index[cn.as_str()])
+                .filter_map(|(cn, _)| index.get(cn.as_str()).copied())
                 .collect(),
         })
         .collect();
@@ -1916,11 +1919,12 @@ mod tests {
             Some("r2"),
             "后列的那根骨（r2）应当成为父"
         );
+        // 客户端（`sub_14073A190` LABEL_58）：孩子名查不到就跳过 ⇒ 这种条目仍然建得出一棵树，
+        // 只是那条悬空的父子关系不进树。
         let bad = [entry("a", &["nope"])];
-        assert_eq!(
-            tree_from_entries(&bad, vec![], true).err(),
-            Some("孩子名单里有对不上条目的名字")
-        );
+        let got = tree_from_entries(&bad, vec![], true).expect("悬空孩子名应被跳过");
+        assert_eq!(got.bones.len(), 1);
+        assert!(got.bones[0].children.is_empty(), "悬空孩子不该进 children");
         let loop2 = [entry("a", &["b"]), entry("b", &["a"])];
         assert_eq!(
             tree_from_entries(&loop2, vec![], true).err(),

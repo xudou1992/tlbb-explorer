@@ -1736,9 +1736,14 @@ fn main() {
             if rows.len() < 22 {
                 let mut rs = roots.clone();
                 rs.truncate(4);
+                let with_bind = h.bones.iter().filter(|b| b.bind.is_some()).count();
                 rows.push(format!(
-                    "  {name} · 骨 {} · 根 {} 个（{}）· 其中无绑定的根 {bad}· 例 {}",
-                    h.bones.len(), roots.len(), rs.join(","), roots.get(0).unwrap_or(&"")
+                    "  {name} · 骨 {} · 有绑定 {}（{:.0}%）· 根 {} 个（{}）· 无绑定的根 {bad}",
+                    h.bones.len(),
+                    with_bind,
+                    100.0 * with_bind as f64 / h.bones.len().max(1) as f64,
+                    roots.len(),
+                    rs.join(",")
                 ));
             }
         }

@@ -661,6 +661,28 @@ pub async fn animation_view(gid: i64, file: String) -> Result<AnimReply, String>
 mod tests {
     use super::*;
 
+    /// 今天（10-16）才解出来的那一族：`heiyuan` 的尾部按客户端读法走通（挂点段 4 字节头 +20 之一）。
+    /// 这条锁**界面数据面**：骨架页必须给出 chain=true、声明 29 根、骨表不少，且父链真的连上了。
+    #[test]
+    fn 新解出的件在骨架页有父链() {
+        let (root, db) = roots();
+        if !root.join("data.pak").is_file() || !db.is_file() {
+            eprintln!("跳过：本机没有客户端或资源清单");
+            return;
+        }
+        let con = open_db(&db).expect("清单");
+        let gid: i64 = con
+            .query_row("SELECT id FROM agroups WHERE stem = 'w1351_monster_heiyuan'", [], |r| r.get(0))
+            .expect("这只怪应在清单里");
+        let rep = skeleton_view_run(gid, "").expect("骨架回包");
+        assert_eq!(rep.declared, 29, "头部声明的骨骼数");
+        assert!(rep.chain, "父链应解得出（10-16 前这一份是解不出的）");
+        assert!(rep.nodes.len() >= 29, "骨表 {} 行少于声明 29 根", rep.nodes.len());
+        let 有父 = rep.nodes.iter().filter(|n| n.parent.is_some()).count();
+        assert!(有父 >= 1, "至少该有一根骨挂在父骨下");
+        assert!(rep.nodes.iter().any(|n| n.root), "该有根");
+    }
+
     /// 真数据：那只怪的骨架要出得来，且数字与自己解的一致。
     #[test]
     fn 骨架页回包带节点声明数与动作表() {

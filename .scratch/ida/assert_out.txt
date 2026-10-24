@@ -1,0 +1,30 @@
+0x1406438f5 sar     r8, 1
+0x1406438f8 mov     rcx, r8
+0x1406438fb shr     rcx, 3Fh
+0x1406438ff add     r8, rcx
+0x140643902 jz      loc_1406446A1
+0x140643908 mov     rcx, [rbx+180h]
+0x14064390f mov     rax, r10
+0x140643912 mov     [rsp+148h+var_18], rbp
+0x14064391a mov     rbp, [rbx+178h]
+0x140643921 sub     rcx, rbp
+0x140643924 imul    rcx
+0x140643927 sar     rdx, 1
+0x14064392a mov     rax, rdx
+0x14064392d shr     rax, 3Fh
+0x140643931 add     rdx, rax
+0x140643934 jz      loc_140644699
+0x14064393a mov     [rsp+148h+var_28], r12
+0x140643942 mov     r12, [rsi+440h]
+0x140643949 test    r12, r12
+0x14064394c jz      loc_140644691
+0x140643952 mov     r12, [r12+30h]
+0x140643957 test    r12, r12
+0x14064395a jz      loc_140644691
+0x140643960 mov     rax, [rsi+450h]
+0x140643967 mov     [rsp+148h+var_30], r13
+0x14064396f mov     r13, [rsi+448h]
+0x140643976 sub     rax, r13
+0x140643979 sar     rax, 2
+0x14064397d test    eax, eax
+0x14064397f jg      short loc_14064399E

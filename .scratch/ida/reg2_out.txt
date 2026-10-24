@@ -1,0 +1,422 @@
+
+########## 0x140900280 sub_140900280 ##########
+// Hidden C++ exception states: #wind=17
+_QWORD *__fastcall sub_140900280(_QWORD *a1, int *a2)
+{
+  int *v2; // r15
+  _QWORD *v3; // r12
+  _QWORD *v4; // r13
+  unsigned int v5; // ebx
+  __int64 v6; // rdi
+  __int64 v7; // r9
+  __int64 v8; // r9
+  __int64 v9; // rcx
+  __int64 v10; // rbx
+  __int64 v11; // rbx
+  __int64 v12; // r8
+  _QWORD *v13; // rdx
+  __int64 v14; // r8
+  char *v15; // rdi
+  char *v16; // rsi
+  int v17; // esi
+  unsigned int v18; // ebx
+  __int64 v19; // rdi
+  __int64 v20; // rbx
+  __int64 v21; // rdi
+  int v22; // esi
+  int v23; // esi
+  __int64 v24; // r15
+  unsigned __int64 v25; // rax
+  __int64 v26; // rcx
+  __int64 v27; // rdx
+  __int64 v28; // rax
+  _QWORD *v29; // rax
+  _QWORD *v30; // rax
+  _QWORD *v31; // rsi
+  __int64 v32; // r14
+  __int64 v33; // rsi
+  __int64 v34; // r9
+  unsigned __int64 v35; // rax
+  __int64 v36; // r8
+  __int64 v37; // rcx
+  __int64 v38; // rdx
+  __int64 v39; // rax
+  _QWORD *v40; // rax
+  _QWORD *v41; // rax
+  _QWORD *v42; // rsi
+  __int64 v43; // rsi
+  unsigned int v44; // esi
+  __int64 v45; // r14
+  __int64 v46; // r9
+  int **v47; // rdx
+  _QWORD *v48; // rdx
+  unsigned __int64 v49; // rax
+  __int64 v50; // rcx
+  __int64 v51; // rdx
+  __int64 v52; // rax
+  void **v53; // rax
+  _QWORD *v54; // r15
+  _QWORD *v55; // rax
+  __int64 v56; // rsi
+  unsigned int v57; // esi
+  __int64 v58; // r14
+  __int64 v59; // r9
+  __int64 v60; // rsi
+  __int64 v61; // rax
+  __int64 v62; // rax
+  int **v63; // r12
+  int **j; // r14
+  int *v65; // rax
+  _QWORD *v66; // rdx
+  __int64 *v67; // r8
+  __int64 *v68; // rax
+  __int64 *v69; // rcx
+  __int64 v70; // r8
+  __int64 *v71; // rax
+  __int64 *v72; // rcx
+  _QWORD *v73; // rdx
+  bool v74; // zf
+  __int64 v75; // rax
+  __int64 *v76; // r12
+  __int64 *i; // r14
+  __int64 v78; // rax
+  _QWORD *v79; // rdx
+  __int64 v80; // r8
+  __int64 *v81; // rdx
+  __int64 *v82; // rax
+  char *v83; // rsi
+  unsigned __int64 v84; // rax
+  __int64 v85; // rcx
+  __int64 v86; // rdx
+  __int64 v87; // rax
+  _QWORD *v88; // rax
+  _QWORD *v89; // rax
+  _QWORD *v90; // rsi
+  __int64 v91; // rsi
+  unsigned int v92; // esi
+  __int64 v93; // r14
+  __int64 v94; // r15
+  __int64 v95; // rax
+  int *v97; // [rsp+30h] [rbp-D0h] BYREF
+  _QWORD *v98; // [rsp+38h] [rbp-C8h] BYREF
+  unsigned int *v99; // [rsp+40h] [rbp-C0h]
+  _QWORD *v100; // [rsp+48h] [rbp-B8h] BYREF
+  __int64 v101; // [rsp+50h] [rbp-B0h] BYREF
+  __int64 v102; // [rsp+58h] [rbp-A8h] BYREF
+  void **v103; // [rsp+60h] [rbp-A0h] BYREF
+  void *Block; // [rsp+68h] [rbp-98h]
+  _BYTE v105[128]; // [rsp+70h] [rbp-90h] BYREF
+  unsigned int v106; // [rsp+F0h] [rbp-10h]
+  int v107; // [rsp+F4h] [rbp-Ch]
+
+  v2 = a2;
+  v99 = (unsigned int *)a2;
+  v3 = a1;
+  v100 = a1;
+  sub_1408FD270(&v101, a2, "name", &qword_1410AB578);
+  sub_1408FD270(&v102, v2, "path", &qword_1410AB578);
+  v4 = nullptr;
+  v5 = *v2;
+  v6 = *((_QWORD *)v2 + 1);
+  if ( *(_QWORD *)sub_140908680(v2, &v97, "type", v7) != (v6 & 0xFFFFFFFFFFFFLL) + 32LL * v5
+    && (*(_WORD *)(sub_140908800(v2, "type") + 14) & 0x400) != 0 )
+  {
+    v10 = sub_140908800(v2, "type");
+    if ( (*(_WORD *)(v10 + 14) & 0x1000) == 0 )
+      v10 = *(_QWORD *)(v10 + 8) & 0xFFFFFFFFFFFFLL;
+    if ( !dword_1410ABB38 )
+      sub_140135BC0(v9);
+    v11 = sub_1402E04F0(v10);
+    v98 = (_QWORD *)v11;
+    v12 = *(unsigned int *)(v11 + 12);
+    v13 = (_QWORD *)(v11 + 32);
+    if ( (*(_BYTE *)(v11 + 9) & 0x20) != 0 )
+      v13 = (_QWORD *)*v13;
+    v103 = &String<128>::`vftable';
+    v105[0] = 0;
+    Block = v105;
+    v106 = 0;
+    v107 = 128;
+    sub_1403B1D80(&v103, v13, v12);
+    v14 = v106;
+    v15 = (char *)Block;
+    v16 = (char *)Block + v106;
+    if ( Block != v16 )
+    {
+      do
+      {
+        *v15 = tolower(*v15);
+        ++v15;
+      }
+      while ( v15 != v16 );
+      v14 = v106;
+      v15 = (char *)Block;
+    }
+    sub_1401341D0(&v97, v15, v14);
+    if ( v97 != (int *)qword_1410AD938 )
+    {
+      if ( v97 == (int *)qword_1410AD950 )
+      {
+        sub_1402E05B0(v97);
+        v103 = &String<128>::`vftable';
+        if ( Block != v105 && Block )
+          j__free_base(Block);
+        v17 = 1;
+LABEL_32:
+        sub_1402E05B0(v11);
+        goto LABEL_36;
+      }
+      if ( v97 == (int *)qword_1410AD918 )
+      {
+        sub_1402E05B0(v97);
+        v103 = &String<128>::`vftable';
+        if ( Block != v105 && Block )
+          j__free_base(Block);
+        v17 = 2;
+        goto LABEL_32;
+      }
+      if ( v97 == (int *)qword_1410AD968 )
+      {
+        sub_1402E05B0(v97);
+        v103 = &String<128>::`vftable';
+        if ( Block != v105 && Block )
+          j__free_base(Block);
+        v17 = 3;
+        goto LABEL_32;
+      }
+    }
+    sub_1402E05B0(v97);
+    v103 = &String<128>::`vftable';
+    if ( Block != v105 && Block )
+      j__free_base(Block);
+    v17 = 0;
+    goto LABEL_32;
+  }
+  v18 = *v2;
+  v19 = *((_QWORD *)v2 + 1);
+  if ( *(_QWORD *)sub_140908680(v2, &v98, "type", v8) == (v19 & 0xFFFFFFFFFFFFLL) + 32LL * v18 )
+    v17 = 0;
+  else
+    v17 = *(_DWORD *)sub_14090
+
+########## 0x140c82350 sub_140C82350 ##########
+void __fastcall sub_140C82350()
+{
+  sub_1402E05B0(qword_1410AD918);
+}
+
+
+########## 0x1408fe060 sub_1408FE060 ##########
+// Hidden C++ exception states: #wind=16
+_QWORD *__fastcall sub_1408FE060(_QWORD *a1, unsigned int *a2, float a3)
+{
+  unsigned int *v3; // r15
+  unsigned __int64 v5; // rax
+  __int64 v6; // r8
+  __int64 v7; // r9
+  __int64 v8; // rax
+  _QWORD *v9; // rax
+  __int64 v10; // r12
+  char *v11; // rax
+  __int64 v12; // rbx
+  int v13; // esi
+  __int64 v14; // rdi
+  __int64 v15; // r9
+  __int64 v16; // r9
+  __int64 v17; // rdi
+  unsigned int v18; // ebx
+  __int64 v19; // r9
+  __int64 v20; // rcx
+  __int64 v21; // rbx
+  __int64 v22; // rbx
+  __int64 v23; // r8
+  _QWORD *v24; // rdx
+  __int64 v25; // r8
+  char *v26; // rdi
+  char *v27; // rsi
+  int v28; // eax
+  __int64 v29; // r9
+  __int64 v30; // rdi
+  unsigned int v31; // ebx
+  int v32; // ecx
+  __int64 v33; // rdi
+  unsigned int v34; // ebx
+  __int64 v35; // r9
+  __int64 v36; // r14
+  unsigned __int64 v37; // rax
+  __int64 v38; // r9
+  __int64 v39; // rcx
+  __int64 v40; // rdx
+  __int64 v41; // rax
+  char **v42; // rax
+  char *v43; // rsi
+  char *v44; // rax
+  int v45; // ecx
+  unsigned int v46; // ebx
+  __int64 v47; // rdi
+  unsigned int v48; // ebx
+  __int64 v49; // rdi
+  __int64 v50; // r9
+  int v51; // ecx
+  double v52; // xmm0_8
+  double v53; // xmm0_8
+  double v54; // xmm0_8
+  double v55; // xmm0_8
+  __int64 v56; // rdi
+  unsigned int v57; // ebx
+  __int64 v58; // r9
+  __int64 v59; // rbx
+  double v60; // xmm0_8
+  double v61; // xmm0_8
+  double v62; // xmm0_8
+  double v63; // xmm0_8
+  __int64 v64; // rdi
+  unsigned int v65; // ebx
+  __int64 v66; // r9
+  unsigned int *v67; // r13
+  unsigned __int64 v68; // r14
+  unsigned __int64 v69; // r12
+  _QWORD *v70; // rdi
+  __int64 **v71; // r15
+  _QWORD *v72; // rsi
+  __int64 v73; // rbx
+  __int64 v74; // rdi
+  __int64 *v75; // r9
+  __int64 *v76; // rdx
+  __int64 *v77; // r8
+  __int64 v78; // rax
+  __int64 v79; // rax
+  __int64 *v80; // rdx
+  __int64 *v81; // rax
+  __int64 *v82; // rbx
+  __int64 *v83; // rax
+  __int64 v84; // rdx
+  __int64 i; // rcx
+  __int64 *v86; // rax
+  __int64 **v87; // rcx
+  __int64 *j; // rcx
+  __int64 *k; // rcx
+  _QWORD *v90; // rbx
+  __int64 *v91; // rdx
+  __int64 v92; // rdi
+  unsigned int v93; // ebx
+  unsigned int *v94; // r13
+  unsigned __int64 v95; // r14
+  unsigned __int64 m; // r15
+  __int64 v97; // rax
+  __int64 v98; // rdi
+  __int64 v99; // rdx
+  __int64 v100; // rcx
+  __int64 v101; // r8
+  char v102; // r10
+  unsigned __int64 v103; // r9
+  __int64 v104; // rax
+  unsigned __int64 v105; // rax
+  __int64 v106; // rbx
+  _QWORD *v107; // rax
+  __int64 v108; // rdx
+  __int64 v109; // rdi
+  unsigned int v110; // ebx
+  __int64 v111; // r9
+  __int64 v112; // r9
+  unsigned int v113; // edi
+  unsigned int *v114; // rsi
+  unsigned __int64 v115; // r14
+  unsigned __int64 n; // rbx
+  __int64 v117; // rax
+  __int64 v118; // rdi
+  unsigned int v119; // ebx
+  __int64 v120; // r9
+  unsigned int *v121; // r13
+  unsigned __int64 v122; // r14
+  unsigned __int64 v123; // r15
+  __int64 *v124; // rsi
+  __int64 v125; // rax
+  __int64 v126; // rdi
+  __int64 *v127; // rdx
+  __int64 v128; // r8
+  unsigned __int64 v129; // rax
+  __int64 v130; // rcx
+  __int64 v131; // rax
+  unsigned __int64 v132; // rdx
+  __int64 v133; // rbx
+  __int64 *v134; // rax
+  __int64 v135; // rcx
+  unsigned __int64 v136; // r14
+  _QWORD *v137; // r13
+  unsigned __int64 v138; // r15
+  __int64 v139; // rsi
+  __int64 v140; // rcx
+  unsigned __int64 v141; // rdi
+  __int64 v142; // rdx
+  unsigned int v143; // r8d
+  __int64 v144; // rbx
+  unsigned __int64 v145; // rbx
+  unsigned int v146; // edx
+  __int64 v147; // r8
+  __int64 v148; // rsi
+  __int64 *v149; // rcx
+  __int64 *v150; // rax
+  __int64 v151; // rcx
+  __int64 v152; // rax
+  __int64 v153; // rdx
+  unsigned int *v154; // rsi
+  __int64 v155; // rdi
+  unsigned int v156; // ebx
+  __int64 v157; // r9
+  __int128 *v158; // r12
+  const char *v159; // rax
+  unsigned int ii; // ecx
+  __int128 *v161; // r15
+  unsigned __int64 v162; // r14
+  unsigned __int64 v163; // rdi
+  _QWORD *v164; // r13
+  _QWORD *v165; // r12
+  __int64 v166; // rax
+  __int64 v167; // rbx
+  __int64 *v168; // rcx
+  __int64 *v169; // rdx
+  __int64 *v170; // r8
+  unsigned __int64 v171; // rax
+  __int64 *v172; // r8
+  __int64 *v173; // rdx
+  __int64 v174; // rax
+  __int64 v175; // rdi
+  unsigned int v176; // ebx
+  __int64 v177; // r9
+  const char *v178; // rax
+  unsigned int jj; // ecx
+  __int128 *v180; // rdx
+  _QWORD *v181; // r15
+  __int64 v182; // rax
+  char **v183; // r14
+  char **kk; // rsi
+  char *v185; // rbx
+  _QWORD *v186; // rdx
+  __int64 *v187; // rcx
+  __int64 *v188; // rax
+  __int64 v189; // rax
+  __int64 v190; // rdi
+  unsigned int v191; // ebx
+  const char *v192; // rax
+  unsigned int mm; // ecx
+  __int64 v194; // rax
+  char **v195; // rsi
+  char **nn; // rdi
+  char *v197; // rax
+  _QWORD *v198; // rdx
+  __int64 v199; // rax
+  __int64 v200; // rax
+  __int64 v201; // rax
+  _QWORD *v202; // rbx
+  _QWORD *v203; // rbx
+  char *v205; // [rsp+30h] [rbp-D0h] BYREF
+  __int64 v206; // [rsp+38h] [rbp-C8h]
+  _QWORD *v2
+
+########## 0x140c822f0 sub_140C822F0 ##########
+void __fastcall sub_140C822F0()
+{
+  sub_1402E05B0(qword_1410AD920);
+}
+

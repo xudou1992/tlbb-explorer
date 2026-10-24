@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "signmatch" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "signmatch" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "signmatch" | "purec" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "signmatch" | "purec" | "nodegap" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "signmatch" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "signmatch" | "purec" | "nodegap" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -2267,6 +2267,39 @@ fn main() {
         for si in 0..8usize {
             let (sx, sy, sz) = (si & 1 != 0, si & 2 != 0, si & 4 != 0);
             println!("  S=({},{},{}) 共轭 {} · 左乘 {} · 右乘 {}", sx, sy, sz, tally[si*3], tally[si*3+1], tally[si*3+2]);
+        }
+        return;
+    }
+
+    if mode == "purec" {
+        // 打真 .pu 的参数记录流：(cls, fld) 与载荷首词；给「属性表 B 连号」做连接。
+        let mut names: Vec<String> = Vec::new();
+        if let Ok(mut st) = con.prepare("SELECT path FROM resources WHERE ext='.pu' AND stored > 0 LIMIT 400") {
+            if let Ok(rows) = st.query_map([], |r| r.get::<_, String>(0)) {
+                for r in rows.flatten() {
+                    names.push(r.rsplit('/').next().unwrap_or("").to_string());
+                }
+            }
+        }
+        let mut seen: std::collections::BTreeMap<(u16, u16), (usize, usize)> = Default::default();
+        let mut files = 0usize;
+        let mut complete = 0usize;
+        for n in &names {
+            let Some(raw) = bytes_of(&con, &root, &mut paks, n) else { continue };
+            let Some(ef) = tlbb_core::preview::parse_pu(&raw) else { continue };
+            files += 1;
+            if ef.param_walk_complete { complete += 1 }
+            for rec in &ef.param_records {
+                let e = seen.entry((rec.cls, rec.fld)).or_insert((0, 0));
+                e.0 += 1;
+                if let Some(w) = rec.words.first() { e.1 = *w as usize; }
+            }
+        }
+        println!("
+# purec · 解出 {files} 份 .pu（走完整 {complete}）· 不同 (cls,fld) {}", seen.len());
+        println!("# cls	fld	次数	载荷首词");
+        for ((c, f), (n2, w)) in &seen {
+            println!("{c}	{f}	{n2}	{w}");
         }
         return;
     }

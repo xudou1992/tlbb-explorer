@@ -26,7 +26,7 @@ use rusqlite::{Connection, OpenFlags};
 use tlbb_core::jpak::Pak;
 use tlbb_core::payload;
 use tlbb_core::preview::rest;
-use tlbb_core::preview::{bone_count, hierarchy_stuck, parse_ani, parse_hierarchy, parse_nodes, parse_nodes_variant, rest_poses, tail_inf_audit, tail_stuck_detail, tail_walk_steps, tail_is_u92, tail_first_entry_head, pose};
+use tlbb_core::preview::{bone_count, tail_entries, hierarchy_stuck, parse_ani, parse_hierarchy, parse_nodes, parse_nodes_variant, rest_poses, tail_inf_audit, tail_stuck_detail, tail_walk_steps, tail_is_u92, tail_first_entry_head, pose};
 
 fn locate(con: &Connection, name: &str) -> Option<(u64, String)> {
     let mut stmt = con
@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -1334,6 +1334,87 @@ fn main() {
         }
         if hits.is_empty() {
             println!("  0 份 · 上面六种算法一份都对不上 ⇒ 长度不由孩子数决定，别再找跳过分支");
+        }
+        return;
+    }
+
+    if mode == "dupkid" {
+        // 那 4 份「有孩子被列了两次」到底是**包里真列了两次**，还是**我们自己重读了一遍**。
+        // 用的出口是 `tail_entries`（只吐条目与孩子名单、不做树判定）+ 主干那条「条目数 == 声明骨数」的等式，
+        // 所以这里不改任何判据。要看的三件事：重名出现在**相邻**还是隔几个、孩子名单长度、
+        // 这份是不是 `parse_hierarchy` 已经能建（能建就说明重复发生在别处）。
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut hits = 0usize;
+        let mut adj = 0usize;
+        let mut far = 0usize;
+        let mut rows: Vec<String> = Vec::new();
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            let Some(es) = tail_entries(&raw) else { continue };
+            // 主干那条判的是**一个孩子在两个父骨下都出现**（两个爹 = 树不合法），不是同一份名单里重名。
+            let mut par: std::collections::HashMap<&str, Vec<&str>> = std::collections::HashMap::new();
+            for (parent, kids) in &es {
+                for k in kids {
+                    par.entry(k.as_str()).or_default().push(parent.as_str());
+                }
+            }
+            let multi: Vec<(&str, Vec<&str>)> = par
+                .iter()
+                .filter(|(_, v)| v.len() > 1)
+                .map(|(k, v)| (*k, v.clone()))
+                .collect();
+            if !multi.is_empty() && rows.len() < 20 {
+                hits += multi.len();
+                for (k, ps) in multi.iter().take(4) {
+                    rows.push(format!(
+                        "  {name} · 孩子 {k} 挂在 {} 个父骨下：{}",
+                        ps.len(),
+                        ps.join(" / ")
+                    ));
+                }
+            }
+            for (parent, kids) in &es {
+                if kids.len() < 2 {
+                    continue;
+                }
+                let mut seen: std::collections::HashSet<&str> = std::collections::HashSet::new();
+                let mut dup: Vec<(usize, usize, &str)> = Vec::new();
+                let mut last: std::collections::HashMap<&str, usize> = std::collections::HashMap::new();
+                for (i, k) in kids.iter().enumerate() {
+                    if let Some(j) = last.insert(k.as_str(), i) {
+                        dup.push((j, i, k.as_str()));
+                    }
+                    seen.insert(k.as_str());
+                }
+                if dup.is_empty() {
+                    continue;
+                }
+                hits += 1;
+                let near = dup.iter().all(|(j, i, _)| i - j == 1);
+                if near {
+                    adj += 1;
+                } else {
+                    far += 1;
+                }
+                if rows.len() < 20 {
+                    let d0 = dup[0];
+                    rows.push(format!(
+                        "  {name} · 父 {parent} · 名单 {} 个/不重复 {} 个 · 首对重复 {} 在 [{},{}]{}",
+                        kids.len(),
+                        seen.len(),
+                        d0.2,
+                        d0.0,
+                        d0.1,
+                        if near { " · **相邻**（像同一条读两遍）" } else { " · 隔开（像真列两次）" }
+                    ));
+                }
+            }
+        }
+        println!("
+# dupkid · 条目与孩子名单里出现重名的父骨条目 {hits} 处（相邻 {adj} · 隔开 {far}）");
+        for r in rows {
+            println!("{r}");
         }
         return;
     }

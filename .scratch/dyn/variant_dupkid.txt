@@ -1,0 +1,12 @@
+
+# dupkid · 条目与孩子名单里出现重名的父骨条目 10 处（相邻 0 · 隔开 0）
+  w1351_new_npc_dingchunqiu.mesh · 孩子 bone93 挂在 2 个父骨下：bip001_pelvis / bone92
+  w1351_pets_xiaohualing_b3.mesh · 孩子 bone105_b0 挂在 2 个父骨下：bip001_spine1 / bone104_b0
+  w1351_pets_xiaohualing_b3.mesh · 孩子 bone107_b0 挂在 2 个父骨下：bip001_spine1 / bone106_b0
+  w1351_pets_xiaohualing_b3.mesh · 孩子 bone103_b0 挂在 2 个父骨下：bip001_head / bone091_b0
+  w1351_pets_xiaohualing_b1.mesh · 孩子 bone107_b0 挂在 2 个父骨下：bip001_spine1 / bone106_b0
+  w1351_pets_xiaohualing_b1.mesh · 孩子 bone103_b0 挂在 2 个父骨下：bip001_head / bone091_b0
+  w1351_pets_xiaohualing_b1.mesh · 孩子 bone105_b0 挂在 2 个父骨下：bip001_spine1 / bone104_b0
+  w1351_pets_xiaohualing_b0.mesh · 孩子 bone103_b0 挂在 2 个父骨下：bip001_head / bone091_b0
+  w1351_pets_xiaohualing_b0.mesh · 孩子 bone105_b0 挂在 2 个父骨下：bip001_spine1 / bone104_b0
+  w1351_pets_xiaohualing_b0.mesh · 孩子 bone107_b0 挂在 2 个父骨下：bip001_spine1 / bone106_b0

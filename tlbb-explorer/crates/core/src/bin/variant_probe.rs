@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "signmatch" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "signmatch" | "nodegap" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "signmatch" | "nodegap" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -2212,6 +2212,62 @@ fn main() {
         println!("
 # localbind · 可算的 {files} 份 · 变体==S_parent·S⁻¹ {m1} · ==S⁻¹·S_parent {m2} · 不同 {diff} · 跳过 {skipped}");
         for r in rows { println!("{r}"); }
+        return;
+    }
+
+    if mode == "signmatch" {
+        // 变体矩阵 ?= 某个符号对角矩阵对 inverse(96B) 的共轭/左乘/右乘。
+        use tlbb_core::preview::pose::mat_inverse_affine;
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut tally = [0usize; 24]; // [S 索引][0=共轭 1=左乘 2=右乘]
+        let mut pairs = 0usize;
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            let var = parse_nodes_variant(&raw);
+            if var.is_empty() { continue }
+            let std_nodes = parse_nodes(&raw);
+            if std_nodes.is_empty() { continue }
+            let mut sm: std::collections::HashMap<&str, [f32; 16]> = std::collections::HashMap::new();
+            for n in &std_nodes { sm.insert(n.name.as_str(), n.bind); }
+            let mut vm: std::collections::HashMap<&str, [f32; 16]> = std::collections::HashMap::new();
+            for n in &var { vm.insert(n.name.as_str(), n.bind); }
+            for (nm, b) in &sm {
+                let Some(v) = vm.get(nm) else { continue };
+                let Some(m) = mat_inverse_affine(b) else { continue };
+                pairs += 1;
+                for si in 0..8usize {
+                    let sgn = [(si & 1 != 0, si & 2 != 0, si & 4 != 0)];
+                    let (sx, sy, sz) = sgn[0];
+                    let mut s = [0f32; 16];
+                    s[0] = if sx { -1.0 } else { 1.0 };
+                    s[5] = if sy { -1.0 } else { 1.0 };
+                    s[10] = if sz { -1.0 } else { 1.0 };
+                    s[15] = 1.0;
+                    let mul = |a: &[f32; 16], b: &[f32; 16]| -> [f32; 16] {
+                        let mut r = [0f32; 16];
+                        for i in 0..4 { for j in 0..4 {
+                            let mut t = 0f32;
+                            for k in 0..4 { t += a[i * 4 + k] * b[k * 4 + j]; }
+                            r[i * 4 + j] = t;
+                        }}
+                        r
+                    };
+                    let c = mul(&mul(&s, &m), &s);
+                    let l = mul(&s, &m);
+                    let r = mul(&m, &s);
+                    if c.iter().zip(v.iter()).all(|(a, b2)| (a - b2).abs() < 1e-4) { tally[si * 3] += 1 }
+                    if l.iter().zip(v.iter()).all(|(a, b2)| (a - b2).abs() < 1e-4) { tally[si * 3 + 1] += 1 }
+                    if r.iter().zip(v.iter()).all(|(a, b2)| (a - b2).abs() < 1e-4) { tally[si * 3 + 2] += 1 }
+                }
+            }
+        }
+        println!("
+# signmatch · 配对 {pairs} 个");
+        for si in 0..8usize {
+            let (sx, sy, sz) = (si & 1 != 0, si & 2 != 0, si & 4 != 0);
+            println!("  S=({},{},{}) 共轭 {} · 左乘 {} · 右乘 {}", sx, sy, sz, tally[si*3], tally[si*3+1], tally[si*3+2]);
+        }
         return;
     }
 

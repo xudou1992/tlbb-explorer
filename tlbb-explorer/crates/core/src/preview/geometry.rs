@@ -1256,6 +1256,10 @@ fn tail_try_sockets(
         if let Some(got) = tail_sockets_at(raw, p) {
             return hit(got, p, tr.as_deref_mut());
         }
+        // 4 字节头那种（客户端 `sub_14073A940` 的读法）：`[u32 n] + n×128`，没有标志 1。
+        if let Some(got) = tail_sockets_at4(raw, p) {
+            return hit(got, p, tr.as_deref_mut());
+        }
         if tail_is_u92(raw, p) {
             p += 88;
             continue;
@@ -1366,6 +1370,37 @@ fn tail_sockets_at(raw: &[u8], at: usize) -> Option<(Vec<SocketEntry>, usize)> {
 
 /// 挂点段第一个字段：NUL 结尾的字符串。纯 ASCII ⇒ 老的 32 字节；
 /// 含双字节（GBK）⇒ `32 + 字符数`（实测 5 字标签字段 37、6 字 38，两条记录长 133 / 134）。
+/// 挂点段的**第二种头**（141~143 补）：客户端 `sub_14073A940` 读的是
+/// `[u32 count] + count × 128 字节`（挂点名 32 + 挂到哪根骨 32 + 矩阵 64），**没有老口径那个标志 1**。
+/// 实测 `w1351_monster_heiyuan.mesh` 尾部 260 字节 = 4 + 2×128（`tx_chest`/`tx_head` → `Bip01_Head`），正好到 EOF。
+/// 仍然要求整段正好收到 EOF，命名与矩阵判据与老口径一致。
+fn tail_sockets_at4(raw: &[u8], at: usize) -> Option<(Vec<SocketEntry>, usize)> {
+    let count = tail_u32(raw, at)? as usize;
+    if count > 4096 {
+        return None;
+    }
+    let end = at.checked_add(4)?.checked_add(count.checked_mul(128)?)?;
+    if end != raw.len() {
+        return None;
+    }
+    let mut p = at + 4;
+    let mut out = Vec::with_capacity(count);
+    for _ in 0..count {
+        let name = tail_name_at(raw, p)?.to_string();
+        let bone = tail_name_at(raw, p + 32)?.to_string();
+        let mut m = [0f32; 16];
+        for k in 0..16 {
+            m[k] = tail_f32(raw, p + 64 + k * 4)?;
+        }
+        if !m.iter().all(|v| v.is_finite() && v.abs() < 1e7) || (m[15] - 1.0).abs() > 1e-3 {
+            return None;
+        }
+        out.push(SocketEntry { name, bone, bind: m });
+        p += 128;
+    }
+    Some((out, p))
+}
+
 fn tail_socket_label(raw: &[u8], at: usize) -> Option<(String, usize)> {
     let win = raw.get(at..at + 96)?;
     let nul = win.iter().position(|&c| c == 0)?;

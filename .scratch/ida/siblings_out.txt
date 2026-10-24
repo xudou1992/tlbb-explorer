@@ -1,0 +1,34 @@
+'RunGameLoader but m_strGameUpdater is empty!\n'
+    <- 0x1400f473b sub_1400F4700 size 487
+'Table file %s row %d is empty.'
+    <- 0x14017f3db sub_14017E2A0 size 4598
+'The DevVer of column %s is empty when format development version of %s.'
+    <- 0x14017ffff sub_14017F4A0 size 3450
+'The document is empty.'
+    <- 0x1401d1f57 sub_1401D1F30 size 183
+'interval is empty'
+    <- 0x1402feb63 sub_1402FE990 size 509
+'Upload failed (at start/before it took off)'
+    <- 0x14057136f sub_140571290 size 719
+'Open file %s failed. filesystem is not ready.'
+    <- 0x14059ff2d FileSystem_OpenReadFile size 2508
+'Open file %s failed. file is not ready.'
+    <- 0x1405a02f5 FileSystem_OpenReadFile size 2508
+'file: %s load failed!'
+    <- 0x14061d84e sub_14061D700 size 924
+    <- 0x14061d8ca sub_14061D700 size 924
+'Open file %s failed.'
+    <- 0x1405c45cb sub_1405C3DC0 size 2327
+    <- 0x1405fe717 sub_1405FE5F0 size 4288
+    <- 0x140601014 sub_1406001D0 size 3903
+    <- 0x14062c69d sub_14062BFC0 size 1946
+'MeshFarmount load failed'
+    <- 0x140721bda sub_140721BA0 size 111
+'Ani file load failed "%s"\n'
+    <- 0x140730cd8 ?_RTC_AllocaFailure@@YAXPEAXPEAU_RTC_ALLOCA_NODE@@H@Z_0 size 5501
+'AniList file load failed "%s"\n'
+    <- 0x1407a73d7 sub_1407A6E40 size 1513
+'AniList file %s ani %s is empty\n'
+    <- 0x1407a73a3 sub_1407A6E40 size 1513
+'Chain segment is empty'
+    <- 0x1407bccf0 sub_1407BCCA0 size 218

@@ -1,0 +1,8 @@
+
+== xrefs to vftable 0x140f09e10 ==
+0x140735b50 ('sub_140735B40', 491) type 1
+0x140735d8b ('sub_140735D70', 744) type 1
+
+== xrefs to vftable 0x140f09cb8 ==
+0x140735b5d ('sub_140735B40', 491) type 1
+0x140735d95 ('sub_140735D70', 744) type 1

@@ -1,0 +1,19 @@
+int sub_1400E0840()
+{
+  unsigned int v0; // ebx
+  __int64 v1; // r8
+  int v2; // r9d
+
+  v0 = 1074195201; /*0x1400e084a*/
+  v1 = 4; /*0x1400e0856*/
+  do /*0x1400e0880*/
+  {
+    v2 = (unsigned __int8)aMesh[--v1]; /*0x1400e0860*/
+    v0 ^= (v0 >> 2) + 32 * v0 + v2; /*0x1400e0879*/
+  }
+  while ( v1 ); /*0x1400e0880*/
+  if ( !dword_1410ABB38 ) /*0x1400e0889*/
+    sub_140135BC0(); /*0x1400e088b*/
+  qword_1410AD918 = sub_1402E0480("mesh", 4, v0); /*0x1400e08a7*/
+  return atexit(sub_140C82350); /*0x1400e08ae*/
+}

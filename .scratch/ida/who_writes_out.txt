@@ -1,0 +1,26 @@
+
+########## 0x14070fb70 size=1322 ##########
+strings: 3
+    0x140ef2e90 'Copyright 2013-2200 http://www.julegame.com/ Corporation. All rights Reserved'
+    0x140ef2f60 'julekeji'
+    0x140f07b60 '.walkplane'
+calls: 14 sub_1401369D0, sub_1409A81D0, strncpy, sub_14070FB70, sub_140719210, sub_140718D80, sub_140712310, j__malloc_base, sub_1409C7750, memcpy, j__free_base, sub_140136890, sub_140137260, __security_check_cookie
+
+########## 0x14072f6f0 size=3521 ##########
+strings: 2
+    0x140ef2e90 'Copyright 2013-2200 http://www.julegame.com/ Corporation. All rights Reserved'
+    0x140ef2f60 'julekeji'
+calls: 13 strncpy, sub_1400EE110, sub_1409A3660, sub_14072F6F0, j__malloc_base, memset, sub_140136890, sub_1401369D0, sub_140732F80, memcpy, sub_1407330B0, j__free_base, __security_check_cookie
+
+########## 0x140736070 size=1773 ##########
+strings: 2
+    0x140ef2e90 'Copyright 2013-2200 http://www.julegame.com/ Corporation. All rights Reserved'
+    0x140ef2f60 'julekeji'
+calls: 23 sub_1409A81D0, sub_1401369D0, strncpy, sub_14073B8A0, sub_140736070, sub_1406472A0, sub_14061E960, sub_14073CFF0, sub_1401AF5D0, memset, sub_1401AF6E0, sub_14073BB10, sub_1400EE110, tolower, sub_140136E60, sub_14073BA90, j__malloc_base, sub_14073A190, sub_14073A940, sub_140739960, sub_140735590, sub_1400F1190, __security_check_cookie
+
+########## 0x1407a6e40 size=1513 ##########
+strings: 3
+    0x140ef2e90 'Copyright 2013-2200 http://www.julegame.com/ Corporation. All rights Reserved'
+    0x140ef2f60 'julekeji'
+    0x140f08528 'Open file %s failed.'
+calls: 16 strncpy, sub_1401375C0, sub_140136890, sub_1409A4470, sub_140133920, sub_1401369D0, sub_140136E60, sub_1407A6E40, sub_1405E47A0, sub_1406C76E0, j_??2@YAPEAX_K@Z, sub_14072F6F0, sub_1402382B0, j_j_j__free_base_0, sub_1409A3660, __security_check_cookie

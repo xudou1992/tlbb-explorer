@@ -1,0 +1,152 @@
+
+########## 0x1405c3dc0 sub_1405C3DC0 ##########
+lines 500
+    __int64 sub_1405C3DC0()
+    __int64 v96; // [rsp+120h] [rbp+20h]
+    size_t Size; // [rsp+140h] [rbp+40h]
+    v4 = (__int64 *)sub_140605F50((unsigned int)v1);
+    v96 = 0;
+    sub_1400F1020(&v95);
+    sub_140606320(&v95);
+    sub_1405CE930(Block, v2, &v88);
+    v21 = (__int64 *)sub_140605E70((unsigned int)n);
+    sub_1400F1020(&v88);
+    sub_140606200(&v88);
+    sub_1405CE930(Block, v2, v93);
+    Buf1[0] = (void *)sub_1400F0FA0(32);
+    ((void (*)(void))sub_1401375C0)();
+    sub_1401369D0(v36);
+    if ( (char *)v39 == (char *)sub_1405C0BE0 )
+    sub_1405C0BE0(&v80, &v74, 4);
+    v87 = sub_140136890("wb", 2u, v61, 0);
+    v69 = sub_140136890(v66, Size, v64, 0);
+    sub_1401375C0(v68, v67);
+    sub_1409A4470(qword_1410AB150, &v77, &v86);
+    sub_140133920(3, "Open file %s failed.", v71);
+    sub_1401369D0(v86);
+    sub_1401369D0(v69);
+    sub_1401369D0(v87);
+    sub_1401369D0(v85);
+    sub_140225220(&v91);
+    sub_1400F1190(Buf1);
+
+########## 0x1405fe5f0 sub_1405FE5F0 ##########
+lines 1217
+    char __fastcall sub_1405FE5F0(_DWORD *a1)
+    _QWORD *v96; // rcx
+    const char *v140; // rcx
+    v7 = sub_140136890("engine_settings.xml", 0x13u, v4, 0);
+    sub_1401375C0(v6, v5);
+    sub_1409A4470(qword_1410AB150, v172, &v171);
+    sub_1401369D0(v171);
+    sub_1401369D0(v7);
+    memset(v181, 0, 32);
+    if ( (unsigned __int8)sub_140151500(&v173, v11) )
+    v14 = sub_140136890("Settings", 8u, v13, 1);
+    v22 = sub_140136890(v16, v17, v19, 0);
+    sub_1401369D0(v22);
+    v30 = sub_140136890(v24, v25, v27, 0);
+    v34 = *(int *)(v31 + 32);
+    sub_1401369D0(v30);
+    v41 = sub_140136890(v35, v36, v38, 0);
+    v50 = sub_140136890(v44, v45, v47, 0);
+    v59 = sub_140136890(v53, v54, v56, 0);
+    v68 = sub_140136890(v62, v63, v65, 0);
+    v77 = sub_140136890(v71, v72, v74, 0);
+    v86 = sub_140136890(v80, v81, v83, 0);
+    v95 = sub_140136890(v89, v90, v92, 0);
+    v96 = (_QWORD *)v2[9];
+    if ( !v96 )
+    if ( (unsigned __int64)v95 < v96[3] )
+    v96 = (_QWORD *)v96[1];
+    if ( (unsigned __int64)v95 > v96[3] )
+    v96 = (_QWORD *)v96[2];
+    if ( !v96 )
+    v97 = v96 + 4;
+    v104 = sub_140136890(v98, v99, v101, 0);
+    v113 = sub_140136890(v107, v108, v110, 0);
+    v125 = sub_140136890(v119, v120, v122, 0);
+    v136 = sub_140136890(v130, v131, v133, 0);
+    v140 = byte_1410A73B0;
+    v140 = *(const char **)(v23 + 8);
+    a1[140] = strtol(v140, nullptr, 0);
+    v150 = sub_140136890(v144, v145, v147, 0);
+    v159 = sub_140136890(v153, v154, v156, 0);
+    v168 = sub_140136890(v162, v163, v165, 0);
+    goto LABEL_296;
+    goto LABEL_296;
+    LABEL_296:
+    sub_1401369D0(v32);
+    if ( !*(_QWORD *)(v23 + 32) )
+
+########## 0x1406001d0 sub_1406001D0 ##########
+lines 806
+    char __fastcall sub_1406001D0(__int64 a1)
+    __int128 *v96; // rdx
+    memset(v111, 0, 32);
+    v4 = sub_1400ED860(v108, 96);
+    *(_QWORD *)(v4 + 32) = 0;
+    *(_QWORD *)(v4 + 32) = v102;
+    v8 = (_QWORD *)sub_1400ED860(v108, 56);
+    v12 = (_QWORD *)sub_1400ED860(v108, 56);
+    v16 = (_QWORD *)sub_1400ED860(v108, 56);
+    v20 = (_QWORD *)sub_1400ED860(v108, 56);
+    v24 = (_QWORD *)sub_1400ED860(v108, 56);
+    v28 = (_QWORD *)sub_1400ED860(v108, 56);
+    v32 = (_QWORD *)sub_1400ED860(v108, 56);
+    v36 = (_QWORD *)sub_1400ED860(v108, 56);
+    v40 = (_QWORD *)sub_1400ED860(v108, 56);
+    v43 = (_QWORD *)sub_1400ED860(v108, 56);
+    v46 = (_QWORD *)sub_1400ED860(v108, 56);
+    sub_1400F0E50(v112, 64, "%d", dword_141077360);
+    v50 = (_BYTE *)sub_1400ED860(v108, v49);
+    v53 = (_QWORD *)sub_1400ED860(v108, 56);
+    sub_1400F0E50(v112, 64, "%d", dword_141077364);
+    v57 = (_BYTE *)sub_1400ED860(v108, v56);
+    v60 = (_QWORD *)sub_1400ED860(v108, 56);
+    sub_1400F0E50(v112, 64, "%d", *(_DWORD *)(a1 + 692));
+    v64 = (_BYTE *)sub_1400ED860(v108, v63);
+    v67 = (_QWORD *)sub_1400ED860(v108, 56);
+    v68 = "GpuSkin";
+    *v67 = "GpuSkin";
+    v67[2] = v68 - "GpuSkin";
+    sub_1400F0E50(v112, 64, "%d", dword_141077378);
+    v71 = (_BYTE *)sub_1400ED860(v108, v70);
+    v74 = (_QWORD *)sub_1400ED860(v108, 56);
+    sub_1400F0E50(v112, 64, "%d", dword_14107738C);
+    v78 = (_BYTE *)sub_1400ED860(v108, v77);
+    v81 = (_QWORD *)sub_1400ED860(v108, 56);
+    sub_1400F0E50(v112, 64, "%d", dword_141077398);
+    v85 = (_BYTE *)sub_1400ED860(v108, v84);
+    si128 = _mm_load_si128((const __m128i *)&xmmword_140F1D1E0);
+    sub_1401256B0((unsigned int)&v99, (unsigned int)&v100, (unsigned int)v102, 0, 0);
+    v92 = sub_140136890("engine_settings.xml", 0x13u, v89, 0);
+    sub_1401375C0(v91, v90);
+    sub_1409A4470(qword_1410AB150, &v99, &v98);
+    sub_1401369D0(v98);
+    sub_1401369D0(v99);
+    v96 = &v100;
+    v96 = (__int128 *)v100;
+
+########## 0x14062bfc0 sub_14062BFC0 ##########
+lines 346
+    __int64 __fastcall sub_14062BFC0(__int64 a1)
+    Buf1[0] = (void *)sub_1400F0FA0(32);
+    sub_1400EF730(v71, Size[0], Src, v4);
+    v5 = sub_1400EE220(v71, ".info", 5u);
+    v70[1] = _mm_load_si128((const __m128i *)&xmmword_140F1D1E0);
+    sub_1400F1190(v70);
+    sub_1400F1190(v71);
+    sub_1401375C0(v10, v9);
+    sub_1401369D0(v11);
+    v60 = sub_140136890("wb", 2u, v47, 0);
+    v55 = sub_140136890(v52, Size[0], v50, 0);
+    sub_1401375C0(v54, v53);
+    sub_1409A4470(qword_1410AB150, &v65, &v61);
+    sub_140133920(3, "Open file %s failed.", v57);
+    sub_1401369D0(v61);
+    sub_1401369D0(v55);
+    sub_1401369D0(v60);
+    sub_1401369D0(v64);
+    sub_140225220(&v66);
+    return sub_1400F1190(Buf1);

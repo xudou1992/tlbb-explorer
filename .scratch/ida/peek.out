@@ -1,0 +1,389 @@
+=== 0x1409a4972 函数 sub_1409A47F0 起 0x1409a47f0 大小 0x59d
+0x1409a47f0  mov     [rsp-28h+arg_0], rbx
+0x1409a47f5  mov     [rsp-28h+arg_10], rsi
+0x1409a47fa  mov     [rsp-28h+arg_18], rdi
+0x1409a47ff  push    rbp, 
+0x1409a4800  push    r12, 
+0x1409a4802  push    r13, 
+0x1409a4804  push    r14, 
+0x1409a4806  push    r15, 
+0x1409a4808  mov     rbp, rsp
+0x1409a480b  sub     rsp, 80h
+0x1409a4812  mov     rax, cs:__security_cookie   ; 2
+0x1409a4819  xor     rax, rsp
+0x1409a481c  mov     [rbp+var_10], rax
+0x1409a4820  mov     [rbp+var_40], r8b
+0x1409a4824  mov     r13, rcx
+0x1409a4827  xorps   xmm0, xmm0
+0x1409a482a  movups  xmmword ptr [rbp+Buf], xmm0
+0x1409a482e  xor     esi, esi
+0x1409a4830  mov     [rbp+var_20], rsi
+0x1409a4834  mov     [rbp+var_18], rsi
+0x1409a4838  mov     rbx, 0FFFFFFFFFFFFFFFFh
+0x1409a483f  mov     r8, rbx
+0x1409a4842  inc     r8, 
+0x1409a4845  cmp     [rdx+r8], sil
+0x1409a4849  jnz     loc_1409A4842, 
+0x1409a484b  lea     rcx, [rbp+Buf]
+0x1409a484f  call    sub_1400F1020, 
+0x1409a4854  nop     , 
+0x1409a4855  lea     rcx, [rbp+Buf]
+0x1409a4859  mov     r15, [rbp+Buf]
+0x1409a485d  mov     r12, [rbp+var_18]
+0x1409a4861  cmp     r12, 0Fh
+0x1409a4865  cmova   rcx, r15
+0x1409a4869  mov     [rsp+80h+var_60], 3
+0x1409a4872  lea     r9, aMdl_0   ; mdl
+0x1409a4879  xor     r8d, r8d
+0x1409a487c  mov     r14, [rbp+var_20]
+0x1409a4880  mov     rdx, r14
+0x1409a4883  call    sub_1406BE890, 
+0x1409a4888  cmp     rax, 0FFFFFFFFFFFFFFFFh
+0x1409a488c  jz      loc_1409A493C, 
+0x1409a4892  mov     rcx, cs:qword_1410A7DD8
+0x1409a4899  mov     rax, [rcx]
+0x1409a489c  mov     edx, 37h
+0x1409a48a1  call    qword ptr [rax+30h], 
+0x1409a48a4  mov     rdi, rax
+0x1409a48a7  lea     rcx, [rbp+Buf]
+0x1409a48ab  cmp     [rbp+var_18], 0Fh
+0x1409a48b0  cmova   rcx, [rbp+Buf]
+0x1409a48b5  inc     rbx, 
+0x1409a48b8  cmp     byte ptr [rcx+rbx], 0
+0x1409a48bc  jnz     loc_1409A48B5, 
+0x1409a48be  mov     r10d, ebx
+0x1409a48c1  mov     r8d, ebx
+0x1409a48c4  xor     r8d, 4006EB05h
+0x1409a48cb  mov     edx, ebx
+0x1409a48cd  shr     rdx, 5
+0x1409a48d1  inc     rdx, 
+0x1409a48d4  cmp     r10, rdx
+0x1409a48d7  jb      loc_1409A4905, 
+0x1409a48d9  lea     r11, [rcx-1]
+0x1409a48dd  add     r11, r10
+0x1409a48e0  mov     r9d, r8d
+0x1409a48e3  shl     r9d, 5
+0x1409a48e7  mov     eax, r8d
+0x1409a48ea  shr     eax, 2
+0x1409a48ed  add     r9d, eax
+0x1409a48f0  movzx   eax, byte ptr [r11]
+0x1409a48f4  add     r9d, eax
+0x1409a48f7  xor     r8d, r9d
+0x1409a48fa  sub     r10, rdx
+0x1409a48fd  sub     r11, rdx
+0x1409a4900  cmp     r10, rdx
+0x1409a4903  jnb     loc_1409A48E0, 
+0x1409a4905  xor     r9d, r9d
+0x1409a4908  mov     edx, ebx
+0x1409a490a  call    sub_140136890, 
+0x1409a490f  mov     [rbp+var_38], rax
+0x1409a4913  mov     rax, [rdi]
+0x1409a4916  mov     [rsp+80h+var_58], 1
+0x1409a491b  mov     dword ptr [rsp+80h+var_60], esi
+0x1409a491f  xor     r9d, r9d
+0x1409a4922  lea     r8, qword_1410AB580
+0x1409a4929  lea     rdx, [rbp+var_38]
+0x1409a492d  mov     rcx, rdi
+0x1409a4930  call    qword ptr [rax+108h], 
+0x1409a4936  nop     , 
+0x1409a4937  jmp     loc_1409A4C98, 
+0x1409a493c  lea     rdi, [rbp+Buf]
+0x1409a4940  cmp     r12, 0Fh
+0x1409a4944  cmova   rdi, r15
+0x1409a4948  cmp     r14, 4
+0x1409a494c  jb      loc_1409A4998, 
+0x1409a494e  lea     rsi, [r14+rdi]
+0x1409a4952  lea     r8, [rsi-3]
+0x1409a4956  sub     r8, rdi
+0x1409a4959  mov     edx, 6Dh
+0x1409a495e  mov     rcx, rdi
+0x1409a4961  call    memchr, 
+0x1409a4966  test    rax, rax
+0x1409a4969  jz      loc_1409A4998, 
+0x1409a496b  nop     dword ptr [rax+rax+00h], 
+0x1409a4970  cmp     dword ptr [rax], 6873656Dh
+0x1409a4976  jz      loc_1409A4A5C, 
+0x1409a497c  inc     rax, 
+0x1409a497f  lea     r8, [rsi-3]
+0x1409a4983  sub     r8, rax
+0x1409a4986  mov     edx, 6Dh
+0x1409a498b  mov     rcx, rax
+0x1409a498e  call    memchr, 
+0x1409a4993  test    rax, rax
+0x1409a4996  jnz     loc_1409A4970, 
+0x1409a4998  lea     rdi, [rbp+Buf]
+0x1409a499c  cmp     r12, 0Fh
+0x1409a49a0  cmova   rdi, r15
+0x1409a49a4  cmp     r14, 4
+0x1409a49a8  jb      loc_1409A49F8, 
+0x1409a49aa  lea     rsi, [r14+rdi]
+0x1409a49ae  lea     r8, [rsi-3]
+0x1409a49b2  sub     r8, rdi
+0x1409a49b5  mov     edx, 74h
+0x1409a49ba  mov     rcx, rdi
+0x1409a49bd  call    memchr, 
+0x1409a49c2  test    rax, rax
+0x1409a49c5  jz      loc_1409A49F8, 
+0x1409a49c7  nop     word ptr [rax+rax+00000000h], 
+0x1409a49d0  cmp     dword ptr [rax], 696E6174h
+0x1409a49d6  jz      loc_1409A4B1D, 
+0x1409a49dc  inc     rax, 
+0x1409a49df  lea     r8, [rsi-3]
+0x1409a49e3  sub     r8, rax
+0x1409a49e6  mov     edx, 74h
+0x1409a49eb  mov     rcx, rax
+0x1409a49ee  call    memchr, 
+0x1409a49f3  test    rax, rax
+0x1409a49f6  jnz     loc_1409A49D0, 
+0x1409a49f8  lea     rdi, [rbp+Buf]
+0x1409a49fc  cmp     r12, 0Fh
+0x1409a4a00  cmova   rdi, r15
+0x1409a4a04  cmp     r14, 2
+0x1409a4a08  jb      loc_1409A4CAA, 
+0x1409a4a0e  lea     rsi, [r14+rdi]
+0x1409a4a12  lea     r8, [rsi-1]
+0x1409a4a16  sub     r8, rdi
+0x1409a4a19  mov     edx, 70h
+0x1409a4a1e  mov     rcx, rdi
+0x1409a4a21  call    memchr, 
+0x1409a4a26  test    rax, rax
+0x1409a4a29  jz      loc_1409A4CAA, 
+0x1409a4a2f  nop     , 
+0x1409a4a30  cmp     word ptr [rax], 7570h
+0x1409a4a35  jz      loc_1409A4BDF, 
+0x1409a4a3b  inc     rax, 
+0x1409a4a3e  lea     r8, [rsi-1]
+0x1409a4a42  sub     r8, rax
+0x1409a4a45  mov     edx, 70h
+0x1409a4a4a  mov     rcx, rax
+0x1409a4a4d  call    memchr, 
+0x1409a4a52  test    rax, rax
+0x1409a4a55  jnz     loc_1409A4A30, 
+0x1409a4a57  jmp     loc_1409A4CAA, 
+0x1409a4a5c  sub     rax, rdi
+0x1409a4a5f  cmp     rax, 0FFFFFFFFFFFFFFFFh
+0x1409a4a63  jz      loc_1409A4998, 
+0x1409a4a69  mov     rcx, cs:qword_1410A7DD8
+0x1409a4a70  mov     rax, [rcx]
+0x1409a4a73  xor     edx, edx
+0x1409a4a75  call    qword ptr [rax+30h], 
+0x1409a4a78  mov     rdi, rax
+0x1409a4a7b  lea     rcx, [rbp+Buf]
+0x1409a4a7f  cmp     [rbp+var_18], 0Fh
+0x1409a4a84  cmova   rcx, [rbp+Buf]
+0x1409a4a89  nop     dword ptr [rax+00000000h], 
+0x1409a4a90  inc     rbx, 
+0x1409a4a93  cmp     byte ptr [rcx+rbx], 0
+0x1409a4a97  jnz     loc_1409A4A90, 
+0x1409a4a99  mov     r10d, ebx
+0x1409a4a9c  mov     r8d, ebx
+0x1409a4a9f  xor     r8d, 4006EB05h
+0x1409a4aa6  mov     r9d, ebx
+0x1409a4aa9  shr     r9, 5
+0x1409a4aad  inc     r9, 
+0x1409a4ab0  cmp     r10, r9
+0x1409a4ab3  jb      loc_1409A4AE2, 
+0x1409a4ab5  lea     r11, [rcx-1]
+0x1409a4ab9  add     r11, r10
+0x1409a4abc  nop     dword ptr [rax+00h], 
+0x1409a4ac0  mov     edx, r8d
+0x1409a4ac3  shl     edx, 5
+0x1409a4ac6  mov     eax, r8d
+0x1409a4ac9  shr     eax, 2
+0x1409a4acc  add     edx, eax
+0x1409a4ace  movzx   eax, byte ptr [r11]
+0x1409a4ad2  add     edx, eax
+0x1409a4ad4  xor     r8d, edx
+0x1409a4ad7  sub     r10, r9
+0x1409a4ada  sub     r11, r9
+0x1409a4add  cmp     r10, r9
+0x1409a4ae0  jnb     loc_1409A4AC0, 
+0x1409a4ae2  xor     r9d, r9d
+0x1409a4ae5  mov     edx, ebx
+0x1409a4ae7  call    sub_140136890, 
+0x1409a4aec  mov     [rbp+var_38], rax
+0x1409a4af0  mov     rax, [rdi]
+0x1409a4af3  mov     [rsp+80h+var_58], 1
+0x1409a4af8  mov     dword ptr [rsp+80h+var_60], 0
+0x1409a4b00  xor     r9d, r9d
+0x1409a4b03  lea     r8, qword_1410AB580
+0x1409a4b0a  lea     rdx, [rbp+var_38]
+0x1409a4b0e  mov     rcx, rdi
+0x1409a4b11  call    qword ptr [rax+108h], 
+0x1409a4b17  nop     , 
+0x1409a4b18  jmp     loc_1409A4C98, 
+0x1409a4b1d  sub     rax, rdi
+0x1409a4b20  cmp     rax, 0FFFFFFFFFFFFFFFFh
+0x1409a4b24  jz      loc_1409A49F8, 
+0x1409a4b2a  call    sub_140652510, 
+0x1409a4b2f  mov     rdi, rax
+0x1409a4b32  lea     rcx, [rbp+Buf]
+0x1409a4b36  cmp     [rbp+var_18], 0Fh
+0x1409a4b3b  cmova   rcx, [rbp+Buf]
+0x1409a4b40  inc     rbx, 
+0x1409a4b43  cmp     byte ptr [rcx+rbx], 0
+0x1409a4b47  jnz     loc_1409A4B40, 
+0x1409a4b49  mov     r10d, ebx
+0x1409a4b4c  mov     r8d, ebx
+0x1409a4b4f  xor     r8d, 4006EB05h
+0x1409a4b56  mov     r9d, ebx
+0x1409a4b59  shr     r9, 5
+0x1409a4b5d  inc     r9, 
+0x1409a4b60  cmp     r10, r9
+0x1409a4b63  jb      loc_1409A4B92, 
+0x1409a4b65  lea     r11, [rcx-1]
+0x1409a4b69  add     r11, r10
+0x1409a4b6c  nop     dword ptr [rax+00h], 
+0x1409a4b70  mov     edx, r8d
+0x1409a4b73  shl     edx, 5
+0x1409a4b76  mov     eax, r8d
+0x1409a4b79  shr     eax, 2
+0x1409a4b7c  add     edx, eax
+0x1409a4b7e  movzx   eax, byte ptr [r11]
+0x1409a4b82  add     edx, eax
+0x1409a4b84  xor     r8d, edx
+0x1409a4b87  sub     r10, r9
+0x1409a4b8a  sub     r11, r9
+0x1409a4b8d  cmp     r10, r9
+0x1409a4b90  jnb     loc_1409A4B70, 
+0x1409a4b92  xor     r9d, r9d
+0x1409a4b95  mov     edx, ebx
+0x1409a4b97  call    sub_140136890, 
+0x1409a4b9c  mov     [rbp+var_38], rax
+0x1409a4ba0  mov     rax, [rdi]
+0x1409a4ba3  mov     [rsp+80h+var_50], 0
+0x1409a4ba8  mov     [rsp+80h+var_58], 1
+0x1409a4bad  mov     byte ptr [rsp+80h+var_60], 1
+0x1409a4bb2  xor     r9d, r9d
+0x1409a4bb5  lea     r8, qword_1410AB580
+0x1409a4bbc  lea     rdx, [rbp+var_38]
+0x1409a4bc0  mov     rcx, rdi
+0x1409a4bc3  call    qword ptr [rax+48h], 
+0x1409a4bc6  nop     , 
+0x1409a4bc7  mov     rcx, [rbp+var_38]
+0x1409a4bcb  call    sub_1401369D0, 
+0x1409a4bd0  lea     rcx, [rdi+8]
+0x1409a4bd4  mov     rax, [rcx]
+0x1409a4bd7  call    qword ptr [rax+18h], 
+0x1409a4bda  jmp     loc_1409A4CAA, 
+0x1409a4bdf  sub     rax, rdi
+0x1409a4be2  cmp     rax, 0FFFFFFFFFFFFFFFFh
+0x1409a4be6  jz      loc_1409A4CAA, 
+0x1409a4bec  mov     rcx, cs:qword_1410A7DD8
+0x1409a4bf3  mov     rax, [rcx]
+0x1409a4bf6  mov     edx, 50h
+0x1409a4bfb  call    qword ptr [rax+30h], 
+0x1409a4bfe  mov     rdi, rax
+0x1409a4c01  lea     rcx, [rbp+Buf]
+0x1409a4c05  cmp     [rbp+var_18], 0Fh
+0x1409a4c0a  cmova   rcx, [rbp+Buf]
+0x1409a4c0f  nop     , 
+0x1409a4c10  inc     rbx, 
+0x1409a4c13  cmp     byte ptr [rcx+rbx], 0
+0x1409a4c17  jnz     loc_1409A4C10, 
+0x1409a4c19  mov     r10d, ebx
+0x1409a4c1c  mov     r8d, ebx
+0x1409a4c1f  xor     r8d, 4006EB05h
+0x1409a4c26  mov     r9d, ebx
+0x1409a4c29  shr     r9, 5
+0x1409a4c2d  inc     r9, 
+0x1409a4c30  cmp     r10, r9
+0x1409a4c33  jb      loc_1409A4C62, 
+0x1409a4c35  lea     r11, [rcx-1]
+0x1409a4c39  add     r11, r10
+0x1409a4c3c  nop     dword ptr [rax+00h], 
+0x1409a4c40  mov     edx, r8d
+0x1409a4c43  shl     edx, 5
+0x1409a4c46  mov     eax, r8d
+0x1409a4c49  shr     eax, 2
+0x1409a4c4c  add     edx, eax
+0x1409a4c4e  movzx   eax, byte ptr [r11]
+0x1409a4c52  add     edx, eax
+0x1409a4c54  xor     r8d, edx
+0x1409a4c57  sub     r10, r9
+0x1409a4c5a  sub     r11, r9
+0x1409a4c5d  cmp     r10, r9
+0x1409a4c60  jnb     loc_1409A4C40, 
+0x1409a4c62  xor     r9d, r9d
+0x1409a4c65  mov     edx, ebx
+0x1409a4c67  call    sub_140136890, 
+0x1409a4c6c  mov     [rbp+var_38], rax
+0x1409a4c70  mov     rax, [rdi]
+0x1409a4c73  mov     [rsp+80h+var_58], 0
+0x1409a4c78  mov     dword ptr [rsp+80h+var_60], 0
+0x1409a4c80  xor     r9d, r9d
+0x1409a4c83  lea     r8, qword_1410AB580
+0x1409a4c8a  lea     rdx, [rbp+var_38]
+0x1409a4c8e  mov     rcx, rdi
+0x1409a4c91  call    qword ptr [rax+108h], 
+0x1409a4c97  nop     , 
+0x1409a4c98  mov     rcx, [rbp+var_38]
+0x1409a4c9c  call    sub_1401369D0, 
+0x1409a4ca1  mov     rax, [rdi]
+0x1409a4ca4  mov     rcx, rdi
+0x1409a4ca7  call    qword ptr [rax+8], 
+0x1409a4caa  cmp     [rbp+var_40], 0
+0x1409a4cae  jz      loc_1409A4D57, 
+0x1409a4cb4  lea     rdx, aLogDebugResour   ; LOG_DEBUG_RESOURCE_BEGIN
+0x1409a4cbb  mov     ecx, 3
+0x1409a4cc0  call    sub_1409A3660, 
+0x1409a4cc5  mov     rax, [r13+50h]
+0x1409a4cc9  mov     rbx, [rax]
+0x1409a4ccc  cmp     rbx, rax
+0x1409a4ccf  jz      loc_1409A4D45, 
+0x1409a4cd1  mov     rax, [rbx+28h]
+0x1409a4cd5  lea     r8, [rax+18h]
+0x1409a4cd9  cmp     dword ptr [rax+14h], 0
+0x1409a4cdd  jz      loc_1409A4CE2, 
+0x1409a4cdf  mov     r8, [r8]
+0x1409a4ce2  lea     rdx, aS_0   ; %s
+0x1409a4ce9  mov     ecx, 3
+0x1409a4cee  call    sub_1409A3660, 
+0x1409a4cf3  mov     rax, [rbx+10h]
+0x1409a4cf7  cmp     byte ptr [rax+19h], 0
+0x1409a4cfb  jz      loc_1409A4D1F, 
+0x1409a4cfd  mov     rax, [rbx+8]
+0x1409a4d01  cmp     byte ptr [rax+19h], 0
+0x1409a4d05  jnz     loc_1409A4D1A, 
+0x1409a4d07  cmp     rbx, [rax+10h]
+0x1409a4d0b  jnz     loc_1409A4D1A, 
+0x1409a4d0d  mov     rbx, rax
+0x1409a4d10  mov     rax, [rax+8]
+0x1409a4d14  cmp     byte ptr [rax+19h], 0
+0x1409a4d18  jz      loc_1409A4D07, 
+0x1409a4d1a  mov     rbx, rax
+0x1409a4d1d  jmp     loc_1409A4D3F, 
+0x1409a4d1f  mov     rbx, rax
+0x1409a4d22  mov     rdx, [rax]
+0x1409a4d25  cmp     byte ptr [rdx+19h], 0
+0x1409a4d29  jnz     loc_1409A4D3F, 
+0x1409a4d2b  nop     dword ptr [rax+rax+00h], 
+0x1409a4d30  mov     rbx, rdx
+0x1409a4d33  mov     rax, [rdx]
+0x1409a4d36  mov     rdx, rax
+0x1409a4d39  cmp     byte ptr [rax+19h], 0
+0x1409a4d3d  jz      loc_1409A4D30, 
+0x1409a4d3f  cmp     rbx, [r13+50h]
+0x1409a4d43  jnz     loc_1409A4CD1, 
+0x1409a4d45  lea     rdx, aLogDebugResour_0   ; LOG_DEBUG_RESOURCE_END
+0x1409a4d4c  mov     ecx, 3
+0x1409a4d51  call    sub_1409A3660, 
+0x1409a4d56  nop     , 
+0x1409a4d57  lea     rcx, [rbp+Buf]
+0x1409a4d5b  call    sub_1400F1190, 
+0x1409a4d60  mov     rcx, [rbp+var_10]
+0x1409a4d64  xor     rcx, rsp
+0x1409a4d67  call    __security_check_cookie, 
+0x1409a4d6c  lea     r11, [rsp+80h+var_s0]
+0x1409a4d74  mov     rbx, [r11+30h]
+0x1409a4d78  mov     rsi, [r11+40h]
+0x1409a4d7c  mov     rdi, [r11+48h]
+0x1409a4d80  mov     rsp, r11
+0x1409a4d83  pop     r15, 
+0x1409a4d85  pop     r14, 
+0x1409a4d87  pop     r13, 
+0x1409a4d89  pop     r12, 
+0x1409a4d8b  pop     rbp, 
+0x1409a4d8c  retn    , 
+   （函数共 386 条，只列前 400）
+=== 0x140eea825 函数 ? 起 ? 大小 ?

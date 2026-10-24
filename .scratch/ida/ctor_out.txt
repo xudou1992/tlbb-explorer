@@ -1,0 +1,16 @@
+== callers of 0x140735b40 ==
+0x1406c6b8b ('sub_1406C6A50', 667)
+== callers of 0x140735d70 ==
+0x140735d3f ('sub_140735D30', 52)
+
+#### caller func 0x1406c6a50 size=667
+    if ( !*(_BYTE *)(v14 + 25) && *(_QWORD *)a2 >= *(_QWORD *)(v14 + 32) && v14 != SpinCount )
+    if ( _InterlockedExchangeAdd((volatile signed __int32 *)(v17 + 48), 0xFFFFFFFF) == 1 )
+    v23 = j__malloc_base(0x2D0u);
+    v24 = sub_140735B40(v23);
+    _InterlockedIncrement((volatile signed __int32 *)(*(_QWORD *)a2 + 8LL));
+    _InterlockedIncrement((volatile signed __int32 *)(v28[0] + 8LL));
+    + 96LL))(
+
+#### caller func 0x140735d30 size=52
+    sub_140735D70();

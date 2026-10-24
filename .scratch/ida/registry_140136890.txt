@@ -1,0 +1,86 @@
+char *__fastcall sub_140136890(_QWORD *Buf1, size_t Size, int a3, int a4)
+{
+  _QWORD *v4; // rax
+  size_t v6; // r15
+  __int64 v8; // rdi
+  char *v9; // rbx
+  _QWORD *v10; // rdx
+  signed __int32 v11; // eax
+  signed __int32 v12; // ett
+  int v13; // esi
+  __int64 v14; // rcx
+  _QWORD *v15; // rcx
+
+  v4 = qword_1410B5C38; /*0x1401368a7*/
+  v6 = (unsigned int)Size; /*0x1401368b1*/
+  if ( !qword_1410B5C38 ) /*0x1401368ba*/
+  {
+    sub_1401375C0(); /*0x1401368bc*/
+    v4 = qword_1410B5C38; /*0x1401368c1*/
+  }
+  v8 = *v4 + 16LL * (a3 & 0x1FFFF); /*0x1401368db*/
+  while ( _InterlockedExchange((volatile __int32 *)(v8 + 8), 1) ) /*0x1401368e3*/
+    ; /*0x1401368e0*/
+  v9 = *(char **)v8; /*0x1401368ea*/
+  if ( *(_QWORD *)v8 ) /*0x1401368ea*/
+  {
+    while ( 1 ) /*0x1401368f6*/
+    {
+      if ( a3 == *((_DWORD *)v9 + 4) && (_DWORD)v6 == *((_DWORD *)v9 + 3) ) /*0x1401368fc*/
+      {
+        v10 = v9 + 24; /*0x140136902*/
+        if ( *((_DWORD *)v9 + 5) ) /*0x1401368fe*/
+          v10 = (_QWORD *)*v10; /*0x140136908*/
+        if ( Buf1 == v10 || !memcmp(Buf1, v10, v6) ) /*0x140136916*/
+        {
+          v11 = *((_DWORD *)v9 + 2); /*0x14013691f*/
+          if ( v11 ) /*0x140136924*/
+            break; /*0x140136924*/
+        }
+      }
+LABEL_15:
+      v9 = *(char **)v9; /*0x140136934*/
+      if ( !v9 ) /*0x14013693a*/
+        goto LABEL_16; /*0x14013693a*/
+    }
+    while ( 1 ) /*0x140136929*/
+    {
+      v12 = v11; /*0x140136929*/
+      v11 = _InterlockedCompareExchange((volatile signed __int32 *)v9 + 2, v11 + 1, v11); /*0x140136929*/
+      if ( v12 == v11 ) /*0x14013692e*/
+        break; /*0x14013692e*/
+      if ( !v11 ) /*0x140136932*/
+        goto LABEL_15; /*0x140136932*/
+    }
+  }
+  else
+  {
+LABEL_16:
+    v13 = 0; /*0x140136941*/
+    if ( !*((_BYTE *)Buf1 + v6) ) /*0x140136948*/
+      v13 = a4; /*0x14013694c*/
+    if ( v13 ) /*0x140136953*/
+      v14 = 8; /*0x140136955*/
+    else
+      v14 = (unsigned int)(v6 + 1); /*0x14013695c*/
+    v9 = (char *)j__malloc_base(v14 + 24); /*0x14013696b*/
+    *((_DWORD *)v9 + 3) = v6; /*0x14013696e*/
+    v15 = v9 + 24; /*0x140136972*/
+    *((_DWORD *)v9 + 4) = a3; /*0x140136976*/
+    _InterlockedExchange((volatile __int32 *)v9 + 2, 1); /*0x14013697a*/
+    *((_DWORD *)v9 + 5) = v13; /*0x14013697e*/
+    if ( v13 ) /*0x140136986*/
+    {
+      *v15 = Buf1; /*0x140136988*/
+    }
+    else
+    {
+      memcpy(v15, Buf1, v6); /*0x140136993*/
+      v9[v6 + 24] = 0; /*0x140136998*/
+    }
+    *(_QWORD *)v9 = *(_QWORD *)v8; /*0x1401369a1*/
+    *(_QWORD *)v8 = v9; /*0x1401369a4*/
+  }
+  *(_DWORD *)(v8 + 8) = 0; /*0x1401369af*/
+  return v9; /*0x1401369b6*/
+}

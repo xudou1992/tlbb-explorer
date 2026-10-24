@@ -453,7 +453,8 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
     } else {
         missing.push(
             "这一份网格没有影响顶点表（同一只怪的衣服那份有）：蒙皮权重是按份登记的，\
-             换一份网格看得到"
+             换一份网格看得到；所以这份在播放与导出里只会「骨架动、网格不动」
+             （2026-10-16 实测：posed_vertices 的顶点与原始位置完全相同）"
                 .to_string(),
         );
     }
@@ -829,6 +830,12 @@ mod tests {
         assert!(
             !rep.missing.iter().any(|m| m.contains("(0 根") || m.contains("（0 根")),
             "0 根还写「已按骨读出」是自相矛盾：{:?}",
+            rep.missing
+        );
+        // 没有影响表 ⇒ 播放/导出只会「骨架动、网格不动」（2026-10-16 实测），提示必须说清。
+        assert!(
+            rep.missing.iter().any(|m| m.contains("网格不动")),
+            "无影响表的件要如实说网格不跟骨走：{:?}",
             rep.missing
         );
         assert!(

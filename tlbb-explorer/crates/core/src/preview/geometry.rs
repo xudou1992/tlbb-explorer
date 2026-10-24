@@ -1636,7 +1636,9 @@ pub fn tail_entries(raw: &[u8]) -> Option<Vec<(String, Vec<String>)>> {
     let declared = bone_count(raw)?;
     let (starts, variants) = tail_starts(raw);
     for start in starts.into_iter().chain(variants) {
-        if let Some((entries, _)) = tail_walk(raw, start, vc) {
+        // 诊断口径与 `hierarchy_impl` 对齐：老走法不行时再试客户端顺序那条（137/138 补）。
+        let got = tail_walk(raw, start, vc).or_else(|| tail_walk_client(raw, start, declared));
+        if let Some((entries, _)) = got {
             if entries.len() == declared {
                 return Some(
                     entries

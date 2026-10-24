@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -1631,6 +1631,45 @@ fn main() {
         for g in &gain_names { println!("  {g}"); }
         println!("# 走不通的例子");
         for g in &bad_examples { println!("  {g}"); }
+        return;
+    }
+
+    if mode == "unknownkid" {
+        // 那 6 份「孩子名单里有对不上条目的名字」到底差在哪：把对不上的孩子名与**它最近的条目名**
+        // 一起打出来（不猜，只看形态：补零、后缀、大小写、还是整串不同）。
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut rows: Vec<String> = Vec::new();
+        let mut n = 0usize;
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            if parse_nodes(&raw).is_empty() || parse_hierarchy(&raw).is_some() { continue }
+            let Some(es) = tail_entries(&raw) else { continue };
+            let mut set: std::collections::HashSet<String> = std::collections::HashSet::new();
+            for (p, _) in &es { set.insert(p.to_ascii_lowercase()); }
+            let mut bad: Vec<(String, String)> = Vec::new();
+            for (p, kids) in &es {
+                for k in kids {
+                    if !set.contains(&k.to_ascii_lowercase()) {
+                        bad.push((p.clone(), k.clone()));
+                    }
+                }
+            }
+            if bad.is_empty() { continue }
+            n += 1;
+            if rows.len() < 12 {
+                let (p0, k0) = &bad[0];
+                // 最近的条目名（按字符串前缀相似取第一个）
+                let near = es.iter().map(|(x, _)| x).find(|x| x.len() >= 2 && k0.starts_with(&x[..2.min(x.len())])).cloned().unwrap_or_default();
+                rows.push(format!(
+                    "  {name} · 条目 {} · 对不上的孩子 {} 个 · 首例 父={p0} 孩子={k0} · 疑似最近条目={near}",
+                    es.len(), bad.len()
+                ));
+            }
+        }
+        println!("
+# unknownkid · 有对不上孩子名的份 {n}");
+        for r in rows { println!("{r}"); }
         return;
     }
 

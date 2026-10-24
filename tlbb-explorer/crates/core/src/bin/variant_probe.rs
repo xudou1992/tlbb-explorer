@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "nodegap" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "nodegap" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -1845,6 +1845,49 @@ fn main() {
                 h.bones.len(), tracks.len(), hit, 100.0 * hit as f64 / h.bones.len().max(1) as f64
             );
         }
+        return;
+    }
+
+    if mode == "ske4gap" {
+        // 那 106 份 0x110 读不出的件：同目录有没有 .ske、里面有没有像骨名的字符串。
+        // 只读；用来判断「骨架数据其实存在、只是不在 .mesh 里」这个假设。
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut n = 0usize;
+        let mut has_ske = 0usize;
+        let mut with_bones = 0usize;
+        let mut rows: Vec<String> = Vec::new();
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            if parse_nodes(&raw).is_empty() || parse_hierarchy(&raw).is_some() { continue }
+            if bone_count(&raw).unwrap_or(0) != 0 { continue }
+            n += 1;
+            let dir = p.rsplit_once('/').map(|(d, _)| d.to_string()).unwrap_or_default();
+            let ske = con
+                .prepare("SELECT coalesce(path,'') FROM resources WHERE ext='.ske' AND path LIKE ?1 LIMIT 1")
+                .ok()
+                .and_then(|mut st| st.query_row([format!("%{dir}/%")], |r| r.get::<_, String>(0)).ok());
+            let Some(sp) = ske else {
+                if rows.len() < 12 { rows.push(format!("  {name} · 无 .ske")); }
+                continue;
+            };
+            has_ske += 1;
+            let sn = sp.rsplit('/').next().unwrap_or("").to_string();
+            let Some(sraw) = bytes_of(&con, &root, &mut paks, &sn) else { continue };
+            let bones = tlbb_core::jbcf::parse(&sraw)
+                .map(|j| j.strings.iter().filter(|s| {
+                    let t = s.text.to_ascii_lowercase();
+                    t.starts_with("bone") || t.starts_with("bip") || t.starts_with("b_") || t.starts_with("fracture")
+                }).count())
+                .unwrap_or(0);
+            if bones > 0 { with_bones += 1 }
+            if rows.len() < 16 {
+                rows.push(format!("  {name} · .ske {sn} · 骨名样 {bones} 个"));
+            }
+        }
+        println!("
+# ske4gap · 0x110=0 且有记录的 {n} 份 · 同目录有 .ske 的 {has_ske} · .ske 里骨名样 >0 的 {with_bones}");
+        for r in rows { println!("{r}"); }
         return;
     }
 

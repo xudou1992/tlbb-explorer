@@ -661,6 +661,30 @@ pub async fn animation_view(gid: i64, file: String) -> Result<AnimReply, String>
 mod tests {
     use super::*;
 
+    /// 多根且零绑定的件：**有 `.ani` 动作、但没有可用骨位**（`.ani` 静态区反解只出 1 根）。
+    /// 这条是⑤的决策依据，也是绊线：若将来反解变强（pos 明显 >1），⑤ 的价码就变了，要重算。
+    #[test]
+    fn 多根零绑定件没有可用骨位() {
+        let (root, db) = roots();
+        if !root.join("data.pak").is_file() || !db.is_file() { return; }
+        let con = open_db(&db).expect("清单");
+        for stem in ["w1351_model_sl_cleave_h01", "w1351_model_cloud_h002", "w1351_model_link_h01"] {
+            let Ok(gid) = con.query_row("SELECT id FROM agroups WHERE stem = ?1", [stem], |r| r.get::<_, i64>(0)) else {
+                eprintln!("{stem}: 不在清单");
+                continue;
+            };
+            match skeleton_view_run(gid, "") {
+                Ok(rep) => {
+                    let pos = rep.nodes.iter().filter(|n| n.pos.is_some()).count();
+                    assert!(rep.chain, "{stem} 该有多根父链");
+                    assert!(rep.nodes.len() >= rep.declared as usize, "{stem} 骨表该不少于声明数");
+                    assert!(pos <= 1, "{stem} 反解出 {pos} 根骨位——说明能力变强了，⑤ 的价码要重算");
+                }
+                Err(e) => eprintln!("{stem}: 回包失败 {e}"),
+            }
+        }
+    }
+
     /// 层级里没有绑定矩阵的件（`bird`，134 根骨、`parse_hierarchy` 的 bind 全 None），
     /// **骨架页照样有位置**：表格的坐标来自 `parse_nodes` 的 96B 记录（99 条），
     /// 只有 `.ani` 轨道名单里多出来的 35 根没有坐标、`source="ani"`。

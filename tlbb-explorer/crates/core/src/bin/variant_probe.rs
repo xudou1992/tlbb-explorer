@@ -1828,7 +1828,8 @@ fn main() {
         for p in &paths {
             let name = p.rsplit('/').next().unwrap_or("").to_string();
             let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
-            let Some(h) = parse_hierarchy(&raw) else { continue };
+            // 用森林口径：多根件也要能核（它们本来就过不了单根闸门）。
+            let Ok(h) = tlbb_core::preview::hierarchy_forest(&raw) else { continue };
             let mut tracks: std::collections::HashSet<String> = std::collections::HashSet::new();
             for an in anim_names_for(&con, p) {
                 if let Some(a) = bytes_of(&con, &root, &mut paks, &an).and_then(|b| parse_ani(&b)) {

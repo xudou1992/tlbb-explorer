@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "forestroots" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -1706,6 +1706,48 @@ fn main() {
                 Err(e) => println!("{name} · jbcf 解不出：{e:?}"),
             }
         }
+        return;
+    }
+
+    if mode == "forestroots" {
+        // 第 3 步的料：`hierarchy_forest` 能建、单根口径拒的那些份，各有几个根、根是谁、根有没有绑定矩阵。
+        // 只读数，不改任何判据。
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut tally: BTreeMap<usize, usize> = BTreeMap::new();
+        let mut rows: Vec<String> = Vec::new();
+        let mut n = 0usize;
+        let mut no_bind = 0usize;
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            if parse_nodes(&raw).is_empty() || parse_hierarchy(&raw).is_some() { continue }
+            let Ok(h) = tlbb_core::preview::hierarchy_forest(&raw) else { continue };
+            let roots: Vec<&str> = h
+                .bones
+                .iter()
+                .filter(|b| b.parent.is_none())
+                .map(|b| b.name.as_str())
+                .collect();
+            if roots.len() < 2 { continue }
+            n += 1;
+            *tally.entry(roots.len()).or_insert(0) += 1;
+            let bad = h.bones.iter().filter(|b| b.parent.is_none() && b.bind.is_none()).count();
+            no_bind += bad;
+            if rows.len() < 22 {
+                let mut rs = roots.clone();
+                rs.truncate(4);
+                rows.push(format!(
+                    "  {name} · 骨 {} · 根 {} 个（{}）· 其中无绑定的根 {bad}· 例 {}",
+                    h.bones.len(), roots.len(), rs.join(","), roots.get(0).unwrap_or(&"")
+                ));
+            }
+        }
+        println!("
+# forestroots · forest 能建、单根口径拒的 {n} 份");
+        for r in rows { println!("{r}"); }
+        println!("# 根数分布（根数×份数）");
+        for (k, v) in &tally { println!("  {k} 根 · {v} 份"); }
+        println!("# 无绑定矩阵的根合计 {no_bind} 个");
         return;
     }
 

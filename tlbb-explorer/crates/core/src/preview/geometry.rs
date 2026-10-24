@@ -1883,6 +1883,108 @@ mod tests {
         }
     }
 
+    /// 客户端顺序的每骨布局（137 补从 `sub_14073A190` 读出，138 补落地）：
+    /// 哨兵 -1 · 每骨 `name32 + 第二份名字 32 + 孩子数 4 + 孩子名 32×c + 矩阵 64 + 影响数 4 + 8n + 收尾 92`。
+    /// 合成两骨（父 `000` 带一个孩子 `bone1`）必须解出 2 条、父的孩子名单对得上。
+    #[test]
+    fn client_order_walk_reads_the_documented_layout() {
+        let mut b: Vec<u8> = Vec::new();
+        b.extend_from_slice(&u32::MAX.to_le_bytes()); // 哨兵
+        let mut push_bone = |name: &str, kids: &[&str], b: &mut Vec<u8>| {
+            let mut slot = [0u8; 32];
+            slot[..name.len()].copy_from_slice(name.as_bytes());
+            b.extend_from_slice(&slot);
+            b.extend_from_slice(&slot); // 第二份名字（客户端 seek 跳过）
+            b.extend_from_slice(&(kids.len() as u32).to_le_bytes());
+            for k in kids {
+                let mut s = [0u8; 32];
+                s[..k.len()].copy_from_slice(k.as_bytes());
+                b.extend_from_slice(&s);
+            }
+            let mut m = [0f32; 16];
+            m[0] = 1.0;
+            m[5] = 1.0;
+            m[10] = 1.0;
+            m[15] = 1.0;
+            for f in m {
+                b.extend_from_slice(&f.to_le_bytes());
+            }
+            b.extend_from_slice(&0u32.to_le_bytes()); // 影响数
+            b.extend_from_slice(&[0u8; 92]); // 收尾 92（客户端原样读、不解释）
+        };
+        push_bone("000", &["bone1"], &mut b);
+        push_bone("bone1", &[], &mut b);
+        let got = tail_walk_client(&b, 0, 2).expect("客户端顺序该解出 2 条");
+        assert_eq!(got.0.len(), 2);
+        assert_eq!(got.0[0].name, "000");
+        assert_eq!(got.0[0].children.len(), 1);
+        assert_eq!(got.0[0].children[0].0, "bone1");
+        assert_eq!(got.0[1].name, "bone1");
+        assert_eq!(got.1.len(), 0, "没有挂点段");
+    }
+
+    /// 挂点段的**4 字节头**（客户端 `sub_14073A940` 的读法，144 补）：
+    /// `[u32 count] + count × (挂点名 + 挂骨名 + 64 字节矩阵)`，没有老口径的标志 1。
+    /// 正例：ASCII 名、正好收到 EOF；反例：多一个字节就不认（整段必须精确收尾）。
+    #[test]
+    fn socket_section_with_four_byte_header_parses() {
+        let mut b: Vec<u8> = Vec::new();
+        b.extend_from_slice(&1u32.to_le_bytes()); // count = 1
+        let mut name = [0u8; 32];
+        name[..7].copy_from_slice(b"tx_head");
+        b.extend_from_slice(&name);
+        let mut bone = [0u8; 32];
+        bone[..10].copy_from_slice(b"Bip01_Head");
+        b.extend_from_slice(&bone);
+        let mut m = [0f32; 16];
+        m[0] = 1.0;
+        m[5] = 1.0;
+        m[10] = 1.0;
+        m[15] = 1.0;
+        for f in m {
+            b.extend_from_slice(&f.to_le_bytes());
+        }
+        let got = tail_sockets_at4(&b, 0).expect("4 字节头的挂点段该认");
+        assert_eq!(got.0.len(), 1);
+        assert_eq!(got.0[0].name, "tx_head");
+        assert_eq!(got.0[0].bone, "Bip01_Head");
+        assert_eq!(got.1, b.len());
+
+        let mut extra = b.clone();
+        extra.push(0);
+        assert!(tail_sockets_at4(&extra, 0).is_none(), "整段必须正好到 EOF，多一个字节都不认");
+    }
+
+    /// 同一段的**变长 GBK 标签**（145 补：eyubangdashou_yifu_001 里 ASCII 与 GBK 混用）：
+    /// 标签字段长 = 32 + 字数，所以不能按固定步长乘；必须按顺序解到正好 EOF。
+    #[test]
+    fn socket_section_with_gbk_label_parses() {
+        let bytes = encoding_rs::GBK.encode("左武器").0.into_owned(); // 3 字 = 6 字节
+        assert_eq!(bytes.len(), 6);
+        let field = 32 + 3; // 32 + 字数
+        let mut b: Vec<u8> = Vec::new();
+        b.extend_from_slice(&1u32.to_le_bytes());
+        let mut label = [0u8; 96];
+        label[..6].copy_from_slice(&bytes);
+        b.extend_from_slice(&label[..field]);
+        let mut bone = [0u8; 32];
+        bone[..10].copy_from_slice(b"Bip02_Hand");
+        b.extend_from_slice(&bone);
+        let mut m = [0f32; 16];
+        m[0] = 1.0;
+        m[5] = 1.0;
+        m[10] = 1.0;
+        m[15] = 1.0;
+        for f in m {
+            b.extend_from_slice(&f.to_le_bytes());
+        }
+        let got = tail_sockets_at4(&b, 0).expect("变长 GBK 标签的挂点段该认");
+        assert_eq!(got.0.len(), 1);
+        assert_eq!(got.0[0].name, "左武器");
+        assert_eq!(got.0[0].bone, "Bip02_Hand");
+        assert_eq!(got.1, b.len());
+    }
+
     /// 矩阵判据的正反两面：**非均匀缩放的合法仿射要认**（旧判据按「三轴长度差 ≤5%」
     /// 把它当噪声，166 份卡半路里有 7 份是这一形），**不正交 / w 列不对的仍不许认**
     /// （那是浮点噪声的形状，认了就等于往走段里放水）。

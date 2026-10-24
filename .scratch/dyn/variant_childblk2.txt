@@ -1,0 +1,78 @@
+
+# childblk · dead 就是进入点、且后面还找得到条目头的 27 份
+  w1351_model_bird_lf001.mesh · D 156（m=8）· 段哈希 1267066820bf3b60 · 头四个 f32 [5663.97070 8035.16699 1831.82275 -0.00000]
+  w1351_monster_heiyuan.mesh · D 492（m=50）· 段哈希 09b29d63f9722acd · 头四个 f32 [0.00000 0.00000 0.00000 0.00000]
+  w1351_boss_hubaoshenshou02.mesh · D 276（m=23）· 段哈希 49011f171b313bdd · 头四个 f32 [-0.26419 0.69655 0.63299 0.00000]
+  w1351_boss_hubaoshenshou03.mesh · D 276（m=23）· 段哈希 49011f171b313bdd · 头四个 f32 [-0.26419 0.69655 0.63299 0.00000]
+  w1351_boss_hubaoshenshou04.mesh · D 276（m=23）· 段哈希 49011f171b313bdd · 头四个 f32 [-0.26419 0.69655 0.63299 0.00000]
+  w1351_pets_zhizunshenshou_b0.mesh · D 276（m=23）· 段哈希 9a0321fbcf0e9eeb · 头四个 f32 [-0.26419 0.69655 0.63299 0.00000]
+  w1351_boss_hubaoshenshou.mesh · D 276（m=23）· 段哈希 9a0321fbcf0e9eeb · 头四个 f32 [-0.26419 0.69655 0.63299 0.00000]
+  w1351_monster_eyubangdashou_yifu_001.mesh · D 156（m=8）· 段哈希 9bb9dda3fdf6d34e · 头四个 f32 [1.33555 0.26850 -0.32974 0.00000]
+  w1351_monster_eyubangdashou_lian_001.mesh · D 156（m=8）· 段哈希 809231f26f932c36 · 头四个 f32 [0.61278 -0.30287 -0.84749 0.00000]
+  w1351_monster_tengjiayongshi_yifu_001.mesh · D 300（m=26）· 段哈希 89759a4bc88aced7 · 头四个 f32 [-0.00867 -0.03575 -0.99932 0.00000]
+  w1351_monster_eyubanghunhun_yifu_001.mesh · D 156（m=8）· 段哈希 9bb9dda3fdf6d34e · 头四个 f32 [1.33555 0.26850 -0.32974 0.00000]
+  w1351_pets_bianfu_b0.mesh · D 172（m=10）· 段哈希 cc50d8e28e0b894a · 头四个 f32 [-0.10544 -0.99420 -0.01945 0.00000]
+  w1351_npc_duanzhengming_yifu_001.mesh · D 836（m=93）· 段哈希 e6d3ad45d84d020c · 头四个 f32 [0.00000 0.00000 0.00000 0.00000]
+  w1351_monster_xueshanlieren_yifu_001.mesh · D 156（m=8）· 段哈希 166785d441782087 · 头四个 f32 [0.00804 -0.00149 -0.99997 0.00000]
+  w1351_monster_touliezhe_yifu_001.mesh · D 156（m=8）· 段哈希 166785d441782087 · 头四个 f32 [0.00804 -0.00149 -0.99997 0.00000]
+  w1351_monster_lichonggui_yifu_001.mesh · D 156（m=8）· 段哈希 322f8789a86d481e · 头四个 f32 [-0.04522 -0.53009 -0.83622 0.00000]
+  w1351_pets_yanzi_b0.mesh · D 260（m=21）· 段哈希 9814cd3132521881 · 头四个 f32 [0.88064 -0.35374 -0.37280 0.00000]
+  w1351_monster_eyubangdashou_shoutao_001.mesh · D 1100（m=126）· 段哈希 cdb17a850e417a99 · 头四个 f32 [0.61278 -0.30287 -0.84749 0.00000]
+  w1351_monster_eyubanghunhun_shoutao_001.mesh · D 156（m=8）· 段哈希 9bb9dda3fdf6d34e · 头四个 f32 [1.33555 0.26850 -0.32974 0.00000]
+  w1351_monster_xueshanlieren_lian_001.mesh · D 156（m=8）· 段哈希 166785d441782087 · 头四个 f32 [0.00804 -0.00149 -0.99997 0.00000]
+  w1351_monster_touliezhe_lian_001.mesh · D 156（m=8）· 段哈希 166785d441782087 · 头四个 f32 [0.00804 -0.00149 -0.99997 0.00000]
+  w1351_monster_lichonggui_lian_001.mesh · D 156（m=8）· 段哈希 322f8789a86d481e · 头四个 f32 [-0.04522 -0.53009 -0.83622 0.00000]
+  w1351_monster_lichonggui_shoutao_001.mesh · D 644（m=69）· 段哈希 765a1e1c43ce089e · 头四个 f32 [-0.04522 -0.53009 -0.83622 0.00000]
+  w1351_monster_tengjiayongshi_lian_011.mesh · D 156（m=8）· 段哈希 a7ce1cba4d6c0c82 · 头四个 f32 [-0.00867 -0.03575 -0.99932 0.00000]
+  w1351_monster_xueshanlieren_shoutao_001.mesh · D 156（m=8）· 段哈希 166785d441782087 · 头四个 f32 [0.00804 -0.00149 -0.99997 0.00000]
+  w1351_monster_touliezhe_shoutao_001.mesh · D 156（m=8）· 段哈希 166785d441782087 · 头四个 f32 [0.00804 -0.00149 -0.99997 0.00000]
+  w1351_monster_tengjiayongshi_shoutao_001.mesh · D 156（m=8）· 段哈希 a7ce1cba4d6c0c82 · 头四个 f32 [-0.00867 -0.03575 -0.99932 0.00000]
+# m = (D-92)/8 的分布
+  m = 8 · 15 份
+  m = 10 · 1 份
+  m = 21 · 1 份
+  m = 23 · 5 份
+  m = 26 · 1 份
+  m = 50 · 1 份
+  m = 69 · 1 份
+  m = 93 · 1 份
+  m = 126 · 1 份
+# 同一个 D 里，段内容是不是逐字节相同（(D,哈希) → 份数）
+  D = 156 · 共 15 份 · 段内容 6 种（1 种 = 逐字节相同的模板数据）
+  D = 172 · 共 1 份 · 段内容 1 种（1 种 = 逐字节相同的模板数据）
+  D = 260 · 共 1 份 · 段内容 1 种（1 种 = 逐字节相同的模板数据）
+  D = 276 · 共 5 份 · 段内容 2 种（1 种 = 逐字节相同的模板数据）
+  D = 300 · 共 1 份 · 段内容 1 种（1 种 = 逐字节相同的模板数据）
+  D = 492 · 共 1 份 · 段内容 1 种（1 种 = 逐字节相同的模板数据）
+  D = 644 · 共 1 份 · 段内容 1 种（1 种 = 逐字节相同的模板数据）
+  D = 836 · 共 1 份 · 段内容 1 种（1 种 = 逐字节相同的模板数据）
+  D = 1100 · 共 1 份 · 段内容 1 种（1 种 = 逐字节相同的模板数据）
+  w1351_model_bird_lf001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 134 根/吃 7 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_heiyuan.mesh · flag-not-1 试读孩子 0 · 上一条孩子 1 · 声明 29 根/吃 4 条 · D = 492（÷16 = 30，余 12；减 88 再 ÷16 = 25）
+  w1351_boss_hubaoshenshou02.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 40 根/吃 12 条 · D = 276（÷16 = 17，余 4；减 88 再 ÷16 = 11）
+  w1351_boss_hubaoshenshou03.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 40 根/吃 12 条 · D = 276（÷16 = 17，余 4；减 88 再 ÷16 = 11）
+  w1351_boss_hubaoshenshou04.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 40 根/吃 12 条 · D = 276（÷16 = 17，余 4；减 88 再 ÷16 = 11）
+  w1351_pets_zhizunshenshou_b0.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 40 根/吃 12 条 · D = 276（÷16 = 17，余 4；减 88 再 ÷16 = 11）
+  w1351_boss_hubaoshenshou.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 40 根/吃 12 条 · D = 276（÷16 = 17，余 4；减 88 再 ÷16 = 11）
+  w1351_monster_eyubangdashou_yifu_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 32 根/吃 25 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_eyubangdashou_lian_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 32 根/吃 25 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_tengjiayongshi_yifu_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 29 根/吃 27 条 · D = 300（÷16 = 18，余 12；减 88 再 ÷16 = 13）
+  w1351_monster_eyubanghunhun_yifu_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 32 根/吃 25 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_pets_bianfu_b0.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 63 根/吃 28 条 · D = 172（÷16 = 10，余 12；减 88 再 ÷16 = 5）
+  w1351_npc_duanzhengming_yifu_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 3 · 声明 27 根/吃 5 条 · D = 836（÷16 = 52，余 4；减 88 再 ÷16 = 46）
+  w1351_monster_xueshanlieren_yifu_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 28 根/吃 26 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_touliezhe_yifu_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 28 根/吃 26 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_lichonggui_yifu_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 32 根/吃 28 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_pets_yanzi_b0.mesh · flag-not-1 试读孩子 0 · 上一条孩子 2 · 声明 44 根/吃 40 条 · D = 260（÷16 = 16，余 4；减 88 再 ÷16 = 10）
+  w1351_monster_eyubangdashou_shoutao_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 32 根/吃 25 条 · D = 1100（÷16 = 68，余 12；减 88 再 ÷16 = 63）
+  w1351_monster_eyubanghunhun_shoutao_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 32 根/吃 25 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_xueshanlieren_lian_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 28 根/吃 26 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_touliezhe_lian_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 28 根/吃 26 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_lichonggui_lian_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 32 根/吃 28 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_lichonggui_shoutao_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 32 根/吃 28 条 · D = 644（÷16 = 40，余 4；减 88 再 ÷16 = 34）
+  w1351_monster_tengjiayongshi_lian_011.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 29 根/吃 27 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_xueshanlieren_shoutao_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 28 根/吃 26 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_touliezhe_shoutao_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 28 根/吃 26 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_tengjiayongshi_shoutao_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 29 根/吃 27 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+# 哪种算法命中（同一份可进多格）
+  0 份 · 上面六种算法一份都对不上 ⇒ 长度不由孩子数决定，别再找跳过分支

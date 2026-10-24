@@ -1219,6 +1219,9 @@ fn main() {
         let paths = mesh_paths(&con, &batch, limit);
         let mut rows: Vec<String> = Vec::new();
         let mut hits: BTreeMap<String, usize> = BTreeMap::new();
+        let mut seg_hash: BTreeMap<(usize, u64), usize> = BTreeMap::new();
+        let mut seg_rows: Vec<String> = Vec::new();
+        let mut mx8tally: BTreeMap<usize, usize> = BTreeMap::new();
         let mut n = 0usize;
         for p in &paths {
             let name = p.rsplit('/').next().unwrap_or("").to_string();
@@ -1248,6 +1251,33 @@ fn main() {
                 .and_then(|f| raw.get(f + 68..f + 72))
                 .map(|s| u32::from_le_bytes(<[u8; 4]>::try_from(s).unwrap()) as usize);
             n += 1;
+            // 这一族到底是「每根骨的数」还是「一份模板数据」？两条便宜证据：
+            // ① 把整段（去掉尾部 u92）做个 FNV 哈希，看同 D 的不同份是不是**逐字节相同**；
+            // ② 把段前 4 个字当 f32 打出来，看数值像坐标（上千量级）还是像权重（0..1）。
+            let body = &raw[dead..nxt.saturating_sub(88).max(dead)];
+            let mut hv: u64 = 0xcbf2_9ce4_8422_2325;
+            for &by in body {
+                hv = (hv ^ by as u64).wrapping_mul(0x0000_0100_0000_01b3);
+            }
+            *seg_hash.entry((d, hv)).or_insert(0) += 1;
+            let head4: Vec<String> = (0..4)
+                .map(|k| {
+                    raw.get(dead + 4 * k..dead + 4 * k + 4)
+                        .and_then(|s| <[u8; 4]>::try_from(s).ok())
+                        .map(f32::from_le_bytes)
+                        .map(|v| format!("{v:.5}"))
+                        .unwrap_or_default()
+                })
+                .collect();
+            let mx8 = if d >= 92 { (d - 92) / 8 } else { 0 };
+            *mx8tally.entry(mx8).or_insert(0) += 1;
+            if seg_rows.len() < 30 {
+                seg_rows.push(format!(
+                    "  {name} · D {d}（m={mx8}）· 段哈希 {:016x} · 头四个 f32 [{}]",
+                    hv,
+                    head4.join(" ")
+                ));
+            }
             for (lbl, ok) in [
                 ("D = 88 + 16k", (d >= 88) && (d - 88) % 16 == 0),
                 ("D = 88 + 16kids", kids.map_or(false, |k| d == 88 + 16 * k)),
@@ -1275,6 +1305,26 @@ fn main() {
         }
         println!("
 # childblk · dead 就是进入点、且后面还找得到条目头的 {n} 份");
+        for r in seg_rows {
+            println!("{r}");
+        }
+        println!("# m = (D-92)/8 的分布");
+        for (k, v) in &mx8tally {
+            println!("  m = {k} · {v} 份");
+        }
+        println!("# 同一个 D 里，段内容是不是逐字节相同（(D,哈希) → 份数）");
+        let mut by_d: BTreeMap<usize, Vec<u64>> = BTreeMap::new();
+        for ((d, hv), c) in &seg_hash {
+            for _ in 0..*c {
+                by_d.entry(*d).or_default().push(*hv);
+            }
+        }
+        for (d, list) in &by_d {
+            let mut uniq = list.clone();
+            uniq.sort_unstable();
+            uniq.dedup();
+            println!("  D = {d} · 共 {} 份 · 段内容 {} 种（1 种 = 逐字节相同的模板数据）", list.len(), uniq.len());
+        }
         for r in rows {
             println!("{r}");
         }

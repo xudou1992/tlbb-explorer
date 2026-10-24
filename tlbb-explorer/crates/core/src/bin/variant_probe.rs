@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -1557,6 +1557,80 @@ fn main() {
         for r in rows {
             println!("{r}");
         }
+        return;
+    }
+
+    if mode == "clientwalk" {
+        // 136 补从客户端二进制读出来的**骨架尾部读法**（sub_14073A190），这里只做只读普查：
+        // 起点用我们现有的 `hierarchy_stuck().start`，骨数用头部声明值，按客户端顺序走：
+        //   可选哨兵 -1(4) → 每根骨 name32 + name32 + childCount(4) + children(32×c) + matrix(64)
+        //   + inflCount(4) + ids(4n) + weights(4n) + **额外 92 字节**（64+12+12+4）
+        // 落点与文件尾的差只允许 0/4/8（尾部的挂点段/空段），其余算走不通。判据一字未动。
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut tally: BTreeMap<String, usize> = BTreeMap::new();
+        let mut gain = 0usize;
+        let mut gain_names: Vec<String> = Vec::new();
+        let mut bad_examples: Vec<String> = Vec::new();
+        let mut n = 0usize;
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            if parse_nodes(&raw).is_empty() { continue }
+            let Some(declared) = bone_count(&raw) else { continue };
+            if declared == 0 || declared > 4096 { continue }
+            let Some(sp) = hierarchy_stuck(&raw) else { continue };
+            let mut pos = sp.start;
+            let rd = |at: usize| -> Option<u32> {
+                raw.get(at..at + 4).and_then(|s| <[u8;4]>::try_from(s).ok()).map(u32::from_le_bytes)
+            };
+            let mut ok = true;
+            let mut step = 0usize;
+            if rd(pos) == Some(u32::MAX) { pos += 4; }
+            while step < declared {
+                pos += 32; pos += 32;
+                let Some(c) = rd(pos) else { ok = false; break };
+                pos += 4;
+                if c > 4096 { ok = false; break }
+                pos += 32 * c as usize;
+                pos += 64;
+                let Some(k) = rd(pos) else { ok = false; break };
+                pos += 4;
+                if k > 200_000 { ok = false; break }
+                pos += 8 * k as usize;
+                pos += 92;
+                if pos > raw.len() { ok = false; break }
+                step += 1;
+            }
+            let diff = raw.len() as i64 - pos as i64;
+            let key = if !ok {
+                "中途越界/计数离谱".to_string()
+            } else if diff == 0 {
+                "走到 EOF（精确）".to_string()
+            } else if diff == 4 {
+                "EOF 前 4 字节".to_string()
+            } else if diff == 8 {
+                "EOF 前 8 字节".to_string()
+            } else {
+                format!("差 {diff} 字节")
+            };
+            *tally.entry(key.clone()).or_insert(0) += 1;
+            n += 1;
+            let resolved = parse_hierarchy(&raw).is_some();
+            if !resolved && ok && (0..=8).contains(&diff) {
+                gain += 1;
+                if gain_names.len() < 12 { gain_names.push(format!("{name}(差{diff})")); }
+            }
+            if !ok && bad_examples.len() < 8 {
+                bad_examples.push(format!("{name} · 声明 {declared} · 停在 {pos}"));
+            }
+        }
+        println!("
+# clientwalk · 有记录且声明骨数可读的 {n} 份");
+        for (k, v) in &tally { println!("  {v} 份 · {k}"); }
+        println!("# 按客户端读法走通、但当前 parse_hierarchy 解不出的：{gain} 份");
+        for g in &gain_names { println!("  {g}"); }
+        println!("# 走不通的例子");
+        for g in &bad_examples { println!("  {g}"); }
         return;
     }
 

@@ -1348,10 +1348,24 @@ fn main() {
         let mut adj = 0usize;
         let mut far = 0usize;
         let mut rows: Vec<String> = Vec::new();
+        // 全局「孩子 → 父骨」计数：双爹的那些孩子，在**别的文件**里由谁当爹，是归属规则的独立证据
+        // （同一个命名族的变体，三份都双爹就说明这条链真有两处引用；别的份只给一个爹就指明了那一个）。
+        let mut census: std::collections::HashMap<String, std::collections::HashMap<String, usize>> =
+            std::collections::HashMap::new();
+        let mut dups: Vec<(String, String, Vec<String>)> = Vec::new();
         for p in &paths {
             let name = p.rsplit('/').next().unwrap_or("").to_string();
             let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
             let Some(es) = tail_entries(&raw) else { continue };
+            for (parent, kids) in &es {
+                for k in kids {
+                    *census
+                        .entry(k.clone())
+                        .or_default()
+                        .entry(parent.clone())
+                        .or_insert(0) += 1;
+                }
+            }
             // 主干那条判的是**一个孩子在两个父骨下都出现**（两个爹 = 树不合法），不是同一份名单里重名。
             let mut par: std::collections::HashMap<&str, Vec<&str>> = std::collections::HashMap::new();
             for (parent, kids) in &es {
@@ -1364,14 +1378,12 @@ fn main() {
                 .filter(|(_, v)| v.len() > 1)
                 .map(|(k, v)| (*k, v.clone()))
                 .collect();
-            if !multi.is_empty() && rows.len() < 20 {
+            if !multi.is_empty() {
                 hits += multi.len();
-                for (k, ps) in multi.iter().take(4) {
-                    rows.push(format!(
-                        "  {name} · 孩子 {k} 挂在 {} 个父骨下：{}",
-                        ps.len(),
-                        ps.join(" / ")
-                    ));
+                for (k, ps) in multi.iter() {
+                    if dups.len() < 12 {
+                        dups.push((name.clone(), k.to_string(), ps.iter().map(|s| s.to_string()).collect()));
+                    }
                 }
             }
             for (parent, kids) in &es {
@@ -1412,7 +1424,16 @@ fn main() {
             }
         }
         println!("
-# dupkid · 条目与孩子名单里出现重名的父骨条目 {hits} 处（相邻 {adj} · 隔开 {far}）");
+# dupkid · 一个孩子在同一份里挂在几个父骨下：全库 {hits} 处");
+        println!("# 双爹孩子 · 这两个爹在**全库所有文件**里各当过它爹几次（独立旁证）");
+        for (f, k, ps) in &dups {
+            let mut parts: Vec<String> = Vec::new();
+            for ptag in ps {
+                let c = census.get(k).and_then(|m| m.get(ptag)).copied().unwrap_or(0);
+                parts.push(format!("{ptag} 当爹 {c} 次"));
+            }
+            println!("  {f} · 孩子 {k}：{}", parts.join(" · "));
+        }
         for r in rows {
             println!("{r}");
         }

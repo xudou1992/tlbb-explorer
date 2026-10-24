@@ -1,0 +1,13 @@
+
+# dupkid · 一个孩子在同一份里挂在几个父骨下：全库 10 处
+# 双爹孩子 · 这两个爹在**全库所有文件**里各当过它爹几次（独立旁证）
+  w1351_new_npc_dingchunqiu.mesh · 孩子 bone93：bip001_pelvis 当爹 1 次 · bone92 当爹 15 次
+  w1351_pets_xiaohualing_b3.mesh · 孩子 bone103_b0：bip001_head 当爹 3 次 · bone091_b0 当爹 3 次
+  w1351_pets_xiaohualing_b3.mesh · 孩子 bone107_b0：bip001_spine1 当爹 3 次 · bone106_b0 当爹 3 次
+  w1351_pets_xiaohualing_b3.mesh · 孩子 bone105_b0：bip001_spine1 当爹 3 次 · bone104_b0 当爹 3 次
+  w1351_pets_xiaohualing_b1.mesh · 孩子 bone105_b0：bip001_spine1 当爹 3 次 · bone104_b0 当爹 3 次
+  w1351_pets_xiaohualing_b1.mesh · 孩子 bone103_b0：bip001_head 当爹 3 次 · bone091_b0 当爹 3 次
+  w1351_pets_xiaohualing_b1.mesh · 孩子 bone107_b0：bip001_spine1 当爹 3 次 · bone106_b0 当爹 3 次
+  w1351_pets_xiaohualing_b0.mesh · 孩子 bone103_b0：bip001_head 当爹 3 次 · bone091_b0 当爹 3 次
+  w1351_pets_xiaohualing_b0.mesh · 孩子 bone107_b0：bip001_spine1 当爹 3 次 · bone106_b0 当爹 3 次
+  w1351_pets_xiaohualing_b0.mesh · 孩子 bone105_b0：bip001_spine1 当爹 3 次 · bone104_b0 当爹 3 次

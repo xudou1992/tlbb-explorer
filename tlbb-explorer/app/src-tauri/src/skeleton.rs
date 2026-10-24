@@ -661,6 +661,33 @@ pub async fn animation_view(gid: i64, file: String) -> Result<AnimReply, String>
 mod tests {
     use super::*;
 
+    /// 层级里没有绑定矩阵的件（`bird`，134 根骨、`parse_hierarchy` 的 bind 全 None），
+    /// **骨架页照样有位置**：表格的坐标来自 `parse_nodes` 的 96B 记录（99 条），
+    /// 只有 `.ani` 轨道名单里多出来的 35 根没有坐标、`source="ani"`。
+    /// ⇒ 「无绑定」影响的是导出/播放那条（用 `parse_hierarchy().bones[].bind`），不是这一页。
+    #[test]
+    fn 无绑定件的骨架页仍有坐标() {
+        let (root, db) = roots();
+        if !root.join("data.pak").is_file() || !db.is_file() {
+            eprintln!("跳过：本机没有客户端或资源清单");
+            return;
+        }
+        let con = open_db(&db).expect("清单");
+        let gid: i64 = con
+            .query_row("SELECT id FROM agroups WHERE stem = 'w1351_model_bird_lf001'", [], |r| r.get(0))
+            .expect("应在清单里");
+        let rep = skeleton_view_run(gid, "").expect("骨架回包");
+        let pos = rep.nodes.iter().filter(|n| n.pos.is_some()).count();
+        let mut src: std::collections::BTreeMap<&str, usize> = Default::default();
+        for n in &rep.nodes { *src.entry(n.source.as_str()).or_insert(0) += 1; }
+        assert_eq!(rep.declared, 134);
+        assert!(rep.chain, "父链该解得出");
+        assert!(rep.nodes.len() >= 134, "骨表不该少于声明数");
+        assert_eq!(pos, 99, "坐标应来自 99 条 96B 记录");
+        assert_eq!(*src.get("ani").unwrap_or(&0), 35, "只有 .ani 名单的骨该有 35 根");
+        assert!(!src.contains_key("chain") || *src.get("chain").unwrap_or(&0) <= 1);
+    }
+
     /// 今天（10-16）才解出来的那一族：`heiyuan` 的尾部按客户端读法走通（挂点段 4 字节头 +20 之一）。
     /// 这条锁**界面数据面**：骨架页必须给出 chain=true、声明 29 根、骨表不少，且父链真的连上了。
     #[test]

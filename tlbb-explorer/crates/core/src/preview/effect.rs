@@ -442,6 +442,40 @@ pub struct EffectNames {
     pub other: Vec<String>,
 }
 
+/// 客户端属性的名字表（2026-10-16 从 exe 的 `.rdata` 静态表整张取出，611 条，id 0..610）。
+///
+/// 每条 24 字节：`[char* 名字][u32 A][u32 B]`，`B` 连号；记录的 `fld` 就是这里的 `id`。
+/// 真 `.pu` 的参数记录里 `cls != 0` 的 261 种 `(cls,fld)` 全部命中（按条数 100%）。
+/// 语义抽检：`33 = position`（cls=7 三维）、`370 = time_colour`（cls=14 时间+RGBA）、
+/// `16 = speed`（cls=1 浮点）。`A` 是客户端的另一种类型码，与 `cls` 不正交，尚未使用。
+static PU_ATTR_TSV: &str = include_str!("../../data/pu_attr_table.tsv");
+
+fn pu_attrs() -> &'static std::collections::HashMap<u16, (&'static str, u16)> {
+    static ONCE: std::sync::OnceLock<std::collections::HashMap<u16, (&'static str, u16)>> =
+        std::sync::OnceLock::new();
+    ONCE.get_or_init(|| {
+        let mut m = std::collections::HashMap::new();
+        for line in PU_ATTR_TSV.lines().skip(1) {
+            let mut it = line.split('\t');
+            let (Some(id), Some(name), Some(a)) = (it.next(), it.next(), it.next()) else { continue };
+            if let (Ok(id), Ok(a)) = (id.parse::<u16>(), a.parse::<u16>()) {
+                m.insert(id, (name, a));
+            }
+        }
+        m
+    })
+}
+
+/// 属性 id（记录里的 `fld`）→ 客户端属性名。表外的值返回 `None`（不编名字）。
+pub fn pu_field_name(fld: u16) -> Option<&'static str> {
+    pu_attrs().get(&fld).map(|(n, _)| *n)
+}
+
+/// 属性表条目数（测试与界面统计用）。
+pub fn pu_attr_count() -> usize {
+    pu_attrs().len()
+}
+
 /// 参数块里的一条记录：`key = (cls << 16) | fld`，后跟 `pw(cls,fld)` 个 u32 载荷词。
 ///
 /// cls 是载荷类型（1=单浮点、6=二维向量、7=三维向量、8/9=RGBA 颜色、
@@ -597,6 +631,20 @@ fn classify(strings: &[String]) -> EffectNames {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
+    /// 属性表：整张表在，且三个语义明确的 id 对得上（2026-10-16 从 exe 静态表取出）。
+    #[test]
+    fn pu_attr_table_has_the_known_names() {
+        assert_eq!(pu_attr_count(), 611, "表应有 611 条（id 0..610，含 total/invalid 哨兵）");
+        assert_eq!(pu_field_name(33), Some("position"));
+        assert_eq!(pu_field_name(370), Some("time_colour"));
+        assert_eq!(pu_field_name(16), Some("speed"));
+        assert_eq!(pu_field_name(6), Some("initial_colour"));
+        assert_eq!(pu_field_name(609), Some("total"));
+        assert_eq!(pu_field_name(65535), None, "表外不许编名字");
+    }
+
     use super::*;
 
     /// 手搓一份合规容器：验证驻留表、分隔符翻译与分桶。

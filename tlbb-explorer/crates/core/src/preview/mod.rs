@@ -19,7 +19,7 @@ pub mod uvfit;
 pub mod uvfit_batch;
 
 pub use anim::{parse_ani, rest_poses, Anim, Rest, Track};
-pub use effect::{parse_pu, Effect, EffectNames, PuRecord};
+pub use effect::{parse_pu, pu_attr_count, pu_field_name, Effect, EffectNames, PuRecord};
 
 pub use geometry::{
     bone_count, hierarchy_forest, hierarchy_with_virtual_root, hierarchy_stuck, hierarchy_try, node_names, parse_forest,

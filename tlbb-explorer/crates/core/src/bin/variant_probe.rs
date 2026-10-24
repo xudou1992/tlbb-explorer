@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -1436,6 +1436,42 @@ fn main() {
         }
         for r in rows {
             println!("{r}");
+        }
+        return;
+    }
+
+    if mode == "anitrack" {
+        // 双爹那格只剩一条旁证路：`.ani` 的 `Track` 只有骨名与局部通道（**没有父字段**），
+        // 所以唯一能用的是**轨道顺序**。这一档把每份动作的轨道名按文件顺序打出来，
+        // 并标出：这条轨道紧跟在谁后面（如果 .ani 的序就是骨架的父链序，这个邻居就是父的旁证）。
+        let paths = mesh_paths(&con, &batch, limit);
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            // 动作与网格同目录（`<名>/ani/*.ani`），用现成的 `anim_names_for` 取，别自己拼
+            let Some(aniname) = anim_names_for(&con, p).into_iter().next() else { continue };
+            let Some(araw) = bytes_of(&con, &root, &mut paks, &aniname) else { continue };
+            let Some(an) = parse_ani(&araw) else { continue };
+            let name = format!("{name} <- {}", aniname.rsplit('/').next().unwrap_or(""));
+            let tr: Vec<&str> = an.tracks.iter().map(|t| t.bone.as_str()).collect();
+            let numbered: Vec<usize> = tr
+                .iter()
+                .enumerate()
+                .filter(|(_, n)| n.starts_with("bone"))
+                .map(|(i, _)| i)
+                .take(8)
+                .collect();
+            println!(
+                "
+{name} · 声明骨 {} · 帧 {} · 轨道 {} 条 · 其中 boneNNN 型 {}",
+                an.bones,
+                an.frames,
+                tr.len(),
+                tr.iter().filter(|n| n.starts_with("bone")).count()
+            );
+            for i in numbered {
+                let prev = if i > 0 { tr[i - 1] } else { "(第一条)" };
+                println!("   #{i:<4} {:<18} 紧跟在 {prev} 后", tr[i]);
+            }
         }
         return;
     }

@@ -44,43 +44,5 @@
       "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_pets_xiaohualing_b0/w1351_pets_xiaohualing_b3.mesh\t151\t284148",
       "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_pets_xiongmao_b0/w1351_pets_xiongmao_b0_yifu_001.mesh\t44\t38852"
     ]
-  },
-  "尾部走不通（没有任何起点能读到文件末尾）": {
-    "n": 20,
-    "declared_sum": 703,
-    "size_sum": 649524,
-    "with_origin": 20,
-    "with_root_flag": 20,
-    "mesh_parse_fail": 0,
-    "samples": [
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_boss_hubaoshenshou/w1351_boss_hubaoshenshou.mesh (声明 40)",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_boss_hubaoshenshou/w1351_boss_hubaoshenshou02.mesh (声明 40)",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_boss_hubaoshenshou/w1351_boss_hubaoshenshou03.mesh (声明 40)",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_boss_hubaoshenshou/w1351_boss_hubaoshenshou04.mesh (声明 40)",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_eyubangdashou/w1351_monster_eyubangdashou_lian_001.mesh (声明 32)",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_eyubangdashou/w1351_monster_eyubangdashou_shoutao_001.mesh (声明 32)"
-    ],
-    "rows": [
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_boss_hubaoshenshou/w1351_boss_hubaoshenshou.mesh\t40\t48900",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_boss_hubaoshenshou/w1351_boss_hubaoshenshou02.mesh\t40\t48772",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_boss_hubaoshenshou/w1351_boss_hubaoshenshou03.mesh\t40\t48772",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_boss_hubaoshenshou/w1351_boss_hubaoshenshou04.mesh\t40\t48772",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_eyubangdashou/w1351_monster_eyubangdashou_lian_001.mesh\t32\t31812",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_eyubangdashou/w1351_monster_eyubangdashou_shoutao_001.mesh\t32\t22260",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_eyubangdashou/w1351_monster_eyubangdashou_yifu_001.mesh\t32\t31160",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_eyubanghunhun/w1351_monster_eyubanghunhun_shoutao_001.mesh\t32\t20080",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_eyubanghunhun/w1351_monster_eyubanghunhun_yifu_001.mesh\t32\t29812",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_heiyuan/w1351_monster_heiyuan.mesh\t29\t49084",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_lichonggui/w1351_monster_lichonggui_lian_001.mesh\t32\t15388",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_lichonggui/w1351_monster_lichonggui_shoutao_001.mesh\t32\t15132",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_lichonggui/w1351_monster_lichonggui_yifu_001.mesh\t32\t31648",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_xueshanlieren/w1351_monster_xueshanlieren_lian_001.mesh\t28\t15524",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_xueshanlieren/w1351_monster_xueshanlieren_shoutao_001.mesh\t28\t11356",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_xueshanlieren/w1351_monster_xueshanlieren_yifu_001.mesh\t28\t30668",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_npc_duanzhengming/w1351_npc_duanzhengming_yifu_001.mesh\t27\t30880",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_pets_bianfu_b0/w1351_pets_bianfu_b0.mesh\t63\t43780",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_pets_yanzi_b0/w1351_pets_yanzi_b0.mesh\t44\t26696",
-      "D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_pets_zhizunshenshou_b0/w1351_pets_zhizunshenshou_b0.mesh\t40\t49028"
-    ]
   }
 }

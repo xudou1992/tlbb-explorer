@@ -1379,28 +1379,31 @@ fn tail_sockets_at4(raw: &[u8], at: usize) -> Option<(Vec<SocketEntry>, usize)> 
     if count > 4096 {
         return None;
     }
-    let end = at.checked_add(4)?.checked_add(count.checked_mul(128)?)?;
-    if end != raw.len() {
-        return None;
-    }
+    // 记录实测三种长度：128（heiyuan）、132（eyubangdashou_yifu_001 的 ASCII 条）、
+    // 以及**变长**——第一条实测是 GBK 标签（`tail_socket_label` 的 32 + 字数）。
+    // 所以不再按步长乘，按顺序解：标签字段（ASCII 32 / GBK 32+字数）+ 挂骨名 32 + 矩阵 64，走完必须正好到 EOF。
     let mut p = at + 4;
     let mut out = Vec::with_capacity(count);
     for _ in 0..count {
-        let name = tail_name_at(raw, p)?.to_string();
-        let bone = tail_name_at(raw, p + 32)?.to_string();
+        let (label, field) = tail_socket_label(raw, p)?;
+        p += field;
+        let bone = tail_name_at(raw, p)?.to_string();
+        p += 32;
         let mut m = [0f32; 16];
         for k in 0..16 {
-            m[k] = tail_f32(raw, p + 64 + k * 4)?;
+            m[k] = tail_f32(raw, p + k * 4)?;
         }
+        p += 64;
         if !m.iter().all(|v| v.is_finite() && v.abs() < 1e7) || (m[15] - 1.0).abs() > 1e-3 {
             return None;
         }
-        out.push(SocketEntry { name, bone, bind: m });
-        p += 128;
+        out.push(SocketEntry { name: label, bone, bind: m });
+    }
+    if p != raw.len() {
+        return None;
     }
     Some((out, p))
 }
-
 fn tail_socket_label(raw: &[u8], at: usize) -> Option<(String, usize)> {
     let win = raw.get(at..at + 96)?;
     let nul = win.iter().position(|&c| c == 0)?;

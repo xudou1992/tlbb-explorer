@@ -1,6 +1,6 @@
 树 D:\TLGL\.scratch\out\tree
-.mesh 总数 7996 · 读不出 0 · 无骨架声明(0x110=0/读不出) 5300 · 解出 2648
-解不出合计 48
+.mesh 总数 7996 · 读不出 0 · 无骨架声明(0x110=0/读不出) 5300 · 解出 2668
+解不出合计 28
 
 【不是单根】 28 份 · 平均声明骨 64.4 · 平均大小 335915.4285714286 B · 有 origin 记录 7 · 有 -1 标志 28 · 网格本身解不出 0
    D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_ani_model_qixiayingri_jian_c01/w1351_ani_model_qixiayingri_jian_c01.mesh (声明 15)
@@ -9,11 +9,3 @@
    D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_model_em_nan_jt_posui_ani_x01/w1351_model_em_nan_jt_posui_ani_x01.mesh (声明 30)
    D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_model_fazhen_ani_lf001/w1351_model_fazhen_ani_lf001.mesh (声明 50)
    D:/TLGL/.scratch/out/tree/data/source/npc/model/w1351_model_glass_ani_lf001/w1351_model_glass_ani_lf001.mesh (声明 55)
-
-【尾部走不通（没有任何起点能读到文件末尾）】 20 份 · 平均声明骨 35.1 · 平均大小 32476.2 B · 有 origin 记录 20 · 有 -1 标志 20 · 网格本身解不出 0
-   D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_boss_hubaoshenshou/w1351_boss_hubaoshenshou.mesh (声明 40)
-   D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_boss_hubaoshenshou/w1351_boss_hubaoshenshou02.mesh (声明 40)
-   D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_boss_hubaoshenshou/w1351_boss_hubaoshenshou03.mesh (声明 40)
-   D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_boss_hubaoshenshou/w1351_boss_hubaoshenshou04.mesh (声明 40)
-   D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_eyubangdashou/w1351_monster_eyubangdashou_lian_001.mesh (声明 32)
-   D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_eyubangdashou/w1351_monster_eyubangdashou_shoutao_001.mesh (声明 32)

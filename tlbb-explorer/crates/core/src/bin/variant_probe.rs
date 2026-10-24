@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "nodegap" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "nodegap" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -1974,6 +1974,47 @@ fn main() {
         }
         println!("
 # playcheck · 多根件 {n} 份 · pose_frame 全有限 {posed_ok} · 姿态非常量 {moved}");
+        for r in rows { println!("{r}"); }
+        return;
+    }
+
+    if mode == "glbcheck" {
+        // ⑤ 的导出那一半：多根件套虚拟根后，能不能在内存里建出 rigged GLB（不写文件）。
+        use tlbb_core::export::gltf::{to_glb_rigged, RigExport};
+        let paths = mesh_paths(&con, &batch, limit);
+        let (mut n, mut ok, mut fail) = (0usize, 0usize, 0usize);
+        let mut rows: Vec<String> = Vec::new();
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            if parse_nodes(&raw).is_empty() || parse_hierarchy(&raw).is_some() { continue }
+            let Ok(v) = tlbb_core::preview::hierarchy_with_virtual_root(&raw) else { continue };
+            let Ok(l) = tlbb_core::preview::parse_mesh(&raw) else { continue };
+            let nodes = parse_nodes(&raw);
+            let mut anim: Option<(String, tlbb_core::preview::Anim)> = None;
+            for an in anim_names_for(&con, p) {
+                if let Some(a) = bytes_of(&con, &root, &mut paks, &an).and_then(|b| parse_ani(&b)) {
+                    anim = Some((an, a));
+                    break;
+                }
+            }
+            let anims: Vec<(&str, &tlbb_core::preview::Anim)> =
+                anim.as_ref().map(|(n2, a)| vec![(n2.as_str(), a)]).unwrap_or_default();
+            let rig = RigExport { hierarchy: &v, influences: &nodes };
+            n += 1;
+            match to_glb_rigged(&name, &l, &[], Some(&rig), &anims) {
+                Ok(b) => {
+                    ok += 1;
+                    if rows.len() < 8 { rows.push(format!("  {name} · OK {} 字节 · 骨 {} · 动作 {}", b.len(), v.bones.len(), anims.len())); }
+                }
+                Err(e) => {
+                    fail += 1;
+                    if rows.len() < 8 { rows.push(format!("  {name} · 失败：{e}")); }
+                }
+            }
+        }
+        println!("
+# glbcheck · 多根件 {n} 份 · 内存导出成功 {ok} · 失败 {fail}");
         for r in rows { println!("{r}"); }
         return;
     }

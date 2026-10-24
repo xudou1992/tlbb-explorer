@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "nodegap" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "nodegap" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -2015,6 +2015,49 @@ fn main() {
         }
         println!("
 # glbcheck · 多根件 {n} 份 · 内存导出成功 {ok} · 失败 {fail}");
+        for r in rows { println!("{r}"); }
+        return;
+    }
+
+    if mode == "posecheck" {
+        // 播放那一层的**真判定**：照 app 的管线（hierarchy → geometry → anim → reanchored_palette → posed_vertices），
+        // 只把树来源换成虚拟根，看 21 份多根件能不能真的摆出蒙皮顶点（只读）。
+        use tlbb_core::preview::pose::{posed_vertices, reanchored_palette};
+        let paths = mesh_paths(&con, &batch, limit);
+        let (mut n, mut ok, mut moved) = (0usize, 0usize, 0usize);
+        let mut rows: Vec<String> = Vec::new();
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            if parse_nodes(&raw).is_empty() || parse_hierarchy(&raw).is_some() { continue }
+            let Ok(hier) = tlbb_core::preview::hierarchy_with_virtual_root(&raw) else { continue };
+            let Ok(geom) = tlbb_core::preview::parse_geometry(&raw) else { continue };
+            let nodes = parse_nodes(&raw);
+            let Some((_an, a)) = anim_names_for(&con, p)
+                .into_iter()
+                .find_map(|an| bytes_of(&con, &root, &mut paks, &an).and_then(|b| parse_ani(&b)).map(|x| (an, x)))
+            else { continue };
+            n += 1;
+            let Some(pal) = reanchored_palette(&hier, &a, 0) else {
+                if rows.len() < 8 { rows.push(format!("  {name} · 调色板失败")); }
+                continue;
+            };
+            let Some(posed) = posed_vertices(&hier, &pal, &nodes, &geom.positions) else {
+                if rows.len() < 8 { rows.push(format!("  {name} · posed_vertices 失败")); }
+                continue;
+            };
+            let finite = posed.iter().all(|p| p.iter().all(|v| v.is_finite()));
+            let changed = posed.iter().zip(geom.positions.iter()).any(|(a2, b2)| {
+                (a2[0] - b2[0]).abs() + (a2[1] - b2[1]).abs() + (a2[2] - b2[2]).abs() > 1e-3
+            });
+            if finite { ok += 1 }
+            if finite && changed { moved += 1 }
+            if rows.len() < 8 {
+                rows.push(format!("  {name} · 顶点 {} · 有限 {} · 与原始不同 {}", posed.len(), finite, changed));
+            }
+        }
+        println!("
+# posecheck · 多根件 {n} 份 · posed_vertices 成功且有限 {ok} · 其中顶点真的动了 {moved}");
         for r in rows { println!("{r}"); }
         return;
     }

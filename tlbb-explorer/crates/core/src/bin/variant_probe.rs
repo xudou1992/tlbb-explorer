@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "nodegap" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "nodegap" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -2101,6 +2101,117 @@ fn main() {
 # fuzz · 扫了 {n} 份 · parse_mesh 成功 {mesh_ok} / 失败 {mesh_err} / 自身 panic {mesh_panic} · 其它入口 panic {}", panics.len());
         for e in errs.iter().take(8) { println!("  parse_mesh 失败：{e}"); }
         for x in panics.iter().take(20) { println!("  ✗ {x}"); }
+        return;
+    }
+
+    if mode == "vscmp" {
+        // 悬案对照：客户端每骨的 64 字节矩阵 vs 136 字节「变体记录」里的矩阵（按骨名配对）。
+        let paths = mesh_paths(&con, &batch, limit);
+        let (mut files, mut same, mut same_t, mut diff) = (0usize, 0usize, 0usize, 0usize);
+        let mut rows: Vec<String> = Vec::new();
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            let var = parse_nodes_variant(&raw);
+            if var.is_empty() { continue }
+            let Some(cb) = tlbb_core::preview::tail_client_binds(&raw) else { continue };
+            let mut cm: std::collections::HashMap<&str, [f32; 16]> = std::collections::HashMap::new();
+            for (n, m) in &cb { cm.insert(n.as_str(), *m); }
+            files += 1;
+            for nd in &var {
+                let Some(m2) = cm.get(nd.name.as_str()) else { continue };
+                let close = |a: &[f32; 16], b: &[f32; 16]| a.iter().zip(b.iter()).all(|(x, y)| (x - y).abs() < 1e-5);
+                if close(&nd.bind, m2) { same += 1 }
+                else {
+                    let mut t = [0f32; 16];
+                    for r in 0..4 { for c in 0..4 { t[r * 4 + c] = m2[c * 4 + r]; } }
+                    if close(&nd.bind, &t) { same_t += 1 } else {
+                        diff += 1;
+                        if rows.len() < 6 {
+                            rows.push(format!("  {name} · {} · 变体[{:.3},{:.3},{:.3}] 客户端[{:.3},{:.3},{:.3}]",
+                                nd.name, nd.bind[0], nd.bind[1], nd.bind[2], m2[0], m2[1], m2[2]));
+                        }
+                    }
+                }
+            }
+        }
+        println!("
+# vscmp · 两边都有数据的 {files} 份 · 同值 {same} · 仅转置相同 {same_t} · 不同 {diff}");
+        for r in rows { println!("{r}"); }
+        return;
+    }
+
+    if mode == "invcheck" {
+        // 验证：变体记录的 64B 矩阵 ?= inverse(标准 96B 记录里存的绑定矩阵)。
+        use tlbb_core::preview::pose::mat_inverse_affine;
+        let paths = mesh_paths(&con, &batch, limit);
+        let (mut files, mut same, mut diff, mut no_std) = (0usize, 0usize, 0usize, 0usize);
+        let mut rows: Vec<String> = Vec::new();
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            let var = parse_nodes_variant(&raw);
+            if var.is_empty() { continue }
+            let std_nodes = parse_nodes(&raw);
+            if std_nodes.is_empty() { continue }
+            let mut sm: std::collections::HashMap<&str, [f32; 16]> = std::collections::HashMap::new();
+            for n in &std_nodes { sm.insert(n.name.as_str(), n.bind); }
+            files += 1;
+            for nd in &var {
+                let Some(b) = sm.get(nd.name.as_str()) else { no_std += 1; continue };
+                let Some(inv) = mat_inverse_affine(b) else { continue };
+                let ok = inv.iter().zip(nd.bind.iter()).all(|(x, y)| (x - y).abs() < 1e-4);
+                if ok { same += 1 } else {
+                    diff += 1;
+                    if rows.len() < 6 {
+                        rows.push(format!("  {name} · {} · inv(96B)[{:.3},{:.3},{:.3}] 变体[{:.3},{:.3},{:.3}]",
+                            nd.name, inv[0], inv[1], inv[2], nd.bind[0], nd.bind[1], nd.bind[2]));
+                    }
+                }
+            }
+        }
+        println!("
+# invcheck · 两边都有标准记录的 {files} 份 · inverse(96B) == 变体矩阵 {same} · 不同 {diff} · 无标准记录 {no_std}");
+        for r in rows { println!("{r}"); }
+        return;
+    }
+
+    if mode == "localbind" {
+        // 变体矩阵 ?= 局部绑定 = S_parent · S⁻¹（S = 96B 里存的世界绑定逆）。两种乘法顺序都试。
+        use tlbb_core::preview::pose::{mat_inverse_affine, mat_mul};
+        let paths = mesh_paths(&con, &batch, limit);
+        let (mut files, mut m1, mut m2, mut diff, mut skipped) = (0usize, 0usize, 0usize, 0usize, 0usize);
+        let mut rows: Vec<String> = Vec::new();
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            let var = parse_nodes_variant(&raw);
+            if var.is_empty() { continue }
+            let Some(h) = parse_hierarchy(&raw) else { continue };
+            let mut vm: std::collections::HashMap<&str, [f32; 16]> = std::collections::HashMap::new();
+            for nd in &var { vm.insert(nd.name.as_str(), nd.bind); }
+            files += 1;
+            for (i, b) in h.bones.iter().enumerate() {
+                let Some(&v) = vm.get(b.name.as_str()) else { skipped += 1; continue };
+                let (Some(s), Some(sp)) = (b.bind, b.parent.and_then(|pi| h.bones[pi].bind)) else { skipped += 1; continue };
+                let Some(si) = mat_inverse_affine(&s) else { skipped += 1; continue };
+                // 我们的 bind 存的是世界绑定逆 ⇒ B = S⁻¹。局部绑定 V = B_parent⁻¹ · B = S_parent · S⁻¹。
+                let c1 = mat_mul(&sp, &si);
+                let c2 = mat_mul(&si, &sp);
+                let eq = |a: &[f32; 16]| a.iter().zip(v.iter()).all(|(x, y)| (x - y).abs() < 1e-4);
+                if eq(&c1) { m1 += 1 } else if eq(&c2) { m2 += 1 } else {
+                    diff += 1;
+                    if rows.len() < 6 {
+                        rows.push(format!("  {name} · {} · 变体[{:.3},{:.3},{:.3}] c1[{:.3},{:.3},{:.3}] c2[{:.3},{:.3},{:.3}]",
+                            b.name, v[0], v[1], v[2], c1[0], c1[1], c1[2], c2[0], c2[1], c2[2]));
+                    }
+                }
+                let _ = i;
+            }
+        }
+        println!("
+# localbind · 可算的 {files} 份 · 变体==S_parent·S⁻¹ {m1} · ==S⁻¹·S_parent {m2} · 不同 {diff} · 跳过 {skipped}");
+        for r in rows { println!("{r}"); }
         return;
     }
 

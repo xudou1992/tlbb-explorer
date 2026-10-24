@@ -24,7 +24,7 @@ pub use effect::{parse_pu, Effect, EffectNames, PuRecord};
 pub use geometry::{
     bone_count, hierarchy_forest, hierarchy_with_virtual_root, hierarchy_stuck, hierarchy_try, node_names, parse_forest,
     parse_nodes_variant, root_count, tail_entries, tail_inf_audit, tail_stuck_detail,
-    tail_stuck_why, tail_walk_steps, tail_first_entry_head, tail_is_u92, parse_geometry, parse_hierarchy, parse_mesh,
+    tail_stuck_why, tail_walk_steps, tail_first_entry_head, tail_is_u92, tail_client_binds, parse_geometry, parse_hierarchy, parse_mesh,
     parse_nodes, BoneNode, MeshGeometry, MeshLayout, Node, SkeletonHierarchy, SocketEntry,
     SkinInfluence, StuckPoint,
 };

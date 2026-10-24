@@ -1447,6 +1447,16 @@ fn tail_walk_client(
     start: usize,
     declared: usize,
 ) -> Option<(Vec<TailEntry>, Vec<SocketEntry>)> {
+    tail_walk_client_binds(raw, start, declared, None)
+}
+
+/// 同一条客户端走法，可选收集「名字 → 64 字节矩阵」（诊断用，不影响解析结果）。
+fn tail_walk_client_binds(
+    raw: &[u8],
+    start: usize,
+    declared: usize,
+    mut binds: Option<&mut Vec<(String, [f32; 16])>>,
+) -> Option<(Vec<TailEntry>, Vec<SocketEntry>)> {
     let mut p = start;
     if tail_u32(raw, p) == Some(u32::MAX) {
         p += 4;
@@ -1465,13 +1475,18 @@ fn tail_walk_client(
             kids.push((tail_name_at(raw, p)?.to_string(), None));
             p += 32;
         }
+        let mut m = [0f32; 16];
         for k in 0..16 {
             let v = tail_f32(raw, p + 4 * k)?;
             if !v.is_finite() || v.abs() > 1e7 {
                 return None;
             }
+            m[k] = v;
         }
         p += 64;
+        if let Some(bs) = binds.as_deref_mut() {
+            bs.push((name.clone(), m));
+        }
         let n = tail_u32(raw, p)? as usize;
         p += 4;
         if n > 200_000 {
@@ -1686,6 +1701,21 @@ pub fn tail_entries(raw: &[u8]) -> Option<Vec<(String, Vec<String>)>> {
                         })
                         .collect(),
                 );
+            }
+        }
+    }
+    None
+}
+
+/// 诊断：用客户端顺序走一遍，收集每根骨的名字与 64 字节矩阵（不建树、不判据）。
+pub fn tail_client_binds(raw: &[u8]) -> Option<Vec<(String, [f32; 16])>> {
+    let declared = bone_count(raw)?;
+    let (starts, variants) = tail_starts(raw);
+    for start in starts.into_iter().chain(variants) {
+        let mut v: Vec<(String, [f32; 16])> = Vec::new();
+        if let Some((entries, _)) = tail_walk_client_binds(raw, start, declared, Some(&mut v)) {
+            if entries.len() == declared {
+                return Some(v);
             }
         }
     }

@@ -1,0 +1,6 @@
+# 有记录但 parse_hierarchy 为零的 149 份 · 其中 forest 能建的 12 份
+# 主干自己给的人话（按份数）：
+    106 份 · 没有声明骨数（0x110 读不出） · 例 w1351_model_boss_cj_z005.mesh
+     27 份 · 尾部走不通（没有任何起点能读到文件末尾） · 例 w1351_model_bird_lf001.mesh
+     12 份 · （forest 能建，只是不多根） · 例 w1351_model_sl_nan_zhong_x02_2.mesh
+      4 份 · 有孩子被列了两次 · 例 w1351_new_npc_dingchunqiu.mesh

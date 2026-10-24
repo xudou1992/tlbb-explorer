@@ -466,6 +466,11 @@ fn pu_attrs() -> &'static std::collections::HashMap<u16, (&'static str, u16)> {
     })
 }
 
+/// 记录 `(cls, fld)` 的载荷 u32 词数（`PARAM_PW` 查询；未知键返回 `None`）。
+pub fn pu_param_width(cls: u16, fld: u16) -> Option<usize> {
+    param_pw(cls, fld)
+}
+
 /// 属性 id（记录里的 `fld`）→ 客户端属性名。表外的值返回 `None`（不编名字）。
 pub fn pu_field_name(fld: u16) -> Option<&'static str> {
     pu_attrs().get(&fld).map(|(n, _)| *n)
@@ -515,6 +520,9 @@ pub struct Effect {
     pub param_records: Vec<PuRecord>,
     /// 记录流是否恰好走到参数区末尾。false = 中途撞到未知键，已走出的记录保留。
     pub param_walk_complete: bool,
+    /// 走不完整时停在哪：`(cls, fld, 词下标, 原因)`；原因只有 `"unknown-key"` 与 `"overrun"`。
+    /// 走完整时为 `None`。诊断用，不影响已走出的记录。
+    pub param_stop: Option<(u16, u16, usize, &'static str)>,
 }
 
 /// 解 `.pu`。容器不合规（magic / 条数 / 字符池越界 / 名字里有二进制字节）→ `None`。
@@ -563,15 +571,18 @@ pub fn parse_pu(raw: &[u8]) -> Option<Effect> {
         .collect();
     let mut param_records = Vec::new();
     let mut param_walk_complete = true;
+    let mut param_stop: Option<(u16, u16, usize, &'static str)> = None;
     let mut q = 0usize;
     while q < words.len() {
         let (cls, fld) = ((words[q] >> 16) as u16, (words[q] & 0xffff) as u16);
         let Some(pw) = param_pw(cls, fld) else {
             param_walk_complete = false;
+            param_stop = Some((cls, fld, q, "unknown-key"));
             break;
         };
         if q + 1 + pw > words.len() {
             param_walk_complete = false;
+            param_stop = Some((cls, fld, q, "overrun"));
             break;
         }
         param_records.push(PuRecord {
@@ -588,6 +599,7 @@ pub fn parse_pu(raw: &[u8]) -> Option<Effect> {
         param_start,
         param_records,
         param_walk_complete,
+        param_stop,
         strings,
     })
 }

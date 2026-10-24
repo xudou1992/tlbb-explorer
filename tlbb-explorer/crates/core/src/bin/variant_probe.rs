@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "signmatch" | "purec" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "signmatch" | "purec" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "signmatch" | "purec" | "pustop" | "pwpw" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "signmatch" | "purec" | "pustop" | "pwpw" | "nodegap" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "signmatch" | "purec" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "vscmp" | "invcheck" | "localbind" | "signmatch" | "purec" | "pustop" | "pwpw" | "nodegap" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -2300,6 +2300,86 @@ fn main() {
         println!("# cls	fld	次数	载荷首词");
         for ((c, f), (n2, w)) in &seen {
             println!("{c}	{f}	{n2}	{w}");
+        }
+        return;
+    }
+
+    if mode == "pustop" {
+        // 走不完整的 .pu：停在哪种原因/哪把 key。只读诊断。
+        let mut names: Vec<String> = Vec::new();
+        if let Ok(mut st) = con.prepare("SELECT path FROM resources WHERE ext='.pu' AND stored > 0 LIMIT 20000") {
+            if let Ok(rows) = st.query_map([], |r| r.get::<_, String>(0)) {
+                for r in rows.flatten() { names.push(r.rsplit('/').next().unwrap_or("").to_string()); }
+            }
+        }
+        let mut tally: BTreeMap<String, usize> = BTreeMap::new();
+        let (mut files, mut incomplete) = (0usize, 0usize);
+        for n in &names {
+            let Some(raw) = bytes_of(&con, &root, &mut paks, n) else { continue };
+            let Some(ef) = tlbb_core::preview::parse_pu(&raw) else { continue };
+            files += 1;
+            if ef.param_walk_complete { continue }
+            incomplete += 1;
+            match ef.param_stop {
+                Some((c, f, q, why)) => {
+                    let nm = tlbb_core::preview::pu_field_name(f).unwrap_or("?");
+                    *tally.entry(format!("{why} · key=({c},{f}) 名字={nm} · 词下标={q}")).or_insert(0) += 1;
+                }
+                None => { *tally.entry("走不完整但没有 stop 记录".to_string()).or_insert(0) += 1; }
+            }
+        }
+        println!("
+# pustop · .pu {files} 份 · 记录流走不完整 {incomplete} 份");
+        for (k, v) in &tally { println!("  {v} 份 · {k}"); }
+        return;
+    }
+
+    if mode == "pwpw" {
+        // 反解缺失的载荷宽度：对走不完整的 .pu，在停下的那把 key 上试 pw=0..24，
+        // 其余记录仍按现有 PARAM_PW 表走，看哪个 pw 能让整条正好到词尾。
+        let width = |c: u16, f: u16| tlbb_core::preview::pu_param_width(c, f);
+        let mut names: Vec<String> = Vec::new();
+        if let Ok(mut st) = con.prepare("SELECT path FROM resources WHERE ext='.pu' AND stored > 0 LIMIT 20000") {
+            if let Ok(rows) = st.query_map([], |r| r.get::<_, String>(0)) {
+                for r in rows.flatten() { names.push(r.rsplit('/').next().unwrap_or("").to_string()); }
+            }
+        }
+        // key -> pw -> 成功份数
+        let mut cand: std::collections::BTreeMap<(u16, u16), Vec<usize>> = Default::default();
+        for n in &names {
+            let Some(raw) = bytes_of(&con, &root, &mut paks, n) else { continue };
+            let Some(ef) = tlbb_core::preview::parse_pu(&raw) else { continue };
+            if ef.param_walk_complete { continue }
+            let Some((cls, fld, q, why)) = ef.param_stop else { continue };
+            if why != "unknown-key" { continue }
+            let words: Vec<u32> = raw[ef.param_start..]
+                .chunks_exact(4)
+                .map(|c| u32::from_le_bytes([c[0], c[1], c[2], c[3]]))
+                .collect();
+            for pw in 0..=24usize {
+                let mut i = q + 1 + pw;
+                let mut ok = i <= words.len();
+                while ok && i < words.len() {
+                    let c2 = (words[i] >> 16) as u16;
+                    let f2 = (words[i] & 0xffff) as u16;
+                    match width(c2, f2) {
+                        Some(w) => i += 1 + w,
+                        None => { ok = false; break; }
+                    }
+                }
+                if ok && i == words.len() {
+                    let e = cand.entry((cls, fld)).or_default();
+                    if e.len() < 32 { e.push(pw); }
+                }
+            }
+        }
+        println!("
+# pwpw · 未知键的候选宽度（能在整份上走到精确末尾的 pw）");
+        for (k, pws) in &cand {
+            let mut v = pws.clone();
+            v.sort_unstable();
+            v.dedup();
+            println!("  key=({},{}) 名字={} · 候选 pw: {:?}", k.0, k.1, tlbb_core::preview::pu_field_name(k.1).unwrap_or("?"), v);
         }
         return;
     }

@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "forestroots" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "forestroots" | "sanity" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -1748,6 +1748,39 @@ fn main() {
         println!("# 根数分布（根数×份数）");
         for (k, v) in &tally { println!("  {k} 根 · {v} 份"); }
         println!("# 无绑定矩阵的根合计 {no_bind} 个");
+        return;
+    }
+
+    if mode == "sanity" {
+        // 已解出份的质量面：根名、绑定矩阵覆盖、骨数分布。只读，用来给新解出的份做兜底校验。
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut roots: BTreeMap<String, usize> = BTreeMap::new();
+        let mut no_bind_files = 0usize;
+        let mut n = 0usize;
+        let mut rows: Vec<String> = Vec::new();
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            let Some(h) = parse_hierarchy(&raw) else { continue };
+            n += 1;
+            let rs: Vec<&str> = h.bones.iter().filter(|b| b.parent.is_none()).map(|b| b.name.as_str()).collect();
+            *roots.entry(rs.first().copied().unwrap_or("(无)").to_string()).or_insert(0) += 1;
+            let nb = h.bones.iter().filter(|b| b.bind.is_some()).count();
+            if nb == 0 {
+                no_bind_files += 1;
+                if rows.len() < 12 {
+                    rows.push(format!("  {name} · 骨 {} · 绑定 0 · 根 {:?}", h.bones.len(), rs));
+                }
+            }
+        }
+        println!("
+# sanity · 已解出 {n} 份 · 一根绑定都没有的 {no_bind_files} 份");
+        println!("# 根名分布（前 10）");
+        let mut v: Vec<(&String, &usize)> = roots.iter().collect();
+        v.sort_by(|a, b| b.1.cmp(a.1));
+        for (k, c) in v.iter().take(10) { println!("  {c:5} 份 · 根 {k}"); }
+        println!("# 无绑定的例子");
+        for r in rows { println!("{r}"); }
         return;
     }
 

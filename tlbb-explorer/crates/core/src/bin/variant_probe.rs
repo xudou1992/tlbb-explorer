@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -1208,6 +1208,82 @@ fn main() {
         println!("# dead 那一点当表审的原因");
         for (k, v) in &reasons {
             println!("  {v} 份 · {k}");
+        }
+        return;
+    }
+
+    if mode == "childblk" {
+        // 27 份 `flag-not-1`（`dead == 进入点`，走法一步没走）卡在条目之间那段浮点数据里。
+        // 109 补那条嫌疑是「每根骨一份 12/16 字节的附属数据」⇒ 先把**上一条目的孩子数**与
+        // **这段的字节数**摆成一张交叉表，看 D 能不能由孩子数算出来。数不出来就别加分支。
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut rows: Vec<String> = Vec::new();
+        let mut hits: BTreeMap<String, usize> = BTreeMap::new();
+        let mut n = 0usize;
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            if parse_nodes(&raw).is_empty() || parse_hierarchy(&raw).is_some() {
+                continue;
+            }
+            let Some(sp) = hierarchy_stuck(&raw) else { continue };
+            let (why, cc, dead) = tail_stuck_detail(&raw, sp.stopped);
+            if dead != sp.stopped || dead + 72 >= raw.len() {
+                continue;
+            }
+            let Some(nxt) = tail_first_entry_head(&raw, dead) else { continue };
+            if nxt <= dead {
+                continue;
+            }
+            let d = nxt - dead;
+            // 上一条目：轨迹里最后一个 `entry` 起点，再往前找它真正的条目头（标志字）。
+            let (steps, _) = tail_walk_steps(&raw, sp.start);
+            let last = steps
+                .iter()
+                .rev()
+                .find(|(k, at)| *k == "entry" && *at < dead)
+                .map(|(_, at)| *at);
+            let flag = last.and_then(|at| tail_first_entry_head(&raw, at));
+            let kids = flag
+                .and_then(|f| raw.get(f + 68..f + 72))
+                .map(|s| u32::from_le_bytes(<[u8; 4]>::try_from(s).unwrap()) as usize);
+            n += 1;
+            for (lbl, ok) in [
+                ("D = 88 + 16k", (d >= 88) && (d - 88) % 16 == 0),
+                ("D = 88 + 16kids", kids.map_or(false, |k| d == 88 + 16 * k)),
+                ("D = 88 + 8kids", kids.map_or(false, |k| d == 88 + 8 * k)),
+                ("D = 4 + 8kids", kids.map_or(false, |k| d == 4 + 8 * k)),
+                ("D = 16kids", kids.map_or(false, |k| d == 16 * k)),
+                ("D = 16kids + 4", kids.map_or(false, |k| d == 16 * k + 4)),
+            ] {
+                if ok {
+                    *hits.entry(lbl.to_string()).or_insert(0) += 1;
+                }
+            }
+            if rows.len() < 30 {
+                rows.push(format!(
+                    "  {name} · {why} 试读孩子 {} · 上一条孩子 {} · 声明 {} 根/吃 {} 条 · D = {d}（÷16 = {}，余 {}；减 88 再 ÷16 = {}）",
+                    cc,
+                    kids.map_or("无".to_string(), |k| k.to_string()),
+                    sp.declared,
+                    sp.eaten,
+                    d / 16,
+                    d % 16,
+                    if d >= 88 { (d - 88) / 16 } else { 0 }
+                ));
+            }
+        }
+        println!("
+# childblk · dead 就是进入点、且后面还找得到条目头的 {n} 份");
+        for r in rows {
+            println!("{r}");
+        }
+        println!("# 哪种算法命中（同一份可进多格）");
+        for (k, v) in &hits {
+            println!("  {v} 份 · {k}");
+        }
+        if hits.is_empty() {
+            println!("  0 份 · 上面六种算法一份都对不上 ⇒ 长度不由孩子数决定，别再找跳过分支");
         }
         return;
     }

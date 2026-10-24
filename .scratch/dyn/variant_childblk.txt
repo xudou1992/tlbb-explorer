@@ -1,0 +1,31 @@
+
+# childblk · dead 就是进入点、且后面还找得到条目头的 27 份
+  w1351_model_bird_lf001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 134 根/吃 7 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_heiyuan.mesh · flag-not-1 试读孩子 0 · 上一条孩子 1 · 声明 29 根/吃 4 条 · D = 492（÷16 = 30，余 12；减 88 再 ÷16 = 25）
+  w1351_boss_hubaoshenshou02.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 40 根/吃 12 条 · D = 276（÷16 = 17，余 4；减 88 再 ÷16 = 11）
+  w1351_boss_hubaoshenshou03.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 40 根/吃 12 条 · D = 276（÷16 = 17，余 4；减 88 再 ÷16 = 11）
+  w1351_boss_hubaoshenshou04.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 40 根/吃 12 条 · D = 276（÷16 = 17，余 4；减 88 再 ÷16 = 11）
+  w1351_pets_zhizunshenshou_b0.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 40 根/吃 12 条 · D = 276（÷16 = 17，余 4；减 88 再 ÷16 = 11）
+  w1351_boss_hubaoshenshou.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 40 根/吃 12 条 · D = 276（÷16 = 17，余 4；减 88 再 ÷16 = 11）
+  w1351_monster_eyubangdashou_yifu_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 32 根/吃 25 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_eyubangdashou_lian_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 32 根/吃 25 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_tengjiayongshi_yifu_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 29 根/吃 27 条 · D = 300（÷16 = 18，余 12；减 88 再 ÷16 = 13）
+  w1351_monster_eyubanghunhun_yifu_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 32 根/吃 25 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_pets_bianfu_b0.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 63 根/吃 28 条 · D = 172（÷16 = 10，余 12；减 88 再 ÷16 = 5）
+  w1351_npc_duanzhengming_yifu_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 3 · 声明 27 根/吃 5 条 · D = 836（÷16 = 52，余 4；减 88 再 ÷16 = 46）
+  w1351_monster_xueshanlieren_yifu_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 28 根/吃 26 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_touliezhe_yifu_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 28 根/吃 26 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_lichonggui_yifu_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 32 根/吃 28 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_pets_yanzi_b0.mesh · flag-not-1 试读孩子 0 · 上一条孩子 2 · 声明 44 根/吃 40 条 · D = 260（÷16 = 16，余 4；减 88 再 ÷16 = 10）
+  w1351_monster_eyubangdashou_shoutao_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 32 根/吃 25 条 · D = 1100（÷16 = 68，余 12；减 88 再 ÷16 = 63）
+  w1351_monster_eyubanghunhun_shoutao_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 32 根/吃 25 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_xueshanlieren_lian_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 28 根/吃 26 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_touliezhe_lian_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 28 根/吃 26 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_lichonggui_lian_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 32 根/吃 28 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_lichonggui_shoutao_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 32 根/吃 28 条 · D = 644（÷16 = 40，余 4；减 88 再 ÷16 = 34）
+  w1351_monster_tengjiayongshi_lian_011.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 29 根/吃 27 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_xueshanlieren_shoutao_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 28 根/吃 26 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_touliezhe_shoutao_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 28 根/吃 26 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+  w1351_monster_tengjiayongshi_shoutao_001.mesh · flag-not-1 试读孩子 0 · 上一条孩子 0 · 声明 29 根/吃 27 条 · D = 156（÷16 = 9，余 12；减 88 再 ÷16 = 4）
+# 哪种算法命中（同一份可进多格）
+  0 份 · 上面六种算法一份都对不上 ⇒ 长度不由孩子数决定，别再找跳过分支

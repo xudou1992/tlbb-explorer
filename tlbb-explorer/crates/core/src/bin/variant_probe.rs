@@ -2068,6 +2068,8 @@ fn main() {
         let paths = mesh_paths(&con, &batch, limit);
         let mut n = 0usize;
         let mut panics: Vec<String> = Vec::new();
+        let (mut mesh_ok, mut mesh_err, mut mesh_panic) = (0usize, 0usize, 0usize);
+        let mut errs: Vec<String> = Vec::new();
         let prev = std::panic::take_hook();
         std::panic::set_hook(Box::new(|_| {})); // 静音，免得刷屏
         for p in &paths {
@@ -2079,7 +2081,14 @@ fn main() {
                     panics.push(format!("{name} · {tag}"));
                 }
             };
-            hit("parse_mesh", &|| { let _ = tlbb_core::preview::parse_mesh(&raw); });
+            {
+                let r = std::panic::catch_unwind(AssertUnwindSafe(|| tlbb_core::preview::parse_mesh(&raw)));
+                match r {
+                    Ok(Ok(_)) => mesh_ok += 1,
+                    Ok(Err(e)) => { mesh_err += 1; if errs.len() < 8 { errs.push(format!("{name} · {e}")); } }
+                    Err(_) => mesh_panic += 1,
+                }
+            }
             hit("parse_geometry", &|| { let _ = tlbb_core::preview::parse_geometry(&raw); });
             hit("parse_nodes", &|| { let _ = parse_nodes(&raw); });
             hit("parse_hierarchy", &|| { let _ = parse_hierarchy(&raw); });
@@ -2089,7 +2098,8 @@ fn main() {
         }
         std::panic::set_hook(prev);
         println!("
-# fuzz · 扫了 {n} 份 · panic {}", panics.len());
+# fuzz · 扫了 {n} 份 · parse_mesh 成功 {mesh_ok} / 失败 {mesh_err} / 自身 panic {mesh_panic} · 其它入口 panic {}", panics.len());
+        for e in errs.iter().take(8) { println!("  parse_mesh 失败：{e}"); }
         for x in panics.iter().take(20) { println!("  ✗ {x}"); }
         return;
     }

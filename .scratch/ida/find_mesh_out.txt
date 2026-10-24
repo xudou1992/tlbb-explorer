@@ -1,0 +1,109 @@
+== strings containing copyright / mesh extension ==
+count 49
+0x140d06b68 'id-Gost28147-89-CryptoPro-KeyMeshing'
+0x140d06b98 'id-Gost28147-89-None-KeyMeshing'
+0x140d57780 ' deflate 1.2.11 Copyright 1995-2017 Jean-loup Gailly and Mark Adler '
+0x140e7a762 'copyright'
+0x140ea3380 'szMeshName'
+0x140ea33d8 'MainBodyMesh'
+0x140ea33f8 'LeftWeaponMesh'
+0x140ea3408 'RightWeaponMesh'
+0x140ea4428 'DoodadMesh'
+0x140eb1248 '-1 != tableColumn.nMeshName'
+0x140eb12a0 'MeshName'
+0x140eb21e8 'HeadNameShowType'
+0x140eb2270 '-1 != tableColumn.nHeadNameShowType'
+0x140eb3aa0 'nHeadNameShowType'
+0x140eea768 'HairMesh'
+0x140eea824 '.mesh'
+0x140eeaac0 'StaObjSetMeshFile'
+0x140eeaeb8 'SetSubMeshScale'
+0x140eec148 'SkyBoxMeshShader'
+0x140ef2e90 'Copyright 2013-2200 http://www.julegame.com/ Corporation. All rights Reserved'
+0x140ef5df0 'nMeshBipSize > 0'
+0x140ef9928 'mesh_name'
+0x140efa6d8 'entity_renderer_mesh_name'
+0x140efb070 'mesh_surface_scale'
+0x140efb088 'mesh_surface_distribution'
+0x140efb0a8 'mesh_surface_mesh_name'
+0x140efb1f0 'vertex_em_mesh_name'
+0x140efc540 'scene_mesh_name'
+0x140f08bd8 'MeshFarmount load failed'
+0x140f09a68 'pAnimationInfo->pSrcMesh'
+0x140f12438 'COPYRIGHT'
+0x140f16828 'MeshSurface'
+0x1410859d8 '.?AVSkyBoxMeshShader@@'
+0x1410876c8 '.?AVMeshModel@@'
+0x141087808 '.?AVREMesh@@'
+0x14108dd68 '.?AVMeshSurfaceEmitterWriter@@'
+0x14108e860 '.?AVMeshSurfaceEmitterFactory@@'
+0x14108efe8 '.?AVMeshSurfaceEmitterTranslator@@'
+0x141093390 '.?AVStaticMeshVertexDataInterface@@'
+0x1410933f8 '.?AVRERenderMesh@@'
+0x1410934c8 '.?AV?$TStaticMeshVertexData@UVec2@@@@'
+0x141093e08 '.?AVStaticMeshVertexBuffer@@'
+0x141093ec8 '.?AVSkyMesh@@'
+0x141093ee8 '.?AVMeshFarMountain@@'
+0x141094598 '.?AVEsMesh@@'
+0x141095910 '.?AVMeshSurfaceEmitter@@'
+0x141096178 '.?AVEffectMeshTranslator@@'
+0x1410961d8 '.?AVEffectMeshNode@@'
+0x141097f20 '.?AVMeshDisplayData@dragonBones@@'
+
+== xrefs of copyright strings ==
+0x140ef2e90 'Copyright 2013-2200 http://www.julegame.com/ Corporation. All rights Reserved' <- 0x14070fc5b sub_14070FB70@0x14070fb70 type 1
+0x140ef2e90 'Copyright 2013-2200 http://www.julegame.com/ Corporation. All rights Reserved' <- 0x14072f773 sub_14072F6F0@0x14072f6f0 type 1
+0x140ef2e90 'Copyright 2013-2200 http://www.julegame.com/ Corporation. All rights Reserved' <- 0x140730532 ?_RTC_AllocaFailure@@YAXPEAXPEAU_RTC_ALLOCA_NODE@@H@Z_0@0x1407304c0 type 1
+0x140ef2e90 'Copyright 2013-2200 http://www.julegame.com/ Corporation. All rights Reserved' <- 0x14073613b sub_140736070@0x140736070 type 1
+0x140ef2e90 'Copyright 2013-2200 http://www.julegame.com/ Corporation. All rights Reserved' <- 0x1407a6eaf sub_1407A6E40@0x1407a6e40 type 1
+0x140f12438 'COPYRIGHT' <- 0x140e68348 (no func) type 1
+
+== around qword_1410AD918 ==
+0x1410ad8f0 0xffffffffffffffff
+   xref <- 0x1400e12a7 sub_1400E1240@0x1400e1240
+   xref <- 0x140911dda sub_140911C50@0x140911c50
+   xref <- 0x140c825d4 sub_140C825D0@0x140c825d0
+0x1410ad8f8 0xffffffffffffffff
+   xref <- 0x1400e0527 sub_1400E04C0@0x1400e04c0
+   xref <- 0x140907bd2 sub_140907A40@0x140907a40
+   xref <- 0x140c82274 sub_140C82270@0x140c82270
+0x1410ad900 0xffffffffffffffff
+   xref <- 0x1400e0627 sub_1400E05C0@0x1400e05c0
+   xref <- 0x140907c3d sub_140907A40@0x140907a40
+   xref <- 0x140c822b4 sub_140C822B0@0x140c822b0
+0x1410ad908 0xffffffffffffffff
+   xref <- 0x1400e0ba7 sub_1400E0B40@0x1400e0b40
+   xref <- 0x140906630 sub_1409062E0@0x1409062e0
+   xref <- 0x140c82414 sub_140C82410@0x140c82410
+0x1410ad910 0xffffffffffffffff
+   xref <- 0x1400e1327 sub_1400E12C0@0x1400e12c0
+   xref <- 0x140911dea sub_140911C50@0x140911c50
+   xref <- 0x140c825f4 sub_140C825F0@0x140c825f0
+0x1410ad918 0xffffffffffffffff
+   xref <- 0x1400e08a7 sub_1400E0840@0x1400e0840
+   xref <- 0x14090045d sub_140900280@0x140900280
+   xref <- 0x140c82354 sub_140C82350@0x140c82350
+0x1410ad920 0xffffffffffffffff
+   xref <- 0x1400e0727 sub_1400E06C0@0x1400e06c0
+   xref <- 0x1408fe2fb sub_1408FE060@0x1408fe060
+   xref <- 0x140c822f4 sub_140C822F0@0x140c822f0
+0x1410ad928 0xffffffffffffffff
+   xref <- 0x1400e0f27 sub_1400E0EC0@0x1400e0ec0
+   xref <- 0x140911d6a sub_140911C50@0x140911c50
+   xref <- 0x140c824f4 sub_140C824F0@0x140c824f0
+0x1410ad930 0xffffffffffffffff
+   xref <- 0x1400e1027 sub_1400E0FC0@0x1400e0fc0
+   xref <- 0x140911d8a sub_140911C50@0x140911c50
+   xref <- 0x140c82534 sub_140C82530@0x140c82530
+0x1410ad938 0xffffffffffffffff
+   xref <- 0x1400e0827 sub_1400E07C0@0x1400e07c0
+   xref <- 0x140900412 sub_140900280@0x140900280
+   xref <- 0x140c82334 sub_140C82330@0x140c82330
+0x1410ad940 0xffffffffffffffff
+   xref <- 0x1400e10a7 sub_1400E1040@0x1400e1040
+   xref <- 0x140911d9a sub_140911C50@0x140911c50
+   xref <- 0x140c82554 sub_140C82550@0x140c82550
+0x1410ad948 0xffffffffffffffff
+   xref <- 0x1400e0b27 sub_1400E0AC0@0x1400e0ac0
+   xref <- 0x14090661f sub_1409062E0@0x1409062e0
+   xref <- 0x140c823f4 sub_140C823F0@0x140c823f0

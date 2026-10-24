@@ -1,0 +1,356 @@
+
+########## 0x1405e6850 size=1522 ##########
+char __fastcall sub_1405E6850(__int64 a1, __int64 a2, char a3, char a4)
+   callees: 
+   total_lines=317 suspicious=94
+    char __fastcall sub_1405E6850(__int64 a1, __int64 a2, char a3, char a4)
+    if ( !*(_DWORD *)(*(_QWORD *)a2 + 12LL) || *(_QWORD *)(a1 + 184) == *(_QWORD *)a2 )
+    v9 = *(_QWORD *)(a1 + 64);
+    v10 = (_OWORD *)(*(__int64 (__fastcall **)(__int64))(*(_QWORD *)v9 + 160LL))(v9);
+    sub_1405E8400(a1, &qword_1410AB580);
+    (*(void (__fastcall **)(_QWORD, __int64))(**(_QWORD **)(a1 + 80) + 544LL))(*(_QWORD *)(a1 + 80), a1);
+    _InterlockedIncrement((volatile signed __int32 *)(*(_QWORD *)a2 + 8LL));
+    sub_1401369D0(*(_QWORD *)(a1 + 184));
+    *(_QWORD *)(a1 + 184) = *(_QWORD *)a2;
+    if ( (unsigned int)sub_140137050(a2, ".", 1) == -1 || (unsigned int)sub_140137050(a2, ".pu", 3) != -1 )
+    *(_DWORD *)(a1 + 72) = 0;
+    else if ( (unsigned int)sub_140137050(a2, ".mesh", 5) == -1 )
+    if ( (unsigned int)sub_140137050(a2, ".mdl", 4) != -1 )
+    *(_DWORD *)(a1 + 72) = 3;
+    *(_DWORD *)(a1 + 72) = 1;
+    v11 = *(_DWORD *)(a1 + 204) | 1;
+    v11 = *(_DWORD *)(a1 + 204) & 0xFFFFFFFE;
+    *(_DWORD *)(a1 + 204) = v11;
+    v12 = *(_QWORD *)(a1 + 64);
+    (*(void (__fastcall **)(_QWORD))(*(_QWORD *)v12 + 216LL))(*(_QWORD *)(a1 + 64));
+    v13 = (*(__int64 (__fastcall **)(__int64))(*(_QWORD *)v12 + 640LL))(v12);
+    (*(void (__fastcall **)(__int64, _QWORD, _QWORD))(*(_QWORD *)v13 + 32LL))(v13, *(_QWORD *)(a1 + 64), 0);
+    (*(void (__fastcall **)(__int64))(*(_QWORD *)v14 + 112LL))(v14);
+    sub_1405E9970(a1);
+    sub_14063E430(*(_QWORD *)(a1 + 328), 0, &qword_1410AB580);
+    v15 = *(_QWORD *)(a1 + 64);
+    (*(void (__fastcall **)(__int64))(*(_QWORD *)v15 + 8LL))(v15);
+    *(_QWORD *)(a1 + 64) = 0;
+    if ( (*(_BYTE *)(a1 + 204) & 1) == 0 )
+    *(_DWORD *)(a1 + 296) |= 1u;
+    *(_BYTE *)(a1 + 256) = 1;
+    v16 = *(_DWORD *)(a1 + 72);
+    v19 = (*(__int64 (__fastcall **)(__int64, __int64))(*(_QWORD *)qword_1410A7DD8 + 48LL))(qword_1410A7DD8, 55);
+    *(_QWORD *)(a1 + 64) = v19;
+    _InterlockedIncrement((volatile signed __int32 *)(*(_QWORD *)(a1 + 320) + 8LL));
+    sub_1401369D0(*(_QWORD *)(v19 + 1816));
+    *(_QWORD *)(v20 + 1816) = *(_QWORD *)(a1 + 320);
+    *(_QWORD *)(a1 + 64) = (*(__int64 (__fastcall **)(__int64, __int64))(*(_QWORD *)qword_1410A7DD8 + 48LL))(
+    v22 = *(_DWORD *)(a1 + 240) | 4;
+    *(_DWORD *)(a1 + 240) = v22;
+    *(_DWORD *)(a1 + 240) = v22 | 0x80;
+    if ( (*(_BYTE *)(a1 + 204) & 1) != 0 )
+    v25 = *(_QWORD *)(a1 + 120);
+    v26 = sub_1405E47A0(v25);
+    v27 = *(_QWORD *)(a1 + 64);
+    (*(void (__fastcall **)(__int64, __int64))(*(_QWORD *)v27 + 632LL))(v27, v26 - 8);
+    (*(void (__fastcall **)(__int64))(*(_QWORD *)v28 + 112LL))(v28);
+    (*(void (__fastcall **)(__int64, _QWORD))(*(_QWORD *)v27 + 632LL))(v27, 0);
+    v23 = *(_QWORD *)(*(_QWORD *)(a1 + 80) + 104LL);
+    v24 = *(_QWORD *)(a1 + 248);
+    *(_QWORD *)(a1 + 248) = 0;
+    *(_QWORD *)(a1 + 248) = (*(__int64 (__fastcall **)(__int64))(*(_QWORD *)(v23 + 8) + 192LL))(v23 + 8);
+    *(_DWORD *)(a1 + 296) |= 1u;
+    *(_BYTE *)(a1 + 256) = 1;
+    (*(void (__fastcall **)(_QWORD, __int64, __int64, _QWORD, _DWORD, char))(**(_QWORD **)(a1 + 64) + 264LL))(
+    *(_QWORD *)(a1 + 64),
+    sub_14063E430(*(_QWORD *)(a1 + 328), *(_QWORD *)(a1 + 64), a1 + 192);
+    (*(void (__fastcall **)(_QWORD, _OWORD *))(**(_QWORD **)(a1 + 64) + 168LL))(*(_QWORD *)(a1 + 64), v51);
+    if ( *(_DWORD *)(a1 + 72) )
+    (*(void (__fastcall **)(_QWORD, _QWORD, __int64 *, __int64 *, int, _DWORD, _DWORD, _DWORD, _DWORD))(**(_QWORD **)(a1 + 64) + 272LL))(
+    *(_QWORD *)(a1 + 64),
+    v30 = *(__int64 **)(a1 + 64);
+    if ( (*(_BYTE *)(a1 + 204) & 3) != 0 )
+    (*(void (__fastcall **)(__int64 *, __int64))(v31 + 480))(v30, 1);
+    v32 = *(void (__fastcall **)(__int64 *, __int64))(v31 + 480);
+    if ( *(_BYTE *)(qword_1410A7DD8 + 745) )
+    v33 = *(_QWORD **)(a1 + 128);
+    v35 = *(__int64 **)j[5];
+    if ( (*(_BYTE *)(a1 + 204) & 3) != 0 )
+    (*(void (__fastcall **)(__int64 *, __int64))(v36 + 480))(v35, 1);
+    v37 = *(void (__fastcall **)(__int64 *, __int64))(v36 + 480);
+    if ( *(_BYTE *)(qword_1410A7DD8 + 745) )
+    if ( *((_BYTE *)v38 + 25) )
+    for ( i = j[1]; !*(_BYTE *)(i + 25); i = *(_QWORD *)(i + 8) )
+    if ( j != *(_QWORD **)(i + 16) )
+    for ( j = (_QWORD *)j[2]; !*((_BYTE *)v40 + 25); v40 = (__int64 *)*v40 )
+    while ( j != *(_QWORD **)(a1 + 128) );
+    v41 = *(_QWORD **)(a1 + 144);
+    v43 = *(__int64 **)m[5];
+    if ( (*(_BYTE *)(a1 + 204) & 3) != 0 )
+    (*(void (__fastcall **)(__int64 *, __int64))(v44 + 480))(v43, 1);
+    v45 = *(void (__fastcall **)(__int64 *, __int64))(v44 + 480);
+    if ( *(_BYTE *)(qword_1410A7DD8 + 745) )
+    if ( *((_BYTE *)v46 + 25) )
+    for ( k = m[1]; !*(_BYTE *)(k + 25); k = *(_QWORD *)(k + 8) )
+    if ( m != *(_QWORD **)(k + 16) )
+    for ( m = (_QWORD *)m[2]; !*((_BYTE *)v48 + 25); v48 = (__int64 *)*v48 )
+    while ( m != *(_QWORD **)(a1 + 144) );
+    v49 = *(_DWORD *)(a1 + 240) | 8;
+    if ( *(_DWORD *)(a1 + 200) != 1 )
+    v49 = *(_DWORD *)(a1 + 240) & 0xFFFFFFF7;
+    *(_DWORD *)(a1 + 240) = v49;
+    *(_DWORD *)(a1 + 296) |= 4u;
+    *(_BYTE *)(a1 + 256) = 1;
+
+########## 0x1405e8360 size=156 ##########
+__int64 __fastcall sub_1405E8360(__int64 a1, __int64 a2)
+   callees: 
+   total_lines=12 suspicious=7
+    __int64 __fastcall sub_1405E8360(__int64 a1, __int64 a2)
+    if ( (unsigned int)sub_140137050(a2, ".", 1) != -1 )
+    if ( (unsigned int)sub_140137050(a2, ".mesh", 5) != -1 )
+    return (*(__int64 (__fastcall **)(__int64, _QWORD))(*(_QWORD *)qword_1410A7DD8 + 48LL))(qword_1410A7DD8, 0);
+    if ( (unsigned int)sub_140137050(a2, ".mdl", 4) != -1 )
+    return (*(__int64 (__fastcall **)(__int64, __int64))(*(_QWORD *)qword_1410A7DD8 + 48LL))(qword_1410A7DD8, 55);
+    return (*(__int64 (__fastcall **)(__int64, __int64))(*(_QWORD *)qword_1410A7DD8 + 48LL))(qword_1410A7DD8, 113);
+
+########## 0x140724bf0 size=932 ##########
+// Hidden C++ exception states: #wind=2
+   callees: 
+   total_lines=188 suspicious=49
+    void __fastcall sub_140724BF0(__int64 a1)
+    v2 = *(_QWORD *)(a1 + 32);
+    v4 = *(_QWORD *)(v2 + 1416);
+    (*(void (__fastcall **)(__int64))(*(_QWORD *)v4 + 16LL))(v4);
+    v5 = *(_QWORD **)(v2 + 1416);
+    if ( !(*(unsigned __int8 (__fastcall **)(_QWORD *))(v5[1] + 80LL))(v5 + 1) )
+    (*(void (__fastcall **)(_QWORD *))(*v5 + 24LL))(v5);
+    v6 = *(_QWORD *)(a1 + 232);
+    if ( *(_DWORD *)(v6 + 20) )
+    v7 = *(const char **)v7;
+    v9 = *(_QWORD *)(a1 + 232);
+    if ( *(_DWORD *)(v9 + 20) )
+    v10 = *(const char **)v10;
+    v11 = strstr(v10, ".mesh");
+    *(_DWORD *)(a1 + 508) = 1;
+    *(_DWORD *)(a1 + 508) = 2;
+    if ( *(_QWORD *)(a1 + 224) )
+    v14 = *(_DWORD *)(a1 + 508);
+    v16 = sub_14064EE50(v15);
+    v16 = sub_14065B1C0(v17);
+    (*(void (__fastcall **)(__int64 *, _QWORD *))(*v13 + 360))(v13, v5);
+    if ( !*(_QWORD *)(*(_QWORD *)(a1 + 32) + 1424LL) )
+    (*(void (__fastcall **)(__int64 *, __int64))(*v13 + 664))(v13, v18);
+    v19 = *(_QWORD *)(*(_QWORD *)(a1 + 32) + 208LL);
+    v20 = (__int64 *)(*(__int64 (__fastcall **)(__int64))(*(_QWORD *)(v19 + 8) + 8LL))(v19 + 8);
+    (*(void (__fastcall **)(__int64 *, __int64, __int64 *, _QWORD))(*v13 + 264))(v13, a1 + 232, v20, 0);
+    (*(void (__fastcall **)(__int64 *, _QWORD))(*v13 + 320))(v13, 0);
+    v22 = sub_14063FDC0();
+    v23 = *(_QWORD *)(*(_QWORD *)(a1 + 32) + 208LL);
+    LODWORD(v24) = (*(__int64 (__fastcall **)(__int64))(*(_QWORD *)(v23 + 8) + 8LL))(v23 + 8);
+    sub_140618260(v22, (_DWORD)v5, (_DWORD)v24, v21, 0, 1);
+    (*(void (__fastcall **)(_QWORD, _QWORD))(***(_QWORD ***)(v22 + 160) + 408LL))(**(_QWORD **)(v22 + 160), **v12);
+    (*(void (__fastcall **)(_QWORD, __int64, _QWORD, __int64, int))(***(_QWORD ***)(v22 + 160) + 56LL))(
+    **(_QWORD **)(v22 + 160),
+    (*(void (__fastcall **)(_QWORD))(***(_QWORD ***)(v22 + 160) + 112LL))(**(_QWORD **)(v22 + 160));
+    *((_DWORD *)v26 + 8) = 0;
+    v27 = *(_QWORD **)(a1 + 184);
+    if ( v27 == *(_QWORD **)(a1 + 192) )
+    sub_140109450(a1 + 176, v27, &v33);
+    *(_QWORD *)(a1 + 184) += 8LL;
+    v28 = *(_QWORD **)(a1 + 208);
+    if ( v28 == *(_QWORD **)(a1 + 216) )
+    sub_140109450(a1 + 200, v28, &v33);
+    *(_QWORD *)(a1 + 208) += 8LL;
+    v29 = *(_DWORD *)(a1 + 508);
+    v30 = *(__int64 **)(*(_QWORD *)v13[71] + 40LL);
+    (*(void (__fastcall **)(__int64 *, _QWORD))(v31 + 360))(v30, v26[2]);
+    if ( v34 >= *(_QWORD *)(a1 + 224) )
+    (*(void (__fastcall **)(_QWORD *))(*v5 + 24LL))(v5);
+
+########## 0x1407263f0 size=874 ##########
+char __fastcall sub_1407263F0(__int64 a1, __int64 a2, __int64 a3, __int64 a4)
+   callees: 
+   total_lines=142 suspicious=34
+    char __fastcall sub_1407263F0(__int64 a1, __int64 a2, __int64 a3, __int64 a4)
+    v4 = *(_QWORD *)(a3 + 56);
+    switch ( *(_DWORD *)(a4 + 16) )
+    v5 = *(__int64 **)(a4 + 8);
+    sub_1401369D0(*(_QWORD *)(v4 + 232));
+    *(_QWORD *)(v4 + 232) = *v5;
+    if ( *(_DWORD *)(v6 + 20) )
+    v7 = *(const char **)v7;
+    v10 = *(_QWORD *)(v4 + 232);
+    if ( *(_DWORD *)(v10 + 20) )
+    v11 = *(const char **)v11;
+    v12 = strstr(v11, ".mesh");
+    *(_DWORD *)(v4 + 508) = 1;
+    *(_DWORD *)(v4 + 508) = 2;
+    v13 = *(__int64 **)(a4 + 8);
+    sub_1401369D0(*(_QWORD *)(v4 + 240));
+    *(_QWORD *)(v4 + 240) = *v13;
+    if ( !*(_DWORD *)(v15 + 12) )
+    v16 = *(_QWORD *)(v4 + 184);
+    v17 = *(_QWORD *)(v4 + 176);
+    (*(void (__fastcall **)(_QWORD, _QWORD, __int64, __int64 *, int, _DWORD, _DWORD, _DWORD, _DWORD))(**(_QWORD **)(*(_QWORD *)v17 + 8LL) + 272LL))(
+    *(_QWORD *)(*(_QWORD *)v17 + 8LL),
+    v18 = *(_DWORD **)(a4 + 8);
+    *(_DWORD *)(v4 + 272) = 0;
+    *(_DWORD *)(v4 + 272) = 1;
+    *(_DWORD *)(v4 + 272) = 2;
+    *(_DWORD *)(v4 + 272) = 3;
+    *(_BYTE *)(v4 + 476) = **(_BYTE **)(a4 + 8);
+    *(_DWORD *)(v4 + 480) = **(_DWORD **)(a4 + 8);
+    *(_DWORD *)(v4 + 484) = **(_DWORD **)(a4 + 8);
+    *(_OWORD *)(v4 + 488) = *(_OWORD *)*(_QWORD *)(a4 + 8);
+    v19 = *(_DWORD **)(a4 + 8);
+    *(_DWORD *)(v4 + 504) = 1;
+    *(_DWORD *)(v4 + 504) = 0;
+
+########## 0x140782990 size=1027 ##########
+// Hidden C++ exception states: #wind=2
+   callees: 
+   total_lines=195 suspicious=53
+    void __fastcall sub_140782990(__int64 a1)
+    v2 = *(_QWORD *)(a1 + 32);
+    v4 = *(_QWORD *)(v2 + 1416);
+    (*(void (__fastcall **)(__int64))(*(_QWORD *)v4 + 16LL))(v4);
+    v5 = *(__int64 ***)(v2 + 1416);
+    v6 = *(_QWORD *)(a1 + 264);
+    if ( *(_DWORD *)(v6 + 20) )
+    v7 = *(const char **)v7;
+    v9 = *(_QWORD *)(a1 + 264);
+    if ( *(_DWORD *)(v9 + 20) )
+    v10 = *(const char **)v10;
+    v11 = strstr(v10, ".mesh");
+    *(_DWORD *)(a1 + 284) = 1;
+    *(_DWORD *)(a1 + 284) = 2;
+    if ( *(_QWORD *)(a1 + 208) )
+    v14 = *(_DWORD *)(a1 + 284);
+    v16 = sub_14064EE50(v15);
+    v16 = sub_14065B1C0(v17);
+    (*(void (__fastcall **)(__int64 *, __int64 **))(*v13 + 360))(v13, v5);
+    (*(void (__fastcall **)(__int64 *, _QWORD))(*v13 + 664))(v13, 0);
+    v18 = *(_QWORD *)(*(_QWORD *)(a1 + 32) + 208LL);
+    v19 = (__int64 *)(*(__int64 (__fastcall **)(__int64))(*(_QWORD *)(v18 + 8) + 8LL))(v18 + 8);
+    (*(void (__fastcall **)(__int64 *, __int64, __int64 *, _QWORD))(*v13 + 264))(v13, a1 + 264, v19, 0);
+    (*(void (__fastcall **)(__int64 *, _QWORD))(*v13 + 320))(v13, 0);
+    v20 = sub_14063FDC0();
+    v22 = *(_QWORD *)(*(_QWORD *)(a1 + 32) + 208LL);
+    LODWORD(v23) = (*(__int64 (__fastcall **)(__int64))(*(_QWORD *)(v22 + 8) + 8LL))(v22 + 8);
+    sub_140618260(v20, (_DWORD)v5, (_DWORD)v23, v21, 0, 0);
+    v25 = **(_QWORD **)(v20 + 160);
+    v26 = (*(__int64 (__fastcall **)(__int64))(*(_QWORD *)v24 + 616LL))(v24);
+    v27 = (*(__int64 (__fastcall **)(__int64))(*(_QWORD *)v25 + 616LL))(v25);
+    sub_14060EC30(v27, v26);
+    v28 = *(_QWORD *)v40[20];
+    v29 = (*(__int64 (__fastcall **)(_QWORD))(*(_QWORD *)**v39 + 640LL))(**v39);
+    v38 = *(_OWORD *)v29;
+    LODWORD(v26) = *(_DWORD *)(v29 + 16);
+    v30 = (*(__int64 (__fastcall **)(__int64))(*(_QWORD *)v28 + 640LL))(v28);
+    *(_OWORD *)v30 = v38;
+    *(_DWORD *)(v30 + 16) = v26;
+    (*(void (__fastcall **)(_QWORD, _QWORD))(**(_QWORD **)v40[20] + 408LL))(*(_QWORD *)v40[20], **v39);
+    *((_DWORD *)v32 + 8) = 0;
+    v33 = *(_QWORD **)(a1 + 160);
+    if ( v33 == *(_QWORD **)(a1 + 168) )
+    sub_140109450(a1 + 152, v33, &v40);
+    *(_QWORD *)(a1 + 160) += 8LL;
+    v34 = *(_QWORD **)(a1 + 184);
+    if ( v34 == *(_QWORD **)(a1 + 192) )
+    sub_140109450(a1 + 176, v34, &v40);
+    *(_QWORD *)(a1 + 184) += 8LL;
+    v35 = *(_DWORD *)(a1 + 284);
+    v36 = *(__int64 **)(*(_QWORD *)v13[71] + 40LL);
+    (*(void (__fastcall **)(__int64 *, _QWORD))(v37 + 360))(v36, v32[2]);
+    if ( v41 >= *(_QWORD *)(a1 + 208) )
+
+########## 0x1407836d0 size=2073 ##########
+char __fastcall sub_1407836D0(__int64 a1, __int64 a2, __int64 a3, __int64 a4)
+   callees: 
+   total_lines=330 suspicious=89
+    char __fastcall sub_1407836D0(__int64 a1, __int64 a2, __int64 a3, __int64 a4)
+    v5 = *(_QWORD *)(a3 + 56);
+    switch ( *(_DWORD *)(a4 + 16) )
+    v6 = *(__int64 **)(a4 + 8);
+    sub_1401369D0(*(_QWORD *)(v5 + 264));
+    *(_QWORD *)(v5 + 264) = *v6;
+    if ( *(_DWORD *)(v7 + 20) )
+    v8 = *(const char **)v8;
+    v11 = *(_QWORD *)(v5 + 264);
+    if ( *(_DWORD *)(v11 + 20) )
+    v12 = *(const char **)v12;
+    v13 = strstr(v12, ".mesh");
+    *(_DWORD *)(v5 + 284) = 1;
+    *(_DWORD *)(v5 + 284) = 2;
+    v14 = *(__int64 **)(a4 + 8);
+    sub_1401369D0(*(_QWORD *)(v5 + 272));
+    *(_QWORD *)(v5 + 272) = *v14;
+    if ( !*(_DWORD *)(v15 + 12) )
+    v16 = *(_QWORD *)(v5 + 160);
+    v17 = *(_QWORD *)(v5 + 152);
+    (*(void (__fastcall **)(_QWORD, _QWORD, __int64, __int64 *, int, _DWORD, _DWORD, _DWORD, _DWORD))(**(_QWORD **)(*(_QWORD *)v17 + 8LL) + 272LL))(
+    *(_QWORD *)(*(_QWORD *)v17 + 8LL),
+    v18 = *(_DWORD **)(a4 + 8);
+    *(_DWORD *)(v5 + 256) = 0;
+    *(_DWORD *)(v5 + 256) = 1;
+    *(_DWORD *)(v5 + 256) = 2;
+    *(_DWORD *)(v5 + 256) = 3;
+    v19 = *(_DWORD **)(a4 + 8);
+    *(_DWORD *)(v5 + 280) = 1;
+    *(_DWORD *)(v5 + 280) = 0;
+    *(_QWORD *)v20 = &DynamicAttributeFixed::`vftable';
+    sub_14063FED0(v20);
+    sub_14077FF90(v5, v20);
+    *(_QWORD *)v21 = &DynamicAttributeFixed::`vftable';
+    sub_14063FED0(v21);
+    sub_1407801C0(v5, v21);
+    *(_QWORD *)v22 = &DynamicAttributeFixed::`vftable';
+    sub_14063FED0(v22);
+    sub_140780000(v5, v22);
+    *(_QWORD *)v23 = &DynamicAttributeFixed::`vftable';
+    v23[4] = **(_DWORD **)(a4 + 8);
+    sub_140780070(v5, v23);
+    *(_QWORD *)v24 = &DynamicAttributeFixed::`vftable';
+    v24[4] = **(_DWORD **)(a4 + 8);
+    sub_1407800E0(v5, v24);
+    *(_QWORD *)v25 = &DynamicAttributeFixed::`vftable';
+    v25[4] = **(_DWORD **)(a4 + 8);
+    sub_140780230(v5, v25);
+    *(_OWORD *)(v5 + 592) = *(_OWORD *)*(_QWORD *)(a4 + 8);
+    *(_OWORD *)(v5 + 560) = *(_OWORD *)*(_QWORD *)(a4 + 8);
+    *(_OWORD *)(v5 + 576) = *(_OWORD *)*(_QWORD *)(a4 + 8);
+    *(_OWORD *)(v5 + 344) = *(_OWORD *)*(_QWORD *)(a4 + 8);
+    *(_QWORD *)v31 = &DynamicAttributeFixed::`vftable';
+    v31[4] = **(_DWORD **)(a4 + 8);
+    sub_140780460(v5, v31);
+    *(_QWORD *)v30 = &DynamicAttributeFixed::`vftable';
+    v30[4] = **(_DWORD **)(a4 + 8);
+    sub_1407803F0(v5, v30);
+    *(_QWORD *)v26 = &DynamicAttributeFixed::`vftable';
+    v26[4] = **(_DWORD **)(a4 + 8);
+    sub_140780150(v5, v26);
+    *(_QWORD *)v27 = &DynamicAttributeFixed::`vftable';
+    v27[4] = **(_DWORD **)(a4 + 8);
+    sub_1407802A0(v5, v27);
+    *(_DWORD *)(v5 + 436) = **(_DWORD **)(a4 + 8);
+    *(_DWORD *)(v5 + 440) = **(_DWORD **)(a4 + 8);
+    *(_DWORD *)(v5 + 444) = **(_DWORD **)(a4 + 8);
+    v32 = *(_DWORD **)(a4 + 8);
+    *(_DWORD *)(v5 + 320) = *v32;
+    *(_DWORD *)(v5 + 324) = v33;
+    *(_DWORD *)(v5 + 328) = v34;
+    v35 = *(_DWORD **)(a4 + 8);
+    *(_DWORD *)(v5 + 332) = *v35;
+    *(_DWORD *)(v5 + 336) = v36;
+    *(_DWORD *)(v5 + 340) = v37;
+    *(_QWORD *)(v5 + 296) = **(_QWORD **)(a4 + 8);
+    *(_QWORD *)v28 = &DynamicAttributeFixed::`vftable';
+    v28[4] = **(_DWORD **)(a4 + 8);
+    sub_140780310(v5, v28);
+    *(_QWORD *)v29 = &DynamicAttributeFixed::`vftable';
+    v29[4] = **(_DWORD **)(a4 + 8);
+    sub_140780380(v5, v29);
+    *(_QWORD *)(v5 + 312) = **(_QWORD **)(a4 + 8);
+    *(_QWORD *)(v5 + 304) = **(_QWORD **)(a4 + 8);
+    *(_OWORD *)(v5 + 392) = *(_OWORD *)*(_QWORD *)(a4 + 8);
+    *(_OWORD *)(v5 + 376) = *(_OWORD *)*(_QWORD *)(a4 + 8);
+    *(_OWORD *)(v5 + 408) = *(_OWORD *)*(_QWORD *)(a4 + 8);
+    *(_OWORD *)(v5 + 360) = *(_OWORD *)*(_QWORD *)(a4 + 8);
+    *(_DWORD *)(v5 + 292) = **(_DWORD **)(a4 + 8);

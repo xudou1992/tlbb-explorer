@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "nodegap" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "glbcheck" | "posecheck" | "fuzz" | "nodegap" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -2059,6 +2059,38 @@ fn main() {
         println!("
 # posecheck · 多根件 {n} 份 · posed_vertices 成功且有限 {ok} · 其中顶点真的动了 {moved}");
         for r in rows { println!("{r}"); }
+        return;
+    }
+
+    if mode == "fuzz" {
+        // 健壮性：全库逐份喂给所有公开解析入口，用 catch_unwind 抓 panic（只读）。
+        use std::panic::{catch_unwind, AssertUnwindSafe};
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut n = 0usize;
+        let mut panics: Vec<String> = Vec::new();
+        let prev = std::panic::take_hook();
+        std::panic::set_hook(Box::new(|_| {})); // 静音，免得刷屏
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            n += 1;
+            let mut hit = |tag: &str, f: &dyn Fn()| {
+                if catch_unwind(AssertUnwindSafe(f)).is_err() {
+                    panics.push(format!("{name} · {tag}"));
+                }
+            };
+            hit("parse_mesh", &|| { let _ = tlbb_core::preview::parse_mesh(&raw); });
+            hit("parse_geometry", &|| { let _ = tlbb_core::preview::parse_geometry(&raw); });
+            hit("parse_nodes", &|| { let _ = parse_nodes(&raw); });
+            hit("parse_hierarchy", &|| { let _ = parse_hierarchy(&raw); });
+            hit("hierarchy_forest", &|| { let _ = tlbb_core::preview::hierarchy_forest(&raw); });
+            hit("virtual_root", &|| { let _ = tlbb_core::preview::hierarchy_with_virtual_root(&raw); });
+            hit("tail_entries", &|| { let _ = tail_entries(&raw); });
+        }
+        std::panic::set_hook(prev);
+        println!("
+# fuzz · 扫了 {n} 份 · panic {}", panics.len());
+        for x in panics.iter().take(20) { println!("  ✗ {x}"); }
         return;
     }
 

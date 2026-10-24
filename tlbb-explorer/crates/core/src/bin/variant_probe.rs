@@ -187,7 +187,7 @@ fn main() {
         }
     }
     if names.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "nodegap" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "nodegap" | "gap16")
     {
         eprintln!("用法：variant_probe [--root DIR] [--mode same|12slot|trans|axis|crosspart|rest|gain|missnames|skin|local|shift|shiftcensus|mirr|pose|xstd|localcensus|stdcensus] 干名[,...]");
         eprintln!("      批量：variant_probe --mode=gain|missnames|skin|shiftcensus|whytail --batch=路径片段 [--limit=N]");
@@ -307,7 +307,7 @@ fn main() {
         });
     }
     if loaded.is_empty()
-        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "nodegap" | "gap16")
+        && !matches!(mode.as_str(), "gain" | "missnames" | "skin" | "shiftcensus" | "mirr" | "localcensus" | "stdcensus" | "chaingap" | "whychain" | "chaincluster" | "whyerr" | "whytail" | "steps" | "countgate" | "sockjump" | "infgap" | "gapdead" | "childblk" | "dupkid" | "anitrack" | "anisync" | "clientwalk" | "unknownkid" | "ske" | "forestroots" | "sanity" | "nodegap" | "anicheck" | "ske4gap" | "virtroot" | "playcheck" | "nodegap" | "gap16")
     {
         eprintln!("一份都没读到");
         std::process::exit(2);
@@ -1937,6 +1937,44 @@ fn main() {
 # virtroot · 多根件 {n} 份 · 不变量全过 {ok} · 不合格 {}", bad.len());
         for r in sample { println!("{r}"); }
         for r in bad.iter().take(8) { println!("  ✗ {r}"); }
+        return;
+    }
+
+    if mode == "playcheck" {
+        // ⑤ 的另一半价码：那 21 份多根件**有动作**，套虚拟根后 pose_frame 能不能算出来（不需要 bind）。
+        let paths = mesh_paths(&con, &batch, limit);
+        let mut n = 0usize;
+        let mut posed_ok = 0usize;
+        let mut moved = 0usize;
+        let mut rows: Vec<String> = Vec::new();
+        for p in &paths {
+            let name = p.rsplit('/').next().unwrap_or("").to_string();
+            let Some(raw) = bytes_of(&con, &root, &mut paks, &name) else { continue };
+            if parse_nodes(&raw).is_empty() || parse_hierarchy(&raw).is_some() { continue }
+            let Ok(v) = tlbb_core::preview::hierarchy_with_virtual_root(&raw) else { continue };
+            let mut any = false;
+            let mut mved = false;
+            for an in anim_names_for(&con, p) {
+                let Some(a) = bytes_of(&con, &root, &mut paks, &an).and_then(|b| parse_ani(&b)) else { continue };
+                let m = tlbb_core::preview::pose::pose_frame(&v, &a, 0);
+                if m.len() == v.bones.len() && m.iter().all(|x| x.iter().all(|f| f.is_finite())) {
+                    any = true;
+                    let id = tlbb_core::preview::pose::mat_identity();
+                    if m.iter().any(|a| id.iter().zip(a.iter()).any(|(x, y)| (x - y).abs() > 1e-4)) {
+                        mved = true;
+                    }
+                }
+            }
+            n += 1;
+            if any { posed_ok += 1 }
+            if mved { moved += 1 }
+            if rows.len() < 8 {
+                rows.push(format!("  {name} · 骨 {} · pose 有限 {} · 有动作变化 {}", v.bones.len(), any, mved));
+            }
+        }
+        println!("
+# playcheck · 多根件 {n} 份 · pose_frame 全有限 {posed_ok} · 姿态非常量 {moved}");
+        for r in rows { println!("{r}"); }
         return;
     }
 

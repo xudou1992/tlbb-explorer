@@ -1381,6 +1381,42 @@ pub async fn mesh_texture_plan(
     .map_err(|e| e.to_string())?
 }
 
+/// 按网格路径取分层贴图计划：地图道具的网格不属于任何资产组（`amembers` 里只有同茎
+/// `.mtl`），这里用同茎材质反查它所在的组，再走 `mesh_texture_plan` 同一条实现。
+fn mesh_texture_plan_by_path_sync(app: &AppData, path: &str) -> Result<MeshTexturePlan, String> {
+    let (_root, db) = crate::inspector::roots();
+    let con = Connection::open_with_flags(
+        &db,
+        OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+    )
+    .map_err(|e| format!("资源清单打不开：{e}"))?;
+    let stem = path
+        .strip_suffix(".mesh")
+        .or_else(|| path.strip_suffix(".MESH"))
+        .unwrap_or(path);
+    let mtl = format!("{stem}.mtl");
+    let gid: i64 = con
+        .query_row(
+            "SELECT m.gid FROM amembers m JOIN resources r ON r.hash = m.hash \
+             WHERE r.path = ?1 LIMIT 1",
+            [&mtl],
+            |r| r.get(0),
+        )
+        .map_err(|_| "这件网格旁边没有登记材质，取不到贴图".to_string())?;
+    mesh_texture_plan_sync(app, gid, tail_of(path), None)
+}
+
+#[tauri::command]
+pub async fn mesh_texture_plan_by_path(
+    app: State<'_, Arc<AppData>>,
+    path: String,
+) -> Result<MeshTexturePlan, String> {
+    let app = Arc::clone(&app);
+    tauri::async_runtime::spawn_blocking(move || mesh_texture_plan_by_path_sync(&app, &path))
+        .await
+        .map_err(|e| e.to_string())?
+}
+
 /// 批量候选的按需缩略图：全库批量缓存只存元数据不存图，前端候选卡先摆占位框，
 /// 再按候选自带的编号（hash）来要这一张——现解、缩到长边 256、PNG base64
 /// data URL 回去。

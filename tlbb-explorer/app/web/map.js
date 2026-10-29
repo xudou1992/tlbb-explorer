@@ -62,8 +62,8 @@ function paintBanner() {
     );
   } else {
     banner(
-      `<b>灰模预览</b> 只把物件摆在该在的位置上。` +
-        `<span class="warn">地形没解出</span><span class="warn">没有花纹</span><span class="warn">朝向待比对</span>` +
+      `<b>物件预览</b> 把物件摆在该在的位置上，有材质表的<b>已按材质表贴图</b>。` +
+        `<span class="warn">地形没解出</span><span class="dim">没有材质表的物件仍是灰模</span><span class="warn">朝向待比对</span>` +
         `<span class="dim">${scene && scene.alias ? esc(scene.alias) + " · " : ""}地图原名 ${esc(sceneId)}</span>`,
     );
   }
@@ -135,6 +135,24 @@ function ensureViewer() {
     status("显卡上下文被系统收回了，重新点一下这张图就能再看。");
   };
   return viewer;
+}
+
+/// 地图道具的贴图：这些网格不在任何资产组里，按路径取同茎 `.mtl` 的计划（后端反查）。
+/// 一件取不到就灰着，不挡画布、不改「地形未解」的口径。
+async function applyMapPropTextures(v, scene) {
+  const paths = [...new Set((scene.meshes || []).map((m) => m.path).filter(Boolean))];
+  if (!paths.length) return;
+  const plans = [];
+  await Promise.all(
+    paths.map(async (p) => {
+      try {
+        const plan = await api.meshTexturePlanByPath(p);
+        const layers = plan && Array.isArray(plan.layers) ? plan.layers : [];
+        if (layers.length) plans.push({ path: p, layers });
+      } catch {}
+    }),
+  );
+  if (plans.length) v.setInstanceLayers(plans);
 }
 
 function ensureTop() {
@@ -214,6 +232,7 @@ function applyMode() {
         // 中间不许再转置（转一次全图叠到原点且不报错）。
         v.loadInstances({ meshes: scene.meshes, instances: scene.instances });
         grayLoaded = scene.id;
+        void applyMapPropTextures(v, scene);
       } catch (e) {
         el("mapCanvas").hidden = true;
         status(`画不出来：${e instanceof Error ? e.message : String(e)}`);
@@ -223,7 +242,7 @@ function applyMode() {
       // 从俯视切回来时 WebGL 那边已停帧：画一帧把画面找回来，否则可能是块黑布。
       v.start();
     }
-    status(`${num(scene.instances.length)} 件 · ${num(scene.uniqueMeshes)} 个模型 · 平地是代替物（地形未解）`);
+    status(`${num(scene.instances.length)} 件 · ${num(scene.uniqueMeshes)} 个模型 · 有材质表的已贴图，地形未解`);
   } else {
     if (viewer) viewer.stop();
     el("mapCanvas").hidden = true;

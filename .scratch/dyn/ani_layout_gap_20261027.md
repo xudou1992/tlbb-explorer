@@ -2420,3 +2420,15 @@ idle01 每帧最大骨转角 39.4°、walk 85.9°，而 behit01 119.9°、hit01 
   渲染侧 `drawInstanced` 现在固定 `useTex=0`、不绑 UV，要加「每个池子网格一张图」的分支（仅单层覆盖全网格时套，多层先不碰）。
   门槛：地形本身仍是灰的（格式未解），这一项只影响树/石/木架这类道具。
 - **动作族散开**：仍需运行时对账（`pose_dump` + `mem_mat_global.py` 按骨名）或游戏内肉眼；本轮查过进程，游戏未在运行。
+
+## 第一百二十二轮：地图道具按材质表贴图（2026-10-29 15:21）
+
+- 查清：地图网格（`mobile_maps_source/*.mesh`）不在任何 agroup 里（`amembers` 只有同茎 `.mtl`），
+  所以旧的 `mesh_texture_plan(gid,...)` 走不通；但那个「只有材质的组」本身就是 gid，
+  用同茎 mtl 反查即可——新命令 `mesh_texture_plan_by_path(path)`，内部复用 `mesh_texture_plan_sync`，无新解析。
+- 前端：`MeshViewer.setInstanceLayers` 按池路径对号装图；`drawInstanced` 加分层分支
+  （每层按 faceStart/faceCount 画、add 层照样开混合），没计划的网格仍走灰模分支。
+- 实测 `w1351_fb_sxzc_001`（133 格 / 1,283 实例 / 13 个模型）：岩石、树木都上了色（截图 `.scratch/map_textured.png`），
+  页面 0 条自记错误；横幅从「灰模预览」改成「物件预览 · 有材质表的已按材质表贴图」，
+  「地形没解出」保持原样。
+- 已知：分层只画各层覆盖的面，没被任何层覆盖的面不画（本图未见空洞）；地形仍未解。

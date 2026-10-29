@@ -1151,6 +1151,71 @@ export class MeshViewer {
     }
   }
 
+  /// 地图道具的分层贴图：按**几何池路径**对号，与 setPartLayers 同构。
+  /// 只给带 UV 的池子网格套图；没有计划的保持灰模。异步加载完成后才落层，
+  /// 中途换池（`this.pool !== pool`）或本网格又换了一批计划（token）就整批作废。
+  setInstanceLayers(items) {
+    const gl = this.gl;
+    const pool = this.pool;
+    if (!pool || !pool.length) return false;
+    const byPath = new Map();
+    for (const it of Array.isArray(items) ? items : []) {
+      if (it && it.path && Array.isArray(it.layers)) byPath.set(it.path, it.layers);
+    }
+    for (const geo of pool) {
+      const token = (geo.layerToken = (geo.layerToken || 0) + 1);
+      for (const l of geo.layers || []) {
+        if (l.tex) gl.deleteTexture(l.tex);
+        if (l.mask) gl.deleteTexture(l.mask);
+      }
+      geo.layers = [];
+      const layers = byPath.get(geo.path);
+      if (!layers || !layers.length || !geo.buf.uv) continue;
+      const list = layers.filter(
+        (l) => l && l.color && l.color.png && Number(l.faceCount) > 0,
+      );
+      const jobs = list.map(async (l) => {
+        let img;
+        try {
+          img = await loadImage(l.color.png);
+        } catch {
+          return null;
+        }
+        let mask = null;
+        if (l.mask && l.mask.png) {
+          try {
+            mask = await loadImage(l.mask.png);
+          } catch {
+            mask = null;
+          }
+        }
+        if (this.pool !== pool || geo.layerToken !== token) return null;
+        return {
+          tex: uploadTexture(gl, img),
+          mask: mask ? uploadTexture(gl, mask) : null,
+          start: Math.max(0, Number(l.faceStart) || 0) * 3,
+          count: Math.max(0, Number(l.faceCount) || 0) * 3,
+          blend: l.blend === "add" ? "add" : "opaque",
+          slot: l.slot || (l.color && l.color.slot) || "",
+          maskSlot: (l.mask && l.mask.slot) || "",
+        };
+      });
+      Promise.allSettled(jobs).then((results) => {
+        const ready = results.filter((r) => r.status === "fulfilled" && r.value).map((r) => r.value);
+        if (this.pool !== pool || geo.layerToken !== token) {
+          for (const l of ready) {
+            if (l.tex) gl.deleteTexture(l.tex);
+            if (l.mask) gl.deleteTexture(l.mask);
+          }
+          return;
+        }
+        geo.layers = ready;
+        this.draw();
+      });
+    }
+    return true;
+  }
+
   /// 多实例：朴素但正确——**每个网格 bind 一次几何**，然后对引用它的每个实例
   /// 打一次 uniformMatrix4fv + drawElements（VBO 一条都没为实例建过）。
   ///
@@ -1172,7 +1237,6 @@ export class MeshViewer {
     const gl = this.gl;
     const inst = this.inst;
     gl.uniform1f(this.un.use, 1);
-    gl.uniform1f(this.un.useTex, 0);
     gl.uniform1f(this.un.useMask, 0);
     gl.uniform1f(this.un.unlit, 0);
     for (let p = 0; p < this.pool.length; p++) {
@@ -1183,14 +1247,59 @@ export class MeshViewer {
       gl.bindBuffer(gl.ARRAY_BUFFER, geo.buf.nrm);
       gl.enableVertexAttribArray(this.at.nrm);
       gl.vertexAttribPointer(this.at.nrm, 3, gl.FLOAT, false, 0, 0);
+      const layered = geo.layers && geo.layers.length && geo.buf.uv;
+      if (layered) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, geo.buf.uv);
+        gl.enableVertexAttribArray(this.at.uv);
+        gl.vertexAttribPointer(this.at.uv, 2, gl.FLOAT, false, 0, 0);
+        gl.uniform1f(this.un.useTex, 1);
+      } else {
+        gl.uniform1f(this.un.useTex, 0);
+      }
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, geo.buf.idx);
       for (let i = 0; i < inst.count; i++) {
         if (inst.meshIndex[i] !== p) continue;
         gl.uniformMatrix4fv(this.un.inst, false, inst.model.subarray(i * 16, i * 16 + 16));
         gl.uniformMatrix3fv(this.un.nrm, false, inst.normal.subarray(i * 9, i * 9 + 9));
-        gl.drawElements(gl.TRIANGLES, geo.ic, gl.UNSIGNED_SHORT, 0);
+        if (!layered) {
+          gl.drawElements(gl.TRIANGLES, geo.ic, gl.UNSIGNED_SHORT, 0);
+          continue;
+        }
+        // 分层：每层只画自己那段面（与部件/单网格同口径，别把一层的图盖满整件）。
+        for (const l of geo.layers) {
+          if (!l.count) continue;
+          gl.activeTexture(gl.TEXTURE0);
+          gl.bindTexture(gl.TEXTURE_2D, l.tex);
+          if (l.mask) {
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, l.mask);
+            gl.uniform1f(this.un.useMask, 1);
+          } else {
+            gl.uniform1f(this.un.useMask, 0);
+          }
+          if (l.blend === "add") {
+            gl.enable(gl.BLEND);
+            gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+            gl.depthMask(false);
+            gl.enable(gl.POLYGON_OFFSET_FILL);
+            gl.polygonOffset(-1, -1);
+            gl.uniform1f(this.un.unlit, 1);
+          } else {
+            gl.disable(gl.BLEND);
+            gl.depthMask(true);
+            gl.disable(gl.POLYGON_OFFSET_FILL);
+            gl.uniform1f(this.un.unlit, 0);
+          }
+          gl.drawElements(gl.TRIANGLES, l.count, gl.UNSIGNED_SHORT, l.start * 2);
+        }
+        gl.disable(gl.BLEND);
+        gl.depthMask(true);
+        gl.disable(gl.POLYGON_OFFSET_FILL);
+        gl.uniform1f(this.un.useMask, 0);
+        gl.uniform1f(this.un.unlit, 0);
       }
     }
+    gl.uniform1f(this.un.useTex, 0);
   }
 
   /// 整组部件：与多实例同一档朴素——每件 bind 一次几何、drawElements 一次。

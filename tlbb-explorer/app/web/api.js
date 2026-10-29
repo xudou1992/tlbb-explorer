@@ -27,6 +27,8 @@ export const meshData = (name, hash) => call("mesh_data", { name, hash: hash || 
 /// 带上 hash：网格尾部名会重名，光靠名字会定位到别的变体。
 export const meshTexturePlan = (gid, name, hash) =>
   call("mesh_texture_plan", { gid, name, hash: hash || null });
+/// 按网格路径取同一份计划：地图道具不属于任何资产组，用同茎 `.mtl` 反查。
+export const meshTexturePlanByPath = (path) => call("mesh_texture_plan_by_path", { path });
 /// 绑定姿态的骨头连线。解不出骨架时回空表，不是失败。
 export const meshBoneLines = (name, hash) => call("mesh_bone_lines", { name, hash: hash || null });
 /// 「加载即贴」：这格槽位在覆盖表里有人工确认的贴图就回 PNG data URL，没有回 null。

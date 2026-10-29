@@ -2015,6 +2015,32 @@ mod tests {
         assert_eq!(m.get("aaaa000000000001"), None, "方差比第一名不该被算成榜首");
         let _ = std::fs::remove_dir_all(&dir);
     }
+
+    /// 地图道具不在任何资产组里，只能靠同茎 `.mtl` 反查。闸门：
+    /// 真数据上必须取到 ≥1 层，且**各层面数之和 = 网格总面数**（否则实例绘制会漏面）；
+    /// 没有同茎材质的路径必须报错，不许编一个空计划糊弄。
+    #[test]
+    fn 地图道具按同茎材质取到分层计划() {
+        let (root, db) = crate::inspector::roots();
+        if !db.is_file() || !root.join("data.pak").is_file() {
+            eprintln!("跳过：本机没有客户端或资源清单");
+            return;
+        }
+        let app = crate::data::AppData::open(&root, &db).expect("工作台数据");
+        let p = mesh_texture_plan_by_path_sync(
+            &app,
+            "mobile_maps_source/w1351_sxzc_shanshi_001.mesh",
+        )
+        .expect("这张地图道具该能按同茎材质取到计划");
+        assert!(!p.layers.is_empty(), "至少要有一层颜色图");
+        let total: usize = p.face_counts.iter().map(|&x| x as usize).sum();
+        let covered: usize = p.layers.iter().map(|l| l.face_count as usize).sum();
+        assert_eq!(covered, total, "分层覆盖面数必须等于网格总面数，否则会漏画");
+        assert!(
+            mesh_texture_plan_by_path_sync(&app, "mobile_maps_source/根本没有这份网格.mesh").is_err(),
+            "查不到材质就该报错，不许回空计划"
+        );
+    }
 }
 
 /// UV 岛分布图：把这只网格的 UV 铺在 [0,1]² 的哪些格子上画成一张 256×256 的图

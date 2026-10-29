@@ -297,6 +297,9 @@ function initAnim() {
 const poseGate = makePoseGate();
 const poseSeq = makeSeq();
 let poseViewer = null;
+/// 贴图计划的作废令牌：与 poseSeq 分开——poseRequest 每帧都 next()，
+/// 贴图回包晚于第一帧是常态，跟着 poseSeq 走会被误判成过期（实测贴图永不生效）。
+let poseTexSeq = 0;
 /// 该组网格路径清单（skeleton_view 回包的 meshes），按组缓存；切资产即失效。
 let poseMeshGid = 0;
 let poseMeshes = [];
@@ -470,7 +473,7 @@ function togglePart(name, on) {
   if (poseMode !== "parts" || !animReply || !state.selected) return;
   partChecks.set(name, on);
   partNames = partData.filter((o) => partChecks.get(o.name) !== false).map((o) => o.name);
-  poseSeq.next();
+  const my = poseSeq.next();
   poseGate.reset();
   poseMeshLoaded = false;
   if (!partNames.length) {
@@ -488,10 +491,40 @@ function togglePart(name, on) {
     poseBreak(`预览没摆出来：${errText(e)}`);
     return;
   }
+  paintPosePartTextures(state.selected, partNames);
   el("animPoseMeta").textContent = partsMetaText();
   writePartNote(partLoadNote);
   poseMeshLoaded = true;
   poseCursor();
+}
+
+/// 动作预览也穿贴图：与网格页同一份分层计划（按件名取，后端自己去对材质表）。
+/// 取不到就保持灰模，不编、不提示——缺贴图在这套资源里是常态，画布不因此报错。
+async function paintPosePartTextures(gid, names) {
+  if (!poseViewer) return;
+  const token = ++poseTexSeq;
+  await Promise.all(
+    names.map(async (n, i) => {
+      try {
+        const plan = await api.meshTexturePlan(gid, n, null);
+        if (token !== poseTexSeq || state.selected !== gid) return;
+        const layers = plan && Array.isArray(plan.layers) ? plan.layers : [];
+        if (layers.length) poseViewer.setPartLayers(i, layers);
+      } catch {}
+    }),
+  );
+}
+
+/// 单件路径的同一件事：整张网格套它的分层计划（mesh.js 的单件分支同款）。
+async function paintPoseMeshTexture(gid, path) {
+  if (!poseViewer) return;
+  const token = ++poseTexSeq;
+  try {
+    const plan = await api.meshTexturePlan(gid, meshTail(path), null);
+    if (token !== poseTexSeq || state.selected !== gid) return;
+    const layers = plan && Array.isArray(plan.layers) ? plan.layers : [];
+    if (layers.length) poseViewer.setTextureLayers(layers);
+  } catch {}
 }
 
 /// 整组装载：懒取部件清单后逐件取几何（allSettled——单件失败点名跳过，
@@ -537,6 +570,7 @@ async function loadPoseParts(gid) {
     await loadPoseMesh(gid, paths[0]);
     return;
   }
+  paintPosePartTextures(gid, partNames);
   el("animStage").hidden = false;
   el("animPoseMeta").textContent = partsMetaText();
   poseMeshLoaded = true;
@@ -578,6 +612,7 @@ async function loadPoseMesh(gid, path) {
     }
     poseMeshPath = path;
     poseMeshLoaded = true;
+    paintPoseMeshTexture(gid, path);
     el("animStage").hidden = false;
     el("animPoseMeta").textContent = `${path} · ${num(data.vertexCount)} 个顶点`;
     paintPoseMeshChips(); // 回退到单件时筹码跟着回来，用户可以换一份再试

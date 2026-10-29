@@ -1,0 +1,702 @@
+warning: value assigned to `root_bone` is never read
+   --> crates\core\src\export\gltf.rs:312:29
+    |
+312 |           let mut root_bone = 0usize;
+    |                               ^^^^^^ this value is reassigned later and never used
+...
+407 | /         root_bone = bones
+408 | |             .iter()
+409 | |             .position(|b| b.parent.is_none())
+410 | |             .ok_or_else(|| "骨架没有根骨（parse_hierarchy 保证单根，这里不该发生）".to_string())?;
+    | |_________________________________________________________________________________________________- `root_bone` is overwritten here before the previous value is read
+    |
+    = note: `#[warn(unused_assignments)]` (part of `#[warn(unused)]`) on by default
+
+warning: `tlbb-core` (lib) generated 1 warning
+   Compiling tlbb-core v0.1.0 (D:\TLGL\tlbb-explorer\crates\core)
+warning: variable does not need to be mutable
+  --> crates\core\src\bin\scene_census.rs:46:9
+   |
+46 |     let mut say = |s: String, lines: &mut Vec<String>| {
+   |         ----^^^
+   |         |
+   |         help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: `tlbb-core` (bin "scene_census" test) generated 1 warning (run `cargo fix --bin "scene_census" -p tlbb-core --tests` to apply 1 suggestion)
+warning: variable does not need to be mutable
+  --> crates\core\src\bin\scene_verify.rs:18:9
+   |
+18 |     let mut say = |s: String, log: &mut Vec<String>| {
+   |         ----^^^
+   |         |
+   |         help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: `tlbb-core` (bin "scene_verify" test) generated 1 warning (run `cargo fix --bin "scene_verify" -p tlbb-core --tests` to apply 1 suggestion)
+warning: variable does not need to be mutable
+   --> crates\core\src\bin\scene_pick.rs:139:9
+    |
+139 |     let mut say = |s: String, log: &mut Vec<String>| {
+    |         ----^^^
+    |         |
+    |         help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `stride` is never read
+  --> crates\core\src\bin\scene_pick.rs:35:5
+   |
+24 | struct Cand {
+   |        ---- field in this struct
+...
+35 |     stride: usize,
+   |     ^^^^^^
+   |
+   = note: `Cand` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `tlbb-core` (bin "scene_pick" test) generated 2 warnings (run `cargo fix --bin "scene_pick" -p tlbb-core --tests` to apply 1 suggestion)
+warning: function `判据M_违反则拒绝` should have a snake case name
+   --> crates\core\src\preview\scene.rs:528:8
+    |
+528 |     fn 判据M_违反则拒绝() {
+    |        ^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `判据_m_违反则拒绝`
+    |
+    = note: `#[warn(non_snake_case)]` (part of `#[warn(nonstandard_style)]`) on by default
+
+warning: function `判据N_违反则拒绝` should have a snake case name
+   --> crates\core\src\preview\scene.rs:556:8
+    |
+556 |     fn 判据N_违反则拒绝() {
+    |        ^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `判据_n_违反则拒绝`
+
+warning: function `尾部记录也满足判据MN说明不能靠它反推尾部` should have a snake case name
+   --> crates\core\src\preview\scene.rs:669:8
+    |
+669 |     fn 尾部记录也满足判据MN说明不能靠它反推尾部() {
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `尾部记录也满足判据_mn说明不能靠它反推尾部`
+
+warning: function `名字在偏移64且以NUL结尾` should have a snake case name
+   --> crates\core\src\preview\scene.rs:690:8
+    |
+690 |     fn 名字在偏移64且以NUL结尾() {
+    |        ^^^^^^^^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `名字在偏移64且以_nul结尾`
+
+warning: function `悬空槽位保持为_None_不编造_hash` should have a snake case name
+   --> crates\core\src\preview\summary.rs:564:8
+    |
+564 |     fn 悬空槽位保持为_None_不编造_hash() {
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `悬空槽位保持为_none_不编造_hash`
+
+warning: `tlbb-core` (lib test) generated 6 warnings (1 duplicate)
+warning: fields `mips` and `original` are never read
+   --> crates\core\src\bin\texture_cluster.rs:103:5
+    |
+ 96 | struct Tex {
+    |        --- fields in this struct
+...
+103 |     mips: i64,
+    |     ^^^^
+104 |     original: i64,
+    |     ^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `mean_lum` is never read
+   --> crates\core\src\bin\texture_cluster.rs:259:5
+    |
+253 | struct Pick {
+    |        ---- field in this struct
+...
+259 |     mean_lum: f64,
+    |     ^^^^^^^^
+
+warning: `tlbb-core` (bin "texture_cluster" test) generated 2 warnings
+warning: `tlbb-core` (bin "texture_cluster") generated 2 warnings (2 duplicates)
+warning: `tlbb-core` (bin "scene_verify") generated 1 warning (1 duplicate)
+warning: `tlbb-core` (bin "scene_census") generated 1 warning (1 duplicate)
+warning: `tlbb-core` (bin "scene_pick") generated 2 warnings (2 duplicates)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.62s
+     Running unittests src\lib.rs (D:/TLGL/.scratch/rc3\debug\deps\tlbb_core-0c99fcc9892165e1.exe)
+
+running 93 tests
+test catalog::versiondiff::tests::a_fingerprint_move_without_members_is_not_content ... ok
+test catalog::versiondiff::tests::a_renamed_asset_pairs_on_its_members ... ok
+test catalog::versiondiff::tests::a_texture_swap_is_not_a_model_change ... ok
+test catalog::versiondiff::tests::added_and_removed_assets_are_named_as_such ... ok
+test catalog::versiondiff::tests::an_unparsable_blob_names_both_formats ... ok
+test catalog::versiondiff::tests::digests_are_multiset_and_stable ... ok
+test catalog::versiondiff::tests::foreign_basis_reports_no_content_but_still_counts_composition ... ok
+test catalog::versiondiff::tests::identity_v2_shape_reads_in_and_keeps_packing_signals_separate ... ok
+test catalog::versiondiff::tests::member_order_alone_changes_nothing ... ok
+test catalog::versiondiff::tests::members_can_move_while_the_fingerprint_stays_put ... ok
+test catalog::versiondiff::tests::native_json_round_trips_and_diffs_to_nothing ... ok
+test catalog::versiondiff::tests::only_names_moved_is_flagged_as_a_collection_change ... ok
+test catalog::versiondiff::tests::repacking_is_not_content_either ... ok
+test export::gltf::tests::animations_without_rig_are_refused ... ok
+test export::gltf::tests::empty_mesh_is_refused_not_exported ... ok
+test export::gltf::tests::glb_container_and_document_shape ... ok
+test export::gltf::tests::rigged_entry_without_rig_equals_static ... ok
+test export::gltf::tests::slot_names_are_carried_through ... ok
+test jbcf::parser::decode_tests::ascii_names_are_untouched ... ok
+test export::gltf::tests::synthetic_rig_roundtrips ... ok
+test jbcf::parser::decode_tests::gbk_bytes_decode_to_chinese ... ok
+test jbcf::parser::decode_tests::undecodable_bytes_do_not_panic ... ok
+test pathmap::tests::parses_synthetic_and_looks_up_case_insensitively ... ok
+test pathmap::tests::real_cfg_matches_shipped_facts ... ok
+test pathmap::tests::rejects_non_cfg ... ok
+test preview::anim::rest_tests::绑定旋转每条都是单位长 ... ok
+test preview::anim::rest_tests::骨架区不合就不硬给 ... ok
+test preview::anim::tests::坏输入不硬猜 ... ok
+test preview::anim::tests::真样本四份都解得出且四元数单位长 ... ok
+test preview::effect::tests::参数区按记录表确定性切分且补零对齐 ... ok
+test preview::effect::tests::合成容器解得开且分桶不误伤层名 ... ok
+test preview::effect::tests::坏输入不硬猜 ... ok
+test preview::effect::tests::未知键截断记录流但不否定整个文件 ... ok
+test preview::effect::tests::真特效参数块记录流走通 ... ok
+test preview::effect::tests::真特效解得开且能报出材质 ... ok
+test preview::geometry::tests::missing_normals_leaves_them_empty_not_garbage ... ok
+test preview::geometry::tests::inconsistent_index_count_is_rejected ... ok
+test preview::geometry::tests::multi_submesh_counts_array_is_located_and_split ... ok
+test preview::geometry::tests::out_of_range_index_is_rejected ... ok
+test preview::geometry::tests::plane_roundtrips ... ok
+test preview::geometry::tests::truncated_file_is_rejected ... ok
+test preview::pose::tests::mat_mul_composes_translations_additively ... ok
+test preview::pose::tests::bind_worlds_uses_stored_and_fills_the_chain ... FAILED
+test preview::pose::tests::pose_frame_composes_trs_along_parents ... ok
+test preview::pose::tests::quat_to_mat_matches_hand_computed_rotations ... ok
+test preview::pose::tests::affine_inverse_roundtrips ... ok
+test preview::pose::tests::posed_vertices_skin_and_identity_cases ... ok
+test preview::scene::tests::判据M_违反则拒绝 ... ok
+test preview::pose::tests::trs_scales_rows_and_puts_translation_in_the_last_row ... ok
+test preview::pose::tests::skin_palette_order_keeps_vertex_attached_to_its_bone ... ok
+test preview::scene::tests::判据N_违反则拒绝 ... ok
+test preview::scene::tests::合成两条记录能解出来 ... ok
+test preview::scene::tests::名字在偏移64且以NUL结尾 ... ok
+test preview::scene::tests::声明被低估时仍走出全部头部记录 ... ok
+test preview::scene::tests::尾部记录也满足判据MN说明不能靠它反推尾部 ... ok
+test preview::pose::tests::unify_weights_covers_the_four_cases ... ok
+test preview::scene::tests::尾部附加段只报字节数不编造实例 ... ok
+test preview::scene::tests::已知版本集合与_stride_表一致 ... ok
+test preview::scene::tests::未知_tag_报_unknown_version ... ok
+test preview::scene::tests::布局走不通在中间时报_failed_at ... ok
+test preview::scene::tests::空格子判定 ... ok
+test preview::summary::tests::悬空槽位保持为_None_不编造_hash ... ok
+test preview::summary::tests::去重保序 ... ok
+test preview::summary::tests::材质槽位保留悬空并保序 ... ok
+test preview::summary::tests::路由把常见扩展名送到对的预览器 ... ok
+test preview::scene::tests::真实样本 ... ok
+test preview::uvfit::tests::black_bias_real_samples_v041 ... ignored, 依赖本机 D:/TLGL 真实数据（db/pak），v0.4.1 验收时手动跑
+test preview::geometry::tests::real_multi_submesh_samples ... ok
+test preview::scene::tests::长度不足12字节报_too_short ... ok
+test preview::uvfit::tests::cand_summary_format_is_frozen ... ok
+test preview::uvfit::tests::cand_summary_v2_appends_only ... ok
+test preview::uvfit::tests::replay_production_candidate_caches ... ignored, 依赖本机 D:/TLGL 真实数据（db/pak/旧缓存），离线对拍时手动跑
+test preview::uvfit::tests::size_fit_anchors ... ok
+test preview::uvfit_batch::tests::增量跑完后再跑一遍不重算且manifest齐全 ... ignored, 要解码全池匿名贴图，一轮约 7 分钟，手动验证批量闭环时跑
+test preview::uvfit_batch::tests::分级阈值按两个口径各算一次 ... ok
+test preview::uvfit::tests::empty_mask_yields_no_candidates ... ok
+test preview::uvfit_batch::tests::旧缓存重扫不谎报v2口径 ... ok
+test preview::uvfit_batch::tests::缺值是_null_不是零 ... ok
+test preview::uvfit::tests::black_bias_triggers_and_floor_brings_score_back ... ok
+test preview::geometry::node_tests::skin_influences_sum_to_one_per_vertex ... ok
+test preview::uvfit::tests::variance_and_score_math ... ok
+test preview::uvfit::tests::normal_texture_adjusted_equals_score ... ok
+test preview::geometry::node_tests::bind_translations_mirror_left_and_right ... ok
+test preview::geometry::node_tests::socket_entries_are_not_bones ... ok
+test preview::scene::tests::任意截断与垃圾输入都不panic ... ok
+test preview::uvfit::tests::white_bias_symmetric ... ok
+test preview::uvfit::tests::adjusted_ordering_aligned_above_misaligned ... ok
+test preview::geometry::node_tests::a_weight_out_of_range_kills_the_table ... ok
+test preview::uvfit::tests::alpha_fit_branches ... ok
+test preview::geometry::node_tests::unsorted_vertex_ids_are_not_a_table ... ok
+test preview::geometry::node_tests::tampering_a_bind_row_breaks_the_mirror ... ok
+test preview::geometry::node_tests::skin_tables_are_per_part_not_per_model ... ok
+test preview::geometry::node_tests::declared_bone_count_equals_the_animation_track_count ... ok
+
+failures:
+
+---- preview::pose::tests::bind_worlds_uses_stored_and_fills_the_chain stdout ----
+
+thread 'preview::pose::tests::bind_worlds_uses_stored_and_fills_the_chain' (20064) panicked at crates\core\src\preview\pose.rs:588:9:
+assertion `left == right` failed
+  left: [1.0, -0.0, 0.0, 0.0, -0.0, 1.0, -0.0, 0.0, 0.0, -0.0, 1.0, 0.0, -1.0, -0.0, -0.0, 1.0]
+ right: [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    preview::pose::tests::bind_worlds_uses_stored_and_fills_the_chain
+
+test result: FAILED. 89 passed; 1 failed; 3 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+error: test failed, to rerun pass `-p tlbb-core --lib`
+     Running unittests src\bin\asset_cards.rs (D:/TLGL/.scratch/rc3\debug\deps\asset_cards-c69ddcf923d99207.exe)
+
+running 4 tests
+test tests::epoch_days_match_the_calendar ... ok
+test tests::nameless_groups_fall_back_to_their_identifier ... ok
+test tests::scenarios_and_placeholders_stay_within_the_sprite_set ... ok
+test tests::subtitle_only_cuts_the_stem_apart ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\asset_report.rs (D:/TLGL/.scratch/rc3\debug\deps\asset_report-d737ec4cc7e4b5f1.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\block_census.rs (D:/TLGL/.scratch/rc3\debug\deps\block_census-bc395ed4734dfaac.exe)
+
+running 15 tests
+test tests::f32可读_正常浮点表全过 ... ok
+test tests::f32可读_空与残尾 ... ok
+test tests::f32可读_随机模式低 ... ok
+test tests::u32可读_索引缓冲风格全过 ... ok
+test tests::尺寸分桶_四档边界 ... ok
+test tests::熵_两值对半为1 ... ok
+test tests::熵_全同字节为0 ... ok
+test tests::熵_均匀分布接近8 ... ok
+test tests::规则引擎_熵分档与浮点覆盖 ... ok
+test tests::规则引擎_魔数优先 ... ok
+test tests::魔数表_信封标签白名单 ... ok
+test tests::魔数表_游戏自有格式 ... ok
+test tests::魔数表_短输入不误判 ... ok
+test tests::魔数表_通用格式 ... ok
+test tests::重复率_垫底块高_随机块低 ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src\bin\catalog_baseline.rs (D:/TLGL/.scratch/rc3\debug\deps\catalog_baseline-9e53b21d0023d6b5.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\dump_scene_sample.rs (D:/TLGL/.scratch/rc3\debug\deps\dump_scene_sample-8705e94d63ccae19.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\entry-scan.rs (D:/TLGL/.scratch/rc3\debug\deps\entry_scan-e9e28d3255cc0963.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\jpak-scan.rs (D:/TLGL/.scratch/rc3\debug\deps\jpak_scan-7cd5fb530d0352ad.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\mesh2glb.rs (D:/TLGL/.scratch/rc3\debug\deps\mesh2glb-481cacb6f89ba901.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\mesh_gate.rs (D:/TLGL/.scratch/rc3\debug\deps\mesh_gate-00056ef81a421562.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\nameless_probe.rs (D:/TLGL/.scratch/rc3\debug\deps\nameless_probe-96a61f83e2a15408.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\preview-scan.rs (D:/TLGL/.scratch/rc3\debug\deps\preview_scan-ad1ff5350770660f.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\preview_probe.rs (D:/TLGL/.scratch/rc3\debug\deps\preview_probe-896ed4d6878b86fe.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\scene_census.rs (D:/TLGL/.scratch/rc3\debug\deps\scene_census-aff0bfdd003c62b6.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\scene_pick.rs (D:/TLGL/.scratch/rc3\debug\deps\scene_pick-de1591fd165aa903.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\scene_stop.rs (D:/TLGL/.scratch/rc3\debug\deps\scene_stop-1bd718fe72438283.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\scene_verify.rs (D:/TLGL/.scratch/rc3\debug\deps\scene_verify-631618866929a029.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\skel_dump.rs (D:/TLGL/.scratch/rc3\debug\deps\skel_dump-3506cc52e56e32e1.exe)
+
+running 3 tests
+test tests::single_animation_dumps_without_a_mesh ... ok
+test tests::batch_selects_meshes_under_a_prefix ... ok
+test tests::dump_carries_nodes_tracks_and_says_what_is_missing ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+     Running unittests src\bin\texture_cluster.rs (D:/TLGL/.scratch/rc3\debug\deps\texture_cluster-565b659e68928541.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\uvfit.rs (D:/TLGL/.scratch/rc3\debug\deps\uvfit-83d9e4660c6acbc2.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\uvfit_batch.rs (D:/TLGL/.scratch/rc3\debug\deps\uvfit_batch-c86cc34b8005f2f2.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\view.rs (D:/TLGL/.scratch/rc3\debug\deps\view-10e2cdd5c1a6e72b.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\bin\wall_harvest.rs (D:/TLGL/.scratch/rc3\debug\deps\wall_harvest-be69f914d2ca2739.exe)
+
+running 1 test
+test tests::表头与两种数据行列数一致 ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\asset_report.rs (D:/TLGL/.scratch/rc3\debug\deps\asset_report-1c6ffb2e4e149e13.exe)
+
+running 30 tests
+test a_missing_image_still_proves_the_page_is_self_contained ... ok
+test a_report_with_only_internal_edges_says_so_in_words ... ok
+test a_snapshot_row_is_parsed_by_literal_fields_only ... ok
+test an_asset_with_no_decodable_texture_shows_a_silhouette ... ok
+test an_unreadable_snapshot_directory_reads_as_no_history ... ok
+test base64_follows_rfc_4648 ... ok
+test a_snapshot_directory_without_json_also_reads_as_no_history ... ok
+test names_carrying_markup_cannot_rearrange_the_page ... ok
+test fingerprints_read_as_facts_not_failures ... ok
+test arguments_default_to_the_read_only_catalog_layout ... ok
+test an_inlined_report_references_nothing_outside_itself ... ok
+test placeholder_keys_stay_inside_the_sprite_set ... ok
+test byte_sizes_are_written_for_people ... ok
+test snapshots_are_compared_with_the_census_vocabulary ... ok
+test the_composition_chips_are_labelled_once_each ... ok
+test the_subtitle_is_only_ever_a_cut_of_the_name ... ok
+test the_workbench_and_the_report_read_the_same_fingerprint ... ok
+test a_shared_skeleton_lists_only_outside_users ... ok
+test an_assets_own_files_are_never_listed_as_its_users ... ok
+test the_report_prints_the_catalogs_own_fingerprint ... ok
+test a_referrer_without_a_path_is_never_dressed_up_as_one ... ok
+test a_smooth_texture_only_needs_the_first_rung ... ok
+test rescaling_caps_a_sheet_without_smearing_its_colors ... ok
+test the_list_is_capped_but_the_headline_keeps_the_true_total ... ok
+test an_oversized_sheet_steps_down_the_ladder_instead_of_disappearing ... ok
+test a_self_contained_asset_reports_no_users_and_stays_one_file ... ok
+test the_report_prints_the_catalogs_own_identity ... ok
+test the_snapshot_members_are_the_catalogs_member_digests ... ok
+test a_real_snapshot_json_changes_the_verdict_it_prints ... ok
+test a_texture_bearing_asset_embeds_a_real_image ... ok
+
+test result: ok. 30 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.18s
+
+     Running tests\bone_hierarchy.rs (D:/TLGL/.scratch/rc3\debug\deps\bone_hierarchy-fa1eef73f0ba5130.exe)
+
+running 6 tests
+test bind_distance_between_parent_and_child_stays_in_bone_length_range ... ok
+test hierarchy_is_a_single_rooted_tree_of_declared_size ... ok
+test second_mesh_with_different_bone_count_parses_the_same_way ... ok
+test parent_chain_follows_biped_anatomy ... ok
+test tampering_a_child_slot_breaks_the_parse ... ok
+test hierarchy_names_cover_the_ani_tracks ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests\container.rs (D:/TLGL/.scratch/rc3\debug\deps\container-0d7076be5cb2e52e.exe)
+
+running 3 tests
+test empty_dir_yields_no_texture_candidates ... ok
+test rejects_non_jpak_input ... ok
+test data_pak_chain_is_exact ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.70s
+
+     Running tests\evidence.rs (D:/TLGL/.scratch/rc3\debug\deps\evidence-5b71ceaded449e55.exe)
+
+running 9 tests
+test a_needs_every_reference_to_land ... ok
+test labels_are_chinese_and_ordered ... ok
+test members_zero_is_d_regardless_of_decode ... ok
+test role_kinds_counts_raw_roles_not_display_labels ... ok
+test signals_are_a_pure_function_of_the_facts ... ok
+test single_role_bodies_are_name_evidence_only ... ok
+test undecodable_body_is_always_d ... ok
+test unmeasured_decode_never_asserts_d ... ok
+test unmeasured_grade_agrees_with_the_measured_rule_above_d ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests\glb_skin_export.rs (D:/TLGL/.scratch/rc3\debug\deps\glb_skin_export-cc6e3fd66828cb9d.exe)
+
+running 2 tests
+test static_export_still_has_no_skin ... ok
+test rigged_glb_eats_back_through_every_gate ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests\glb_spec_skin.rs (D:/TLGL/.scratch/rc3\debug\deps\glb_spec_skin-b3bf2e447b6152e2.exe)
+
+running 4 tests
+test glb_bind_globals_match_engine_binds_elementwise ... FAILED
+test glb_animation_channels_carry_stored_ani_values ... ok
+test glb_animated_globals_match_pose_frame_every_frame ... ok
+test glb_skinned_vertices_match_engine_skinning ... FAILED
+
+failures:
+
+---- glb_bind_globals_match_engine_binds_elementwise stdout ----
+[glb] yifu_001: joints=46 无bind骨=16 覆盖顶点=529 归一=441 差额挂根骨=88 按和强归=0 未覆盖=252 超4影响=0 trs不符=0
+[glb]   动画 idle01: 41 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+bind 对账：46 根骨 · 逐元素比对最大差 2e0（骨 bip01）· 转置版比对最大差 1.7837
+
+thread 'glb_bind_globals_match_engine_binds_elementwise' (13972) panicked at crates\core\tests\glb_spec_skin.rs:352:5:
+规范复合的骨世界应与存储 bind 逐元素相等，骨 bip01 差 2
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- glb_skinned_vertices_match_engine_skinning stdout ----
+[glb] yifu_001: joints=46 无bind骨=16 覆盖顶点=529 归一=441 差额挂根骨=88 按和强归=0 未覆盖=252 超4影响=0 trs不符=0
+[glb]   动画 idle01: 41 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+参与比对：全部 781 顶点（其中原始 Σw≠1 的 114 个、未覆盖 226 个）
+蒙皮对账：41 帧 × 781 顶点 · 规范公式 vs pose.rs 最大差 2.5117466e0（第 11 帧 顶点 387 轴1）
+
+thread 'glb_skinned_vertices_match_engine_skinning' (18972) panicked at crates\core\tests\glb_spec_skin.rs:497:5:
+规范蒙皮结果应与引擎蒙皮一致，差 2.5117466
+
+
+failures:
+    glb_bind_globals_match_engine_binds_elementwise
+    glb_skinned_vertices_match_engine_skinning
+
+test result: FAILED. 2 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+error: test failed, to rerun pass `-p tlbb-core --test glb_spec_skin`
+     Running tests\golden_decode.rs (D:/TLGL/.scratch/rc3\debug\deps\golden_decode-9daec164378855c3.exe)
+
+running 1 test
+test golden_entries_match_the_python_reference ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 24.16s
+
+     Running tests\grade_census.rs (D:/TLGL/.scratch/rc3\debug\deps\grade_census-5785eb779cf64aed.exe)
+
+running 2 tests
+test frozen_grade_distribution_holds ... ok
+test texture_refs_and_ref_rows_agree_on_every_group ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.97s
+
+     Running tests\hamigua_tail.rs (D:/TLGL/.scratch/rc3\debug\deps\hamigua_tail-29ee2ca727a027ef.exe)
+
+running 7 tests
+test fake_socket_footer_x_zero_is_no_longer_accepted ... ok
+test hamigua_mesh_without_origin_prelude_parses_to_exact_eof ... ok
+test socket_segment_with_true_head_ending_at_eof_is_accepted ... ok
+test tampering_child_slot_still_breaks_the_parse ... ok
+test tampering_root_flag_breaks_the_variant_start ... ok
+test variant_family_follows_biped_anatomy_and_bone_lengths ... ok
+test variant_with_sockets_parses_sockets_too ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests\jbcf.rs (D:/TLGL/.scratch/rc3\debug\deps\jbcf-d269a8eb1a7e1b12.exe)
+
+running 4 tests
+test rejects_foreign_and_inconsistent_payloads ... ok
+test role_classifies_by_extension ... ok
+test round_trip_recovers_every_string_and_role ... ok
+test shipped_material_exposes_its_graph ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\jmt1.rs (D:/TLGL/.scratch/rc3\debug\deps\jmt1-596cea77c010e226.exe)
+
+running 8 tests
+test bc1_four_colour_mode ... ok
+test bc1_three_colour_mode_has_transparent_entry ... ok
+test bc3_alpha_ramp_is_indexed_three_bits ... ok
+test classify_matches_the_shipped_decision_table ... ok
+test colr_border_is_cropped ... ok
+test colw_is_passed_through ... ok
+test l8_renders_as_grey ... ok
+test rejects_garbage ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\pose_compose.rs (D:/TLGL/.scratch/rc3\debug\deps\pose_compose-6298c5cb419288eb.exe)
+
+running 6 tests
+test bind_worlds_reproduce_known_bone_distances_and_reject_the_local_reading ... ok
+test bind_origins_sit_inside_their_skinned_geometry ... ok
+test skin_at_bind_pose_reproduces_the_original_vertices ... ok
+test skin_at_pose_frames_is_safe_and_reports_displacement ... ok
+test pose_frames_across_all_actions_stay_finite ... ok
+test skin_keeps_rigid_vertices_at_their_bone_distance ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s
+
+     Running tests\query_plan_audit.rs (D:/TLGL/.scratch/rc3\debug\deps\query_plan_audit-d93ef7dbaac3fcba.exe)
+
+running 3 tests
+test textures_in_dir_is_answered_by_a_covering_index ... ok
+test the_per_group_queries_all_stay_index_backed ... ok
+test the_planner_has_real_statistics ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\refs_audit.rs (D:/TLGL/.scratch/rc3\debug\deps\refs_audit-bc7e28f6ab1a8bdc.exe)
+
+running 9 tests
+test refs_to_must_not_back_the_panel_untouched ... ok
+test naming_inference_is_not_a_reference ... ok
+test external_users_never_reports_internal_edges ... ok
+test blank_from_path_swallows_real_users ... ok
+test ambiguous_flag_matches_reality ... ok
+test pollution_is_real_so_the_filter_is_load_bearing ... ok
+test external_users_are_rare_and_concentrated ... ok
+test unresolved_names_never_read_as_located ... ok
+test no_internal_edge_survives_the_filter ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.16s
+
+     Running tests\scene_contract.rs (D:/TLGL/.scratch/rc3\debug\deps\scene_contract-0b65449e0702923e.exe)
+
+running 5 tests
+test 契约_32格号与文件名吻合 ... ok
+test 契约_缩放逐实例存在且允许三轴独立 ... ok
+test 契约_齐次末行与正交性与可逆性_逐实例硬断言 ... ok
+test 契约_纯偏航与上轴占比_不低于全量实测下限 ... ok
+test 契约_tag白名单与样本覆盖 ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\search.rs (D:/TLGL/.scratch/rc3\debug\deps\search-070077894dbd6b0b.exe)
+
+running 4 tests
+test han_query_expands_to_pinyin ... ok
+test separators_do_not_matter ... ok
+test whole_path_is_not_searched ... ok
+test a_two_character_word_stays_specific ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.48s
+
+     Running tests\search_audit.rs (D:/TLGL/.scratch/rc3\debug\deps\search_audit-7e2c27f1896fcf44.exe)
+
+running 13 tests
+test category_words_never_reach_the_name_path ... ignored, known defect: a pinyin prefix matches inside a longer compound token
+test game_polyphones_resolve ... ignored, known defect: heteronym readings are not expanded
+test print_audit_tables ... ignored
+test unrelated_dir_leaf_is_not_searched ... ignored, known defect: unrelated dir leaf leaks foreign assets
+test every_tag_in_the_catalog_has_a_chinese_label ... ok
+test tagged_words_cover_what_names_cannot ... ok
+test stems_carry_no_display_names ... ok
+test fullwidth_query_folds ... ok
+test pinyin_keys_are_ascii_and_reach_nv_groups ... ok
+test initials_are_still_not_generated ... ok
+test category_words_barely_overlap_the_name_path ... ok
+test two_char_words_do_not_flood_across_tokens ... ok
+test random_two_char_words_stay_specific ... ok
+
+test result: ok. 9 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 4.92s
+
+     Running tests\snappy.rs (D:/TLGL/.scratch/rc3\debug\deps\snappy-2a4067a8709fd647.exe)
+
+running 8 tests
+test copy2_and_copy4_offsets ... ok
+test copy1_offset_high_bits_come_from_the_tag ... ok
+test declared_length_is_cross_checked_against_the_record ... ok
+test overlapping_copy_repeats_just_written_bytes ... ok
+test short_literal ... ok
+test rejects_truncated_and_inconsistent_streams ... ok
+test long_literal_uses_two_extra_length_bytes ... ok
+test rle_run_of_one_byte ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests\vectors.rs (D:/TLGL/.scratch/rc3\debug\deps\vectors-c163af009d5469a3.exe)
+
+running 3 tests
+test crc32_is_zlib_compatible ... ok
+test keystream_matches_engine_decrypt ... ok
+test path_hash_matches_engine ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\versiondiff.rs (D:/TLGL/.scratch/rc3\debug\deps\versiondiff-559935f1badc32df.exe)
+
+running 29 tests
+test versiondiff::tests::a_fingerprint_move_without_members_is_not_content ... ok
+test a_library_never_changed_reports_nothing ... ok
+test a_departure_is_listed_as_a_departure ... ok
+test versiondiff::tests::a_texture_swap_is_not_a_model_change ... ok
+test an_arrival_is_listed_as_an_arrival ... ok
+test mismatched_bases_never_claim_content ... ok
+test the_projection_counts_reconcile_with_the_summary ... ok
+test only_the_texture_moving_is_presentation_not_restructure ... ok
+test only_the_referenced_names_moving_is_a_vocabulary_change ... ok
+test a_repack_stays_on_the_fingerprint_axis ... ok
+test a_relocated_asset_is_one_row_and_not_two_events ... ok
+test versiondiff::tests::a_renamed_asset_pairs_on_its_members ... ok
+test a_membership_move_without_a_content_move_is_attribution ... ok
+test versiondiff::tests::added_and_removed_assets_are_named_as_such ... ok
+test versiondiff::tests::an_unparsable_blob_names_both_formats ... ok
+test versiondiff::tests::digests_are_multiset_and_stable ... ok
+test versiondiff::tests::identity_v2_shape_reads_in_and_keeps_packing_signals_separate ... ok
+test versiondiff::tests::members_can_move_while_the_fingerprint_stays_put ... ok
+test versiondiff::tests::foreign_basis_reports_no_content_but_still_counts_composition ... ok
+test versiondiff::tests::member_order_alone_changes_nothing ... ok
+test versiondiff::tests::only_names_moved_is_flagged_as_a_collection_change ... ok
+test versiondiff::tests::repacking_is_not_content_either ... ok
+test versiondiff::tests::native_json_round_trips_and_diffs_to_nothing ... ok
+test the_real_pair_projects_a_valid_contract_document ... ok
+test the_shipped_sample_snapshot_reads_in ... ok
+test the_synthesised_next_version_lands_on_its_ground_truth ... ok
+test a_real_catalog_repack_is_not_reported_as_content ... ok
+test the_real_library_snapshots_and_self_diffs_to_nothing ... ok
+test the_real_library_self_diff_is_empty_stable_and_fast ... ok
+
+test result: ok. 29 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.24s
+
+   Doc-tests tlbb_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: 2 targets failed:
+    `-p tlbb-core --lib`
+    `-p tlbb-core --test glb_spec_skin`

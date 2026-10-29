@@ -1,0 +1,109 @@
+=== 路径形状普查：有没有「目录是一段 hash」的路径 ===
+路径段数分布: [(1, 11), (2, 6490), (3, 15256), (4, 6919), (5, 7103), (6, 10251), (7, 11244)]
+父目录像 hash 的路径样例: []
+父目录像 hash 的路径样例数（上面已列）: 0
+
+=== 12 张池内贴图的左右邻居现场 ===
+  [data/2 @336906832] 本行 hash=1299be188cda06c3 type=texture
+      前 336846496 texture        None
+      前 336849688 texture        None
+      前 336880568 texture        None
+      >>> 匿名贴图
+      后 336975904 texture        None
+      后 336984672 texture        None
+      后 336998224 JBPU           data/effect/pu_skill/chuangjue/sl_nan/w1351_skill_sl_nan_cj_jt_13.pu
+  [data/2 @337984504] 本行 hash=15fa20a3658b8c96 type=texture
+      前 337946616 texture        None
+      前 337953768 texture        None
+      前 337958640 texture        None
+      >>> 匿名贴图
+      后 338142304 texture        None
+      后 338160480 JBCF           data/effect/textures/model/w1351_model_gb_long_h01.mtl
+      后 338161056 texture        None
+  [data/3 @346001720] 本行 hash=65bb103376cd9766 type=texture
+      前 345983312 JBCF           data/effect/textures/plant/w1351_plant_tl_nan_x02.mtl
+      前 345983888 JBCF           data/effect/textures/plant/w1351_plant_z005.mtl
+      前 345984456 texture        None
+      >>> 匿名贴图
+      后 346156904 JBPU           data/effect/pu_other/w1351_other_nv_sz_xy_lizi01.pu
+      后 346158600 JBPU           data/effect/pu_other/w1351_other_nv_sz_gb_lizi04.pu
+      后 346160064 JBPU           data/effect/pu_other/w1351_other_nv_sz_xy_lizi02.pu
+  [data/3 @363381536] 本行 hash=c994eae2ed24e82a type=texture
+      前 363227000 JBCF           data/effect/textures/point_light/w1351_point_tl_nan_x02.mtl
+      前 363227576 texture        None
+      前 363380952 JBCF           data/effect/textures/ring/w1351_textures_liqiushui_x03.mtl
+      >>> 匿名贴图
+      后 363598896 texture        None
+      后 363652352 JBPU           data/effect/pu_skill/chuangjue/gb_nv/w1351_skill_gb_nv_cj_jt_tuowei01.pu
+      后 363652976 JBPU           data/effect/pu_skill/chuangjue/gb_nv/w1351_skill_gb_nv_cj_jt_tuowei02.pu
+  [data/3 @363752832] 本行 hash=7c307e8d6c7fd5ea type=texture
+      前 363691352 JBCF           data/effect/textures/smoke/w1351_smoke_h017.mtl
+      前 363692368 texture        None
+      前 363720064 texture        None
+      >>> 匿名贴图
+      后 363912392 JBPU           data/effect/pu_skill/chuangjue/mj_nv/w1351_skill_mj_nv_04.pu
+      后 363913800 mesh           data/effect/effectmodel/w1351_model_ts_nv_jt_x17.mesh
+      后 363944472 JBCF           data/effect/textures/point_light/w1351_point_x02.mtl
+  [data/3 @365959800] 本行 hash=105b436e9e473bb8 type=texture
+      前 365950240 JBPU           data/effect/pu_skill/chuangjue/ts_nv/w1351_skill_ts_nv_cj_jt_13.pu
+      前 365952088 JBPU           data/effect/pu_skill/chuangjue/sl_nv/w1351_skill_sl_nv_cj_buddha01.pu
+      前 365956216 JBPU           data/effect/pu_skill/chuangjue/sl_nv/w1351_skill_sl_nv_cj_hand01_hit01.pu
+      >>> 匿名贴图
+      后 366068688 mesh           data/effect/effectmodel/w1351_model_ts_nv_jt_x22.mesh
+      后 366241072 JBCF           data/effect/textures/ribbon_trail/w1351_ribbon_h020.mtl
+      后 366241648 JBCF           data/effect/textures/ribbon_trail/w1351_ribbon_h016.mtl
+  [data/3 @368398800] 本行 hash=58302aa4f8e58484 type=texture
+      前 367355832 texture        None
+      前 367395944 texture        None
+      前 367398344 mesh           data/effect/effectmodel/w1351_model_sl_buddha_h01.mesh
+      >>> 匿名贴图
+      后 368506264 texture        None
+      后 368636384 texture        None
+      后 368636800 texture        None
+  [data/3 @368506264] 本行 hash=cc6ee46d9e5ee8ad type=texture
+      前 367395944 texture        None
+      前 367398344 mesh           data/effect/effectmodel/w1351_model_sl_buddha_h01.mesh
+      前 368398800 texture        None
+      >>> 匿名贴图
+      后 368636384 texture        None
+      后 368636800 texture        None
+      后 368637216 texture        None
+  [data/3 @369538376] 本行 hash=c0b5360dccd3e0aa type=texture
+      前 369476832 mesh           data/effect/effectmodel/w1351_model_boss_hyz_cone_c04.mesh
+      前 369480504 mesh           data/effect/effectmodel/w1351_model_boss_lzs_cone_c02.mesh
+      前 369489896 texture        None
+      >>> 匿名贴图
+      后 369727944 texture        None
+      后 369738800 texture        None
+      后 369806504 texture        None
+  [data/3 @369738800] 本行 hash=8a351d1448c82d6a type=texture
+      前 369489896 texture        None
+      前 369538376 texture        None
+      前 369727944 texture        None
+      >>> 匿名贴图
+      后 369806504 texture        None
+      后 369893976 texture        None
+      后 369963328 JBCF           data/effect/textures/model/w1351_model_remnats_h002.mtl
+  [data/3 @369893976] 本行 hash=94b6a913480bcdc1 type=texture
+      前 369727944 texture        None
+      前 369738800 texture        None
+      前 369806504 texture        None
+      >>> 匿名贴图
+      后 369963328 JBCF           data/effect/textures/model/w1351_model_remnats_h002.mtl
+      后 369963904 texture        None
+      后 370188784 texture        None
+  [data/3 @369963904] 本行 hash=38dc780bcd6cc8fa type=texture
+      前 369806504 texture        None
+      前 369893976 texture        None
+      前 369963328 JBCF           data/effect/textures/model/w1351_model_remnats_h002.mtl
+      >>> 匿名贴图
+      后 370188784 texture        None
+      后 370245112 texture        None
+      后 370310184 texture        None
+
+=== 匿名贴图的邻居类型构成（决定严格口径为什么这么小）===
+匿名贴图的直接邻居类型: [('texture', 25553), ('geom', 12862), ('JBCF', 4273), ('ani', 2293), ('mesh', 1096), ('binary', 682), ('scene', 664), ('mapref', 483)]
+同一匿名贴图连成的「连段」长度分布(0=孤立): [(0, 6723), (1, 5576), (2, 3243), (3, 1696), (4, 1285), (5, 804), (6, 427), (7, 424), (8, 279), (9, 160), (10, 121), (11, 84), (12, 78), (13, 70)]
+
+=== 有路径的贴图（named，2,259 张）在索引里是连段还是散点 ===
+贴图连段的 N/A 形状前 12: [('A', 6651), ('AA', 2765), ('AAA', 1075), ('AAAA', 416), ('AAAAA', 254), ('AAAAAA', 134), ('AAAAAAA', 61), ('AAAAAAAA', 52), ('AAAAAAAAA', 31), ('AAAAAAAAAAAAAAAAAAAAAAAA', 24), ('N', 17), ('AAAAAAAAAA', 15)]

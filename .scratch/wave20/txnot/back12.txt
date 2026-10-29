@@ -1,0 +1,99 @@
+==============================================================================
+w1351_model_qianghua_h001.mesh size=1700 declared=1 vc=24 starts=[] roots=['0x478']
+-- walk start 0x478  nodes=1
+   ENTRY 000 x=4294967295 children=[]  0x478->0x4c0
+   SKIP_BLOCKS 0x4c0->0x628
+   TX flag=49 count=0 at=0x628 end=0x630 socks=[] left=116
+-- 假挂点头前回看
+   00608  00 00 00 00 00 00 00 00 00 00 c8 42 00 00 c8 42  |...........B...B| u32=0 f32=0
+   00618  00 00 c8 42 01 00 00 00 01 00 00 00 74 78 5f 30  |...B........tx_0| u32=1120403456 f32=100
+   00628  31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |1...............| u32=49 f32=6.8664e-44 <<<
+-- 回看 12B 假设: {'true': 1564, 'flag': 1, 'count': 1, 'end': 1700, 'eof': True, 'parse_ok': True, 'socks': [('tx_01', '000')], 'left_formula': 116}
+
+==============================================================================
+w1351_model_tiangangbeidouzhen_h001.mesh size=1700 declared=1 vc=24 starts=[] roots=['0x478']
+-- walk start 0x478  nodes=1
+   ENTRY 000 x=4294967295 children=[]  0x478->0x4c0
+   SKIP_BLOCKS 0x4c0->0x628
+   TX flag=49 count=0 at=0x628 end=0x630 socks=[] left=116
+-- 假挂点头前回看
+   00608  00 00 00 00 00 00 00 00 00 00 c8 42 00 00 c8 42  |...........B...B| u32=0 f32=0
+   00618  00 00 c8 42 01 00 00 00 01 00 00 00 74 78 5f 30  |...B........tx_0| u32=1120403456 f32=100
+   00628  31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |1...............| u32=49 f32=6.8664e-44 <<<
+-- 回看 12B 假设: {'true': 1564, 'flag': 1, 'count': 1, 'end': 1700, 'eof': True, 'parse_ok': True, 'socks': [('tx_01', '000')], 'left_formula': 116}
+
+==============================================================================
+w1351_model_yanlongwushuang_h001.mesh size=1700 declared=1 vc=24 starts=[] roots=['0x478']
+-- walk start 0x478  nodes=1
+   ENTRY 000 x=4294967295 children=[]  0x478->0x4c0
+   SKIP_BLOCKS 0x4c0->0x628
+   TX flag=49 count=0 at=0x628 end=0x630 socks=[] left=116
+-- 假挂点头前回看
+   00608  00 00 00 00 00 00 00 00 00 00 c8 42 00 00 c8 42  |...........B...B| u32=0 f32=0
+   00618  00 00 c8 42 01 00 00 00 01 00 00 00 74 78 5f 30  |...B........tx_0| u32=1120403456 f32=100
+   00628  31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |1...............| u32=49 f32=6.8664e-44 <<<
+-- 回看 12B 假设: {'true': 1564, 'flag': 1, 'count': 1, 'end': 1700, 'eof': True, 'parse_ok': True, 'socks': [('tx_01', '000')], 'left_formula': 116}
+
+==============================================================================
+w1351_yqlygyw_lihe001.mesh size=2716 declared=2 vc=35 starts=['0x654'] roots=['0x714']
+-- walk start 0x654  nodes=2
+   REC96 origin  0x654->0x6b4
+   REC96 top  0x6b4->0x714
+   ENTRY 000 x=4294967295 children=['bone001']  0x714->0x7bc
+   ENTRY bone001 x=1 children=[]  0x7bc->0x860
+   SKIP_BLOCKS 0x860->0xa20
+   TX flag=12592 count=0 at=0xa20 end=0xa28 socks=[] left=116
+-- walk start 0x714  nodes=2
+   ENTRY 000 x=4294967295 children=['bone001']  0x714->0x7bc
+   ENTRY bone001 x=1 children=[]  0x7bc->0x860
+   SKIP_BLOCKS 0x860->0xa20
+   TX flag=12592 count=0 at=0xa20 end=0xa28 socks=[] left=116
+-- 假挂点头前回看
+   00a00  00 00 00 00 00 00 00 00 00 00 c8 42 00 00 c8 42  |...........B...B| u32=0 f32=0
+   00a10  00 00 c8 42 01 00 00 00 01 00 00 00 74 78 5f 30  |...B........tx_0| u32=1120403456 f32=100
+   00a20  30 31 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |01..............| u32=12592 f32=1.7645e-41 <<<
+-- 回看 12B 假设: {'true': 2580, 'flag': 1, 'count': 1, 'end': 2716, 'eof': True, 'parse_ok': True, 'socks': [('tx_001', 'Bone001')], 'left_formula': 116}
+
+==============================================================================
+w1351_model_liuliyan_h001.mesh size=2760 declared=4 vc=24 starts=[] roots=['0x490']
+-- walk start 0x490  nodes=4
+   ENTRY 000 x=4294967295 children=['bone011', 'bone012', 'bone013']  0x490->0x578
+   ENTRY bone011 x=1 children=[]  0x578->0x6dc
+   ENTRY bone012 x=1 children=[]  0x6dc->0x7c0
+   ENTRY bone013 x=1 children=[]  0x7c0->0x8a4
+   SKIP_BLOCKS 0x8a4->0x94c
+   TX flag=13104 count=0 at=0x94c end=0x954 socks=[] left=372
+-- 假挂点头前回看
+   0092c  00 00 00 00 00 00 00 00 00 00 c8 42 00 00 c8 42  |...........B...B| u32=0 f32=0
+   0093c  00 00 c8 42 01 00 00 00 03 00 00 00 74 78 5f 30  |...B........tx_0| u32=1120403456 f32=100
+   0094c  30 33 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |03..............| u32=13104 f32=1.8363e-41 <<<
+-- 回看 12B 假设: {'true': 2368, 'flag': 1, 'count': 3, 'end': 2760, 'eof': True, 'parse_ok': True, 'socks': [('tx_003', 'Bone011'), ('tx_001', 'Bone012'), ('tx_002', 'Bone013')], 'left_formula': 372}
+
+==============================================================================
+全量 141：{'formula_and_parse': 123, 'formula_only': 0, 'parse_only': 0, 'neither': 18, 'nnodes_ne': 14}
+nnodes==declared: 127
+回看12B 解出 flag=1 且 EOF: 123
+leftover=128N-12: 123
+回看成功的 N 直方: [(1, 21), (12, 15), (2, 12), (15, 12), (9, 11), (13, 8), (3, 7), (7, 7), (8, 6), (10, 5), (4, 5), (6, 4), (16, 4), (11, 3), (20, 2), (5, 1)]
+回看成功的首挂点名 top: [('tx_001', 43), ('tx_002', 25), ('tx_003', 17), ('tx_01', 10), ('tx-06', 10), ('tx_012', 5), ('tx_009', 5), ('tx_02', 3), ('tx_006', 3), ('tx_007', 2)]
+
+失败例（回看解不出或不到 EOF）：
+  w1351_model_ls_yudu_h001.mesh left=88 nnodes=1/1 tx_at=0x11f8 flag_false=3158064 ts={'true': 4588, 'flag': 0, 'count': 0, 'end': 4596, 'eof': False, 'parse_ok': False, 'socks': [], 'left_formula': None}
+  w1351_model_ls_yudu_h002.mesh left=88 nnodes=1/1 tx_at=0x11f8 flag_false=3158064 ts={'true': 4588, 'flag': 0, 'count': 0, 'end': 4596, 'eof': False, 'parse_ok': False, 'socks': [], 'left_formula': None}
+  w1351_yqlygyw_xuyuanshu001_lian_001.mesh left=216 nnodes=33/33 tx_at=0x6fc0 flag_false=3158064 ts={'true': 28596, 'flag': 0, 'count': 0, 'end': 28604, 'eof': False, 'parse_ok': False, 'socks': [], 'left_formula': None}
+  w1351_npc_duanzhengming_yifu_001.mesh left=12604 nnodes=5/27 tx_at=0x475c flag_false=93 ts={'true': 18256, 'flag': 3186095624, 'count': 3029206478, 'end': 387738447448, 'eof': False, 'parse_ok': False, 'socks': [], 'left_formula': 387738429172}
+  w1351_monster_heiyuan.mesh left=19136 nnodes=4/29 tx_at=0x74f4 flag_false=50 ts={'true': 29928, 'flag': 1056875519, 'count': 3045414724, 'end': 389813114608, 'eof': False, 'parse_ok': False, 'socks': [], 'left_formula': 389813084660}
+  w1351_yqlygyw_xuyuanshu001_shoutao_001.mesh left=216 nnodes=33/33 tx_at=0x3ce5c flag_false=3158064 ts={'true': 249424, 'flag': 0, 'count': 0, 'end': 249432, 'eof': False, 'parse_ok': False, 'socks': [], 'left_formula': None}
+  w1351_pets_xiaomuling_b7.mesh left=147340 nnodes=6/102 tx_at=0x26be8 flag_false=2690 ts={'true': 158684, 'flag': 3178335202, 'count': 941785833, 'end': 120548745316, 'eof': False, 'parse_ok': False, 'socks': [], 'left_formula': 120548586612}
+  w1351_model_ymg02_jn_long_lg_h001.mesh left=167608 nnodes=41/106 tx_at=0x56da4 flag_false=78 ts={'true': 355736, 'flag': 1047040290, 'count': 1076437465, 'end': 137784351264, 'eof': False, 'parse_ok': False, 'socks': [], 'left_formula': 137783995508}
+  w1351_model_ymg02_nan_slbw_lg_h002.mesh left=167608 nnodes=42/107 tx_at=0x56ea8 flag_false=78 ts={'true': 355996, 'flag': 3201818851, 'count': 1075741446, 'end': 137695261092, 'eof': False, 'parse_ok': False, 'socks': [], 'left_formula': 137694905076}
+  w1351_model_ymg02_nan_slbw_lg_h003.mesh left=167608 nnodes=42/107 tx_at=0x56ea8 flag_false=78 ts={'true': 355996, 'flag': 3200990746, 'count': 1069752412, 'end': 136928664740, 'eof': False, 'parse_ok': False, 'socks': [], 'left_formula': 136928308724}
+  w1351_model_ymg02_nv_flzt_lg_h001.mesh left=167608 nnodes=42/107 tx_at=0x56ea8 flag_false=78 ts={'true': 355996, 'flag': 1058485122, 'count': 1064137277, 'end': 136209927460, 'eof': False, 'parse_ok': False, 'socks': [], 'left_formula': 136209571444}
+  w1351_model_ymg02_jn_long_lg_h005.mesh left=167608 nnodes=41/106 tx_at=0x5bfbc flag_false=78 ts={'true': 376752, 'flag': 1073133598, 'count': 1044536005, 'end': 133700985400, 'eof': False, 'parse_ok': False, 'socks': [], 'left_formula': 133700608628}
+  w1351_model_ymg02_jn_long_lg_h005_1.mesh left=167608 nnodes=41/106 tx_at=0x5bfbc flag_false=78 ts={'true': 376752, 'flag': 1048038774, 'count': 3179630289, 'end': 406993053752, 'eof': False, 'parse_ok': False, 'socks': [], 'left_formula': 406992676980}
+  w1351_model_ymg02_jn_long_h001.mesh left=206848 nnodes=41/106 tx_at=0x667ec flag_false=77 ts={'true': 419808, 'flag': 1047040290, 'count': 1076437465, 'end': 137784415336, 'eof': False, 'parse_ok': False, 'socks': [], 'left_formula': 137783995508}
+  w1351_model_ymg02_nan_slbw_h002.mesh left=206848 nnodes=42/107 tx_at=0x668f0 flag_false=77 ts={'true': 420068, 'flag': 3201818851, 'count': 1075741446, 'end': 137695325164, 'eof': False, 'parse_ok': False, 'socks': [], 'left_formula': 137694905076}
+  w1351_model_ymg02_nan_slbw_h003.mesh left=206848 nnodes=42/107 tx_at=0x668f0 flag_false=77 ts={'true': 420068, 'flag': 3200990746, 'count': 1069752412, 'end': 136928728812, 'eof': False, 'parse_ok': False, 'socks': [], 'left_formula': 136928308724}
+  w1351_model_ymg02_nv_flzt_h001.mesh left=206848 nnodes=42/107 tx_at=0x668f0 flag_false=77 ts={'true': 420068, 'flag': 1058485122, 'count': 1064137277, 'end': 136209991532, 'eof': False, 'parse_ok': False, 'socks': [], 'left_formula': 136209571444}
+  w1351_model_ymg02_jn_long_h005.mesh left=206848 nnodes=41/106 tx_at=0x6ba04 flag_false=77 ts={'true': 440824, 'flag': 1073133598, 'count': 1044536005, 'end': 133701049472, 'eof': False, 'parse_ok': False, 'socks': [], 'left_formula': 133700608628}
+失败例数 18

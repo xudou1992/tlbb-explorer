@@ -1,0 +1,65 @@
+全库 .mesh=7996  走通=1072  失败=6924
+
+失败型分布：
+  bad-declared           5300
+  no-origin              1334
+  no-origin-walk         289
+  multi-root             1
+
+失败文件按名字前缀（前 2 token）聚类 top30：
+  w1351_model              1963  例：w1351_model_1314_h001.mesh  {'bad-declared': 1662, 'no-origin': 294, 'no-origin-walk': 7}
+  w1351_npc                 361  例：w1351_npc_poyanzunzhelinghun.mesh  {'no-origin': 228, 'no-origin-walk': 73, 'bad-declared': 60}
+  w1351_ly                  225  例：w1351_ly__fangwuyancong_001.mesh  {'bad-declared': 225}
+  w1351_dl                  192  例：w1351_dl_baihehua_001.mesh  {'bad-declared': 192}
+  w1351_ll                  186  例：w1351_ll_baitiaoyuanta_001.mesh  {'bad-declared': 186}
+  w1351_pets                182  例：w1351_pets_dandanji_xiaojiu_jian.mesh  {'no-origin': 147, 'no-origin-walk': 34, 'multi-root': 1}
+  w1351_monster             181  例：w1351_monster_qinyun_qin.mesh  {'no-origin': 109, 'no-origin-walk': 69, 'bad-declared': 3}
+  w1351_nan                 176  例：w1351_nan_t_toukui_aihuangmao_2601.mesh  {'bad-declared': 60, 'no-origin': 116}
+  w1351_sz                  166  例：w1351_sz_baoxiangdanzi_001.mesh  {'bad-declared': 166}
+  w1351_nv                  164  例：w1351_nv_t_toukui_aihuangmao_2601.mesh  {'bad-declared': 64, 'no-origin': 100}
+  w1351_jiehun              150  例：w1351_jiehun_baobianqiang_001.mesh  {'bad-declared': 150}
+  w1351_wuqi                143  例：w1351_wuqi_t_danduan_0202.mesh  {'bad-declared': 128, 'no-origin': 15}
+  w1351_boss                119  例：w1351_boss_aihu_toufa_001.mesh  {'no-origin': 79, 'no-origin-walk': 40}
+  w1351_st                   90  例：w1351_st_aizhuo_001.mesh  {'bad-declared': 90}
+  w1351_qhl                  79  例：w1351_qhl_bailiandao_001.mesh  {'bad-declared': 79}
+  w1351_cbs                  78  例：w1351_cbs_bingshitou_001.mesh  {'bad-declared': 78}
+  w1351_xiyu                 78  例：w1351_xiyu_aiguanzidui_001.mesh  {'bad-declared': 78}
+  w1351_bzd                  76  例：w1351_bzd_baijinta_001.mesh  {'bad-declared': 76}
+  w1351_shgz                 73  例：w1351_shgz_caihuapain_001.mesh  {'bad-declared': 73}
+  w1351_qz                   64  例：w1351_qz_baoxiangguan_001.mesh  {'bad-declared': 64}
+  w1351_miaoj                63  例：w1351_miaoj_changgu_001.mesh  {'bad-declared': 63}
+  w1351_qhdg                 62  例：w1351_qhdg_bingmayongge_001.mesh  {'bad-declared': 62}
+  w1351_dh                   61  例：w1351_dh_bihuacaihui_001.mesh  {'bad-declared': 61}
+  w1351_shenghuo             58  例：w1351_shenghuo_candou1.mesh  {'no-origin': 20, 'no-origin-walk': 35, 'bad-declared': 3}
+  w1351_mrsz                 58  例：w1351_mrsz_bulian_001.mesh  {'no-origin': 5, 'bad-declared': 53}
+  w1351_nh                   58  例：w1351_nh_caotinglou_001.mesh  {'bad-declared': 58}
+  w1351_new                  57  例：w1351_new_lishierniang.mesh  {'no-origin': 39, 'bad-declared': 18}
+  w1351_sl                   52  例：w1351_sl_dongmen_001.mesh  {'bad-declared': 52}
+  w1351_xh                   52  例：w1351_xh_aixiaoshu_001.mesh  {'bad-declared': 52}
+  w1351_caiji                49  例：w1351_caiji_bosijihao_01.mesh  {'no-origin': 43, 'bad-declared': 4, 'no-origin-walk': 2}
+
+失败文件的 0x110 声明数直方（top20）：
+  declared=0     5300
+  declared=2     149
+  declared=133   118
+  declared=134   104
+  declared=1     55
+  declared=39    52
+  declared=28    48
+  declared=27    48
+  declared=32    34
+  declared=34    33
+  declared=40    32
+  declared=38    30
+  declared=57    27
+  declared=29    26
+  declared=12    26
+  declared=30    26
+  declared=33    25
+  declared=5     24
+  declared=52    22
+  declared=41    21
+
+ hamigua 全名单：
+  D:\TLGL\.scratch\out\tree\data\source\npc\changjingdaoju\w1351_caiji_hamigua_01\w1351_caiji_hamigua_01.mesh  {'err': 'no-origin', 'declared': 2, 'vc': 66, 'size': 4252}
+  D:\TLGL\.scratch\out\tree\mobile_maps_source\w1351_ll_hamiguaxiang_001.mesh  {'err': 'bad-declared', 'declared': 0}

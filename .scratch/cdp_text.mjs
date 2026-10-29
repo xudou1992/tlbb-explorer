@@ -1,0 +1,11 @@
+const list = await (await fetch("http://127.0.0.1:9222/json/list")).json();
+const page = list.find((t) => t.type === "page" && t.webSocketDebuggerUrl);
+const ws = new WebSocket(page.webSocketDebuggerUrl);
+let id = 0;
+const send = (m, p = {}) => new Promise((res) => { const mid = ++id; const on = (e) => { const x = JSON.parse(e.data); if (x.id === mid) { ws.removeEventListener("message", on); res(x.result); } }; ws.addEventListener("message", on); ws.send(JSON.stringify({ id: mid, method: m, params: p })); });
+await new Promise((r) => ws.addEventListener("open", r, { once: true }));
+const ev = async (e) => { const r = await send("Runtime.evaluate", { expression: e, returnByValue: true }); if (r?.exceptionDetails) return "抛错:" + r.exceptionDetails.text; return r?.result?.value; };
+console.log("左栏：", await ev(`(() => { const r=document.querySelector(".rail"); return r? r.innerText.replace(/\n+/g," § ").slice(0,260) : "无 .rail"; })()`));
+console.log("列表区：", await ev(`(() => { const r=document.getElementById("rows"); return r? (r.innerText.replace(/\n+/g," § ").slice(0,120) || "(空) 父类=" + r.parentElement.className) : "无 #rows"; })()`));
+console.log("视图按钮：", await ev(`[...document.querySelectorAll("button")].filter(b=>b.offsetParent).slice(0,10).map(b=>b.textContent.trim().slice(0,10)+(b.className.includes("on")?"*":"")).join(" ")`));
+ws.close();

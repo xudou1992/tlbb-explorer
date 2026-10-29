@@ -1,0 +1,46 @@
+
+w1351_model_flower_lf004  动作数 1
+  lf004_idle01: 采了 8 根骨 · 动了 6 根 · 最大位移 0.07 · 样例 [{"bone":"000","d":0},{"bone":"bone001","d":0},{"bone":"bone006","d":0.0143},{"bone":"bone007","d":0.0387},{"bone":"bone008","d":0.0634},{"bone":"bone009","d":0.07}]
+
+w1351_model_sphere_lf006  动作数 1
+  lf006_idle01: 采了 3 根骨 · 动了 1 根 · 最大位移 0.4 · 样例 [{"bone":"000","d":0},{"bone":"bone001","d":0},{"bone":"bone002","d":0.4}]
+
+w1351_boss_machao  动作数 3
+  machao_behit01: 采了 8 根骨 · 动了 6 根 · 最大位移 1.0397 · 样例 [{"bone":"000","d":0},{"bone":"bip01","d":0},{"bone":"bip01_footsteps","d":0.3298},{"bone":"bip01_pelvis","d":0.1456},{"bone":"bip01_spine","d":0.1456},{"bone":"bip01_spine1","d":0.202}]
+  machao_dead: 采了 8 根骨 · 动了 0 根 · 最大位移 0 · 样例 [{"bone":"000","d":0},{"bone":"bip01","d":0},{"bone":"bip01_footsteps","d":0},{"bone":"bip01_pelvis","d":0},{"bone":"bip01_spine","d":0},{"bone":"bip01_spine1","d":0}]
+  machao_deadbegin: 采了 8 根骨 · 动了 6 根 · 最大位移 1.5035 · 样例 [{"bone":"000","d":0},{"bone":"bip01","d":0},{"bone":"bip01_footsteps","d":1.5035},{"bone":"bip01_pelvis","d":0.4196},{"bone":"bip01_spine","d":0.4196},{"bone":"bip01_spine1","d":0.4696}]
+
+w1351_monster_heimoguai03  动作数 3
+  heimoguai03_behit01: 采了 8 根骨 · 动了 6 根 · 最大位移 0.4654 · 样例 [{"bone":"000","d":0},{"bone":"bone001","d":0},{"bone":"bone002","d":0.0626},{"bone":"bone003","d":0.2369},{"bone":"bone004","d":0.3016},{"bone":"bone005","d":0.3878}]
+  heimoguai03_dead: 采了 8 根骨 · 动了 3 根 · 最大位移 0.0003 · 样例 [{"bone":"000","d":0},{"bone":"bone001","d":0},{"bone":"bone002","d":0},{"bone":"bone003","d":0.0001},{"bone":"bone004","d":0.0002},{"bone":"bone005","d":0.0002}]
+  heimoguai03_deadbegin: 采了 8 根骨 · 动了 6 根 · 最大位移 0.3321 · 样例 [{"bone":"000","d":0},{"bone":"bone001","d":0},{"bone":"bone002","d":0.0023},{"bone":"bone003","d":0.0466},{"bone":"bone004","d":0.1533},{"bone":"bone005","d":0.263}]
+
+w1351_pets_bawanglong_b1_yifu_001  动作数 3
+  behit: 采了 8 根骨 · 动了 6 根 · 最大位移 0.6588 · 样例 [{"bone":"000","d":0},{"bone":"bip01","d":0},{"bone":"bip01_footsteps","d":0.2381},{"bone":"bip01_pelvis","d":0.3364},{"bone":"bip01_spine","d":0.3364},{"bone":"bip01_l_thigh","d":0.6588}]
+  dead: 采了 8 根骨 · 动了 5 根 · 最大位移 0.0155 · 样例 [{"bone":"000","d":0},{"bone":"bip01","d":0},{"bone":"bip01_footsteps","d":0},{"bone":"bip01_pelvis","d":0.0155},{"bone":"bip01_spine","d":0.0155},{"bone":"bip01_l_thigh","d":0.0155}]
+  deadbegin: 采了 8 根骨 · 动了 6 根 · 最大位移 0.6516 · 样例 [{"bone":"000","d":0},{"bone":"bip01","d":0},{"bone":"bip01_footsteps","d":0.2936},{"bone":"bip01_pelvis","d":0.2828},{"bone":"bip01_spine","d":0.2828},{"bone":"bip01_l_thigh","d":0.3486}]
+
+w1351_pets_chaimao_b1  动作数 3
+  b1_behit: 采了 8 根骨 · 动了 6 根 · 最大位移 0.1522 · 样例 [{"bone":"000","d":0},{"bone":"bip01","d":0},{"bone":"bip01_footsteps","d":0.0447},{"bone":"bip01_pelvis","d":0.1005},{"bone":"bip01_spine","d":0.0984},{"bone":"bip01_spine1","d":0.1036}]
+  b1_dead: 采了 8 根骨 · 动了 5 根 · 最大位移 0.0167 · 样例 [{"bone":"000","d":0},{"bone":"bip01","d":0},{"bone":"bip01_footsteps","d":0},{"bone":"bip01_pelvis","d":0.0167},{"bone":"bip01_spine","d":0.0167},{"bone":"bip01_spine1","d":0.0167}]
+  b1_deadbegin: 采了 8 根骨 · 动了 6 根 · 最大位移 0.7416 · 样例 [{"bone":"000","d":0},{"bone":"bip01","d":0},{"bone":"bip01_footsteps","d":0.2842},{"bone":"bip01_pelvis","d":0.4742},{"bone":"bip01_spine","d":0.4689},{"bone":"bip01_spine1","d":0.5545}]
+
+w1351_pets_chufeng_b1_yifu_001  动作数 3
+  behit: 采了 8 根骨 · 动了 6 根 · 最大位移 1.0432 · 样例 [{"bone":"000","d":0},{"bone":"bip01","d":0},{"bone":"bip01_footsteps","d":0.5867},{"bone":"bip01_pelvis","d":0.5591},{"bone":"bip01_spine","d":0.5591},{"bone":"bip01_l_thigh","d":0.9552}]
+  dead: 采了 8 根骨 · 动了 5 根 · 最大位移 0.1201 · 样例 [{"bone":"000","d":0},{"bone":"bip01","d":0},{"bone":"bip01_footsteps","d":0},{"bone":"bip01_pelvis","d":0.1201},{"bone":"bip01_spine","d":0.1201},{"bone":"bip01_l_thigh","d":0.1201}]
+  deadbegin: 采了 8 根骨 · 动了 6 根 · 最大位移 2.0375 · 样例 [{"bone":"000","d":0},{"bone":"bip01","d":0},{"bone":"bip01_footsteps","d":1.8131},{"bone":"bip01_pelvis","d":2.0282},{"bone":"bip01_spine","d":2.0282},{"bone":"bip01_l_thigh","d":2.0375}]
+
+w1351_pets_daidainiu_b1  动作数 3
+  b1_behit01: 采了 8 根骨 · 动了 6 根 · 最大位移 0.0982 · 样例 [{"bone":"000","d":0},{"bone":"bip01","d":0},{"bone":"bip01_footsteps","d":0.0305},{"bone":"bip01_pelvis","d":0.0552},{"bone":"bip01_spine","d":0.0547},{"bone":"bip01_spine1","d":0.0422}]
+  b1_dead: 采了 8 根骨 · 动了 5 根 · 最大位移 0.005 · 样例 [{"bone":"000","d":0},{"bone":"bip01","d":0},{"bone":"bip01_footsteps","d":0},{"bone":"bip01_pelvis","d":0.005},{"bone":"bip01_spine","d":0.005},{"bone":"bip01_spine1","d":0.005}]
+  b1_deadbegin: 采了 8 根骨 · 动了 6 根 · 最大位移 0.1895 · 样例 [{"bone":"000","d":0},{"bone":"bip01","d":0},{"bone":"bip01_footsteps","d":0.1895},{"bone":"bip01_pelvis","d":0.1041},{"bone":"bip01_spine","d":0.1048},{"bone":"bip01_spine1","d":0.1046}]
+
+w1351_pets_daishu_b1_2_3  动作数 3
+  3_behit: 采了 8 根骨 · 动了 6 根 · 最大位移 0.798 · 样例 [{"bone":"000","d":0},{"bone":"bip01","d":0},{"bone":"bip01_footsteps","d":0.1668},{"bone":"bip01_pelvis","d":0.2578},{"bone":"bip01_spine","d":0.2578},{"bone":"bip01_l_thigh","d":0.6034}]
+  3_dead: 采了 8 根骨 · 动了 5 根 · 最大位移 0.0512 · 样例 [{"bone":"000","d":0},{"bone":"bip01","d":0},{"bone":"bip01_footsteps","d":0},{"bone":"bip01_pelvis","d":0.0512},{"bone":"bip01_spine","d":0.0512},{"bone":"bip01_l_thigh","d":0.0512}]
+  3_deadbegin: 采了 8 根骨 · 动了 6 根 · 最大位移 1.1649 · 样例 [{"bone":"000","d":0},{"bone":"bip01","d":0},{"bone":"bip01_footsteps","d":0.4718},{"bone":"bip01_pelvis","d":0.1277},{"bone":"bip01_spine","d":0.1277},{"bone":"bip01_l_thigh","d":0.4553}]
+
+w1351_pets_danghu_b1  动作数 3
+  b1_behit: 采了 8 根骨 · 动了 6 根 · 最大位移 1.4821 · 样例 [{"bone":"000","d":0},{"bone":"bone001","d":0},{"bone":"bone002","d":0.2744},{"bone":"bone003","d":0.2586},{"bone":"bone004","d":1.4821},{"bone":"bone005","d":0.8487}]
+  b1_dead: 采了 8 根骨 · 动了 0 根 · 最大位移 0 · 样例 [{"bone":"000","d":0},{"bone":"bone001","d":0},{"bone":"bone002","d":0},{"bone":"bone003","d":0},{"bone":"bone004","d":0},{"bone":"bone005","d":0}]
+  b1_deadbegin: 采了 8 根骨 · 动了 6 根 · 最大位移 1.7846 · 样例 [{"bone":"000","d":0},{"bone":"bone001","d":0},{"bone":"bone002","d":0.7599},{"bone":"bone003","d":0.7362},{"bone":"bone004","d":1.7846},{"bone":"bone005","d":1.4586}]

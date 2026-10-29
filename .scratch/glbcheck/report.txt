@@ -1,0 +1,5 @@
+validator 2.0.0-dev.3.10
+==== ../glb_rigged/m_db18794d0000cd38.glb
+counts: undefined
+==== ../glb_rigged/m_8ff895cd00003a5c.glb
+counts: undefined

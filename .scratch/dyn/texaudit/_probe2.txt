@@ -1,0 +1,10 @@
+named via named=1 flag: 2259
+named via named=1 and path null: 0
+tex named ext dist: [('.tga', 2259)]
+tex named by ext (named=1): [('.tga', 2259)]
+=== sha self-join named<->anon textures ===
+sha used by >=1 named tex: 2226
+anon tex whose sha also has a NAMED tex: 0
+of those in the pool(1650 filter): 0
+=== filecrc self-join ===
+anon tex filecrc in named tex filecrc: 0

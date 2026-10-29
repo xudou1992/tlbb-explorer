@@ -1,0 +1,11 @@
+const list = await (await fetch("http://127.0.0.1:9222/json/list")).json();
+const page = list.find(p => p.type === "page");
+const ws = new WebSocket(page.webSocketDebuggerUrl);
+let id = 0; const pending = new Map();
+ws.onmessage = (ev) => { const m = JSON.parse(ev.data); if (m.id && pending.has(m.id)) { pending.get(m.id)(m); pending.delete(m.id); } };
+await new Promise(r => ws.onopen = r);
+function call(method, params) { return new Promise(res => { const i = ++id; pending.set(i, res); ws.send(JSON.stringify({ id: i, method, params })); }); }
+await call("Page.reload", { ignoreCache: true });
+await new Promise(r => setTimeout(r, 4000));
+console.log("reloaded");
+ws.close();

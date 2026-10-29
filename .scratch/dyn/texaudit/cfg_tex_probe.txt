@@ -1,0 +1,22 @@
+cfg 文件 D:/TLGL\.scratch/unpacked/data/ResourcePath.cfg 字节=10853872
+头 16 字节 magic=b'JBCF'
+串表条数=145528（应为 2×72,764=145,528）flag=0 用时 0.1s
+映射对=72764  首 3 对=[('0.TerrainInfo', 'mobile_maps/w1351_cj_002/terrain/0.TerrainInfo'), ('1.TerrainInfo', 'mobile_maps/w1351_cj_002/terrain/1.TerrainInfo'), ('100.wav', 'data/sound/run/100.wav')]
+对内自洽（path 末段==裸名，忽略大小写）: 72764 / 72764 (100.0%)
+去重后的裸名: 72763
+
+=== 悬空贴图名 × cfg ===
+悬空贴图名 8690 个，其中 cfg 登记过路径的: 7889 (90.8%)
+登记目录种类: 1552；前 10: [('mobile_maps_source/texture', 1914), ('data/effect/textures/model', 467), ('data/effect/textures/mask', 387), ('data/effect/textures/ribbon_trail', 278), ('data/effect/textures/texture', 268), ('data/effect/textures/ring', 178), ('data/source/npc/toukui/texture', 121), ('data/effect/textures/point_light', 112), ('data/effect/textures/pattern', 105), ('data/effect/textures/plant', 104)]
+登记目录里含 /texture/ 段的: 7829 个名
+
+=== 决定性一枪：path_hash(cfg 登记全路径) 落在包里吗 ===
+登记路径共 7889 条 → 哈希命中任意匿名行 0 条，其中匿名**贴图** 0 条，落进候选池 0 条
+对照（有路径的贴图行 200 条自校验）: 200/200 哈希相符
+
+=== 穷举 B：cfg 目录宇宙 × 悬空贴图名 ===
+cfg 目录宇宙（含祖先，不含根）: 5653；旧的 resources.path 宇宙: 3,757
+比对 49M 次（目录含根 5654 × 名 8690），耗时 13.6s，命中 0
+命中里 type=texture 的: 0
+
+覆盖表键清单（cfg:/bare:）→ D:/TLGL\.scratch/dyn/texaudit/cfg_tex_paths.json

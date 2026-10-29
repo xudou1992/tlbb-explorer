@@ -1,0 +1,6 @@
+== a_position rva=f15878
+== a_texCoord rva=f15820
+== a_Normal rva=f158b0
+== a_color rva=f158d0
+== a_costomize rva=f158c0
+== a_tex0 rva=f15954

@@ -1,0 +1,45 @@
+== cfg 路径 × 包内条目 对账（只读）
+  root = "D:/TLGL"
+  db   = "D:/TLGL/.scratch/resources.db"
+  cfg 映射对：72764
+  清单条目：105327
+
+对账结果（cfg 映射逐条代 path_hash）
+  库里已有路径的行命中：42083
+  包里没这件（源被剥离）：25900
+  命中但清单没记路径（白捡身份）：**4780**
+  同一哈希被两条不同 cfg 路径命中：0（该是 0，不是 0 就说明哈希不够唯一）
+
+白捡那 4780 条按类型：
+  ani                  2995
+  JBCF                  788
+  mesh                  468
+  binary                278
+  JBPU                  223
+  table                  19
+  tiny                    5
+  mapref                  3
+  set                     1
+
+贴图那一格（裸路径）：0 条。一条都没有。 别把它当成贴图归属有救了——匿名贴图池 24,261 条里 path 全空，
+  而贴图名的六条桥已证伪（见 .scratch/tex_归属证据缺失_20261010.md），这里能拿到的只是**少数几张确有路径登记的大图**。
+
+convert/dxt/ 前缀（客户端贴图转换目录，2026-10-26 实测）
+  命中且库里已有路径：0
+  包里没这件：63272
+  命中贴图行：9491（其中匿名大图 **9491**）
+    w1351_npc_tongshuai1_xiezi_001.tga  →  convert/dxt/data/source/npc/quest/w1351_npc_tongshuai1/texture/w1351_npc_tongshuai1_xiezi_001.tga  (6320a0c40a5af51d)
+    w1351_pets_mojingmao_b6_yifu_001.tga  →  convert/dxt/data/source/npc/quest/w1351_pets_mojingmao_b6/texture/w1351_pets_mojingmao_b6_yifu_001.tga  (f53d3b625e7803c5)
+    w1351_monster_qinjiazhaiqinbing_shoutao_01.tga  →  convert/dxt/data/source/npc/quest/w1351_monster_qinjiazhaiqinbing/texture/w1351_monster_qinjiazhaiqinbing_shoutao_01.tga  (cabb9a866c303365)
+    w1351_monster_nvwashiren.tga  →  convert/dxt/data/source/npc/quest/w1351_monster_yeyanshiren/texture/w1351_monster_nvwashiren.tga  (0fd4410e7a37fa92)
+    w1351_npc_dalaozeng_toufa_001.tga  →  convert/dxt/data/source/npc/quest/w1351_npc_dalaozeng/texture/w1351_npc_dalaozeng_toufa_001.tga  (fb874f024c525aa9)
+    w1351_boss_yudu_shoutao_001.tga  →  convert/dxt/data/source/npc/quest/w1351_boss_yudu/texture/w1351_boss_yudu_shoutao_001.tga  (36c015cc1c421589)
+    w1351_pattern_s003.tga  →  convert/dxt/data/effect/textures/pattern/w1351_pattern_s003.tga  (4253068bd16d30e8)
+    w1351_texture_lf020.tga  →  convert/dxt/data/effect/textures/texture/w1351_texture_lf020.tga  (964134ffc9d0ac93)
+    cloud_xsc_01.tga  →  convert/dxt/data/sharematerial/cloud/cloud_xsc_01.tga  (631b2fdfc9bb9f8c)
+    w1351_new_npc_tianshantonglao_1.tga  →  convert/dxt/data/source/npc/quest/w1351_new_npc_tianshantonglao/texture/w1351_new_npc_tianshantonglao_1.tga  (65bc9df008dae898)
+    w1351_npc_xijingjinjun_shoutao_001.tga  →  convert/dxt/data/source/npc/quest/w1351_npc_xijingjinjun/texture/w1351_npc_xijingjinjun_shoutao_001.tga  (39083128d6ce2844)
+    lq_lightmap_0_8.dds  →  convert/dxt/mobile_maps/w1351_fb_kuangchang_001/lightmap/LQ_Lightmap_0_8.dds  (2b16c4cbc7c5973a)
+  ⇒ 贴图名经 ResourcePath.cfg 逻辑路径 + convert/dxt/ 前缀，可落到匿名贴图记录。
+
+sidecar："D:/TLGL/.scratch/dyn/cfg_convert_dxt_20261026.json"（4780 条 hash→cfg 路径）

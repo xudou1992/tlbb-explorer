@@ -1,0 +1,8 @@
+   304 a8=  56 data/tani/boss_tani_huoshaochibi_shifa01.tani str='data/tani/boss_tani_huoshaochibi_shifa01.tani'
+   304 a8=  56 data/tani/boss_tani_jiaolongluanwu_shifa01.tani str='data/tani/boss_tani_jiaolongluanwu_shifa01.tani'
+   304 a8=  56 data/tani/boss_tani_shaxing_gss_fsf_hit01.tani str='data/tani/boss_tani_shaxing_gss_fsf_hit01.tani'
+   304 a8=  48 data/tani/boss_zhuobufan_shifa.tani str='data/tani/boss_zhuobufan_shifa.tani'
+   304 a8=  48 data/tani/pets_tani_xuruo01.tani str='data/tani/pets_tani_xuruo01.tani'
+   304 a8=  48 data/tani/pt_tani_chujizhiliao01.tani str='data/tani/pt_tani_chujizhiliao01.tani'
+ 53212 a8=  56 data/tani/mr_tani_nan_liufoyi_qiangbang01.tani str='data/tani/mr_tani_nan_liufoyi_qiangbang01.tani'
+ 50836 a8=  56 data/tani/gb_tani_panlongji_nan_cq01.tani str='data/tani/gb_tani_panlongji_nan_cq01.tani'

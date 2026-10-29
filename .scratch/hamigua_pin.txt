@@ -1,0 +1,13 @@
+== heihou_01 距离 ==
+带矩阵的骨: 22 / 29
+父子双矩阵对数: 16  带内(0.001,2.0]: 16
+  最小3: [(0.0202, 'bip01_l_toe0', 'bip01_l_foot'), (0.0202, 'bip01_r_toe0', 'bip01_r_foot'), (0.0828, 'bip01_tail', 'bip01_spine')]
+  最大3: [(0.8503, 'bip01_r_forearm', 'bip01_r_upperarm'), (1.0349, 'bip01_tail1', 'bip01_tail'), (1.1017, 'bip01_r_upperarm', 'bip01_r_clavicle')]
+  零/近零: []
+  head 父: bip01_neck1  neck1 父: bip01_neck
+
+== hamigua_01 本尊 ==
+Traceback (most recent call last):
+  File "<stdin>", line 70, in <module>
+  File "<stdin>", line 37, in load
+AssertionError

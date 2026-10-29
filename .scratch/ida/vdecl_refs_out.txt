@@ -1,0 +1,6 @@
+== a_position target=140f15878
+== a_texCoord target=140f15820
+== a_Normal target=140f158b0
+== a_color target=140f158d0
+== a_costomize target=140f158c0
+== a_tex0 target=140f15954

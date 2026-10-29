@@ -1,0 +1,13 @@
+import fs from "node:fs";
+const list = await (await fetch("http://127.0.0.1:9222/json/list")).json();
+const page = list.find(p => p.type === "page");
+const ws = new WebSocket(page.webSocketDebuggerUrl);
+await new Promise(r => ws.onopen = r);
+let id = 0; const pending = new Map();
+ws.onmessage = e => { const m = JSON.parse(e.data); if (m.id && pending.has(m.id)) pending.get(m.id)(m); };
+const call = (m, p) => new Promise(res => { const i = ++id; pending.set(i, res); ws.send(JSON.stringify({ id: i, method: m, params: p })); });
+const ev = async x => (await call("Runtime.evaluate", { expression: x, returnByValue: true, awaitPromise: true })).result?.result?.value;
+const sample = JSON.parse(fs.readFileSync(process.argv[2], "utf8")).slice(0, 50);
+const r = await ev(`(async()=>{const inv=window.__TAURI__.core.invoke;const t0=performance.now();let n=0,ok=0;for(const s of ${JSON.stringify(sample)}){const a=performance.now();try{const o=await inv('group_mesh_outline',{gid:s.gid});if(o)ok++}catch(e){}n++;}return JSON.stringify({组:n,有图:ok,总毫秒:Math.round(performance.now()-t0)})})()`);
+console.log(r);
+ws.close();

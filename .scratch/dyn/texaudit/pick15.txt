@@ -1,0 +1,26 @@
+有榜 mesh 2368 只；可落标（槽位干净且 ≤3 或同干）2151 只
+分带: [('high', 1437), ('3to6', 278), ('degenerate', 197), ('lowSignal', 94), ('covgate', 93), ('1.2to3', 52)]
+榜首通吃冠军前 8: [('dae002f8', 260, '夹不出目录'), ('1e17fe2e', 126, '夹不出目录'), ('d5484738', 103, '夹不出目录'), ('d88556d6', 85, 'data/effect/textures/mask'), ('3e525246', 84, 'data/source/npc/quest/w1351_npc_wanganshi'), ('131cb3ac', 76, '夹不出目录'), ('bb00d906', 71, 'data/effect/textures/plant'), ('c97d3877', 65, 'data/effect/textures/smoke')]
+
+=== 15 条（可执行清单）===
+# | 组 | mesh | 大类 | 覆盖表键（标注写这里） | 槽位选择 | 榜首hash | 规格 | raw | adjusted | coverage | 该hash当榜首 | 同槽位mesh数 | 为什么值钱
+1 | G1 通吃冠军 | _w1351_boss_sysz_langying_shoutao_001.mesh | boss | cfg:data/source/npc/quest/w1351_boss_sysz_langying/texture/_w1351_boss_sysz_langying_shoutao_001.tga | 同干自动对准 | dae002f82c686d00 | 512x512 BC3 m10 | 665.6 | 1.100 | 0.898 | 260 | 2 | 榜首 dae002f82c686d00 当了 260 只模型的冠军（索引顺序把它夹到 夹不出目录）；一条判决这一批的榜首可信度
+2 | G1 通吃冠军 | w1351_caiji_wudangrenshen_01.mesh | 采集物 | cfg:data/source/npc/changjingdaoju/w1351_caiji_wudangrenshen_01/texture/w1351_caiji_wudangrenshen_01.tga | 同干自动对准 | 1e17fe2ef2a9a78c | 512x512 BC3 m10 | 21.2 | 21.231 | 0.577 | 126 | 1 | 榜首 1e17fe2ef2a9a78c 当了 126 只模型的冠军（索引顺序把它夹到 夹不出目录）；一条判决这一批的榜首可信度
+3 | G1 通吃冠军 | w1351_diancang_qibaobanzhi.mesh | 其它 | cfg:data/source/npc/changjingdaoju/w1351_diancang_qibaobanzhi/texture/w1351_diancang_qibaobanzhi.tga | 同干自动对准 | d5484738ee56f92f | 512x512 BC3 m10 | 25.3 | 17.719 | 0.521 | 103 | 1 | 榜首 d5484738ee56f92f 当了 103 只模型的冠军（索引顺序把它夹到 夹不出目录）；一条判决这一批的榜首可信度
+4 | G1 通吃冠军 | w1351_monster_bilinjiangshi.mesh | 怪物 | cfg:data/source/npc/quest/w1351_monster_bilinjiangshi/texture/w1351_monster_bilinjiangshi.tga | 同干自动对准 | d88556d683c7c214 | 512x512 BC3 m10 | 3.2 | 3.207 | 0.746 | 85 | 1 | 榜首 d88556d683c7c214 当了 85 只模型的冠军（索引顺序把它夹到 data/effect/textures/mask）；一条判决这一批的榜首可信度
+5 | G2 刀口 1.2 下沿 | w1351_diancang_douzhuanxingyi.mesh | 其它 | cfg:data/source/npc/changjingdaoju/w1351_diancang_douzhuanxingyi/texture/w1351_diancang_douzhuanxingyi.tga | 同干自动对准 | 4648be1348bf082b | 512x512 BC3 m10 | 113.9 | 1.193 | 0.822 | 50 | 22 | adjusted=1.193 正卡在 grade 的 1.2 上，low/mid/high 三档与 2,105 份的归属判定都靠这条线
+6 | G2 刀口 1.2 上沿 | w1351_new_npc_xiaodaoshi.mesh | NPC | cfg:data/source/npc/quest/w1351_new_npc_xiaodaoshi/texture/w1351_new_npc_xiaodaoshi.tga | 同干自动对准 | f673c0c71cc423e8 | 512x512 BC3 m10 | 72.8 | 1.208 | 0.779 | 21 | 1 | adjusted=1.208 正卡在 grade 的 1.2 上，low/mid/high 三档与 2,105 份的归属判定都靠这条线
+7 | G2 刀口 3.0 | w1351_model_spider_h03.mesh | 特效模型 | cfg:data/effect/textures/texture/w1351_texture_xy_nv_x01.tga | 槽位 1 选 1 | 1e17fe2ef2a9a78c | 512x512 BC3 m10 | 3.1 | 3.059 | 0.190 | 126 | 11 | adjusted=3.059 正卡在 grade 的 3.0 上，low/mid/high 三档与 2,105 份的归属判定都靠这条线
+8 | G2 刀口 6.0 | w1351_zuoqi_liulifeng_yifu_001.mesh | 坐骑 | cfg:data/source/npc/quest/w1351_zuoqi_liulifeng/texture/w1351_zuoqi_liulifeng_yifu_001.tga | 同干自动对准 | 3e52524620f385a2 | 512x512 BC3 m10 | 6.0 | 5.980 | 0.750 | 84 | 2 | adjusted=5.980 正卡在 grade 的 6.0 上，low/mid/high 三档与 2,105 份的归属判定都靠这条线
+9 | G2 coverage 闸门 | w1351_npc_zhanghuo_xiezi_001.mesh | NPC | cfg:data/source/npc/quest/w1351_npc_zhanghuo/texture/w1351_npc_zhanghuo_lian_001.tga | 槽位 2 选 1 | d88556d683c7c214 | 512x512 BC3 m10 | 50.7 | 50.735 | 0.114 | 85 | 3 | adjusted 很高但 coverage<0.3 被压档——专治小 UV 岛假高分
+10 | G3 退化带·岛外零对比 | decal.mesh | 贴花 | cfg:data/source/npc/quest/decal/texture/decal.tga | 同干自动对准 | d822e62ee3f686aa | 512x512 BC3 m10 | 3877.4 | 1.000 | 1.000 | 43 | 1 | coverage=1.000 岛外方差=0，榜只排「谁更忙」；标它才知道这 263 份要不要单独定状态
+11 | G3 退化带·比值贴 1 | w1351_pets_youchilong_b1_yifu_001.mesh | 宠物 | cfg:data/source/npc/quest/w1351_pets_youchilong_b1/texture/w1351_pets_youchilong_b1_yifu_001.tga | 同干自动对准 | 4e3015f937c6860d | 512x512 BC3 m10 | 1724.0 | 1.015 | 0.981 | 44 | 1 | adjusted=1.015 且 coverage=0.981：铺满整图时岛内外无对比，判「铺满=无信息」成不成立
+12 | G4 槽位带动 | w1351_model_gbnan_long_h001.mesh | 特效模型 | cfg:data/effect/textures/model/w1351_model_long_h001.tga | 槽位 1 选 1 | dae002f82c686d00 | 512x512 BC3 m10 | 646.3 | 1.069 | 0.928 | 260 | 31 | 槽位 w1351_model_long_h001.tga 被 31 只已评分 mesh 共用（dangling.n_refs=24）；标 1 条落 31 条
+13 | G4 槽位带动 | w1351_model_gbnan_long_lg_h001.mesh | 特效模型 | cfg:data/effect/textures/model/w1351_model_long_h001.tga | 槽位 1 选 1 | 837df7e78ee5e8ef | 512x512 BC3 m10 | 203.2 | 203.192 | 0.874 | 13 | 31 | 槽位 w1351_model_long_h001.tga 被 31 只已评分 mesh 共用（dangling.n_refs=24）；标 1 条落 31 条
+14 | G5 类别不交 | w1351_nan_s_yifu_shengdanpaidui.mesh | 衣服 | cfg:data/source/player/w1351_nan/texture/yifu/w1351_nan_s_yifu_shengdanpaidui.tga | 同干自动对准 | dae002f82c686d00 | 512x512 BC3 m10 | 70.0 | 69.972 | 0.870 | 260 | 1 | 大类「衣服」前面一条都没沾到，阈值不能只被一家族带偏
+15 | G5 类别不交 | w1351_mrsz_tongyongwujian_001.mesh | 场景 | cfg:mobile_maps_source/texture/w1351_mrsz_loukongmulan_001.tga | 槽位 3 选 1 | d822e62ee3f686aa | 512x512 BC3 m10 | 3877.4 | 1.000 | 1.000 | 43 | 1 | 大类「场景」前面一条都没沾到，阈值不能只被一家族带偏
+
+账面：15 条锁定榜首贴图 10 张；按「同榜首 / 同槽位」外推影响 mesh 850 只（占有榜 2368 只的 35.9%）
+组配额: [('G1 通吃冠军', 4), ('G4 槽位带动', 2), ('G5 类别不交', 2), ('G2 刀口 1.2 下沿', 1), ('G2 刀口 1.2 上沿', 1), ('G2 刀口 3.0', 1), ('G2 刀口 6.0', 1), ('G2 coverage 闸门', 1), ('G3 退化带·岛外零对比', 1), ('G3 退化带·比值贴 1', 1)]
+类别覆盖: [('特效模型', 3), ('其它', 2), ('NPC', 2), ('boss', 1), ('采集物', 1), ('怪物', 1), ('坐骑', 1), ('贴花', 1), ('宠物', 1), ('衣服', 1), ('场景', 1)]
+槽位无歧义（同干）: 10 / 15

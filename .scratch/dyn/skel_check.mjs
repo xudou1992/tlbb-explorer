@@ -1,0 +1,18 @@
+import fs from "node:fs";
+const list = await (await fetch("http://127.0.0.1:9222/json/list")).json();
+const page = list.find(p => p.type === "page");
+const ws = new WebSocket(page.webSocketDebuggerUrl);
+await new Promise(r => ws.onopen = r);
+let id = 0; const pending = new Map();
+ws.onmessage = e => { const m = JSON.parse(e.data); if (m.id && pending.has(m.id)) pending.get(m.id)(m); };
+const call = (m, p) => new Promise(res => { const i = ++id; pending.set(i, res); ws.send(JSON.stringify({ id: i, method: m, params: p })); });
+const ev = async x => (await call("Runtime.evaluate", { expression: x, returnByValue: true, awaitPromise: true })).result?.result?.value;
+const sample = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
+const r = await ev(`(async()=>{const inv=window.__TAURI__.core.invoke;const out=[];for(const s of ${JSON.stringify(sample)}){try{const v=await inv('skeleton_view',{gid:s.gid,mesh:''});out.push({gid:s.gid,ok:true,bones:(v.declared||0),nodes:(v.nodes||[]).length,anims:(v.animations||[]).length})}catch(e){out.push({gid:s.gid,ok:false,err:String(e).slice(0,60)})}}return JSON.stringify(out)})()`);
+const out = JSON.parse(r);
+const ok = out.filter(x => x.ok);
+const bad = out.filter(x => !x.ok);
+console.log(`骨架页抽样 ${out.length}：成功 ${ok.length} · 失败 ${bad.length}`);
+console.log(`  骨数中位 ${ok.map(x=>x.bones).sort((a,b)=>a-b)[Math.floor(ok.length/2)]} · 有动作的 ${ok.filter(x=>x.anims>0).length}/${ok.length}`);
+for (const b of bad.slice(0,5)) console.log("  失败", JSON.stringify(b));
+ws.close();

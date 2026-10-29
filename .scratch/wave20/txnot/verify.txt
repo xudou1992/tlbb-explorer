@@ -1,0 +1,40 @@
+declared>0 = 2696
+V2 旧 walker 走通 = 2208
+文法 G 走通 = 2335
+回退（旧走通 → G 失败）= 0
+
+first-attempt 口径 tx-not-eof = 128  → G 走通 114  仍失败 14
+任一起点口径 tx-not-eof = 141  → G 走通 127  仍失败 14
+
+first-attempt 128 族 G 走通的挂点数直方：[(1, 23), (2, 14), (15, 12), (9, 11), (3, 7), (12, 7), (7, 7), (8, 6), (4, 5), (10, 5), (6, 4), (16, 4), (13, 3), (11, 3), (20, 2), (5, 1)]
+first-attempt 仍失败：
+  w1351_model_ymg02_jn_long_h001.mesh declared=106 size=626676 old0=tx-not-eof@0x667f4-of-0x98ff4 new=[(285124, 'stuck@0x667ec', 41)]
+  w1351_model_ymg02_jn_long_h005.mesh declared=106 size=647692 old0=tx-not-eof@0x6ba0c-of-0x9e20c new=[(306140, 'stuck@0x6ba04', 41)]
+  w1351_model_ymg02_jn_long_lg_h001.mesh declared=106 size=523364 old0=tx-not-eof@0x56dac-of-0x7fc64 new=[(244068, 'stuck@0x56da4', 41)]
+  w1351_model_ymg02_jn_long_lg_h005.mesh declared=106 size=544380 old0=tx-not-eof@0x5bfc4-of-0x84e7c new=[(265084, 'stuck@0x5bfbc', 41)]
+  w1351_model_ymg02_jn_long_lg_h005_1.mesh declared=106 size=544380 old0=tx-not-eof@0x5bfc4-of-0x84e7c new=[(265084, 'stuck@0x5bfbc', 41)]
+  w1351_model_ymg02_nan_slbw_h002.mesh declared=107 size=626936 old0=tx-not-eof@0x668f8-of-0x990f8 new=[(285124, 'stuck@0x668f0', 42)]
+  w1351_model_ymg02_nan_slbw_h003.mesh declared=107 size=626936 old0=tx-not-eof@0x668f8-of-0x990f8 new=[(285124, 'stuck@0x668f0', 42)]
+  w1351_model_ymg02_nan_slbw_lg_h002.mesh declared=107 size=523624 old0=tx-not-eof@0x56eb0-of-0x7fd68 new=[(244068, 'stuck@0x56ea8', 42)]
+  w1351_model_ymg02_nan_slbw_lg_h003.mesh declared=107 size=523624 old0=tx-not-eof@0x56eb0-of-0x7fd68 new=[(244068, 'stuck@0x56ea8', 42)]
+  w1351_model_ymg02_nv_flzt_h001.mesh declared=107 size=626936 old0=tx-not-eof@0x668f8-of-0x990f8 new=[(285124, 'stuck@0x668f0', 42)]
+  w1351_model_ymg02_nv_flzt_lg_h001.mesh declared=107 size=523624 old0=tx-not-eof@0x56eb0-of-0x7fd68 new=[(244068, 'stuck@0x56ea8', 42)]
+  w1351_monster_heiyuan.mesh declared=29 size=49084 old0=tx-not-eof@0x74fc-of-0xbfbc new=[(28800, 'stuck@0x74f4', 4), (28992, 'stuck@0x74f4', 4)]
+  w1351_npc_duanzhengming_yifu_001.mesh declared=27 size=30880 old0=tx-not-eof@0x4764-of-0x78a0 new=[(16764, 'stuck@0x475c', 5), (16956, 'stuck@0x475c', 5)]
+  w1351_pets_xiaomuling_b7.mesh declared=102 size=306044 old0=tx-not-eof@0x26bf0-of-0x4ab7c new=[(156092, 'stuck@0x26be8', 6)]
+
+任一口径仍失败：
+  w1351_model_ymg02_jn_long_h001.mesh declared=106 nfail0=tx-not-eof@0x667f4-of-0x98ff4 new=[(285124, 'stuck@0x667ec', 41)]
+  w1351_model_ymg02_jn_long_h005.mesh declared=106 nfail0=tx-not-eof@0x6ba0c-of-0x9e20c new=[(306140, 'stuck@0x6ba04', 41)]
+  w1351_model_ymg02_jn_long_lg_h001.mesh declared=106 nfail0=tx-not-eof@0x56dac-of-0x7fc64 new=[(244068, 'stuck@0x56da4', 41)]
+  w1351_model_ymg02_jn_long_lg_h005.mesh declared=106 nfail0=tx-not-eof@0x5bfc4-of-0x84e7c new=[(265084, 'stuck@0x5bfbc', 41)]
+  w1351_model_ymg02_jn_long_lg_h005_1.mesh declared=106 nfail0=tx-not-eof@0x5bfc4-of-0x84e7c new=[(265084, 'stuck@0x5bfbc', 41)]
+  w1351_model_ymg02_nan_slbw_h002.mesh declared=107 nfail0=tx-not-eof@0x668f8-of-0x990f8 new=[(285124, 'stuck@0x668f0', 42)]
+  w1351_model_ymg02_nan_slbw_h003.mesh declared=107 nfail0=tx-not-eof@0x668f8-of-0x990f8 new=[(285124, 'stuck@0x668f0', 42)]
+  w1351_model_ymg02_nan_slbw_lg_h002.mesh declared=107 nfail0=tx-not-eof@0x56eb0-of-0x7fd68 new=[(244068, 'stuck@0x56ea8', 42)]
+  w1351_model_ymg02_nan_slbw_lg_h003.mesh declared=107 nfail0=tx-not-eof@0x56eb0-of-0x7fd68 new=[(244068, 'stuck@0x56ea8', 42)]
+  w1351_model_ymg02_nv_flzt_h001.mesh declared=107 nfail0=tx-not-eof@0x668f8-of-0x990f8 new=[(285124, 'stuck@0x668f0', 42)]
+  w1351_model_ymg02_nv_flzt_lg_h001.mesh declared=107 nfail0=tx-not-eof@0x56eb0-of-0x7fd68 new=[(244068, 'stuck@0x56ea8', 42)]
+  w1351_monster_heiyuan.mesh declared=29 nfail0=tx-not-eof@0x74fc-of-0xbfbc new=[(28800, 'stuck@0x74f4', 4), (28992, 'stuck@0x74f4', 4)]
+  w1351_npc_duanzhengming_yifu_001.mesh declared=27 nfail0=tx-not-eof@0x4764-of-0x78a0 new=[(16764, 'stuck@0x475c', 5), (16956, 'stuck@0x475c', 5)]
+  w1351_pets_xiaomuling_b7.mesh declared=102 nfail0=tx-not-eof@0x26bf0-of-0x4ab7c new=[(156092, 'stuck@0x26be8', 6)]

@@ -1,0 +1,7 @@
+D:\TLGL\.scratch\dyn\texaudit\pathhash_sweep.py:67: RuntimeWarning: overflow encountered in scalar multiply
+  v = (np.uint32(int(b)) + h1 * np.uint32(32) + (h1 >> np.uint32(2))).astype(np.uint32)
+D:\TLGL\.scratch\dyn\texaudit\pathhash_sweep.py:67: RuntimeWarning: overflow encountered in scalar add
+  v = (np.uint32(int(b)) + h1 * np.uint32(32) + (h1 >> np.uint32(2))).astype(np.uint32)
+D:\TLGL\.scratch\dyn\texaudit\pathhash_sweep.py:69: RuntimeWarning: overflow encountered in scalar multiply
+  h2 = (np.uint32(int(b)) + np.uint32(65599) * h2).astype(np.uint32)
+wrote D:/TLGL\.scratch/dyn/texaudit/pathhash_sweep.txt

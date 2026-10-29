@@ -1,0 +1,1 @@
+{"content": [{"type": "text", "text": "{\"result\":\"\",\"stdout\":\"wrote 196\\n\",\"stderr\":\"\"}"}], "structuredContent": {"result": "", "stdout": "wrote 196\n", "stderr": ""}, "isError": false}

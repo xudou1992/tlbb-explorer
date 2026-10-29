@@ -1,0 +1,10 @@
+同角色部件：['w1351_monster_xiyuqiezei_shoutao_001.mesh', 'w1351_monster_xiyuqiezei_yifu_001.mesh']
+
+w1351_monster_xiyuqiezei_shoutao_0 · 000                  vs 兄弟部件标准值 最近 w1351_monster_xiyuqiezei_y 差 1          不等
+w1351_monster_xiyuqiezei_shoutao_0 · bip01_footsteps      vs 兄弟部件标准值 最近 w1351_monster_xiyuqiezei_y 差 7.715e+31  不等
+w1351_monster_xiyuqiezei_shoutao_0 · bip01_l_toe0         vs 兄弟部件标准值 最近 w1351_monster_xiyuqiezei_y 差 1          不等
+w1351_monster_xiyuqiezei_yifu_001. · 000                  vs 兄弟部件标准值 最近 w1351_monster_xiyuqiezei_s 差 1          不等
+w1351_monster_xiyuqiezei_yifu_001. · bip01_footsteps      vs 兄弟部件标准值 最近 w1351_monster_xiyuqiezei_s 差 7.715e+31  不等
+w1351_monster_xiyuqiezei_yifu_001. · bip01_l_toe0         vs 兄弟部件标准值 最近 w1351_monster_xiyuqiezei_s 差 1          不等
+
+跨部件比对：等于兄弟部件标准 bind 的 0 个 · 不等的 6 个

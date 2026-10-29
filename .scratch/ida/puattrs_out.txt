@@ -1,0 +1,68 @@
+matched strings: 14
+'Scale' 0x140ea436c
+   <- 0x1401e3a54 ('sub_1401DBED0', 34907) type 1
+   <- 0x140375b68 ('sub_1403677B0', 143434) type 1
+   <- 0x140379cb4 ('sub_1403677B0', 143434) type 1
+   <- 0x1409aa175 ('sub_1409A82A0', 28931) type 1
+   <- 0x141075638 ('(nofunc)', 0) type 1
+'scale' 0x140ec1a94
+   <- 0x14030f329 ('sub_14030CD90', 13848) type 1
+   <- 0x14030f36c ('sub_14030CD90', 13848) type 1
+   <- 0x1408ff8c8 ('sub_1408FF6A0', 851) type 1
+   <- 0x140902747 ('sub_140902620', 3711) type 1
+   <- 0x14090356a ('sub_1409034A0', 970) type 1
+   <- 0x140907d43 ('sub_140907A40', 1478) type 1
+   <- 0x14090ae22 ('sub_14090AD10', 2201) type 1
+   <- 0x1409b5fa0 ('sub_1409B06C0', 39477) type 1
+   <- 0x140e818f0 ('(nofunc)', 0) type 1
+   <- 0x141072410 ('(nofunc)', 0) type 1
+'Width' 0x140ec8c7c
+   <- 0x140381e14 ('sub_1403677B0', 143434) type 1
+   <- 0x14088f0aa ('sub_14088EF00', 784) type 1
+   <- 0x14088f16e ('sub_14088EF00', 784) type 1
+   <- 0x1408dab1d ('sub_1408D9F90', 3276) type 1
+'Height' 0x140ec8d20
+   <- 0x140381e64 ('sub_1403677B0', 143434) type 1
+   <- 0x1406ad545 ('sub_1406AD520', 530) type 1
+   <- 0x1406ad54c ('sub_1406AD520', 530) type 1
+   <- 0x1406ad7d5 ('sub_1406AD7A0', 618) type 1
+   <- 0x1406ad7dc ('sub_1406AD7A0', 618) type 1
+   <- 0x1409a99a5 ('sub_1409A82A0', 28931) type 1
+   <- 0x1409b20a0 ('sub_1409B06C0', 39477) type 1
+'GRAVITY' 0x140ecea68
+   <- 0x1410615a8 ('(nofunc)', 0) type 1
+'velocity' 0x140ef99c8
+   <- 0x141072008 ('(nofunc)', 0) type 1
+'colour' 0x140efa270
+   <- 0x1409b5520 ('sub_1409B06C0', 39477) type 1
+   <- 0x141072cc8 ('(nofunc)', 0) type 1
+'gravity' 0x140efa310
+   <- 0x141072ef0 ('(nofunc)', 0) type 1
+   <- 0x141074468 ('(nofunc)', 0) type 1
+'Colour' 0x140f05480
+   <- 0x1405ecb12 ('sub_1405ECAB0', 579) type 1
+   <- 0x1405ecc35 ('sub_1405ECAB0', 579) type 1
+   <- 0x1405ecc49 ('sub_1405ECAB0', 579) type 1
+   <- 0x1409ae20b ('sub_1409A82A0', 28931) type 1
+'width' 0x140f149e8
+   <- 0x1408fe5ae ('sub_1408FE060', 5332) type 1
+   <- 0x1408fe674 ('sub_1408FE060', 5332) type 1
+   <- 0x14090229d ('sub_140901E60', 1170) type 1
+   <- 0x140907cbf ('sub_140907A40', 1478) type 1
+   <- 0x140907cd8 ('sub_140907A40', 1478) type 1
+   <- 0x140907eec ('sub_140907A40', 1478) type 1
+   <- 0x140e81968 ('(nofunc)', 0) type 1
+'height' 0x140f149f0
+   <- 0x1408fe5cc ('sub_1408FE060', 5332) type 1
+   <- 0x1408fe694 ('sub_1408FE060', 5332) type 1
+   <- 0x1409022b4 ('sub_140901E60', 1170) type 1
+   <- 0x140907d00 ('sub_140907A40', 1478) type 1
+   <- 0x140907d19 ('sub_140907A40', 1478) type 1
+   <- 0x140907f03 ('sub_140907A40', 1478) type 1
+   <- 0x140e81910 ('(nofunc)', 0) type 1
+'Gravity' 0x140f16760
+   <- 0x1409ae345 ('sub_1409A82A0', 28931) type 1
+'Align' 0x140f167b8
+   <- 0x1409ae0bf ('sub_1409A82A0', 28931) type 1
+'BaseSpeed' 0x140f16bd8
+   <- 0x1409af1b8 ('sub_1409A82A0', 28931) type 1

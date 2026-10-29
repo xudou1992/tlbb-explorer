@@ -1,0 +1,22 @@
+索引顺序能夹出目录的池内贴图: 610 张，目录 177 个
+同干槽位 + 有榜首的样本: 1852 只 mesh；其中槽位在 cfg 登记过路径的: 1852 只
+
+可检样本（榜首夹得出目录 且 槽位有 cfg 目录）: 796 只
+  榜首贴图夹出目录 == 该贴图 cfg 登记目录: 0 (0.00%)
+  末段同名或父子关系: 35 (4.40%)
+  == mesh 自己所在目录: 1 (0.13%)
+  随机基线: 精确 0.01% / 近邻 1.82%
+   近邻/父子: mesh=w1351_boss_mutongbo_lian_001.mesh 槽位=w1351_boss_mutongbo_lian_001.tga cfg目录=data/source/npc/quest/w1351_boss_mutongbo/texture 榜首=876f48291618b19c 夹出=data/effect/textures/texture
+   近邻/父子: mesh=w1351_boss_xuanjijingang_lian_001.mesh 槽位=w1351_boss_xuanjijingang_lian_001.tga cfg目录=data/source/npc/quest/w1351_boss_xuanjijingang/texture 榜首=bbaa2b261e4787ef 夹出=data/effect/textures/texture
+   近邻/父子: mesh=w1351_caiji_yuebing_003.mesh 槽位=w1351_caiji_yuebing_003.tga cfg目录=data/source/npc/changjingdaoju/w1351_caiji_yuebing_003/texture 榜首=e90bcd79d0746f80 夹出=data/effect/textures/texture
+   近邻/父子: mesh=w1351_diancang_bilinzhen.mesh 槽位=w1351_diancang_bilinzhen.tga cfg目录=data/source/npc/changjingdaoju/w1351_diancang_bilinzhen/texture 榜首=e90bcd79d0746f80 夹出=data/effect/textures/texture
+   近邻/父子: mesh=w1351_diancang_ezuijian.mesh 槽位=w1351_diancang_ezuijian.tga cfg目录=data/source/npc/changjingdaoju/w1351_diancang_ezuijian/texture 榜首=e90bcd79d0746f80 夹出=data/effect/textures/texture
+   近邻/父子: mesh=w1351_monster_abixiuluo_lian_001.mesh 槽位=w1351_monster_abixiuluo_lian_001.tga cfg目录=data/source/npc/quest/w1351_monster_abixiuluo/texture 榜首=bbaa2b261e4787ef 夹出=data/effect/textures/texture
+   近邻/父子: mesh=w1351_monster_dawanma.mesh 槽位=w1351_monster_dawanma.tga cfg目录=data/source/npc/quest/w1351_monster_dawanma/texture 榜首=bbaa2b261e4787ef 夹出=data/effect/textures/texture
+   近邻/父子: mesh=w1351_monster_exiuluo_lian_001.mesh 槽位=w1351_monster_exiuluo_lian_001.tga cfg目录=data/source/npc/quest/w1351_monster_exiuluo/texture 榜首=bbaa2b261e4787ef 夹出=data/effect/textures/texture
+   近邻/父子: mesh=w1351_monster_huagangshishi.mesh 槽位=w1351_monster_huagangshishi.tga cfg目录=data/source/npc/quest/w1351_monster_huagangshishi/texture 榜首=876f48291618b19c 夹出=data/effect/textures/texture
+   近邻/父子: mesh=w1351_monster_huosuanni.mesh 槽位=w1351_monster_huosuanni.tga cfg目录=data/source/npc/quest/w1351_monster_huagangshishi/texture 榜首=876f48291618b19c 夹出=data/effect/textures/texture
+
+若把「夹出目录==槽位 cfg 目录」当硬过滤：有可筛对象的 mesh 3 只，平均每目录 35 张贴图（池 1,650）
+槽位 cfg 目录能落进「夹出目录表」的目录数: 1 / 1039
+⇒ 也就是说这条硬过滤今天能覆盖到的 mesh 极少，池内贴图大多夹不出目录（610/1,650）

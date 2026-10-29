@@ -1,0 +1,73 @@
+=== 逐骨 frame0 拟合 A_j（48 候选里角差最小）===
+bone                             只R      R+A  A_j
+bip01                        120.00     0.00  ((1, 2, 0), (1, 1, 1))  par=000
+bip01_footsteps              149.93   149.93  ((0, 1, 2), (1, 1, 1))  par=bip01
+bip01_pelvis                 159.01    59.93  ((0, 2, 1), (1, 1, 1))  par=bip01
+bip01_spine*                   0.00     0.00  ((1, 2, 0), (1, 1, 1))  par=bip01_pelvis
+bip01_spine1                   0.05     0.05  ((0, 1, 2), (1, 1, 1))  par=bip01_spine
+bip01_neck                    10.03    10.03  ((0, 2, 1), (1, 1, 1))  par=bip01_spine1
+bip01_head                    18.89    18.89  ((0, 1, 2), (1, 1, 1))  par=bip01_neck
+bip01_l_clavicle              62.21    62.21  ((0, 1, 2), (1, 1, 1))  par=bip01_neck
+bip01_l_upperarm*            129.26    19.57  ((1, 0, 2), (1, -1, -1))  par=bip01_l_clavicle
+bip01_l_forearm               14.15    14.15  ((0, 1, 2), (1, 1, 1))  par=bip01_l_upperarm
+bip01_l_hand*                156.46    20.67  ((2, 1, 0), (1, 1, 1))  par=bip01_l_forearm
+bip01_l_finger0              167.47   167.47  ((0, 1, 2), (1, 1, -1))  par=bip01_l_hand
+bip01_l_finger1               59.43    59.43  ((1, 0, 2), (1, 1, 1))  par=bip01_l_hand
+bone09*                      105.49    69.01  ((1, 0, 2), (1, 1, 1))  par=bip01_l_hand
+bone08*                      148.57    71.20  ((0, 2, 1), (1, 1, -1))  par=bip01_l_upperarm
+bip01_r_clavicle*             67.44    67.44  ((1, 0, 2), (1, -1, 1))  par=bip01_neck
+bip01_r_upperarm*             93.52    26.56  ((1, 0, 2), (1, -1, -1))  par=bip01_r_clavicle
+bip01_r_forearm*              68.98    41.60  ((1, 0, 2), (1, 1, -1))  par=bip01_r_upperarm
+bip01_r_hand*                118.16   105.99  ((1, 2, 0), (1, 1, 1))  par=bip01_r_forearm
+bip01_r_finger0               94.77    94.77  ((2, 0, 1), (1, 1, 1))  par=bip01_r_hand
+bip01_r_finger1               63.25    63.25  ((2, 0, 1), (1, -1, 1))  par=bip01_r_hand
+bone01*                      122.46    16.03  ((1, 0, 2), (1, -1, -1))  par=bip01_r_hand
+bone05*                      124.29   124.29  ((1, 0, 2), (1, -1, 1))  par=bip01_spine1
+bone06                       142.20    24.02  ((1, 0, 2), (1, 1, -1))  par=bone05
+bone07                        23.88     5.00  ((1, 2, 0), (1, 1, 1))  par=bone06
+bip01_l_thigh                  7.91     7.91  ((0, 1, 2), (1, 1, 1))  par=bip01_spine
+bip01_l_calf*                131.28    83.01  ((1, 2, 0), (1, -1, -1))  par=bip01_l_thigh
+bip01_l_foot*                 50.86    50.85  ((1, 2, 0), (1, 1, 1))  par=bip01_l_calf
+bip01_l_toe0*                 15.89     2.03  ((2, 0, 1), (1, 1, 1))  par=bip01_l_foot
+bip01_r_thigh                 90.00    90.00  ((0, 1, 2), (1, 1, 1))  par=bip01_spine
+bip01_r_calf*                155.29    49.15  ((1, 2, 0), (1, -1, -1))  par=bip01_r_thigh
+bip01_r_foot*                 81.52    81.51  ((1, 2, 0), (1, 1, 1))  par=bip01_r_calf
+bip01_r_toe0*                 35.14    27.27  ((1, 0, 2), (1, 1, -1))  par=bip01_r_foot
+bone10                        90.00    90.00  ((0, 1, 2), (1, 1, 1))  par=bip01_spine
+bone11*                      158.32    35.03  ((1, 2, 0), (1, 1, 1))  par=bone10
+bone12*                       28.84    10.00  ((1, 2, 0), (1, 1, 1))  par=bone11
+bone10_mirror02               26.41    26.41  ((0, 1, 2), (1, 1, 1))  par=bip01_spine
+bone11_mirror02*             174.46    19.98  ((1, 2, 0), (1, 1, 1))  par=bone10_mirror02
+bone12_mirror02*              29.89    18.01  ((1, 2, 0), (1, 1, 1))  par=bone11_mirror02
+bone10_mirror01               21.08    21.08  ((0, 1, 2), (1, 1, 1))  par=bip01_spine
+bone11_mirror01*             168.73    55.03  ((1, 2, 0), (1, 1, 1))  par=bone10_mirror01
+bone12_mirror01*              24.04     9.82  ((2, 0, 1), (1, -1, 1))  par=bone11_mirror01
+bone10_mirror02_mirror01*     33.58    33.53  ((1, 2, 0), (1, 1, 1))  par=bip01_spine
+bone11_mirror02_mirror01*    155.02    42.20  ((1, 2, 0), (1, 1, 1))  par=bone10_mirror02_mirror01
+bone12_mirror02_mirror01*     19.94    11.18  ((0, 2, 1), (1, -1, -1))  par=bone11_mirror02_mirror01
+  frame0 局部角差：只全局 R mean 82.62 med 81.52 -> 加逐骨 A mean 45.68 med 33.53
+  A_j 分布（是否真的『每骨一个常数轴变换』）: 14 种不同取值 / 45 根有通道骨
+     13 根共用同一 A_j
+     10 根共用同一 A_j
+      3 根共用同一 A_j
+      3 根共用同一 A_j
+      2 根共用同一 A_j
+      2 根共用同一 A_j
+
+[全局 R only tv=1] 帧均值 0.4997~0.5271 全局max 1.1829 | f0 0.5001 | f1..40 0.4997~0.5271 | m2 0.1379
+      样本外 frame1..40 逐骨局部角差 mean 83.05 med 89.39 max 174.46 | frame0 时 mean 82.62
+
+[全局 R only tv=2] 帧均值 1.4152~1.4536 全局max 2.1563 | f0 1.4536 | f1..40 1.4152~1.4536 | m2 0.1895
+      样本外 frame1..40 逐骨局部角差 mean 83.05 med 89.39 max 174.46 | frame0 时 mean 82.62
+
+[全局 R + 逐骨 A_j tv=1] 帧均值 1.9185~1.9928 全局max 2.9145 | f0 1.9928 | f1..40 1.9185~1.9928 | m2 0.2397
+      样本外 frame1..40 逐骨局部角差 mean 46.93 med 33.53 max 167.47 | frame0 时 mean 45.68
+
+      逐骨 frame0 平移：C t vs bind|tb| 与 C^T t vs tb 谁更贴
+        C t    mean 0.2721 med 0.1870 max 1.9393
+        C^T t  mean 0.2753 med 0.1870 max 1.9393
+        模长对不上(bind非零) 14 根；bind塌缩为0但 .ani 有偏移 15 根
+        塌缩骨: bip01_footsteps(0.912), bip01_spine1(0.171), bip01_neck(0.214), bip01_head(0.312), bip01_l_clavicle(0.095), bip01_l_forearm(0.133), bip01_l_finger0(0.319), bip01_l_finger1(0.069), bip01_r_finger0(0.319), bip01_r_finger1(0.071), bip01_l_thigh(0.119), bip01_r_thigh(0.184), bone10(0.184), bone10_mirror02(0.187), bone10_mirror01(0.187)
+
+[全局 R + 逐骨 A_j tv=2] 帧均值 1.8870~1.9600 全局max 2.8363 | f0 1.9600 | f1..40 1.8870~1.9600 | m2 0.2324
+      样本外 frame1..40 逐骨局部角差 mean 46.93 med 33.53 max 167.47 | frame0 时 mean 45.68

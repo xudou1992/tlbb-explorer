@@ -1,0 +1,76 @@
+--- control 468 (sidecar_tree) ---
+== 解包目录体检：D:/TLGL/.scratch/out/sidecar_tree
+  找到 .mesh 文件 468 份，本轮只看前 500 份
+每份明细写了 D:/TLGL/.scratch/dyn/verify13/mixcensus_sidecar_re.tsv（468 行）
+
+结果（468 份）：
+  parse_mesh 认得：**468 / 468**（100%）
+  其中带骨架节点表的：466 · 父骨链解得出的：430
+  顶点合计：662401
+  带表顶点 538197 个：单骨权重 1.0（硬）223291 · 多骨 244394 · 含小数权重 314906（438 份文件里出现过混合）
+
+权重表分档（决定导出后网格跟不跟骨架走）：
+  一份都没有 96B 节点记录：2 份
+  有节点记录但后面没认出影响表：26 份
+  有影响表、覆盖全部顶点：15 份 · 只覆盖一部分：425 份
+    无节点 data\effect\effectmodel\w1351_model_stone_lf001.mesh
+    无节点 data\effect\effectmodel\w1351_model_stone_lf002.mesh
+    有 1 条节点却无影响表 data\source\npc\model\w1351_model_sphere_lf006\w1351_model_sphere_lf006.mesh
+    有 29 条节点却无影响表 data\source\npc\quest\w1351_pets_shenqie_b0\w1351_pets_shenqie_b1_lian_01.mesh
+    有 29 条节点却无影响表 data\source\npc\quest\w1351_pets_shenqie_b0\w1351_pets_shenqie_b2_lian_01.mesh
+    有 29 条节点却无影响表 data\source\npc\quest\w1351_pets_shenqie_b0\w1351_pets_shenqie_b3_lian_01.mesh
+    有 29 条节点却无影响表 data\source\npc\quest\w1351_pets_shenqie_b0\w1351_pets_shenqie_b4_lian_01.mesh
+    有 29 条节点却无影响表 data\source\npc\quest\w1351_pets_shenqie_b0\w1351_pets_shenqie_b5_lian_01.mesh
+  缺口最大的几份（覆盖/总数）：
+       248/250    data\source\npc\quest\w1351_pets_shenyuan_b0\w1351_pets_shenyuan_b4_xiezi_001.mesh
+       171/176    data\source\npc\quest\w1351_pets_e_b1\w1351_pets_e_b1.mesh
+       171/176    data\source\npc\quest\w1351_pets_e_b2\w1351_pets_e_b2.mesh
+       588/593    data\source\npc\quest\w1351_pets_huozongshu_b1\w1351_pets_huozongshu_b1.mesh
+       588/593    data\source\npc\quest\w1351_pets_huozongshu_b2\w1351_pets_huozongshu_b2.mesh
+       588/593    data\source\npc\quest\w1351_pets_huozongshu_b3\w1351_pets_huozongshu_b3.mesh
+       588/593    data\source\npc\quest\w1351_pets_huozongshu_b4\w1351_pets_huozongshu_b4.mesh
+       588/593    data\source\npc\quest\w1351_pets_huozongshu_b5\w1351_pets_huozongshu_b5.mesh
+
+文件头前 9 字节的分布：
+   468 × "Copyright"
+exit=0
+--- full 7996 (out/tree) ---
+== 解包目录体检：D:/TLGL/.scratch/out/tree
+  找到 .mesh 文件 7996 份，本轮只看前 99999 份
+每份明细写了 D:/TLGL/.scratch/dyn/verify13/mixcensus_re.tsv（7996 行）
+
+结果（7996 份）：
+  parse_mesh 认得：**7996 / 7996**（100%）
+  其中带骨架节点表的：2776 · 父骨链解得出的：2549
+  顶点合计：7454904
+  带表顶点 2444019 个：单骨权重 1.0（硬）1058529 · 多骨 1156502 · 含小数权重 1385490（1993 份文件里出现过混合）
+
+权重表分档（决定导出后网格跟不跟骨架走）：
+  一份都没有 96B 节点记录：5220 份
+  有节点记录但后面没认出影响表：549 份
+  有影响表、覆盖全部顶点：562 份 · 只覆盖一部分：1665 份
+    无节点 data\effect\effectmodel\test_jianzhen.mesh
+    无节点 data\effect\effectmodel\test_jianzhen2.mesh
+    无节点 data\effect\effectmodel\w1351_an_model_wave_h002.mesh
+    无节点 data\effect\effectmodel\w1351_jianmo_v1.mesh
+    无节点 data\effect\effectmodel\w1351_jianmo_v2.mesh
+    无节点 data\effect\effectmodel\w1351_jianmo_v3.mesh
+    有 1 条节点却无影响表 data\effect\effectmodel\w1351_model_boss_cj_z001.mesh
+    有 1 条节点却无影响表 data\effect\effectmodel\w1351_model_boss_cj_z002.mesh
+    有 1 条节点却无影响表 data\effect\effectmodel\w1351_model_boss_cj_z003.mesh
+    有 1 条节点却无影响表 data\effect\effectmodel\w1351_model_boss_cj_z005.mesh
+    有 1 条节点却无影响表 data\effect\effectmodel\w1351_model_boss_cjdl_z001.mesh
+    有 1 条节点却无影响表 data\effect\effectmodel\w1351_model_boss_cjdl_z002.mesh
+  缺口最大的几份（覆盖/总数）：
+      6930/6931   data\source\npc\model\w1351_model_ymg02_jn_long_h001\w1351_model_ymg02_jn_long_h001.mesh
+      6930/6931   data\source\npc\model\w1351_model_ymg02_jn_long_h005\w1351_model_ymg02_jn_long_h005.mesh
+      5647/5648   data\source\npc\model\w1351_model_ymg02_jn_long_lg_h001\w1351_model_ymg02_jn_long_lg_h001.mesh
+      5647/5648   data\source\npc\model\w1351_model_ymg02_jn_long_lg_h005\w1351_model_ymg02_jn_long_lg_h005.mesh
+      5647/5648   data\source\npc\model\w1351_model_ymg02_jn_long_lg_h005_1\w1351_model_ymg02_jn_long_lg_h005_1.mesh
+      6930/6931   data\source\npc\model\w1351_model_ymg02_nan_slbw_h002\w1351_model_ymg02_nan_slbw_h002.mesh
+      6930/6931   data\source\npc\model\w1351_model_ymg02_nan_slbw_h003\w1351_model_ymg02_nan_slbw_h003.mesh
+      5647/5648   data\source\npc\model\w1351_model_ymg02_nan_slbw_lg_h002\w1351_model_ymg02_nan_slbw_lg_h002.mesh
+
+文件头前 9 字节的分布：
+  7996 × "Copyright"
+exit=0

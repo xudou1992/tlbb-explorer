@@ -1,0 +1,5 @@
+w1351_monster_guifengzhuangke_lian_001.skel.json
+父骨链 28 根 · 节点记录 24 条（含 origin/top 前奏）· 带影响表 2 条
+没有 96B 记录的骨：6 根 → ['000', 'bip02_footsteps', 'bip02_l_thigh', 'bip02_r_thigh', 'bip02_head', 'bip02_l_clavicle']
+这些无记录骨里，有任何一根挂着影响表吗：没有一张（零权重，与记录一致）
+全部影响表的权重合计（求和后 round）：62.0

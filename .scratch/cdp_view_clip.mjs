@@ -1,0 +1,41 @@
+import { writeFileSync } from "node:fs";
+const [term, target, out] = process.argv.slice(2);
+const list = await (await fetch("http://127.0.0.1:9222/json/list")).json();
+const page = list.find((t) => t.type === "page" && t.webSocketDebuggerUrl);
+const ws = new WebSocket(page.webSocketDebuggerUrl);
+let id = 0; const pending = new Map();
+ws.onmessage = (ev) => { const m = JSON.parse(ev.data); if (m.id && pending.has(m.id)) { pending.get(m.id)(m); pending.delete(m.id); } };
+await new Promise((r) => ws.onopen = r);
+const call = (method, params = {}) => new Promise((res) => { const i = ++id; pending.set(i, res); ws.send(JSON.stringify({ id: i, method, params })); });
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const ev = async (e) => { const r = await call("Runtime.evaluate", { expression: e, returnByValue: true, awaitPromise: true }); return r?.result?.result?.value; };
+await call("Page.reload", { ignoreCache: true });
+await wait(6000);
+await ev(`(() => { const q=document.getElementById("q"); q.value=${JSON.stringify(term)}; q.dispatchEvent(new Event("input",{bubbles:true})); return 1; })()`);
+await wait(2500);
+const row = await ev(`(() => { const r=[...document.querySelectorAll(".row-item")].find(x=>x.textContent.trim().length>3); return r?r.textContent.replace(/\s+/g,' ').slice(0,60):null; })()`);
+console.log("首行:", row);
+await ev(`(() => { const r=[...document.querySelectorAll(".row-item")].find(x=>x.textContent.trim().length>3); r&&r.click(); return 1; })()`);
+await wait(5000);
+await ev(`(() => { const t=document.querySelector('#dTabs .tab[data-tab="animation"]'); t&&t.click(); return 1; })()`);
+await wait(3500);
+console.log("动作:", await ev(`(() => { const c=document.querySelector("#animPick .chip.on")||document.querySelector("#animPick .chip"); return c?c.textContent:"无筹码"; })()`));
+console.log("摘要:", (await ev(`document.getElementById("animSum")?.textContent||"无"`)).slice(0, 46));
+await ev(`(() => { const s=document.getElementById("animFrame"); s&&s.scrollIntoView({block:"center"}); return 1; })()`);
+await wait(700);
+const box = await ev(`(() => { const s=document.getElementById("animFrame"); if(!s) return null; const r=s.getBoundingClientRect(); return {x:r.x,y:r.y,w:r.width,h:r.height,min:+s.min,max:+s.max,val:+s.value}; })()`);
+if (box && box.w > 0) {
+  const goal = Math.min(+target, box.max);
+  const y = box.y + box.h / 2;
+  const sx = box.x + (box.val - box.min) / (box.max - box.min) * box.w;
+  const tx = box.x + (goal - box.min) / (box.max - box.min) * box.w;
+  await call("Input.dispatchMouseEvent", { type: "mousePressed", x: sx, y, button: "left", clickCount: 1 });
+  for (let k = 1; k <= 8; k++) { await call("Input.dispatchMouseEvent", { type: "mouseMoved", x: sx + (tx - sx) * k / 8, y, button: "left" }); await wait(50); }
+  await call("Input.dispatchMouseEvent", { type: "mouseReleased", x: tx, y, button: "left", clickCount: 1 });
+  await wait(2200);
+  console.log("帧:", await ev(`document.getElementById("animFrame").value`));
+}
+const shot = await call("Page.captureScreenshot", { format: "png" });
+writeFileSync(out, Buffer.from(shot.result.data, "base64"));
+console.log("图", out);
+ws.close();

@@ -1,0 +1,9 @@
+written D:\TLGL\.scratch\hamigua_walk.txt
+size 52536 declared 46
+origin starts: ['0x7690'] root-flag candidates: 1
+walk err: None nodes: 46 tx: (1, 4, 52536) endpos: 0xc9d4 of 0xcd38
+socket table @0xcb38
+  [flag][count] @0xcb30: ['0x1', '0x4']
+  first entry name: b'tx_head\x00'
+hamigua tail last 16B: 00 00 c8 42 00 00 c8 42 01 00 00 00 00 00 00 00
+hamigua u32@-8: 1 u32@-4: 0

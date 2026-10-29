@@ -1,0 +1,95 @@
+## Q3 同一模型里逐字节相同的动作对（把行数折成独立动作数据）
+  yifu: 15 条 .ani，逐字节相同对：w1351_monster_xiyuqiezei_dead≡w1351_monster_xiyuqiezei_flyingdeadbegin, w1351_monster_xiyuqiezei_deadbegin≡w1351_monster_xiyuqiezei_flyingdead, w1351_monster_xiyuqiezei_idle01≡w1351_monster_xiyuqiezei_idle03, w1351_monster_xiyuqiezei_idle01≡w1351_monster_xiyuqiezei_vertigo, w1351_monster_xiyuqiezei_idle03≡w1351_monster_xiyuqiezei_vertigo
+  daomuzei: 15 条 .ani，逐字节相同对：w1351_monster_daomuzei_dead≡w1351_monster_daomuzei_flyingdeadbegin, w1351_monster_daomuzei_deadbegin≡w1351_monster_daomuzei_flyingdead, w1351_monster_daomuzei_fight_idle01≡w1351_monster_daomuzei_idle01, w1351_monster_daomuzei_fight_idle01≡w1351_monster_daomuzei_idle03, w1351_monster_daomuzei_fight_idle01≡w1351_monster_daomuzei_vertigo, w1351_monster_daomuzei_idle01≡w1351_monster_daomuzei_idle03, w1351_monster_daomuzei_idle01≡w1351_monster_daomuzei_vertigo, w1351_monster_daomuzei_idle03≡w1351_monster_daomuzei_vertigo
+  hmz_lian: 15 条 .ani，逐字节相同对：w1351_monster_heimiaozhanshi_dead≡w1351_monster_heimiaozhanshi_flyingdeadbegin, w1351_monster_heimiaozhanshi_deadbegin≡w1351_monster_heimiaozhanshi_flyingdead, w1351_monster_heimiaozhanshi_fight_idle01≡w1351_monster_heimiaozhanshi_idle01, w1351_monster_heimiaozhanshi_fight_idle01≡w1351_monster_heimiaozhanshi_idle02, w1351_monster_heimiaozhanshi_fight_idle01≡w1351_monster_heimiaozhanshi_idle03, w1351_monster_heimiaozhanshi_fight_idle01≡w1351_monster_heimiaozhanshi_vertigo, w1351_monster_heimiaozhanshi_hit01≡w1351_monster_heimiaozhanshi_skill01, w1351_monster_heimiaozhanshi_idle01≡w1351_monster_heimiaozhanshi_idle02, w1351_monster_heimiaozhanshi_idle01≡w1351_monster_heimiaozhanshi_idle03, w1351_monster_heimiaozhanshi_idle01≡w1351_monster_heimiaozhanshi_vertigo, w1351_monster_heimiaozhanshi_idle02≡w1351_monster_heimiaozhanshi_idle03, w1351_monster_heimiaozhanshi_idle02≡w1351_monster_heimiaozhanshi_vertigo, w1351_monster_heimiaozhanshi_idle03≡w1351_monster_heimiaozhanshi_vertigo
+  lk_yifu: 15 条 .ani，逐字节相同对：w1351_boss_likui_fight_idle01≡w1351_boss_likui_idle01, w1351_boss_likui_fight_idle01≡w1351_boss_likui_idle03, w1351_boss_likui_fight_idle01≡w1351_boss_likui_vertigo, w1351_boss_likui_hit01≡w1351_boss_likui_hit02, w1351_boss_likui_idle01≡w1351_boss_likui_idle03, w1351_boss_likui_idle01≡w1351_boss_likui_vertigo, w1351_boss_likui_idle03≡w1351_boss_likui_vertigo, w1351_boss_likui_run≡w1351_boss_likui_walk, w1351_boss_likui_skill02≡w1351_boss_likui_skill03
+
+## Q2 空载（平局）机制：唯一有权重的骨是否有轨道
+  shoutao: 权重骨 [000] 有轨道=False 全帧世界-vs-bind 最大|Δt|=0.000000 -> 蒙皮恒等成立的机制=骨恒位（A0≡A1 平凡）
+  xiaobaishe: 权重骨 [000] 有轨道=False 全帧世界-vs-bind 最大|Δt|=0.000000 -> 蒙皮恒等成立的机制=骨恒位（A0≡A1 平凡）
+  duzhizhu: 权重骨 [000] 有轨道=False 全帧世界-vs-bind 最大|Δt|=0.000000 -> 蒙皮恒等成立的机制=骨恒位（A0≡A1 平凡）
+  bird: 权重骨 [000] 有轨道=False 全帧世界-vs-bind 最大|Δt|=0.000000 -> 蒙皮恒等成立的机制=骨恒位（A0≡A1 平凡）
+
+## Q1 反例逐帧剖面（每条：帧均A0/A1 与 首/中/末帧均值、峰值帧）
+  hmz_lian/behit01 (16帧)
+    A0 帧0/中/末 = 2.668/1.941/2.668  帧均峰值=3.168(帧3, compare口径帧均)  全max=3.475
+    A1 帧0/中/末 = 0.000/1.342/0.000  帧均峰值=1.456(帧9, compare口径帧均)  全max=1.592
+  hmz_lian/deadbegin (51帧)
+    A0 帧0/中/末 = 2.668/2.461/2.892  帧均峰值=3.611(帧31, compare口径帧均)  全max=3.899
+    A1 帧0/中/末 = 0.000/1.969/3.781  帧均峰值=3.781(帧50, compare口径帧均)  全max=4.094
+  hmz_lian/hit01 (24帧)
+    A0 帧0/中/末 = 2.668/2.739/2.668  帧均峰值=3.135(帧10, compare口径帧均)  全max=3.442
+    A1 帧0/中/末 = 0.000/2.008/0.000  帧均峰值=2.242(帧11, compare口径帧均)  全max=2.411
+  daomuzei/daomuzei_behit01 (21帧)
+    A0 帧0/中/末 = 0.932/1.174/0.932  帧均峰值=1.249(帧7, compare口径帧均)  全max=2.493
+    A1 帧0/中/末 = 0.000/0.693/0.000  帧均峰值=1.105(帧5, compare口径帧均)  全max=2.521
+  daomuzei/daomuzei_dead (2帧)
+    A0 帧0/中/末 = 1.901/1.901/1.901  帧均峰值=1.901(帧1, compare口径帧均)  全max=4.062
+    A1 帧0/中/末 = 0.000/0.000/0.000  帧均峰值=0.000(帧1, compare口径帧均)  全max=0.000
+  daomuzei/daomuzei_deadbegin (71帧)
+    A0 帧0/中/末 = 0.932/1.093/1.901  帧均峰值=2.028(帧63, compare口径帧均)  全max=4.325
+    A1 帧0/中/末 = 0.000/1.052/1.995  帧均峰值=2.111(帧64, compare口径帧均)  全max=3.938
+  daomuzei/daomuzei_fight_idle01 (51帧)
+    A0 帧0/中/末 = 0.932/0.923/0.932  帧均峰值=0.932(帧50, compare口径帧均)  全max=2.170
+    A1 帧0/中/末 = 0.000/0.144/0.000  帧均峰值=0.153(帧31, compare口径帧均)  全max=0.505
+  daomuzei/daomuzei_flyingdead (71帧)
+    A0 帧0/中/末 = 0.932/1.093/1.901  帧均峰值=2.028(帧63, compare口径帧均)  全max=4.325
+    A1 帧0/中/末 = 0.000/1.052/1.995  帧均峰值=2.111(帧64, compare口径帧均)  全max=3.938
+  daomuzei/daomuzei_flyingdeadbegin (2帧)
+    A0 帧0/中/末 = 1.901/1.901/1.901  帧均峰值=1.901(帧1, compare口径帧均)  全max=4.062
+    A1 帧0/中/末 = 0.000/0.000/0.000  帧均峰值=0.000(帧1, compare口径帧均)  全max=0.000
+  daomuzei/daomuzei_hit01 (41帧)
+    A0 帧0/中/末 = 0.932/0.846/0.932  帧均峰值=1.491(帧10, compare口径帧均)  全max=3.210
+    A1 帧0/中/末 = 0.000/0.845/0.000  帧均峰值=1.512(帧10, compare口径帧均)  全max=3.122
+  daomuzei/daomuzei_hit02 (31帧)
+    A0 帧0/中/末 = 0.932/1.255/0.932  帧均峰值=1.255(帧15, compare口径帧均)  全max=2.952
+    A1 帧0/中/末 = 0.000/1.062/0.000  帧均峰值=1.062(帧15, compare口径帧均)  全max=3.242
+  daomuzei/daomuzei_hit03 (36帧)
+    A0 帧0/中/末 = 0.932/0.941/0.932  帧均峰值=1.136(帧12, compare口径帧均)  全max=2.810
+    A1 帧0/中/末 = 0.000/0.710/0.000  帧均峰值=1.258(帧14, compare口径帧均)  全max=2.995
+  daomuzei/daomuzei_idle01 (51帧)
+    A0 帧0/中/末 = 0.932/0.923/0.932  帧均峰值=0.932(帧50, compare口径帧均)  全max=2.170
+    A1 帧0/中/末 = 0.000/0.144/0.000  帧均峰值=0.153(帧31, compare口径帧均)  全max=0.505
+  daomuzei/daomuzei_idle02 (61帧)
+    A0 帧0/中/末 = 0.932/0.838/0.932  帧均峰值=0.932(帧60, compare口径帧均)  全max=2.253
+    A1 帧0/中/末 = 0.000/0.516/0.000  帧均峰值=0.619(帧13, compare口径帧均)  全max=2.200
+  daomuzei/daomuzei_idle03 (51帧)
+    A0 帧0/中/末 = 0.932/0.923/0.932  帧均峰值=0.932(帧50, compare口径帧均)  全max=2.170
+    A1 帧0/中/末 = 0.000/0.144/0.000  帧均峰值=0.153(帧31, compare口径帧均)  全max=0.505
+  daomuzei/daomuzei_run (21帧)
+    A0 帧0/中/末 = 1.025/1.047/1.025  帧均峰值=1.047(帧10, compare口径帧均)  全max=2.843
+    A1 帧0/中/末 = 0.000/0.562/0.000  帧均峰值=0.751(帧6, compare口径帧均)  全max=2.436
+  daomuzei/daomuzei_vertigo (51帧)
+    A0 帧0/中/末 = 0.932/0.923/0.932  帧均峰值=0.932(帧50, compare口径帧均)  全max=2.170
+    A1 帧0/中/末 = 0.000/0.144/0.000  帧均峰值=0.153(帧31, compare口径帧均)  全max=0.505
+  daomuzei/daomuzei_walk (29帧)
+    A0 帧0/中/末 = 0.977/0.924/0.922  帧均峰值=0.977(帧0, compare口径帧均)  全max=2.170
+    A1 帧0/中/末 = 0.000/0.387/0.444  帧均峰值=0.444(帧28, compare口径帧均)  全max=1.900
+  lk_yifu/behit01 (31帧)
+    A0 帧0/中/末 = 1.533/1.481/1.533  帧均峰值=1.545(帧7, compare口径帧均)  全max=4.097
+    A1 帧0/中/末 = 0.000/0.487/0.000  帧均峰值=0.708(帧4, compare口径帧均)  全max=2.327
+  lk_yifu/deadbegin (71帧)
+    A0 帧0/中/末 = 1.619/1.180/2.037  帧均峰值=2.080(帧58, compare口径帧均)  全max=5.347
+    A1 帧0/中/末 = 0.000/1.095/2.406  帧均峰值=2.419(帧65, compare口径帧均)  全max=4.953
+  lk_yifu/hit01 (41帧)
+    A0 帧0/中/末 = 1.533/1.563/1.533  帧均峰值=1.725(帧15, compare口径帧均)  全max=4.451
+    A1 帧0/中/末 = 0.000/1.404/0.001  帧均峰值=1.404(帧20, compare口径帧均)  全max=4.191
+
+## Q4 每模型：赢/输动作的 frame0-vs-bind 差（|Δt| 中位、角差中位，单位同网格/度）
+  yifu        赢 15: 帧均|Δt| 1.23~2.17 角 115~173° | 输 0: -
+  hmz_yifu    赢 15: 帧均|Δt| 1.18~2.16 角 121~175° | 输 0: -
+  hmz_lian    赢 13: 帧均|Δt| 1.18~2.16 角 121~175° | 输 2: 帧均|Δt| 2.06~2.06 角 143~143°
+      输: deadbegin                    |Δt|=2.06 角=143°
+      输: flyingdead                   |Δt|=2.06 角=143°
+  daheixiong  赢 14: 帧均|Δt| 1.69~1.90 角 169~177° | 输 0: -
+  daomuzei    赢 11: 帧均|Δt| 1.19~2.19 角 147~168° | 输 4: 帧均|Δt| 2.17~2.17 角 159~159°
+      输: daomuzei_deadbegin           |Δt|=2.17 角=159°
+      输: daomuzei_flyingdead          |Δt|=2.17 角=159°
+      输: daomuzei_hit01               |Δt|=2.17 角=159°
+      输: daomuzei_hit03               |Δt|=2.17 角=159°
+  baolong     赢 15: 帧均|Δt| 1.26~1.49 角 145~150° | 输 0: -
+  jiuweihu    赢 18: 帧均|Δt| 17.87~19.79 角 153~155° | 输 0: -
+  lk_lian     赢 15: 帧均|Δt| 1.66~3.09 角 120~124° | 输 0: -
+  lk_yifu     赢 14: 帧均|Δt| 1.66~3.06 角 120~124° | 输 1: 帧均|Δt| 3.09~3.09 角 123~123°
+      输: deadbegin                    |Δt|=3.09 角=123°
+  heihou      赢  3: 帧均|Δt| 0.56~0.56 角 166~166° | 输 0: -

@@ -1,0 +1,16 @@
+const list = await (await fetch("http://127.0.0.1:9222/json/list")).json();
+const page = list.find((t) => t.type === "page" && t.webSocketDebuggerUrl);
+const ws = new WebSocket(page.webSocketDebuggerUrl);
+let id = 0;
+const send = (m, p = {}) => new Promise((res) => { const mid = ++id; const on = (e) => { const x = JSON.parse(e.data); if (x.id === mid) { ws.removeEventListener("message", on); res(x.result); } }; ws.addEventListener("message", on); ws.send(JSON.stringify({ id: mid, method: m, params: p })); });
+await new Promise((r) => ws.addEventListener("open", r, { once: true }));
+const ev = async (e) => { const r = await send("Runtime.evaluate", { expression: e, returnByValue: true, awaitPromise: true }); if (r?.exceptionDetails) return "抛错:" + (r.exceptionDetails.text); return r?.result?.value; };
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+console.log("#q 在哪：", await ev(`(() => { const q=document.getElementById("q"); let s=q.id, n=q.parentElement; for(let i=0;i<4&&n;i++){ s = (n.id? "#"+n.id : "."+n.className) + " > " + s; n=n.parentElement; } return s; })()`));
+console.log("当前主视图按钮：", await ev(`[...document.querySelectorAll("button")].filter(b=>/资产|浏览|地图|体检/.test(b.textContent)&&b.offsetParent).slice(0,6).map(b=>b.textContent.trim()+(b.className.includes("on")?"[active]":"")).join(" | ")`));
+console.log("搜索框占位：", await ev(`document.getElementById("q").placeholder`));
+await ev(`(() => { const q=document.getElementById("q"); q.value="xiyuqiezei"; q.dispatchEvent(new Event("input",{bubbles:true})); return 1; })()`);
+await wait(5000);
+console.log("行数：", await ev(`document.querySelectorAll(".row-item").length`));
+console.log("左栏底部计数：", await ev(`[...document.querySelectorAll("p,div,span")].map(e=>e.textContent).filter(t=>t&&t.includes("条资产")&&t.length<60).slice(0,2).join(" ⏎ ")`));
+ws.close();

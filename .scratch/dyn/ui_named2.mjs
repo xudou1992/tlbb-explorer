@@ -1,0 +1,12 @@
+const t = await (await fetch('http://127.0.0.1:9222/json/list')).json();
+const pg = t.find(x => x.type === 'page');
+const ws = new WebSocket(pg.webSocketDebuggerUrl);
+const pend = new Map(); let id = 0;
+ws.addEventListener('message', e => { const m = JSON.parse(e.data); if (m.id && pend.has(m.id)) { pend.get(m.id)(m.result ?? m); pend.delete(m.id); } });
+await new Promise(r => ws.addEventListener('open', r, { once: true }));
+const send = (met, params = {}) => new Promise(res => { const k = ++id; pend.set(k, res); ws.send(JSON.stringify({ id: k, method: met, params })); });
+const expr = 'JSON.stringify({chip:[].slice.call(document.querySelectorAll(".chip")).map(function(e){return (e.textContent||"").trim()}), 计数:[].slice.call(document.querySelectorAll("*")).filter(function(e){return e.children.length===0 && (e.textContent||"").indexOf("条资产")>=0}).map(function(e){return e.textContent.trim()})})';
+const r = await send('Runtime.evaluate', { expression: expr, returnByValue: true });
+const v = r.result && r.result.value ? JSON.parse(r.result.value) : r;
+console.log(JSON.stringify(v));
+ws.close();

@@ -1,0 +1,15 @@
+=== 1. 槽位名体检 ===
+refs 贴图名去重: 8715
+含 # / 空格 / 扩展名不符的可疑名: 23 个，例: ['material #156.tga', 'material #1184.tga', 'material #39.tga', 'material #27.tga', 'material #50.tga', 'material #49.tga', 'Material #0.tga', 'material #1.tga', 'material #26.tga', 'material #44.tga']
+「material #N」这类形态: 24 个
+defaultcompletemap / 模板名这类公共占位: ['defaultcompletemap.tga']
+可疑名的 from_path 后缀: [('pu', 15182), ('mtl', 12767), ('sfl', 2064), ('', 622)]
+
+=== 2. 放宽链条：按资产组取槽位 ===
+amembers 里能按裸名对上已评分 mesh 的: 2580 / 2818
+按「同组全部 .mtl/.pu 成员」取槽位：可标注 mesh = 2445 只
+旧口径（mesh->mtl 直连）：可标注 mesh = 461 只
+放宽后新增: 1985 只（合计 2445 只，占有榜 mesh 2,368 的 103.3%）
+涉及的组 kind 分布: [('npc', 1498), ('player', 37)]
+放宽口径下槽位名去重: 4940；被 >=2 只 mesh 共享的: 3309 个；前 10: [('w1351_model_long_h001.tga', 32), ('w1351_texture_c018_1.tga', 23), ('w1351_texture_lf012.tga', 23), ('w1351_texture_c022_3.tga', 19), ('w1351_texture_c002.tga', 18), ('capcrea_5.png', 16), ('w1351_texture_h042.tga', 16), ('w1351_texture_c018.tga', 16), ('w1351_texture_s015.tga', 15), ('w1351_monster_yanshihufa_lian_001.tga', 15)]
+只被 1 只 mesh 声明（标一条只落一条）: 1631 个

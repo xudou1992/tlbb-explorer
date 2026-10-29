@@ -1,0 +1,118 @@
+warning: value assigned to `root_bone` is never read
+   --> crates\core\src\export\gltf.rs:292:29
+    |
+292 |           let mut root_bone = 0usize;
+    |                               ^^^^^^ this value is reassigned later and never used
+...
+387 | /         root_bone = bones
+388 | |             .iter()
+389 | |             .position(|b| b.parent.is_none())
+390 | |             .ok_or_else(|| "骨架没有根骨（parse_hierarchy 保证单根，这里不该发生）".to_string())?;
+    | |_________________________________________________________________________________________________- `root_bone` is overwritten here before the previous value is read
+    |
+    = note: `#[warn(unused_assignments)]` (part of `#[warn(unused)]`) on by default
+
+warning: `tlbb-core` (lib) generated 1 warning
+warning: variable does not need to be mutable
+  --> crates\core\src\bin\scene_verify.rs:18:9
+   |
+18 |     let mut say = |s: String, log: &mut Vec<String>| {
+   |         ----^^^
+   |         |
+   |         help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+  --> crates\core\src\bin\scene_census.rs:46:9
+   |
+46 |     let mut say = |s: String, lines: &mut Vec<String>| {
+   |         ----^^^
+   |         |
+   |         help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: `tlbb-core` (bin "scene_verify") generated 1 warning (run `cargo fix --bin "scene_verify" -p tlbb-core` to apply 1 suggestion)
+warning: `tlbb-core` (bin "scene_census") generated 1 warning (run `cargo fix --bin "scene_census" -p tlbb-core` to apply 1 suggestion)
+   Compiling tlbb-core v0.1.0 (D:\TLGL\tlbb-explorer\crates\core)
+warning: variable does not need to be mutable
+   --> crates\core\src\bin\scene_pick.rs:139:9
+    |
+139 |     let mut say = |s: String, log: &mut Vec<String>| {
+    |         ----^^^
+    |         |
+    |         help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `stride` is never read
+  --> crates\core\src\bin\scene_pick.rs:35:5
+   |
+24 | struct Cand {
+   |        ---- field in this struct
+...
+35 |     stride: usize,
+   |     ^^^^^^
+   |
+   = note: `Cand` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: fields `mips` and `original` are never read
+   --> crates\core\src\bin\texture_cluster.rs:103:5
+    |
+ 96 | struct Tex {
+    |        --- fields in this struct
+...
+103 |     mips: i64,
+    |     ^^^^
+104 |     original: i64,
+    |     ^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `mean_lum` is never read
+   --> crates\core\src\bin\texture_cluster.rs:259:5
+    |
+253 | struct Pick {
+    |        ---- field in this struct
+...
+259 |     mean_lum: f64,
+    |     ^^^^^^^^
+
+warning: `tlbb-core` (bin "scene_pick") generated 2 warnings (run `cargo fix --bin "scene_pick" -p tlbb-core` to apply 1 suggestion)
+warning: `tlbb-core` (bin "texture_cluster") generated 2 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.69s
+     Running tests\glb_spec_skin.rs (D:/TLGL/.scratch/rc3\debug\deps\glb_spec_skin-b3bf2e447b6152e2.exe)
+
+running 4 tests
+test glb_animated_globals_match_pose_frame_every_frame ... [glb] yifu_001: joints=46 无bind骨=16 覆盖顶点=555/归一=667 照原样=114 未覆盖=226 超4影响=0 trs不符=0
+[glb]   动画 idle01: 41 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+动画对账：41 帧 × 46 骨 · 规范复合 vs pose_frame 最大差 0e0（第 0 帧 骨 ）
+ok
+test glb_animation_channels_carry_stored_ani_values ... [glb] yifu_001: joints=46 无bind骨=16 覆盖顶点=555/归一=667 照原样=114 未覆盖=226 超4影响=0 trs不符=0
+[glb]   动画 idle01: 41 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+原样性：rotation 1845 条 · translation 1845 条 · 逐元素相等
+ok
+test glb_bind_globals_match_engine_binds_elementwise ... [glb] yifu_001: joints=46 无bind骨=16 覆盖顶点=555/归一=667 照原样=114 未覆盖=226 超4影响=0 trs不符=0
+[glb]   动画 idle01: 41 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+bind 对账：46 根骨 · 逐元素比对最大差 6.3329935e-7（骨 bip01_r_upperarm）· 转置版比对最大差 2.0000
+ok
+test glb_skinned_vertices_match_engine_skinning ... [glb] yifu_001: joints=46 无bind骨=16 覆盖顶点=555/归一=667 照原样=114 未覆盖=226 超4影响=0 trs不符=0
+[glb]   动画 idle01: 41 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+参与比对：441 顶点（Σw 严格 1 且 ≤4 根）+ 226 未覆盖
+蒙皮对账：41 帧 × 441 顶点 · 规范公式 vs pose.rs 最大差 3.91146e0（第 40 帧 顶点 279 轴1）
+
+thread 'glb_skinned_vertices_match_engine_skinning' (38264) panicked at crates\core\tests\glb_spec_skin.rs:496:5:
+规范蒙皮结果应与引擎蒙皮一致，差 3.91146
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    glb_skinned_vertices_match_engine_skinning
+
+test result: FAILED. 3 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+
+error: test failed, to rerun pass `-p tlbb-core --test glb_spec_skin`

@@ -1,0 +1,42 @@
+上轴偏离角（col1 与 Y 轴夹角）: p50=0.0000°  p90=0.0000°  p99=30.2107°  p99.9=90.0000°  max=90.0000°
+  >1°: 26,109  >5°: 21,027  >45°: 1,599  >89°: 460
+|x| p50/p99/p99.9: {0.5: 119.54900360107422, 0.99: 296.2330017089844, 0.999: 314.9110107421875}
+|y| p50/p99/p99.9: {0.5: 9.959980010986328, 0.99: 41.73030090332031, 0.999: 53.11579895019531}  max=324881.0
+|z| p50/p99/p99.9: {0.5: 121.94100189208984, 0.99: 297.802001953125, 0.999: 317.47198486328125}
+精确偏航计数: {'0': 89077, '180': 13248, '+90': 856, '-180': 361, '-90': 408}
+旋转块全零实例: 2
+m[5]<0 实例: 616
+understated 文件: 0
+非统一缩放: 47,417 条 / 不同网格名 1214
+    w1351_ly_dzlongwen78_001aa.mesh: 1903
+    w1351_ly_dzlongwen78_001a.mesh: 1900
+    w1351_ly_qiangmian_002.mesh: 1866
+    w1351_ly_dizhuanchang1_002.mesh: 1397
+    w1351_tls_huatan_001.mesh: 935
+    w1351_mj_dzqianzhuan_002.mesh: 864
+    w1351_ly_dizhuanchang1_001.mesh: 842
+    w1351_dl_zhalan_001.mesh: 790
+    w1351_qhdg_dzqiangmianjin_001.mesh: 653
+    w1351_sz_dzchangfangxingkuan_001.mesh: 634
+
+候选样本（每 tag 最小、无 understated、>=2 实例）:
+  tag=749: 无尾 ('w1351_fb_langhuanyudong_001/1_4_-1.scene', 1518, 2, 1.0)
+          有尾 ('w1351_fb_tjqs_001/1_9_-3.scene', 1961, 2)
+  tag=753: 无尾 ('w1351_fb_xinsanhuan_001/1_4_-4.scene', 1097, 2, 0.5)
+          有尾 ('w1351_gj_huoyangu_001/1_0_-4.scene', 1634, 2)
+  tag=605: 无尾 ('w1351_fb_jhqx_001/1_2_-3.scene', 1230, 2, 1.0)
+          有尾 ('w1351_fb_murongshanzhuang_001/1_5_1.scene', 1817, 2)
+  tag=592: 无尾 ('w1351_fb_murongshanzhuang_001/1_-1_-5.scene', 1204, 2, 1.0)
+          有尾 ('w1351_gj_ywgm9_001/1_2_-1.scene', 2512, 4)
+  tag=324: 无尾 None
+          有尾 None
+  tag=596: 无尾 ('mqts_empty_001/1_0_0.scene', 1212, 2, 1.0)
+          有尾 None
+  tag=601: 无尾 None
+          有尾 None
+
+指定样本体检:
+  w1351_fb_songliao_001/1_-1_-6.scene: bytes=765 tag=753 n=1 declared=1 has_tail=False understated=False pure_yaw=1/1 det<0=0 grid=0/1 up_dev_max=0.00° zero_rot=0 nonuni=0
+  w1351_ll_dl_002/1_1_-5.scene: bytes=57079 tag=753 n=75 declared=75 has_tail=False understated=False pure_yaw=75/75 det<0=3 grid=75/75 up_dev_max=0.00° zero_rot=0 nonuni=22
+  w1351_ll_dl_002/1_5_-1.scene: bytes=16950 tag=753 n=21 declared=22 has_tail=True understated=False pure_yaw=19/21 det<0=0 grid=21/21 up_dev_max=46.50° zero_rot=0 nonuni=0
+  w1351_ll_xh_001/1_5_-9.scene: bytes=77069 tag=753 n=100 declared=101 has_tail=True understated=False pure_yaw=89/100 det<0=0 grid=100/100 up_dev_max=90.00° zero_rot=1 nonuni=16

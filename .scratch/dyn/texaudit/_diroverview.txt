@@ -1,0 +1,4 @@
+610 张池内贴图的夹出目录归属: [('data/source(角色/NPC)', 267), ('data/effect(特效)', 205), ('mobile_maps(场景)', 133), ('ui(UI)', 5)]
+含 /texture 段的目录里的贴图张数: 195
+data/source 下的目录数与张数: 148 267
+样例 data/source 目录: ['data/source/npc/changjingdaoju/w1351_ui_baoxiang_03', 'data/source/npc/quest/w1351_pets_xiaohualing_b5', 'data/source/player/w1351_nv/w1351_nv_xiezi', 'data/source/npc/quest/w1351_pets_xiaomuling_b5/ani', 'data/source/npc/quest/w1351_pets_maomi_b8', 'data/source/npc/quest/w1351_pets_tangguotianxin_b0/ani', 'data/source/npc/quest/w1351_new_npc_saodiseng/ani', 'data/source/npc/model/w1351_model_gbnv_wuqi_h001']

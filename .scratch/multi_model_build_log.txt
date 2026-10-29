@@ -1,0 +1,18 @@
+   Compiling encoding_rs v0.8.35
+   Compiling tlbb-core v0.1.0 (D:\TLGL\tlbb-explorer\crates\core)
+warning: value assigned to `root_bone` is never read
+   --> crates\core\src\export\gltf.rs:316:29
+    |
+316 |           let mut root_bone = 0usize;
+    |                               ^^^^^^ this value is reassigned later and never used
+...
+380 | /         root_bone = bones
+381 | |             .iter()
+382 | |             .position(|b| b.parent.is_none())
+383 | |             .ok_or_else(|| "骨架没有根骨（parse_hierarchy 保证单根，这里不该发生）".to_string())?;
+    | |_________________________________________________________________________________________________- `root_bone` is overwritten here before the previous value is read
+    |
+    = note: `#[warn(unused_assignments)]` (part of `#[warn(unused)]`) on by default
+
+warning: `tlbb-core` (lib) generated 1 warning
+    Finished `release` profile [optimized] target(s) in 27.57s

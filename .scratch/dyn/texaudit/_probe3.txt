@@ -1,0 +1,16 @@
+named tex with any path, ext not .tga: []
+all named rows by type: [('texture', 2259), ('webp', 48), ('jpeg', 10), ('png', 2)]
+resources named>0 by type: [('JBCF', 12610), ('ani', 11234), ('scene', 9288), ('mesh', 7996), ('JBPU', 7806), ('GATA', 2560), ('texture', 2259), ('binary', 1478), ('tiny', 1237), ('set', 315)]
+texture named=1 ext: [('.scene', 11933), ('.ani', 11234), ('.mtl', 8536), ('.mesh', 7996), ('.pu', 7806), ('.tani', 2560), ('.tga', 2259), ('.mdl', 2146), ('.ske', 1630), ('.sfl', 297)]
+=== 2271 hunt: path not null and width not null ===
+[(26520,)]
+[(67,)]
+=== anon texture dims/codec dist ===
+[('RGBA32', 12726), ('BC3', 9752), ('BC1', 1782), ('WEBP', 1)]
+anon >=512 both: 3705
+=== refs: role/kind dist ===
+[('.mtl', 38694, 37779), ('.tga', 30585, 25), ('.ani', 15622, 11294), ('.mesh', 9316, 8549), ('.ske', 4210, 3734), ('.png', 36, 0), ('.anis', 20, 20), ('.dds', 14, 0), ('.pu', 7, 7)]
+=== dangling ===
+[('.tga', 8672, 30560, 30560), ('.ani', 4328, 4328, 4328), ('.mesh', 587, 767, 767), ('.mtl', 530, 915, 915), ('.ske', 244, 476, 476), ('.dds', 12, 14, 14), ('.png', 4, 36, 36)]
+=== relations rel dist ===
+[('use-mtl', 37672, 37672), ('model-part', 30966, 30966), ('use-ani', 11314, 11314), ('same-stem', 9686, 9686), ('use-mesh', 8491, 8491), ('use-ske', 2139, 2139), ('use-tex', 25, 25), ('use-pu', 7, 7), ('ref', 3, 3)]

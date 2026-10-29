@@ -1,0 +1,68 @@
+
+########## R perm=(2, 0, 1) signs=(1, 1, 1) det=1  tv=1  (t'=R t) ##########
+  帧均值 0.4997~0.5271  全局max 1.1829  f0 0.5001
+
+  [A] frame0 局部：共轭后 ani 局部 vs bind 局部（旋转角 / 平移差），按父链缩进
+      bone                   ang(deg)     |dt|
+      bone11_mirror02          174.46   0.3400  (par=bone10_mirror02)
+      bone11_mirror01          168.73   0.1436  (par=bone10_mirror01)
+      bip01_l_finger0          167.47   0.3194  (par=bip01_l_hand)
+      bip01_pelvis             159.01   1.3737  (par=bip01)
+      bone11                   158.32   0.3782  (par=bone10)
+      bip01_l_hand             156.46   0.4816  (par=bip01_l_forearm)
+      bip01_r_calf             155.29   0.2399  (par=bip01_r_thigh)
+      bone11_mirror02_mirror01   155.02   0.2509  (par=bone10_mirror02_mirror01)
+      bip01_footsteps          149.93   0.9116  (par=bip01)
+      bone08                   148.57   0.0615  (par=bip01_l_upperarm)
+      bone06                   142.20   0.5332  (par=bone05)
+      bip01_l_calf             131.28   0.2840  (par=bip01_l_thigh)
+      全骨 ang: mean 80.83 med 75.25 max 174.46 | 除 bip01 外 mean 79.96
+
+  [B] 世界残差角 |G_j(0) vs B_j|（看误差是否沿子链累积）
+      bone01                 ang  177.09  |dt|  0.3458  par=bip01_r_hand
+      bone09                 ang  168.84  |dt|  0.2386  par=bip01_l_hand
+      bone11                 ang  168.68  |dt|  0.5797  par=bone10
+      bone12                 ang  168.00  |dt|  0.4608  par=bone11
+      bip01_l_hand           ang  153.96  |dt|  0.1724  par=bip01_l_forearm
+      bone11_mirror01        ang  149.87  |dt|  0.4360  par=bone10_mirror01
+      bone12_mirror01        ang  145.90  |dt|  0.3056  par=bone11_mirror01
+      bip01_r_finger0        ang  143.15  |dt|  0.3884  par=bip01_r_hand
+      bone07                 ang  142.48  |dt|  0.6903  par=bone06
+      bip01_r_thigh          ang  138.95  |dt|  0.2233  par=bip01_spine
+      bone10                 ang  138.95  |dt|  0.2233  par=bip01_spine
+      bone06                 ang  138.48  |dt|  0.7650  par=bone05
+      world ang mean 115.11 med 120.04 max 177.09
+
+  [C] 顶点位移按主导骨分组（41 帧均值），前 10 / 后 5
+      bip01_r_toe0             mean  0.9414  verts 18
+      bip01_r_upperarm         mean  0.8339  verts 35
+      bip01_r_foot             mean  0.7230  verts 25
+      bip01_r_clavicle         mean  0.7057  verts 4
+      bip01_l_upperarm         mean  0.6531  verts 33
+      bip01_l_toe0             mean  0.6371  verts 23
+      bone05                   mean  0.6217  verts 96
+      bip01_r_forearm          mean  0.5952  verts 12
+      bone08                   mean  0.5860  verts 9
+      bone12                   mean  0.4984  verts 2
+      ...
+      bone11_mirror01          mean  0.3204  verts 2
+      bone01                   mean  0.3195  verts 27
+      bip01_l_hand             mean  0.2562  verts 17
+      bone09                   mean  0.2541  verts 27
+      000                      mean  0.2163  verts 48
+
+  [D] 父子骨世界原点距离：bind 值 vs 动画 min~max（恒定=骨长没被拉断）
+      bip01_pelvis           bind 1.0991  ani 0.7708~0.8408 (mean 0.8020)  波动 0.064
+      bip01_l_calf           bind 0.1413  ani 0.2217~0.2217 (mean 0.2217)  波动 0.000
+      bip01_r_calf           bind 0.1413  ani 0.2217~0.2217 (mean 0.2217)  波动 0.000
+      bip01_r_upperarm       bind 0.1076  ani 0.1076~0.1076 (mean 0.1076)  波动 0.000
+      bone07                 bind 0.1748  ani 0.1748~0.1748 (mean 0.1748)  波动 0.000
+      bone08                 bind 0.1332  ani 0.0728~0.0728 (mean 0.0728)  波动 0.000
+      bip01_r_forearm        bind 0.1332  ani 0.1332~0.1332 (mean 0.1332)  波动 0.000
+      bone06                 bind 0.3111  ani 0.3111~0.3111 (mean 0.3111)  波动 0.000
+      波动>10% 的骨数 0 / 28
+
+  [E] 位移场 vs 最优全局刚体（Umeyama 无缩放）残差
+      f= 0  位移 RMS 0.5420 -> 去掉最优全局刚体后残差 RMS 0.4509  (刚体解释 16.8%)
+      f=20  位移 RMS 0.5637 -> 去掉最优全局刚体后残差 RMS 0.4294  (刚体解释 23.8%)
+      f=40  位移 RMS 0.5420 -> 去掉最优全局刚体后残差 RMS 0.4509  (刚体解释 16.8%)

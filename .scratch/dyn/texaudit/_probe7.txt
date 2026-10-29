@@ -1,0 +1,7 @@
+True
+tables: ['meta', 'resources', 'records', 'relations', 'assets', 'blobs', 'refs', 'agroups', 'amembers', 'agroup_names', 'dangling', 'asset_tags', 'asset_fingerprint', 'asset_identity', 'sqlite_stat1']
+tex anon: 24261
+tex named: 2259
+pool: 1650
+mesh rows: 8467
+mesh named: 8464

@@ -1,0 +1,42 @@
+import { writeFileSync } from "node:fs";
+const [clip, target, out] = process.argv.slice(2);
+const list = await (await fetch("http://127.0.0.1:9222/json/list")).json();
+const page = list.find((t) => t.type === "page" && t.webSocketDebuggerUrl);
+const ws = new WebSocket(page.webSocketDebuggerUrl);
+let id = 0; const pending = new Map();
+ws.onmessage = (ev) => { const m = JSON.parse(ev.data); if (m.id && pending.has(m.id)) { pending.get(m.id)(m); pending.delete(m.id); } };
+await new Promise((r) => ws.onopen = r);
+const call = (method, params = {}) => new Promise((res) => { const i = ++id; pending.set(i, res); ws.send(JSON.stringify({ id: i, method, params })); });
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const ev = async (e) => { const r = await call("Runtime.evaluate", { expression: e, returnByValue: true, awaitPromise: true }); return r?.result?.result?.value; };
+await call("Page.reload", { ignoreCache: true });
+await wait(6000);
+const q = JSON.stringify("xinmurongfu");
+await ev(`(() => { const q=document.getElementById("q"); q.value=${q}; q.dispatchEvent(new Event("input",{bubbles:true})); return 1; })()`);
+await wait(2500);
+await ev(`(() => { const r=[...document.querySelectorAll(".row-item")].find(x=>x.textContent.includes("xinmurongfu")); r&&r.click(); return 1; })()`);
+await wait(5000);
+await ev(`(() => { const t=document.querySelector('#dTabs .tab[data-tab="animation"]'); t&&t.click(); return 1; })()`);
+await wait(3000);
+console.log("选中:", await ev(`(() => { const b=[...document.querySelectorAll("#animPick .chip")].find(x=>x.dataset.value.includes(${JSON.stringify(clip)})); if(!b) return "无"; b.click(); return b.textContent; })()`));
+await wait(3000);
+await ev(`(() => { const s=document.getElementById("animFrame"); s&&s.scrollIntoView({block:"center"}); return 1; })()`);
+await wait(800);
+const box = await ev(`(() => { const s=document.getElementById("animFrame"); const r=s.getBoundingClientRect(); return {x:r.x,y:r.y,w:r.width,h:r.height,min:+s.min,max:+s.max,val:+s.value}; })()`);
+const y = box.y + box.h/2;
+const sx = box.x + (box.val - box.min)/(box.max-box.min)*box.w;
+const tx = box.x + (+target - box.min)/(box.max-box.min)*box.w;
+await call("Input.dispatchMouseEvent", { type: "mousePressed", x: sx, y, button: "left", clickCount: 1 });
+for (let k=1;k<=8;k++){ await call("Input.dispatchMouseEvent", { type: "mouseMoved", x: sx+(tx-sx)*k/8, y, button: "left" }); await wait(60); }
+await call("Input.dispatchMouseEvent", { type: "mouseReleased", x: tx, y, button: "left", clickCount: 1 });
+await wait(2000);
+console.log("帧:", await ev(`document.getElementById("animFrame").value`));
+// 双击画布中心复位相机
+const c = await ev(`(() => { const cv=document.querySelector("canvas"); const r=cv.getBoundingClientRect(); return {x:r.x+r.width/2,y:r.y+r.height/2,w:r.width,h:r.height}; })()`);
+console.log("画布:", JSON.stringify(c));
+for (const count of [1,2]) { await call("Input.dispatchMouseEvent", { type: "mousePressed", x: c.x, y: c.y, button: "left", clickCount: count }); await call("Input.dispatchMouseEvent", { type: "mouseReleased", x: c.x, y: c.y, button: "left", clickCount: count }); await wait(80); }
+await wait(2000);
+const shot = await call("Page.captureScreenshot", { format: "png" });
+writeFileSync(out, Buffer.from(shot.result.data, "base64"));
+console.log("图", out);
+ws.close();

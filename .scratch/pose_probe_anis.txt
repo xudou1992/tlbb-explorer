@@ -1,0 +1,16 @@
+1a2545b8c7c1d09a data data/source/npc/quest/w1351_monster_xiyuqiezei/ani/w1351_monster_xiyuqiezei_behit01.ani
+a50e431940a097dc data data/source/npc/quest/w1351_monster_xiyuqiezei/ani/w1351_monster_xiyuqiezei_dead.ani
+028c25ec805e675b data data/source/npc/quest/w1351_monster_xiyuqiezei/ani/w1351_monster_xiyuqiezei_deadbegin.ani
+d45db4390f240632 data data/source/npc/quest/w1351_monster_xiyuqiezei/ani/w1351_monster_xiyuqiezei_fight_idle01.ani
+1b75afc8147d04ce data data/source/npc/quest/w1351_monster_xiyuqiezei/ani/w1351_monster_xiyuqiezei_flyingdead.ani
+0e4233fda4e17b36 data data/source/npc/quest/w1351_monster_xiyuqiezei/ani/w1351_monster_xiyuqiezei_flyingdeadbegin.ani
+9efcf3fb82b1bed8 data data/source/npc/quest/w1351_monster_xiyuqiezei/ani/w1351_monster_xiyuqiezei_hit01.ani
+e2e952fcb84533a5 data data/source/npc/quest/w1351_monster_xiyuqiezei/ani/w1351_monster_xiyuqiezei_hit02.ani
+26d5b1fdbd015af9 data data/source/npc/quest/w1351_monster_xiyuqiezei/ani/w1351_monster_xiyuqiezei_hit03.ani
+4ec2478a169d5e73 data data/source/npc/quest/w1351_monster_xiyuqiezei/ani/w1351_monster_xiyuqiezei_idle01.ani
+92aea68b139cb4ee data data/source/npc/quest/w1351_monster_xiyuqiezei/ani/w1351_monster_xiyuqiezei_idle02.ani
+d69b058c136af83e data data/source/npc/quest/w1351_monster_xiyuqiezei/ani/w1351_monster_xiyuqiezei_idle03.ani
+b2a014f2fe102122 data data/source/npc/quest/w1351_monster_xiyuqiezei/ani/w1351_monster_xiyuqiezei_run.ani
+61c90a473d53209b data data/source/npc/quest/w1351_monster_xiyuqiezei/ani/w1351_monster_xiyuqiezei_vertigo.ani
+361180fe30a07e32 data data/source/npc/quest/w1351_monster_xiyuqiezei/ani/w1351_monster_xiyuqiezei_walk.ani
+total 15

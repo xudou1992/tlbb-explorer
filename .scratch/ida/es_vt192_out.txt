@@ -1,0 +1,79 @@
+
+== +184 -> 1400e8350
+func=1400e8350 size=3
+char sub_1400E8350()
+{
+  return 0;
+}
+
+== +192 -> 1409c24a0
+func=1409c24a0 size=37
+__int64 __fastcall sub_1409C24A0(__int64 a1)
+{
+  __int64 result; // rax
+
+  if ( !*(_QWORD *)(a1 + 8) || *(int *)(a1 + 124) <= 0 || *(_BYTE *)(a1 + 131) )
+    return 0;
+  result = *(_QWORD *)(a1 + 8);
+  _InterlockedIncrement((volatile signed __int32 *)(result + 48));
+  return result;
+}
+
+== +200 -> 1409c24d0
+func=1409c24d0 size=71
+void __fastcall sub_1409C24D0(__int64 a1)
+{
+  EnterCriticalSection((LPCRITICAL_SECTION)(a1 + 48));
+  *(_BYTE *)(a1 + 128) = 1;
+  *(_BYTE *)(a1 + 129) = 1;
+  *(_BYTE *)(a1 + 130) = 1;
+  LeaveCriticalSection((LPCRITICAL_SECTION)(a1 + 48));
+}
+
+== +208 -> 1409c2520
+func=1409c2520 size=63
+__int64 __fastcall sub_1409C2520(volatile signed __int8 *a1)
+{
+  __int64 result; // rax
+  __int64 v2; // rax
+  int v3; // [rsp+30h] [rbp+8h] BYREF
+
+  result = *((unsigned int *)a1 + 31);
+  if ( (int)result > 0 )
+  {
+    result = *((unsigned __int8 *)a1 + 131);
+    if ( !(_BYTE)result )
+    {
+      result = (unsigned __int8)_InterlockedCompareExchange8(a1 + 132, 1, 0);
+      if ( !(_BYTE)result )
+      {
+        v2 = *(_QWORD *)a1;
+        v3 = 0;
+        return (*(__int64 (__fastcall **)(volatile signed __int8 *, int *))(v2 + 40))(a1, &v3);
+      }
+    }
+  }
+  return result;
+}
+
+== +224 -> 1400e8010
+func=1400e8010 size=6
+__int64 __fastcall charNode::raw_length(charNode *this)
+{
+  return 1;
+}
+
+== +240 -> 1409c2610
+func=1409c2610 size=56
+__int64 __fastcall sub_1409C2610(__int64 a1)
+{
+  struct _RTL_CRITICAL_SECTION *v1; // rdi
+  __int64 v2; // rbx
+
+  v1 = (struct _RTL_CRITICAL_SECTION *)(a1 + 48);
+  v2 = a1;
+  EnterCriticalSection((LPCRITICAL_SECTION)(a1 + 48));
+  LOBYTE(v2) = *(_BYTE *)(v2 + 134);
+  LeaveCriticalSection(v1);
+  return (unsigned __int8)v2;
+}

@@ -1,0 +1,43 @@
+=== 反解无记录骨的 rest 世界（用有记录孩子的真实 bind 世界）===
+  000                      solved
+  bip01_footsteps          fallback
+  bip01_spine1             solved
+  bip01_neck               solved
+  bip01_head               fallback
+  bip01_l_clavicle         solved
+  bip01_l_forearm          solved
+  bip01_l_finger0          fallback
+  bip01_l_finger1          fallback
+  bip01_r_finger0          fallback
+  bip01_r_finger1          fallback
+  bip01_l_thigh            solved
+  bip01_r_thigh            solved
+  bone10                   solved
+  bone10_mirror02          solved
+  bone10_mirror01          solved
+
+  交叉验证：spine1 由不同有记录孩子反解的差
+    spine1 只有 1 个有记录孩子，无法交叉验证
+
+=== 验证：反解 blocal vs GLB blocal（干净骨 20 根）===
+  旋转角差: median 0.0239° max 0.0685° ; 平移差: median 0.00000 max 0.00000
+  qrest==blocal⁻¹（全部记录骨, 父已精确）: 
+17/30
+
+=== K 递归全解 + 修正复合播放（W_j(f) = K_j⁻¹ · G_j(f) · K_j, IBM 锚）===
+  frame0 修正世界 vs B: |Δt| med 2.69228 max 3.94005 ; 角差 med 114.6624° max 179.4513°
+  behit01          修正复合+IBM锚: 帧均 max 1.4479 全max 3.3591 重心 mean 2.7455
+  dead             修正复合+IBM锚: 帧均 max 1.7012 全max 3.6163 重心 mean 2.6355
+  deadbegin        修正复合+IBM锚: 帧均 max 1.7081 全max 3.6163 重心 mean 2.8689
+  fight_idle01     修正复合+IBM锚: 帧均 max 1.5122 全max 2.7884 重心 mean 2.6099
+  flyingdead       修正复合+IBM锚: 帧均 max 1.7081 全max 3.6163 重心 mean 2.8689
+  flyingdeadbegin  修正复合+IBM锚: 帧均 max 1.7012 全max 3.6163 重心 mean 2.6355
+  hit01            修正复合+IBM锚: 帧均 max 1.6022 全max 3.3460 重心 mean 2.6778
+  hit02            修正复合+IBM锚: 帧均 max 1.5398 全max 2.8821 重心 mean 2.9200
+  hit03            修正复合+IBM锚: 帧均 max 1.5865 全max 3.2062 重心 mean 2.5850
+  idle01           修正复合+IBM锚: 帧均 max 1.4592 全max 2.6475 重心 mean 2.7806
+  idle02           修正复合+IBM锚: 帧均 max 1.4580 全max 2.5193 重心 mean 2.8540
+  idle03           修正复合+IBM锚: 帧均 max 1.4592 全max 2.6475 重心 mean 2.7806
+  run              修正复合+IBM锚: 帧均 max 1.5462 全max 2.5925 重心 mean 2.7470
+  vertigo          修正复合+IBM锚: 帧均 max 1.4592 全max 2.6475 重心 mean 2.7806
+  walk             修正复合+IBM锚: 帧均 max 1.4768 全max 2.4691 重心 mean 2.9609

@@ -1,0 +1,7 @@
+D:\TLGL\.scratch\dyn\second_table_probe.py:8: SyntaxWarning: invalid escape sequence '\s'
+  p = sys.argv[1] if len(sys.argv) > 1 else '.scratch/out/sidecar_tree/data\source\npc\quest\w1351_boss_machao\w1351_boss_machao.mesh'
+Traceback (most recent call last):
+  File "D:\TLGL\.scratch\dyn\second_table_probe.py", line 9, in <module>
+    raw = open(p, 'rb').read()
+          ~~~~^^^^^^^^^
+OSError: [Errno 22] Invalid argument: '.scratch/out/sidecar_tree/data\\source\npc\\quest\\w1351_boss_machao\\w1351_boss_machao.mesh'

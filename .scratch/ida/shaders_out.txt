@@ -1,0 +1,32 @@
+
+===== 140602a00 size=110 =====
+_QWORD *__fastcall sub_140602A00(__int64 a1, __int64 a2)
+{
+  _QWORD *v4; // rsi
+
+  v4 = j__malloc_base(0xF0u);
+  sub_14062FB30(v4, a1, a2);
+  *v4 = &DownSample::`vftable';
+  v4[3] = &DownSample::`vftable';
+  v4[28] = 0;
+  *((_DWORD *)v4 + 58) = 0;
+  *((_WORD *)v4 + 118) = 0;
+  return v4;
+}
+
+===== 1406e3b30 size=110 =====
+__int64 sub_1406E3B30()
+{
+  __int128 v1; // [rsp+40h] [rbp-28h] BYREF
+  __int64 v2; // [rsp+50h] [rbp-18h]
+  __int64 v3; // [rsp+58h] [rbp-10h]
+  __int64 v4; // [rsp+70h] [rbp+8h] BYREF
+
+  v1 = 0;
+  v2 = 0;
+  v3 = 15;
+  LOBYTE(v1) = 0;
+  v4 = *((_QWORD *)qword_1410AB160 + 241);
+  _InterlockedIncrement((volatile signed __int32 *)(v4 + 8));
+  return sub_14062AE40(qword_1410A7F50, (unsigned int)&v4, 16, 1, 1, 0xFFFF, (__int64)&v1);
+}

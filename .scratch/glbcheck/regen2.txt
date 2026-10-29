@@ -1,0 +1,50 @@
+warning: value assigned to `root_bone` is never read
+   --> crates\core\src\export\gltf.rs:312:29
+    |
+312 |           let mut root_bone = 0usize;
+    |                               ^^^^^^ this value is reassigned later and never used
+...
+379 | /         root_bone = bones
+380 | |             .iter()
+381 | |             .position(|b| b.parent.is_none())
+382 | |             .ok_or_else(|| "骨架没有根骨（parse_hierarchy 保证单根，这里不该发生）".to_string())?;
+    | |_________________________________________________________________________________________________- `root_bone` is overwritten here before the previous value is read
+    |
+    = note: `#[warn(unused_assignments)]` (part of `#[warn(unused)]`) on by default
+
+warning: `tlbb-core` (lib) generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.08s
+     Running `D:/TLGL/.scratch/rc3\debug\mesh2glb.exe '--tree=D:/TLGL/.scratch/out/tree/data/source/npc/quest/w1351_monster_xiyuqiezei' '--db=D:/TLGL/.scratch/resources.db' '--out=D:/TLGL/.scratch/glb_rigged' --rigged`
+[glb] w1351_monster_xiyuqiezei_shoutao_001: joints=46 无bind骨=16 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=42 超4影响=0 trs不符=0
+[glb]   动画 behit01: 21 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 dead: 2 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 deadbegin: 65 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 fight_idle01: 56 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 flyingdead: 65 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 flyingdeadbegin: 2 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 hit01: 31 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 hit02: 36 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 hit03: 36 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 idle01: 41 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 idle02: 61 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 idle03: 41 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 run: 26 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 vertigo: 41 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 walk: 31 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb] w1351_monster_xiyuqiezei_yifu_001: joints=46 无bind骨=16 覆盖顶点=529 归一=441 差额挂根骨=88 按和强归=0 未覆盖=252 超4影响=0 trs不符=0
+[glb]   动画 behit01: 21 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 dead: 2 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 deadbegin: 65 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 fight_idle01: 56 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 flyingdead: 65 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 flyingdeadbegin: 2 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 hit01: 31 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 hit02: 36 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 hit03: 36 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 idle01: 41 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 idle02: 61 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 idle03: 41 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 run: 26 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 vertigo: 41 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+[glb]   动画 walk: 31 帧 · 轨道 46 条 · 对上 45 · 对不上 1 个 ["(unnamed)"]
+mesh=2 glb=2 dup=0 fail=0 rigged=2 normals=2 uv=2 multiSlot=0 verts=823 tris=902 uniqueGlb=2 manifest=D:/TLGL/.scratch/glb_rigged\manifest.json

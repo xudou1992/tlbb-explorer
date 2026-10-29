@@ -1,0 +1,7 @@
+track keys ['bone', 'positions', 'rotations', 'scales']
+  bone = 'bip02'
+  positions list 16 first=[0.0, 0.0, 0.0]
+  rotations list 16 first=[0.7071070075035095, -3.292719985559245e-10, 3.292719985559245e-10, -0.7071070075035095]
+  scales list 16 first=1.0
+anims files: ['w1351_monster_guifengzhuangke_behit01.ani', 'w1351_monster_guifengzhuangke_dead.ani', 'w1351_monster_guifengzhuangke_deadbegin.ani', 'w1351_monster_guifengzhuangke_fight_idle01.ani', 'w1351_monster_guifengzhuangke_flyingdead.ani', 'w1351_monster_guifengzhuangke_flyingdeadbegin.ani', 'w1351_monster_guifengzhuangke_hit01.ani', 'w1351_monster_guifengzhuangke_hit02.ani', 'w1351_monster_guifengzhuangke_idle01.ani', 'w1351_monster_guifengzhuangke_idle02.ani', 'w1351_monster_guifengzhuangke_idle03.ani', 'w1351_monster_guifengzhuangke_run.ani', 'w1351_monster_guifengzhuangke_vertigo.ani', 'w1351_monster_guifengzhuangke_walk.ani']
+nodes with skin? ['bind', 'bindPosition', 'name']

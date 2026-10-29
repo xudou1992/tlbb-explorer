@@ -1,0 +1,79 @@
+
+
+===== 1407a79a0 size=223 =====
+callees: 
+callers: 0x1406c70f9 0x1407acd1a 0x1412350d0
+char __fastcall sub_1407A79A0(
+        __int64 a1,
+        __int64 a2,
+        __int64 a3,
+        __int64 a4,
+        char a5,
+        char a6,
+        __int64 a7,
+        char a8,
+        char a9,
+        char a10)
+{
+  __int64 v14; // rax
+  __int64 v15; // r10
+  char v18; // [rsp+30h] [rbp-18h]
+
+  if ( *(_BYTE *)(a1 + 156) )
+    return 0;
+  *(_BYTE *)(a1 + 248) = a6 ^ 1;
+  *(_BYTE *)(a1 + 250) = a5;
+  if ( !*(_DWORD *)(*(_QWORD *)(a1 + 144) + 12LL) )
+  {
+    _InterlockedIncrement((volatile signed __int32 *)(*(_QWORD *)a2 + 8LL));
+    sub_1401369D0(*(_QWORD *)(a1 + 144));
+    *(_QWORD *)(a1 + 144) = *(_QWORD *)a2;
+  }
+  *(_BYTE *)(a1 + 245) = a8;
+  *(_BYTE *)(a1 + 246) = a9;
+  v14 = sub_1407A7C10();
+  v15 = *(_QWORD *)(a1 + 8);
+  *(_QWORD *)(a1 + 176) = v14;
+  v18 = 0;
+  return (*(char (__fastcall **)(__int64, __int64, __int64, __int64, _QWORD, char, char))(v15 + 96))(
+           a1 + 8,
+           a2,
+           a3,
+           a4,
+           0,
+           a10,
+           v18);
+}
+
+
+===== 1406c77b0 size=202 =====
+callees: 
+callers: 0x1406c6fed 0x1406c7152 0x1407accca 0x1407ace26 0x14122d7b0 0x14122d7bc
+char *sub_1406C77B0()
+{
+  char *v0; // rbx
+
+  v0 = (char *)j__malloc_base(0x108u);
+  sub_1406C5240(v0);
+  *((_DWORD *)v0 + 38) = 8;
+  *(_QWORD *)v0 = &EsTexture2D::`vftable';
+  *((_QWORD *)v0 + 1) = &EsTexture2D::`vftable';
+  *((_QWORD *)v0 + 24) = 0;
+  *((_QWORD *)v0 + 25) = 0;
+  *((_QWORD *)v0 + 26) = 0;
+  *(_QWORD *)(v0 + 220) = 0;
+  *((_QWORD *)v0 + 22) = 0;
+  v0[246] = 0;
+  *((_DWORD *)v0 + 58) = 0;
+  *((_QWORD *)v0 + 20) = 0;
+  *((_QWORD *)v0 + 21) = 0;
+  *(_QWORD *)(v0 + 249) = 256;
+  *((_WORD *)v0 + 122) = 37;
+  *(_WORD *)(v0 + 247) = 256;
+  *((_DWORD *)v0 + 57) = -1;
+  *((_DWORD *)v0 + 54) = 0;
+  *((_QWORD *)v0 + 23) = 0;
+  *((_DWORD *)v0 + 59) = 1;
+  *((_DWORD *)v0 + 60) = 1;
+  return v0;
+}

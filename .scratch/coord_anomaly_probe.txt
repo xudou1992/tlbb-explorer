@@ -1,0 +1,128 @@
+交叉表（纯偏航 × det × 缩放统一）:
+  pure_yaw=True   det=pos   uniform=True   208,375
+  pure_yaw=True   det=pos   uniform=False  43,926
+  pure_yaw=False  det=pos   uniform=True   24,682
+  pure_yaw=True   det=neg   uniform=True   3,715
+  pure_yaw=True   det=neg   uniform=False  1,860
+  pure_yaw=False  det=pos   uniform=False  1,528
+  pure_yaw=False  det=neg   uniform=True   810
+  pure_yaw=False  det=neg   uniform=False  101
+  pure_yaw=True   det=zero  uniform=False  2
+
+det<0 模式（负元素位置）:
+  m0: 2,158
+  m10: 1,681
+  m2|m8|m10: 1,502
+  m0|m2|m8: 1,094
+  m0|m5|m8|m10: 9
+  m0|m2|m5|m10: 8
+  m0|m8: 6
+  m0|m2: 6
+  m2|m8: 6
+  m2|m5: 4
+  m5|m8: 4
+  m2|m10: 3
+  m0|m10: 2
+  m0|m2|m8|m10: 2
+  m0|m2|m5: 1
+
+非纯偏航模式（非零元素）:
+  m1|m4|m6|m9: 17,584
+  m4|m6|m9: 4,062
+  m1|m4|m6: 3,838
+  m6|m9: 906
+  m1|m4: 557
+  m4|m9: 83
+  m1|m6: 67
+  : 18
+  m1|m4|m9: 4
+  m1|m6|m9: 2
+
+det≈0: 2 条
+  w1351_ll_xh_001/1_5_-9.scene#62  w1351_sz_xiaoshumiao_001.mesh
+    m=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 187.998993, 9.99963, -261.567993, 1.0]
+  w1351_ll_yxh_001/1_5_-9.scene#50  w1351_sz_xiaoshumiao_001.mesh
+    m=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 187.998993, 8.302, -261.567993, 1.0]
+
+平移离群 (|y|>1000 或 |x|>20000 或 |z|>20000): 4 条（截断 200）
+  w1351_fb_langhuanyudong_001/1_-1717_-2645.scene#0  w1351_dl_darongshu_002.mesh  pos=[-54921.8984375, 30.3533992767334, -84616.5]
+  w1351_fb_langhuanyudong_002/1_-1717_-2645.scene#0  w1351_dl_darongshu_002.mesh  pos=[-54921.8984375, 30.3533992767334, -84616.5]
+  w1351_fb_wanjiegu_002/1_-1717_-2645.scene#0  w1351_dl_darongshu_002.mesh  pos=[-54921.8984375, 30.3533992767334, -84616.5]
+  w1351_gj_qinhuangerceng_001/1_7_-2.scene#25  w1351_qhdg_dzqiangmiandiaowen_002.mesh  pos=[233.74000549316406, -324881.0, -59.64820098876953]
+
+大理 det<0: 53 条;  大理非纯偏航: 13 条
+  [det<0] w1351_ll_dl_002/1_1_-5.scene#72 w1351_wls_muzhalanwangge_001.mesh yaw=-178.62 neg_at=('m0', 'm2', 'm8') det=-1.364 sx=1.330 sy=1.115 sz=0.920
+  [det<0] w1351_ll_dl_002/1_1_-5.scene#73 w1351_wls_muzhalanwangge_001.mesh yaw=-1.23 neg_at=('m2', 'm8', 'm10') det=-1.149 sx=1.120 sy=1.115 sz=0.920
+  [det<0] w1351_ll_dl_002/1_1_-5.scene#74 w1351_wls_muzhalanwangge_001.mesh yaw=-75.19 neg_at=('m2', 'm8', 'm10') det=-1.149 sx=1.120 sy=1.115 sz=0.920
+  [det<0] w1351_ll_dl_002/1_1_-6.scene#48 w1351_wls_muzhalanwangge_001.mesh yaw=-178.62 neg_at=('m0', 'm2', 'm8') det=-1.364 sx=1.330 sy=1.115 sz=0.920
+  [det<0] w1351_ll_dl_002/1_1_-6.scene#49 w1351_wls_muzhalanwangge_001.mesh yaw=-96.85 neg_at=('m0', 'm2', 'm8') det=-1.364 sx=1.330 sy=1.115 sz=0.920
+  [det<0] w1351_ll_dl_002/1_1_-7.scene#54 w1351_wls_muzhalanwangge_001.mesh yaw=93.97 neg_at=('m0',) det=-1.364 sx=1.330 sy=1.115 sz=0.920
+  [det<0] w1351_ll_dl_002/1_1_-8.scene#76 w1351_wls_muzhalanwangge_001.mesh yaw=4.51 neg_at=('m10',) det=-1.364 sx=1.330 sy=1.115 sz=0.920
+  [det<0] w1351_ll_dl_002/1_2_-1.scene#34 w1351_wls_muzhalanwangge_001.mesh yaw=98.1 neg_at=('m0',) det=-1.300 sx=1.300 sy=1.000 sz=1.000
+  [det<0] w1351_ll_dl_002/1_2_-5.scene#91 w1351_wls_muzhalanwangge_001.mesh yaw=-108.46 neg_at=('m0', 'm2', 'm8') det=-1.364 sx=1.330 sy=1.115 sz=0.920
+  [det<0] w1351_ll_dl_002/1_2_-5.scene#92 w1351_wls_muzhalanwangge_001.mesh yaw=-7.48 neg_at=('m2', 'm8', 'm10') det=-1.364 sx=1.330 sy=1.115 sz=0.920
+  [tilt] w1351_ll_dl_002/1_1_-8.scene#77 w1351_yn_gancaodui_001.mesh which=('m1', 'm4', 'm6', 'm9') max_mag=0.445621
+  [tilt] w1351_ll_dl_002/1_3_-10.scene#22 w1351_scene_dali_pubu01.pu which=('m1', 'm4', 'm6') max_mag=0.442289
+  [tilt] w1351_ll_dl_002/1_4_-7.scene#85 w1351_dl_zhuzi_001.mesh which=('m1', 'm4', 'm6') max_mag=0.00283615
+  [tilt] w1351_ll_dl_002/1_4_-7.scene#87 w1351_dl_zhuzi_001.mesh which=('m1', 'm4', 'm6') max_mag=0.0283526
+  [tilt] w1351_ll_dl_002/1_5_-1.scene#10 w1351_dl_huacu_010.mesh which=('m1', 'm4', 'm6', 'm9') max_mag=0.293708
+  [tilt] w1351_ll_dl_002/1_5_-1.scene#14 w1351_dl_juchicao_001.mesh which=('m1', 'm4', 'm6') max_mag=0.471493
+  [tilt] w1351_ll_dl_002/1_5_-2.scene#63 w1351_sz_xiaoshumiao_001.mesh which=('m1', 'm4', 'm6', 'm9') max_mag=0.219646
+  [tilt] w1351_ll_dl_002/1_6_-2.scene#48 w1351_dl_yezishu_001.mesh which=('m1', 'm4', 'm6') max_mag=0.181889
+  [tilt] w1351_ll_dl_002/1_7_-3.scene#62 w1351_lq_yingchunhua_001.mesh which=('m1', 'm4', 'm6', 'm9') max_mag=0.204163
+  [tilt] w1351_ll_dl_002/1_7_-3.scene#65 w1351_ly_huacu_001.mesh which=('m1', 'm4', 'm6', 'm9') max_mag=0.136771
+  [tilt] w1351_ll_dl_002/1_8_-2.scene#36 w1351_dl_juchicao_001.mesh which=('m1', 'm4', 'm6') max_mag=0.286188
+  [tilt] w1351_ll_dl_002/1_8_-2.scene#80 w1351_xh_zhuzi_001.mesh which=('m4', 'm6', 'm9') max_mag=0.0694481
+  [tilt] w1351_ll_dl_002/1_9_-8.scene#24 w1351_shgz_denglongwu_001.mesh which=('m1', 'm4', 'm6') max_mag=0.0871558
+
+同名互证（异常网格名在库内全部出现处）top50:
+  w1351_xh_caoye_001.mesh: 出现 6487 次, 纯偏航 98.01%, m5 top [(1.0, 5309), (0.788, 386), (0.85, 320)]
+  w1351_sz_luwei_001.mesh: 出现 5298 次, 纯偏航 90.34%, m5 top [(0.65, 3154), (0.652, 566), (0.645, 282)]
+  w1351_bpzd_muzhalanjian_001.mesh: 出现 3612 次, 纯偏航 90.14%, m5 top [(1.0, 3251), (0.526, 66), (0.676, 54)]
+  w1351_ly_huacu_001.mesh: 出现 3398 次, 纯偏航 35.02%, m5 top [(0.65, 620), (0.645, 359), (0.647, 243)]
+  w1351_dl_bajiao_002.mesh: 出现 3332 次, 纯偏航 62.45%, m5 top [(0.65, 1647), (0.652, 145), (0.647, 130)]
+  w1351_ly_caihua_001.mesh: 出现 2978 次, 纯偏航 93.99%, m5 top [(0.65, 2058), (0.56, 390), (0.647, 146)]
+  w1351_qiju_yamenlangan_001.mesh: 出现 2716 次, 纯偏航 100.00%, m5 top [(1.0, 2716)]
+  w1351_dl_yezishu_001.mesh: 出现 2712 次, 纯偏航 96.53%, m5 top [(0.65, 1385), (0.5, 174), (0.45, 134)]
+  w1351_tls_huatan_001.mesh: 出现 2612 次, 纯偏航 100.00%, m5 top [(1.0, 1980), (1.095, 470), (1.08, 68)]
+  w1351_ly_youcaihua_001.mesh: 出现 2568 次, 纯偏航 98.21%, m5 top [(0.647, 2059), (0.65, 368), (0.645, 125)]
+  w1351_dl_juchicao_001.mesh: 出现 2271 次, 纯偏航 73.71%, m5 top [(0.65, 1058), (0.652, 190), (0.647, 176)]
+  w1351_dl_zhuzi_001.mesh: 出现 2171 次, 纯偏航 99.08%, m5 top [(0.65, 1103), (0.645, 301), (0.647, 91)]
+  w1351_ly_qiangmian_002.mesh: 出现 2158 次, 纯偏航 100.00%, m5 top [(1.01, 987), (1.0, 386), (1.002, 242)]
+  w1351_wls_xunyicao_001.mesh: 出现 2016 次, 纯偏航 91.77%, m5 top [(1.0, 1927), (0.996, 38), (1.35, 16)]
+  w1351_ly_dzlongwen78_001aa.mesh: 出现 1930 次, 纯偏航 100.00%, m5 top [(0.88, 1568), (0.9, 198), (1.0, 164)]
+  w1351_ly_dizhuanchang1_002.mesh: 出现 1729 次, 纯偏航 99.65%, m5 top [(1.0, 1669), (1.13, 48), (0.98, 6)]
+  w1351_em_zhuguocong_001.mesh: 出现 1671 次, 纯偏航 52.12%, m5 top [(1.0, 848), (0.999, 41), (0.995, 31)]
+  w1351_dl_zhalan_001.mesh: 出现 1606 次, 纯偏航 99.88%, m5 top [(0.65, 1340), (0.6, 250), (0.57, 10)]
+  w1351_sz_guanmubaihua_001.mesh: 出现 1598 次, 纯偏航 63.27%, m5 top [(0.65, 542), (0.6, 256), (0.647, 58)]
+  w1351_dl_huacu_011.mesh: 出现 1501 次, 纯偏航 99.93%, m5 top [(0.65, 1079), (0.645, 312), (0.75, 62)]
+  w1351_sz_padiguanmu_001.mesh: 出现 1470 次, 纯偏航 42.59%, m5 top [(0.65, 449), (0.652, 65), (0.647, 60)]
+  w1351_yn_shumiaosan_001.mesh: 出现 1375 次, 纯偏航 99.85%, m5 top [(1.0, 1169), (0.65, 70), (0.848, 39)]
+  w1351_mj_tielian_001.mesh: 出现 1355 次, 纯偏航 99.26%, m5 top [(1.0, 1308), (5.648, 14), (2.65, 6)]
+  w1351_jg_zhuziwu_001.mesh: 出现 1212 次, 纯偏航 98.51%, m5 top [(1.0, 955), (0.85, 38), (0.845, 21)]
+  w1351_ly_taohua_001.mesh: 出现 1190 次, 纯偏航 96.47%, m5 top [(0.65, 796), (0.652, 194), (0.647, 88)]
+  w1351_st_zhuzisan_001.mesh: 出现 1166 次, 纯偏航 49.23%, m5 top [(1.0, 263), (0.992, 30), (1.11, 24)]
+  w1351_wls_juchicaohuang_001.mesh: 出现 1139 次, 纯偏航 86.83%, m5 top [(0.65, 588), (1.0, 84), (0.598, 70)]
+  w1351_ly_guanmucong_001.mesh: 出现 1125 次, 纯偏航 56.89%, m5 top [(0.645, 422), (0.65, 186), (0.647, 62)]
+  w1351_dl_cao_001.mesh: 出现 1086 次, 纯偏航 99.72%, m5 top [(0.65, 304), (0.423, 108), (0.678, 90)]
+  w1351_yn_huangyezi_001.mesh: 出现 1077 次, 纯偏航 47.73%, m5 top [(1.0, 478), (0.999, 38), (0.998, 36)]
+  w1351_ly_hongyeshu_001.mesh: 出现 1048 次, 纯偏航 99.90%, m5 top [(0.65, 792), (0.647, 71), (0.645, 61)]
+  w1351_lq_yingchunhua_001.mesh: 出现 1029 次, 纯偏航 53.74%, m5 top [(1.0, 325), (0.645, 71), (0.999, 30)]
+  w1351_cj_caodui_002.mesh: 出现 975 次, 纯偏航 89.54%, m5 top [(1.205, 576), (1.0, 114), (1.15, 49)]
+  w1351_dh_huyangkuzhi_001.mesh: 出现 968 次, 纯偏航 70.35%, m5 top [(0.848, 266), (1.0, 199), (0.845, 90)]
+  w1351_sz_caocong_001.mesh: 出现 920 次, 纯偏航 55.98%, m5 top [(1.0, 359), (0.85, 88), (0.65, 42)]
+  w1351_st_zhalan_001.mesh: 出现 919 次, 纯偏航 99.46%, m5 top [(1.0, 900), (0.65, 11), (1.15, 3)]
+  w1351_nh_yezhishuyi_001.mesh: 出现 888 次, 纯偏航 98.76%, m5 top [(1.0, 374), (1.65, 74), (1.645, 43)]
+  w1351_ss_huangyezi_001.mesh: 出现 852 次, 纯偏航 41.31%, m5 top [(1.0, 368), (0.999, 36), (1.431, 23)]
+  w1351_ly_songshu_001.mesh: 出现 841 次, 纯偏航 96.20%, m5 top [(0.65, 476), (0.645, 93), (0.647, 55)]
+  w1351_mrsz_mulangan_001.mesh: 出现 840 次, 纯偏航 97.86%, m5 top [(1.0, 822), (0.99, 8), (0.995, 6)]
+  w1351_em_weilan_001.mesh: 出现 819 次, 纯偏航 100.00%, m5 top [(1.0, 735), (0.9, 84)]
+  w1351_xh_zhuzi_001.mesh: 出现 792 次, 纯偏航 97.10%, m5 top [(1.0, 450), (2.0, 69), (1.808, 23)]
+  w1351_dl_xiangjiaoshu_001.mesh: 出现 788 次, 纯偏航 99.62%, m5 top [(0.65, 316), (0.652, 40), (0.45, 28)]
+  w1351_th_zhalan_001.mesh: 出现 788 次, 纯偏航 99.24%, m5 top [(1.0, 782), (-0.0, 2), (0.152, 2)]
+  w1351_ly_zhuzhalan_001.mesh: 出现 787 次, 纯偏航 80.81%, m5 top [(0.65, 492), (0.652, 67), (0.647, 42)]
+  w1351_sz_zhalanliba_001.mesh: 出现 785 次, 纯偏航 100.00%, m5 top [(1.0, 785)]
+  w1351_dl_bajiao_003.mesh: 出现 772 次, 纯偏航 99.74%, m5 top [(0.65, 520), (0.7, 75), (0.685, 32)]
+  w1351_cj_caodui_003.mesh: 出现 768 次, 纯偏航 94.27%, m5 top [(1.0, 667), (0.717, 26), (0.76, 11)]
+  w1351_dh_kucao_001.mesh: 出现 749 次, 纯偏航 21.76%, m5 top [(1.0, 214), (0.999, 84), (0.998, 58)]
+  w1351_ly_huangyeguanmu_001.mesh: 出现 721 次, 纯偏航 55.62%, m5 top [(0.65, 209), (0.652, 75), (0.647, 29)]

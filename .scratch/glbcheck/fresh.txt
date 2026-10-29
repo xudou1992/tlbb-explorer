@@ -1,0 +1,7 @@
+validator 2.0.0-dev.3.10
+==== ../glb_rigged/m_db18794d0000cd38.glb
+numErrors=0 numWarnings=0 numInfos=1 numHints=0 messages=1 truncated=false
+       1 × UNUSED_OBJECT | sev=2 | This object may be unused. | ptr=/meshes/0/primitives/0/attributes/TEXCOORD_0
+==== ../glb_rigged/m_8ff895cd00003a5c.glb
+numErrors=0 numWarnings=0 numInfos=1 numHints=0 messages=1 truncated=false
+       1 × UNUSED_OBJECT | sev=2 | This object may be unused. | ptr=/meshes/0/primitives/0/attributes/TEXCOORD_0

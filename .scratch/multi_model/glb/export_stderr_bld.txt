@@ -1,0 +1,2 @@
+[glb] w1351_mrsz_bulian_001: joints=13 无bind骨=5 覆盖顶点=0 归一=0 差额挂根骨=0 按和强归=0 未覆盖=328 超4影响=0 trs不符=0
+[glb]   动画 buliandeng_001_idle: 101 帧 · 轨道 13 条 · 对上 12 · 对不上 1 个 ["(unnamed)"]

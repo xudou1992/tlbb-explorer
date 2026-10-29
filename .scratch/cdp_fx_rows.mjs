@@ -1,0 +1,11 @@
+const list = await (await fetch("http://127.0.0.1:9222/json/list")).json();
+const page = list.find((t) => t.type === "page" && t.webSocketDebuggerUrl);
+const ws = new WebSocket(page.webSocketDebuggerUrl);
+let id = 0;
+const send = (m, p = {}) => new Promise((res) => { const mid = ++id; const on = (e) => { const x = JSON.parse(e.data); if (x.id === mid) { ws.removeEventListener("message", on); res(x.result); } }; ws.addEventListener("message", on); ws.send(JSON.stringify({ id: mid, method: m, params: p })); });
+await new Promise((r) => ws.addEventListener("open", r, { once: true }));
+const ev = async (e) => { const r = await send("Runtime.evaluate", { expression: e, returnByValue: true }); if (r?.exceptionDetails) return "抛错:" + r.exceptionDetails.text; return r?.result?.value; };
+console.log("表头：", await ev(`[...document.querySelectorAll("#fxTable thead th")].map(t=>t.textContent).join("|")`));
+console.log("逐行（类别/数量/原文前 60 字）：");
+console.log(await ev(`[...document.querySelectorAll("#fxTable tbody tr")].map(r=>[...r.children].map(c=>c.textContent.slice(0,60)).join(" § ")).join("\n")`));
+ws.close();

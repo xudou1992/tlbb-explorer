@@ -1,0 +1,32 @@
+rel 口径核对：use-mtl 两端类型 = 8815
+model-part 里 from 是 mesh 的边: 5011
+model-part 里 to 是 mtl 且 from 是 mesh 的边: 682
+有 mtl 边的 mesh（按裸名）: 529
+已评分 2818 只 mesh 中能拿到「声明贴图名」的: 474 只
+mesh 名与某个声明贴图名逐字同干: 316 / 474
+  例 w1351_model_xx_nan_mianju_x03 -> ['defaultcompletemap.tga']
+  例 w1351_model_gbnan_long_wy_h003 -> ['w1351_texture_h010.tga']
+  例 w1351_zuoqi_xiong -> ['w1351_zuoqi_xiong.tga']
+  例 w1351_boss_xinduanyanqing01 -> ['w1351_boss_xinduanyanqing01.tga']
+  例 w1351_monster_dujiangshi -> ['w1351_monster_dujiangshi.tga']
+  例 w1351_model_xy_juanzhou_h001 -> ['w1351_model_xy_jz01.tga']
+  例 w1351_zuoqi_lieyanshi -> ['w1351_zuoqi_lieyanshi.tga']
+  例 w1351_monster_xiyujiefeilv -> ['w1351_monster_xiyujiefeilv.tga']
+声明槽位名去重: 898；其中 dangling 有记录的: 897
+被最多已评分 mesh 共享的槽位名 前 12: [('w1351_model_long_h001.tga', 14), ('w1351_texture_lf012.tga', 5), ('w1351_texture_c002.tga', 5), ('w1351_texture_h010.tga', 4), ('w1351_model_lf004.tga', 4), ('w1351_model_jingji_h001.tga', 3), ('wyh_mode_qs_skill02_liantiao.tga', 3), ('w1351_texture_zq_h002.tga', 3), ('defaultcompletemap.tga', 2), ('w1351_model_xy_jz01.tga', 2), ('w1351_texture_z003.tga', 2), ('w1351_npc_xiaonvhai05_yanjing.tga', 2)]
+只被 1 只 mesh 使用的槽位名: 865 个
+dangling.n_refs 分布（全表贴图名）: [('1', 6293), ('2-5', 1519), ('6-20', 623), ('>20', 253)]
+
+按槽位名标注的「带动量」（同一槽位名可被多只 mesh 声明）：
+  w1351_model_long_h001.tga                  覆盖 mesh 14 只, dangling.n_refs=24
+  w1351_texture_lf012.tga                    覆盖 mesh 5 只, dangling.n_refs=59
+  w1351_texture_c002.tga                     覆盖 mesh 5 只, dangling.n_refs=55
+  w1351_texture_h010.tga                     覆盖 mesh 4 只, dangling.n_refs=32
+  w1351_model_lf004.tga                      覆盖 mesh 4 只, dangling.n_refs=5
+  w1351_model_jingji_h001.tga                覆盖 mesh 3 只, dangling.n_refs=5
+  wyh_mode_qs_skill02_liantiao.tga           覆盖 mesh 3 只, dangling.n_refs=4
+  w1351_texture_zq_h002.tga                  覆盖 mesh 3 只, dangling.n_refs=9
+  defaultcompletemap.tga                     覆盖 mesh 2 只, dangling.n_refs=2
+  w1351_model_xy_jz01.tga                    覆盖 mesh 2 只, dangling.n_refs=3
+  w1351_texture_z003.tga                     覆盖 mesh 2 只, dangling.n_refs=83
+  w1351_npc_xiaonvhai05_yanjing.tga          覆盖 mesh 2 只, dangling.n_refs=2

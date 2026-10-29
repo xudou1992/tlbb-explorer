@@ -1,0 +1,40 @@
+########################################################################
+=== hamigua ===
+  mesh=1 个, ani=3 条, 骨 2, 静态区=解出
+  [Y] 静态区 w1351_caiji_hamigua_01_idle01.ani vs w1351_caiji_hamigua_01_idle02.ani: 0/120 字节不同
+  [Z] 3 条动作按 frame0 局部分组: [3]
+      最大组(3 条): w1351_caiji_hamigua_01_idle01.ani, w1351_caiji_hamigua_01_idle02.ani, w1351_caiji_hamigua_01_idle03.ani
+  [Z2] qrest==blocal⁻¹: 0/0 
+       off48==第一孩子轨道t: 0/0
+########################################################################
+=== heihou ===
+  mesh=1 个, ani=3 条, 骨 29, 静态区=解出
+  [Y] 静态区 w1351_caiji_heihou_01_idle01.ani vs w1351_caiji_heihou_01_idle02.ani: 20/1740 字节不同
+  [Z] 3 条动作按 frame0 局部分组: [2, 1]
+      最大组(2 条): w1351_caiji_heihou_01_idle01.ani, w1351_caiji_heihou_01_idle03.ani
+  [Z2] qrest==blocal⁻¹: 13/16 miss: bip01_pelvis, bip01_r_clavicle, bip01_tail
+       off48==第一孩子轨道t: 16/21
+########################################################################
+=== duchanchu ===
+  mesh=1 个, ani=3 条, 骨 26, 静态区=解出
+  [Y] 静态区 w1351_caiji_duchanchu_01_idle01.ani vs w1351_caiji_duchanchu_01_idle02.ani: 0/1560 字节不同
+  [Z] 3 条动作按 frame0 局部分组: [3]
+      最大组(3 条): w1351_caiji_duchanchu_01_idle01.ani, w1351_caiji_duchanchu_01_idle02.ani, w1351_caiji_duchanchu_01_idle03.ani
+  [Z2] qrest==blocal⁻¹: 14/16 miss: bone011, bone021
+       off48==第一孩子轨道t: 19/20
+########################################################################
+=== bosijihao ===
+  mesh=1 个, ani=3 条, 骨 2, 静态区=解出
+  [Y] 静态区 w1351_caiji_bosijihao_01_idle01.ani vs w1351_caiji_bosijihao_01_idle02.ani: 0/120 字节不同
+  [Z] 3 条动作按 frame0 局部分组: [3]
+      最大组(3 条): w1351_caiji_bosijihao_01_idle01.ani, w1351_caiji_bosijihao_01_idle02.ani, w1351_caiji_bosijihao_01_idle03.ani
+  [Z2] qrest==blocal⁻¹: 0/0 
+       off48==第一孩子轨道t: 0/0
+########################################################################
+=== xiyuqiezei ===
+  mesh=2 个, ani=15 条, 骨 46, 静态区=解出
+  [Y] 静态区 w1351_monster_xiyuqiezei_behit01.ani vs w1351_monster_xiyuqiezei_dead.ani: 3/2760 字节不同
+  [Z] 15 条动作按 frame0 局部分组: [3, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1]
+      最大组(3 条): w1351_monster_xiyuqiezei_idle01.ani, w1351_monster_xiyuqiezei_idle03.ani, w1351_monster_xiyuqiezei_vertigo.ani
+  [Z2] qrest==blocal⁻¹: 15/20 miss: bip01_pelvis, bone09, bone08, bone01, bone10_mirror02_mirror01
+       off48==第一孩子轨道t: 28/29

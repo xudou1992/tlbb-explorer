@@ -1,0 +1,9 @@
+D:\TLGL\.scratch\dyn\second_table_probe.py:8: SyntaxWarning: invalid escape sequence '\s'
+  p = sys.argv[1] if len(sys.argv) > 1 else '.scratch/out/sidecar_tree/data\source\npc\quest\w1351_boss_machao\w1351_boss_machao.mesh'
+w1351_boss_machao.mesh · 顶点数 3641
+记录 63 条：带第一张表 60 · 紧跟还有第二张表的 0 · 一张都没有的 3
+
+只读第一张表：顶点 3331 · 和≈1.0 的 3257 · 和<1 的 74 · 和>1 的 0
+两张都读（若第二张存在）：顶点 3331 · 和≈1.0 的 3257 · 和<1 的 74 · 和>1 的 0
+
+前 10 条（骨名 · N1 · N2）：bone99(390/0), bip01_r_thigh(200/0), bip01_neck(454/0), bone01(757/0), bone03(68/0), bone05(106/0), bone07(111/0), bone09(93/0), bone11(54/0), bone13(20/0)

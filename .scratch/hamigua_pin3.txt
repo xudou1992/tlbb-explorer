@@ -1,0 +1,17 @@
+w1351_model_fenghuang_h001.mesh              declared=43 tx=(1,5) start=0x38cc size=35464 root=000
+w1351_model_spider_h02.mesh                  declared=49 tx=(1,4) start=0x98a4 size=64000 root=000
+w1351_modle_hxw_h001.mesh                    declared=30 tx=(1,7) start=0x535c size=40828 root=000
+w1351_boss_gonghunyingxiang_lian_001.mesh    declared=43 tx=(1,5) start=0x1d18 size=21452 root=000
+w1351_boss_gonghunyingxiang_yifu_001.mesh    declared=43 tx=(1,5) start=0x5530 size=41564 root=000
+w1351_monster_nanhaihaidao_lian_001.mesh     declared=27 tx=(1,4) start=0x194c size=16272 root=000
+socket @0x8808 flag=1 cnt=5
+   [0] tx_head -> Bip001_Head
+   [1] chest -> Bip001_Spine
+   [2] tx_03 -> Bone002
+   [3] tx_02 -> Bone006
+   [4] tx_01 -> Bone010
+  bip01            <- 000            实际=None
+  bip01_pelvis     <- bip01          实际=None
+  bip01_l_calf     <- bip01_l_thigh  实际=None
+  bip01_l_foot     <- bip01_l_calf   实际=None
+hash: ('data/source/npc/model/w1351_model_fenghuang_h001/w1351_model_fenghuang_h001.mesh', 'c246a7afd506c05e', 'data3', 35464)

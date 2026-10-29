@@ -1,0 +1,20 @@
+带名字贴图行的编码分布： [('WEBP', 2164), ('RGBA32P', 85), ('BC3', 5), ('BC1', 5), (None, 2)]
+带名字且 ≥512 的行：0  其中 BC3/RGBA32 0
+
+===== high =====
+  chuansong001.mesh  无 use-mtl 边
+  tx_lian_001.mesh  无 use-mtl 边
+  w1351_an_model_wave_h001.mesh  无 use-mtl 边
+  w1351_ani_model_9999_h005.mesh  无 use-mtl 边
+  w1351_ani_model_maobi_w001.mesh  无 use-mtl 边
+  w1351_ani_model_pets_xuanhaima_idle02_h001.mesh  无 use-mtl 边
+
+===== unknown =====
+  _w1351_boss_sysz_langying_shoutao_001.mesh  无 use-mtl 边
+  _w1351_boss_sysz_langying_yifu_001.mesh  无 use-mtl 边
+  cj_byjt.mesh  无 use-mtl 边
+  decal.mesh  无 use-mtl 边
+  langhuanyudong_jt.mesh  无 use-mtl 边
+  w1351_ani_model_lianhua_h001.mesh  无 use-mtl 边
+
+合计：点名的贴图能查到行的 0 个名字，查不到行的 0 个名字

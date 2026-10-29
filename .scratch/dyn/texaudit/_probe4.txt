@@ -1,0 +1,6 @@
+== the 2271 definition: name like texture ext ==
+name like '%.tga' or .dds or .png (any path): 2261
+  ... with path not null: 2261
+  ... with path NULL (anon but named!): 0
+  types of those: []
+  samples: []

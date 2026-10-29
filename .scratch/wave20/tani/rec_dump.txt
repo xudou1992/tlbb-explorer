@@ -1,0 +1,129 @@
+
+===== 304 boss_tani_huoshaochibi_shifa01.tani nul=0x35 str=b'data/tani/boss_tani_huoshaochibi_shifa01.tani'
+  nonzero u32 @40..140: 0x58:8, 0x68:0x76114890, 0x6c:446, 0x80:1, 0x88:1, 0x98:0x760e36a0, 0x9c:446, 0xa0:0x80000000, 0xa4:32760, 0xa8:0x760e4000, 0xac:446, 0xb0:0x80000000, 0xb4:32761, 0xc0:0x760e4000, 0xc4:446, 0xc8:0x40000013, 0xcc:124, 0xd4:0x3ff00000, 0xd8:0x760e3d30, 0xdc:446, 0xe0:0x80000000, 0xe4:634, 0xe8:0x76114630, 0xec:446, 0xf4:446, 0xf8:0x4a5b0950, 0xfc:445, 0x100:0xa6396be0, 0x104:32760, 0x108:0x9093c0b0
+  strings:
+    0x0008 data/tani/boss_tani_huoshaochibi_shifa01.tani
+
+===== 1112 anqi_tani_fengshen_kuosan01.tani nul=0x32 str=b'data/tani/anqi_tani_fengshen_kuosan01.tani'
+  nonzero u32 @40..140: 0x40:0x8e96e2b8, 0x44:32767, 0x54:7, 0x6c:7, 0x84:7, 0x9c:7, 0xb4:7, 0xc0:1, 0xc8:1, 0xd8:0xbd6eceb0, 0xdc:470, 0xe0:8, 0xe8:0x3f800000, 0xec:256, 0xf0:0x787e2e00, 0xf4:470, 0x10c:1, 0x134:1, 0x138:1, 0x13c:1
+  strings:
+    0x0008 data/tani/anqi_tani_fengshen_kuosan01.tani
+    0x0140 w1351_fuben_fengshen_kuosan01.pu
+    0x0203 ?origin
+    0x0270 skill_circular_range_small
+
+===== 1904 anqi_tani_bingfengwanli_shifa01.tani nul=0x36 str=b'data/tani/anqi_tani_bingfengwanli_shifa01.tani'
+  nonzero u32 @40..140: 0x40:0xc8ace2b8, 0x44:32760, 0x54:7, 0x68:0xa458f400, 0x6c:7, 0x84:7, 0x98:0x42b70200, 0x9c:7, 0xb0:0x80000000, 0xb4:7, 0xc0:1, 0xc8:1, 0xcc:124, 0xd8:0x169287e0, 0xdc:446, 0xe0:0x80000008, 0xe4:634, 0xe8:0x3f800000, 0xec:446, 0xf0:0xa4591610, 0xf4:446, 0x10c:1, 0x134:1, 0x138:2, 0x13c:2
+  strings:
+    0x0008 data/tani/anqi_tani_bingfengwanli_shifa01.tani
+    0x0140 w1351_skill_anqi_bingfengwanli_shifa01.pu
+    0x0203 ?origin
+    0x0270 w1351_skill_anqi_bingfengwanli_buff01.pu
+    0x0333 ?origin
+    0x03a0 skill_circular_range_small
+    0x0588 skill_circular_range_small
+
+===== 2696 anqi_tani_grdz_kanshu_nan01.tani nul=0x32 str=b'data/tani/anqi_tani_grdz_kanshu_nan01.tani'
+  nonzero u32 @40..140: 0x40:0xc8ace2b8, 0x44:32760, 0x54:7, 0x68:0x97304800, 0x6c:7, 0x84:7, 0x98:0x8f006800, 0x9c:7, 0xb0:0x80000000, 0xb4:7, 0xc0:1, 0xc8:1, 0xcc:124, 0xd8:0x26a477b0, 0xdc:446, 0xe0:0x80000008, 0xe4:32760, 0xe8:0x3f800000, 0xec:446, 0xf0:0x973062c0, 0xf4:446, 0x10c:1, 0x134:1, 0x138:3, 0x13c:3
+  strings:
+    0x0008 data/tani/anqi_tani_grdz_kanshu_nan01.tani
+    0x0140 w1351_skill_anqi_kanshunan01.pu
+    0x0203 ?origin
+    0x0270 w1351_skill_anqi_kanshunan03.pu
+    0x0333 ?m_bip01_r_hand
+    0x03a0 w1351_skill_anqi_kanshunan04.pu
+    0x0463 ?m_bip01_r_hand
+    0x04d0 skill_circular_range_small
+    0x06b8 skill_circular_range_small
+    0x08a0 skill_circular_range_small
+
+===== 7140 anqi_tani_anqihuti_shifa01.tani nul=0x31 str=b'data/tani/anqi_tani_anqihuti_shifa01.tani'
+  nonzero u32 @40..140: 0x40:0xc8ace2b8, 0x44:32760, 0x54:7, 0x6c:7, 0x84:7, 0x9c:7, 0xb0:0x3f800000, 0xb4:7, 0xc0:1, 0xc8:1, 0xcc:0x3f800000, 0xd8:0x26a5e8f0, 0xdc:446, 0xe0:8, 0xe4:0x3f800000, 0xe8:0x3f800000, 0xf0:0xa583c930, 0xf4:446, 0x10c:2, 0x134:1, 0x138:1, 0x13c:1
+  strings:
+    0x0008 data/tani/anqi_tani_anqihuti_shifa01.tani
+    0x0140 w1351_skill_anqi_anqihuti_shifa01.pu
+    0x0203 ?origin
+    0x0270 skill_circular_range_small
+    0x0468 data/sound/interface/sound_shengji.wav
+    0x0918 data/sound/interface/sound_shengji.wav
+    0x0dc8 data/sound/interface/sound_shengji.wav
+    0x1278 data/sound/interface/sound_shengji.wav
+    0x1728 data/sound/interface/sound_shengji.wav
+
+===== 6332 anqi_tani_anqitouzhi_shifa01.tani nul=0x29 str=b'anqi_tani_anqitouzhi_shifa01.tani'
+  nonzero u32 @40..140: 0x40:0x19dc0ca0, 0x44:402, 0x48:0x161add40, 0x4c:402, 0x50:0xecd18340, 0x54:32758, 0x60:0x1b1692c0, 0x64:402, 0x68:0x1b169d30, 0x6c:402, 0x78:1, 0x7c:0xa0020, 0x80:0x28000007, 0x84:16, 0x88:0xabbb8704, 0x8c:0x88043e00, 0x90:0x17172600, 0x94:402, 0x98:0x19dc50c0, 0x9c:402, 0xa0:0xecd44ab0, 0xa4:32758, 0xb0:0x19dc7f00, 0xb4:402, 0xb8:0x1b169380, 0xbc:402, 0xc8:1, 0xcc:0x40020, 0xd0:3, 0xd4:16, 0xd8:0xabb08719, 0xdc:0x90043f00, 0xe0:0x3a0043, 0xe4:0x7528005c, 0xe8:0x5c6237, 0xec:0x450044, 0xf0:0x4c004c, 0xf4:0x33005c, 0xf8:0x200044, 0xfc:0x8c615bf9
+  strings:
+    0x0008 anqi_tani_anqitouzhi_shifa01.tani
+    0x00e6 (u7b\
+    0x0140 data/sound/boss/rel/lzkj_rel.ogg
+    0x05f0 data/sound/boss/rel/lzkj_rel.ogg
+    0x0aa0 data/sound/boss/rel/lzkj_rel.ogg
+    0x0f50 data/sound/boss/rel/lzkj_rel.ogg
+    0x1400 data/sound/boss/rel/lzkj_rel.ogg
+
+===== 7932 anqi_tani_nv1_yuexiaxun_wm_idle02_01.tani nul=0x3b str=b'data/tani/anqi_tani_nv1_yuexiaxun_wm_idle02_01.tani'
+  nonzero u32 @40..140: 0x40:10, 0x44:11, 0x48:12, 0x4c:13, 0x50:14, 0x54:15, 0x58:16, 0x5c:17, 0x60:18, 0x64:19, 0x68:20, 0x6c:21, 0x70:22, 0x74:23, 0x78:24, 0x7c:25, 0x80:26, 0x84:27, 0x88:0x2eb2ef40, 0x8c:331, 0x90:0x2eb2ed60, 0x94:331, 0x98:0x2eb2eda0, 0x9c:331, 0xa0:0x2eb2ecc0, 0xa4:331, 0xa8:0x2eb2ece0, 0xac:331, 0xb0:0x2eb2ed00, 0xb4:331, 0xb8:0x2eb2ee40, 0xbc:331, 0xc0:0x2eb2eea0, 0xc4:331, 0xc8:0x2eb2ea00, 0xcc:331, 0xd0:0x2eb2ef60, 0xd4:331, 0xd8:0x2eb2ea60, 0xdc:331
+  strings:
+    0x0008 data/tani/anqi_tani_nv1_yuexiaxun_wm_idle02_01.tani
+    0x0140 w1351_skil_nv1_yuexiaxun_wm_idle02_trail01.pu
+    0x0203 ?w_bip01
+    0x0270 w1351_skil_nv1_yuexiaxun_wm_idle02_trail02.pu
+    0x0333 ?w_bip01
+    0x03a0 skill_circular_range_small
+    0x0588 skill_circular_range_small
+    0x0780 data/sound/skill/biaoqing/bq_yuexiaxun_wm.ogg
+    0x0988 origin
+    0x0c30 data/sound/skill/biaoqing/bq_yuexiaxun_wm.ogg
+    0x0e38 origin
+    0x10e0 data/sound/skill/biaoqing/bq_yuexiaxun_wm.ogg
+    0x12e8 origin
+    0x1590 data/sound/skill/biaoqing/bq_yuexiaxun_wm.ogg
+    0x1798 origin
+    0x1a40 data/sound/skill/biaoqing/bq_yuexiaxun_wm.ogg
+    0x1c48 origin
+
+== fit 0x140+n*0x318: 1574/2560
+n histogram [(1, 818), (2, 384), (3, 147), (4, 79), (5, 70), (6, 30), (7, 23), (8, 13), (9, 5), (10, 1), (12, 2), (13, 1), (18, 1)]
+nonfit patterns top [((8, 484), 459), ((7, 468), 139), ((9, 484), 128), ((10, 484), 51), ((11, 484), 25), ((16, 164), 25), ((12, 484), 13), ((15, 148), 11), ((41, 788), 11), (('short', 304), 9), ((34, 316), 8), ((13, 484), 7), ((14, 484), 7), ((16, 484), 6), ((17, 484), 6), ((17, 164), 4), ((36, 316), 4), ((39, 788), 4), ((18, 164), 3), ((25, 484), 3)]
+bad examples [('anqi_tani_anqihuti_shifa01.tani', 7140, 8, 484), ('anqi_tani_anqitouzhi_shifa01.tani', 6332, 7, 468), ('anqi_tani_fugu_shifa01.tani', 7140, 8, 484), ('anqi_tani_grdz_ailian_nan01.tani', 11100, 13, 484), ('anqi_tani_grdz_ailian_nv01.tani', 10308, 12, 484), ('anqi_tani_grdz_chengsan_nan01.tani', 7140, 8, 484), ('anqi_tani_grdz_chengsan_nv01.tani', 7140, 8, 484), ('anqi_tani_grdz_tiaowu_nan01.tani', 8724, 10, 484), ('anqi_tani_grdz_wujian_nan01.tani', 10308, 12, 484), ('anqi_tani_grdz_wujian_nv01.tani', 10308, 12, 484), ('anqi_tani_grdz_xinhuanufang_nan01.tani', 9516, 11, 484), ('anqi_tani_grdz_xinhuanufang_nv01.tani', 9516, 11, 484)]
+fit files (n, u32@10c, @138, @13c) top:
+  (1, 1, 1, 1) x818
+  (2, 1, 2, 2) x384
+  (3, 1, 3, 3) x147
+  (4, 1, 4, 4) x79
+  (5, 1, 5, 5) x70
+  (6, 1, 6, 6) x30
+  (7, 1, 7, 7) x23
+  (8, 1, 8, 8) x13
+  (9, 1, 9, 9) x5
+  (12, 1, 12, 12) x2
+  (13, 1, 13, 13) x1
+  (18, 1, 18, 18) x1
+  (10, 1, 10, 10) x1
+
+nonfit header signature (u32@10c,138,13c, len, rem%0x318):
+  (2, 1, 1, 8, 484, 7140) x459
+  (2, 2, 2, 9, 484, 7932) x128
+  (1, 1, 0, 7, 468, 6332) x117
+  (2, 3, 3, 10, 484, 8724) x51
+  (2, 4, 4, 11, 484, 9516) x25
+  (2, 1, 1, 16, 164, 13156) x25
+  (1, 1, 1, 7, 468, 6332) x18
+  (2, 5, 5, 12, 484, 10308) x13
+  (2, 4, 4, 41, 788, 33580) x11
+  (2, 4, 4, 34, 316, 27564) x8
+  (2, 6, 6, 13, 484, 11100) x7
+  (2, 7, 7, 14, 484, 11892) x7
+  (1, 2, 0, 15, 148, 12348) x7
+  (2, 9, 9, 16, 484, 13476) x6
+  (2, 10, 10, 17, 484, 14268) x6
+  (2, 2, 2, 17, 164, 13948) x4
+  (2, 6, 6, 36, 316, 29148) x4
+  (2, 2, 2, 39, 788, 31996) x4
+  (2, 3, 3, 18, 164, 14740) x3
+  (1, 2, 1, 15, 148, 12348) x3
+  (2, 18, 18, 25, 484, 20604) x3
+  (2, 3, 3, 63, 620, 50836) x3
+  (2, 4, 4, 57, 148, 45612) x3
+  (2, 3, 3, 40, 788, 32788) x3
+  (2, 1, 1, 54, 148, 43236) x3

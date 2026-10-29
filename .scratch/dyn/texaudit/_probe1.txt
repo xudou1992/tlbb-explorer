@@ -1,0 +1,11 @@
+meta: [('type:texture', '26520'), ('type:ani', '14233'), ('type:JBCF', '13403'), ('type:geom', '12676'), ('type:scene', '10414'), ('type:mesh', '8467'), ('type:JBPU', '8029'), ('type:binary', '3657'), ('type:GATA', '2560'), ('type:tiny', '1890'), ('type:mapref', '887'), ('type:text', '593'), ('type:xml', '549'), ('type:NAVF', '455'), ('type:set', '316'), ('type:wav', '218'), ('type:ogg', '168'), ('type:table', '154'), ('type:webp', '48'), ('type:mp3', '39'), ('type:missing', '27'), ('type:jpeg', '10'), ('type:pe', '8'), ('type:png', '3'), ('type:JLUA', '1'), ('type:JSTR', '1'), ('type:JMDL', '1'), ('records', '114975'), ('resources', '105327'), ('named', '57274'), ('jmt1:codecs', 'COLW=WebP(WEBP), COLR=padded RGBA32 (w+2)x(h+2)'), ('asset:texnames', '13205'), ('jbcf:dangling:.ani', '4328'), ('jbcf:dangling:.dds', '14'), ('jbcf:dangling:.mesh', '767'), ('jbcf:dangling:.mtl', '915'), ('jbcf:dangling:.png', '36'), ('jbcf:dangling:.ske', '476'), ('jbcf:dangling:.tga', '30560'), ('jbcf:edge:.ani', '11294'), ('jbcf:edge:.anis', '20'), ('jbcf:edge:.mesh', '8549'), ('jbcf:edge:.mtl', '37779'), ('jbcf:edge:.pu', '7'), ('jbcf:edge:.ske', '2139'), ('jbcf:edge:.tga', '25'), ('jbcf:ref:.ani', '15622'), ('jbcf:ref:.anis', '20'), ('jbcf:ref:.dds', '14'), ('jbcf:ref:.mesh', '9316'), ('jbcf:ref:.mtl', '38694'), ('jbcf:ref:.png', '36'), ('jbcf:ref:.pu', '7'), ('jbcf:ref:.ske', '4210'), ('jbcf:ref:.tga', '30585'), ('asset:groups', '13080'), ('asset:members', '48122'), ('asset:shared-cut', '34961'), ('asset:dangling-names', '14377'), ('asset:names-attached', '37096'), ('asset:named-orphans', '18837')]
+counts by type: [('texture', 26520), ('ani', 14233), ('JBCF', 13403), ('geom', 12676), ('scene', 10414), ('mesh', 8467), ('JBPU', 8029), ('binary', 3657), ('GATA', 2560), ('tiny', 1890), ('mapref', 887), ('text', 593), ('xml', 549), ('NAVF', 455), ('set', 316), ('wav', 218), ('ogg', 168), ('table', 154), ('webp', 48), ('mp3', 39), ('missing', 27), ('jpeg', 10), ('pe', 8), ('png', 3), ('JLUA', 1), ('JMDL', 1), ('JSTR', 1)]
+tex named: 2259
+tex anon: 24261
+pool SQL (as in lib): 1650
+pool SQL (README wording, no height): 1717
+named codec dist: [('WEBP', 2164), ('RGBA32P', 85), ('BC3', 5), ('BC1', 5)]
+named >=512: 0
+named >=512 any(only width): 15
+max named dims: [(1642, 614)]
+blobs rows: (105222, 88930, 0)

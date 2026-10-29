@@ -1,0 +1,69 @@
+=== 0. 只读闸门 ===
+db: D:/TLGL\.scratch/resources.db  size=152592384  mtime=2026-09-22 18:45:40
+journal mode 检查：以 ro uri 打开，任何写操作都会抛异常
+写入被拒：attempt to write a readonly database
+
+=== 1. 库侧计数（resources.db）===
+匿名贴图 path is null           : 24261   (记录 24,261)
+候选池 SQL(lib 原文,含 height)  : 1650   (记录 1,650)
+候选池 SQL(README 口径,无 height): 1717
+带名字贴图 path is not null     : 2259   (记录 2,271)
+带名字贴图 name like '.tga/.dds/.png': 2261
+带名字 codec 分布               : [('WEBP', 2164), ('RGBA32P', 85), ('BC3', 5), ('BC1', 5)]
+带名字且 width>=512 且 height>=512: 0  (记录 0)
+带名字且 (width>=512 或 height>=512): 15  —— 「≥512 一张都没有」只在双维口径下成立
+带名字最大边长                 : (1642, 614)
+
+named ∩ anon 四条通道（都应为 0）
+  同 hash（trivially 0，hash 是主键）: 0
+  同 filecrc                         : 0
+  同 sha（blobs 内容指纹自连接）      : 0
+  池内 ∩ named（同 sha）              : 0
+
+匿名贴图的入边（都应为 0）
+  refs 里 .tga 行 / 解出 hash: (30585, 25)
+  relations use-tex 边: 25
+  relations to_hash 命中匿名贴图: 0
+  refs to_hash 命中匿名贴图     : 0
+  amembers 贴图成员 / 其中匿名  : (25, 0)
+  assets.primary_hash 命中匿名  : 0
+  dangling 表贴图名（.tga/.dds/.png 去重）: 8688
+  refs 未解析贴图名（去重）              : 8690
+
+mesh 清单（uvfit_batch 的分母）
+  refs 里 .mdl 声明的 mesh 去重: 2818  (记录 2,818)
+  其中 path 能解出 hash        : 2589
+
+=== 2. 人工标注覆盖表 ===
+md5=7e81f32cd3f595b7f079944b086bae0b 基线=7e81f32cd3f595b7f079944b086bae0b  一致=True  字节=21
+标注条数=0  (记录 0)
+库里 override 相关表: 0
+
+=== 3. 逐份重算（.scratch/uvfit_batch/results/*.json）===
+结果文件数=2818
+解析失败=0
+graded(v1)   = {'high': 2070, 'unknown': 450, 'mid': 284, 'low': 14}   (记录 high2070/mid284/low14/unknown450)
+gradedV2     = {'unknown': 815, 'high': 1560, 'mid': 386, 'low': 57}   (记录 high1560/mid386/low57/unknown815)
+withUv       = 2376   (记录 2,376)
+unknownSplit = {'lowSignal': 102, 'noUv': 442, 'degenerate': 263, 'noCandidateScore': 8}   (记录 noUv442/degenerate263/noCandidateScore8/lowSignal102)
+tryableByUv  = 2105   (记录 2,105)
+候选槽位=23680  去重候选=419  (记录 28,180 / 419)
+
+与 manifest.json 统计块对账：
+  manifest: total=2818 withUv=2376 candidates=23680 graded={'high': 2070, 'mid': 284, 'low': 14, 'unknown': 450} gradedV2={'high': 1560, 'mid': 386, 'low': 57, 'unknown': 815}
+  manifest: unknownSplit={'noUv': 442, 'degenerate': 263, 'noCandidateScore': 8, 'lowSignal': 102} tryableByUv=2105
+  manifest: thresholds={'highScore': 6, 'highCoverage': 0.3, 'midScore': 3, 'lowScore': 1.2, 'degenerateAdjusted': 1.3, 'degenerateCoverage': 0.9}
+  manifest 行 vs results 行不一致: 0
+  清单差异：manifest 独有 0 / results 独有 0
+
+refs(.mdl) 清单 2818 个 vs 结果 2818 个：缺 0 / 多 0
+
+=== 4. adjusted 刻度分布（阈值重标用）===
+有分份数=2368  p05=1.036 p25=5.274 p50=10.215 p75=20.077 p90=51.846 max=1767.948
+  阈值 1.2：低于 365 份 (15.4%) / 不低于 2003 份
+  阈值 3.0：低于 422 份 (17.8%) / 不低于 1946 份
+  阈值 6.0：低于 704 份 (29.7%) / 不低于 1664 份
+  阈值 ±8% 带内份数：[(1.2, 104), (3.0, 13), (6.0, 118)]
+
+=== 5. 若按 Oct-12 的 path 回填换库（resources_rehearsal.db）会怎样 ===
+  没有 rehearsal 副本

@@ -1,0 +1,22 @@
+140f0e060 ??_7EsTexture2D@@6B@
+140f0e090 ??_7EsTexture2DDynamic@@6B@
+140f0e0a8 ??_7EsTexture2D@@6B@_0
+140f0e200 ??_7?$GenericTask@V?$RenderCommandWrapper@URefreshTextureSampleTag@?4??RefreshTextureSample@EsTexture2D@@QEAA_NXZ@V_lambda_bd60304ea1e38ce242a3b007f88e200c_@@@@@@6B@
+140f5e650 ??_R1A@?0A@EA@EsTexture2D@@8
+140f5e678 ??_R4EsTexture2D@@6B@_0
+140f5e6a0 ??_R4?$GenericTask@V?$RenderCommandWrapper@URefreshTextureSampleTag@?4??RefreshTextureSample@EsTexture2D@@QEAA_NXZ@V_lambda_bd60304ea1e38ce242a3b007f88e200c_@@@@@@6B@
+140f5e6c8 ??_R2?$GenericTask@V?$RenderCommandWrapper@URefreshTextureSampleTag@?4??RefreshTextureSample@EsTexture2D@@QEAA_NXZ@V_lambda_bd60304ea1e38ce242a3b007f88e200c_@@@@@@8
+140f5e6e0 ??_R4EsTexture2DDynamic@@6B@
+140f5e708 ??_R4EsTexture2D@@6B@
+140f5e730 ??_R1A@?0A@EA@?$GenericTask@V?$RenderCommandWrapper@URefreshTextureSampleTag@?4??RefreshTextureSample@EsTexture2D@@QEAA_NXZ@V_lambda_bd60304ea1e38ce242a3b007f88e200c_@@@@@@8
+140f5e758 ??_R1A@?0A@EA@EsTexture2DDynamic@@8
+140f5e780 ??_R2EsTexture2D@@8
+140f5e7b0 ??_R3?$GenericTask@V?$RenderCommandWrapper@URefreshTextureSampleTag@?4??RefreshTextureSample@EsTexture2D@@QEAA_NXZ@V_lambda_bd60304ea1e38ce242a3b007f88e200c_@@@@@@8
+140f5e7c8 ??_R3EsTexture2DDynamic@@8
+140f5e7e0 ??_R3EsTexture2D@@8
+140f5e7f8 ??_R2EsTexture2DDynamic@@8
+141095bb0 ??_R0?AVEsTexture2D@@@8
+141095bd8 ??_R0?AVEsTexture2DDynamic@@@8
+141095c10 ??_R0?AV?$GenericTask@V?$RenderCommandWrapper@URefreshTextureSampleTag@?4??RefreshTextureSample@EsTexture2D@@QEAA_NXZ@V_lambda_bd60304ea1e38ce242a3b007f88e200c_@@@@@@@8
+
+vtables: []

@@ -1,0 +1,41 @@
+纯变体文件（现有解析器 0 条、变体 >=1 条）= 26 份
+  file                                           bones    A    V      链/对     覆盖/顶点      缩放尾
+  w1351_model_mj_nan_stone_h01.mesh                 79    0   79    78/78 10300/10300       79
+  w1351_model_bell_h002.mesh                        69    0   69    68/68 21627/21627       69
+  w1351_model_glass_ani_lf001.mesh                  55    0   54    53/53 2575/2575       54
+  w1351_model_fazhen_ani_lf001.mesh                 50    0   49    48/48   256/256       49
+  w1351_model_ymg01_stone01.mesh                    38    0   37    36/36 6000/6000       37
+  w1351_ani_model_qixiayingri_jian_c01.mesh         15    0   14    13/13 1344/1344       14
+  w1351_model_ls_tukuai_z001.mesh                   11    0   11    10/10   483/483       11
+  w1351_caiji_sanluodunpai.mesh                      1    0    1      0/0     34/34        1
+  w1351_model_dqz_dici_z001.mesh                     1    0    1      0/0   288/288        1
+  w1351_model_hongbaoshi_s001.mesh                   1    0    1      0/0   287/287        1
+  w1351_model_jgsb_jian_z001.mesh                    1    0    1      0/0   662/662        1
+  w1351_model_knife_h01.mesh                         1    0    1      0/0   530/530        1
+  w1351_model_qianghua_h001.mesh                     1    0    1      0/0     24/24        1
+  w1351_model_sl_wuqi_h01.mesh                       1    0    1      0/0   839/839        1
+  w1351_model_sword_h01.mesh                         1    0    1      0/0   444/444        1
+  w1351_model_tiangangbeidouzhen_h001.mesh           1    0    1      0/0     24/24        1
+  w1351_model_ui_kuijia_z01.mesh                     1    0    1      0/0   836/836        1
+  w1351_model_wd_nan_wq_big_h01.mesh                 1    0    1      0/0   102/102        1
+  w1351_model_wd_wq_h02.mesh                         1    0    1      0/0   351/351        1
+  w1351_model_wq_em_h001.mesh                        1    0    1      0/0 5233/5233        1
+  w1351_model_wq_em_h01.mesh                         1    0    1      0/0 1694/1694        1
+  w1351_model_wq_xy_nan_h01.mesh                     1    0    1      0/0   753/753        1
+  w1351_model_yanlongwushuang_h001.mesh              1    0    1      0/0     24/24        1
+  w1351_model_yuexiaxun_jiubei_lf001.mesh            1    0    1      0/0     90/90        1
+  w1351_model_yuexiaxun_jiubei_lf002.mesh            1    0    1      0/0     90/90        1
+  w1351_model_zq_hd_h001.mesh                        1    0    1      0/0     24/24        1
+
+### 那 5 份在纯变体清单里的位置：见上（V 与 bones 吻合、链全接、顶点 100% 覆盖）
+
+抽样 400 份文件，现有 96B 判据认到的记录共 4333 条，按基向量长度分档：
+   <0.5            36     0.83%
+   0.5~0.95         0     0.00%
+   0.95~1.05     4297    99.17%
+   1.05~50          0     0.00%
+   50~200           0     0.00%
+   >200             0     0.00%
+含「基长偏离 1」记录的文件数 = 1 / 400
+   w1351_model_gb_long_h001.mesh                    偏离条数=  36 样例(基长,偏移)=[(0.26, 65720), (0.26, 65980), (0.26, 66752)]
+正常记录 |平移|/顶点跨度: p10=0.097 中位=0.661 p90=2.992 max=10.702

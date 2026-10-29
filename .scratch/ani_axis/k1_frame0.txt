@@ -1,0 +1,106 @@
+######################################################################
+=== 模型 yifu (NJ=46 verts=781 带权重骨=27) ===
+
+[A] frame0 跨 15 条动作逐骨稳定性（原始 .ani 轴, R=I）
+    平移 max|Δt| < 1e-6 的骨 2/46 ; 旋转 max夹角 < 0.01° 的骨 2/46
+    平移 spread: median 9.433e-01  p90 1.296e+00  max 2.2824 (bip01_l_toe0)
+    旋转 spread: median 110.5692° p90 168.8521° max 177.8357° (bip01_r_finger0)
+    平移 spread 最大的 8 根骨:
+      bip01_l_toe0               max|Δt|=2.2824  max夹角=128.873°
+      bip01_l_foot               max|Δt|=1.4660  max夹角=127.818°
+      bip01_r_foot               max|Δt|=1.4449  max夹角=147.313°
+      bip01_r_finger0            max|Δt|=1.3860  max夹角=177.836°
+      bone12                     max|Δt|=1.3061  max夹角=89.012°
+      bone12_mirror02            max|Δt|=1.2850  max夹角=143.059°
+      bip01_l_finger0            max|Δt|=1.2550  max夹角=162.317°
+      bip01_r_toe0               max|Δt|=1.1925  max夹角=162.111°
+
+[B] frame0(idle01) vs bind B（原始 .ani 轴）
+    逐骨 |Δt|: min 0.0000 median 1.9157 max 2.2569 ; =0(<1e-6) 的骨 2
+    逐骨旋转角差: min 0.000° median 115.853° max 178.291° ; <0.01° 的骨 2
+    E=G0·B⁻¹（bind 锚的 frame0 误差）: 旋转角 min 0.00° med 115.85° max 178.29°；E 平移 |Et| med 1.7628 max 2.2660
+    E 的旋转部分逐骨互差（vs 最近正交平均）: median 58.106° max 174.252° -> 逐骨不同，不是单一全局刚体差
+    E 的平移部分逐骨互差: median 1.0194 max 2.4095 -> 逐骨不同
+    |Δt| 最大的 10 根骨（frame0 vs bind）:
+      bip01_r_upperarm           |Δt|=2.2569  角差=  66.77°  |Et|=2.2660  E角=  66.77°
+      bip01_r_clavicle           |Δt|=2.2437  角差=  37.47°  |Et|=2.2407  E角=  37.47°
+      bip01_r_forearm            |Δt|=2.2259  角差=  85.08°  |Et|=2.2099  E角=  85.08°
+      bip01_l_forearm            |Δt|=2.2175  角差=  70.18°  |Et|=2.0992  E角=  70.18°
+      bip01_l_upperarm           |Δt|=2.1812  角差=  61.39°  |Et|=2.1500  E角=  61.39°
+      bip01_l_finger1            |Δt|=2.1563  角差= 147.82°  |Et|=2.1700  E角= 147.82°
+      bone06                     |Δt|=2.1351  角差=  99.35°  |Et|=1.6182  E角=  99.35°
+      bone08                     |Δt|=2.1246  角差= 111.88°  |Et|=1.6038  E角= 111.88°
+      bip01_l_hand               |Δt|=2.1115  角差= 132.51°  |Et|=1.7926  E角= 132.51°
+      bip01_l_finger0            |Δt|=2.1069  角差= 131.08°  |Et|=1.5803  E角= 131.08°
+
+[C] 静态加权重心判据 |C_j-骨位|（covered=26 根，剔根骨；bind 参照 0.1488）
+    bind  B       : mean 0.1488 median 0.1576 max 0.2531
+    frame0 原始轴 : mean 1.8525 median 1.8277 max 2.3037
+    frame0 经 48 个带符号置换 Q (t->Q^T t) 映射后，最优 6 个：
+      Q=(2,1,0)--+ det-1 : mean 0.7000 max 1.6286
+      Q=(2,1,0)+-+ det+1 : mean 0.7066 max 1.6112
+      Q=(0,1,2)--- det-1 : mean 0.7697 max 1.6147
+      Q=(0,1,2)--+ det+1 : mean 0.7742 max 1.6339
+      Q=(0,1,2)+-- det+1 : mean 0.7780 max 1.6974
+      Q=(0,1,2)+-+ det-1 : mean 0.7847 max 1.7157
+      bip01_pelvis     frame0@Q t=[-0.0122  0.8407 -0.    ]
+      bip01_head       frame0@Q t=[0.0007 0.1498 0.0365]
+      bip01_l_foot     frame0@Q t=[0.321  1.0863 0.3167]
+      bip01_l_toe0     frame0@Q t=[0.406  1.6313 0.3679]
+      bip01_l_hand     frame0@Q t=[ 0.3905  0.6165 -0.144 ]
+      (bind 参照: pelvis [-7.0000e-04  1.0979e+00 -5.0700e-02] head [-7.0000e-04  1.0979e+00 -5.0700e-02] l_foot [ 0.1587  0.6932 -0.0564])
+
+[D] 跨动作锚互用（原始轴 R=I）：A_j = G0^idle_j^{-1}，其它动作 frame0 处的误差
+    behit01          frame0处 M=G0^a·A^idle: 旋转 max 19.570°  平移 max 0.1565 (med 0.0000)
+    dead             frame0处 M=G0^a·A^idle: 旋转 max 177.836°  平移 max 1.0107 (med 0.6804)
+    deadbegin        frame0处 M=G0^a·A^idle: 旋转 max 0.000°  平移 max 0.0000 (med 0.0000)
+    fight_idle01     frame0处 M=G0^a·A^idle: 旋转 max 0.000°  平移 max 0.0000 (med 0.0000)
+    flyingdead       frame0处 M=G0^a·A^idle: 旋转 max 0.000°  平移 max 0.0000 (med 0.0000)
+    flyingdeadbegin  frame0处 M=G0^a·A^idle: 旋转 max 177.836°  平移 max 1.0107 (med 0.6804)
+    hit01            frame0处 M=G0^a·A^idle: 旋转 max 0.000°  平移 max 0.0000 (med 0.0000)
+    hit02            frame0处 M=G0^a·A^idle: 旋转 max 0.000°  平移 max 0.0000 (med 0.0000)
+    hit03            frame0处 M=G0^a·A^idle: 旋转 max 0.000°  平移 max 0.0000 (med 0.0000)
+    idle01           frame0处 M=G0^a·A^idle: 旋转 max 0.000°  平移 max 0.0000 (med 0.0000)
+    idle02           frame0处 M=G0^a·A^idle: 旋转 max 165.514°  平移 max 1.6720 (med 0.3573)
+    idle03           frame0处 M=G0^a·A^idle: 旋转 max 0.000°  平移 max 0.0000 (med 0.0000)
+    run              frame0处 M=G0^a·A^idle: 旋转 max 174.950°  平移 max 1.6698 (med 0.3582)
+    vertigo          frame0处 M=G0^a·A^idle: 旋转 max 0.000°  平移 max 0.0000 (med 0.0000)
+    walk             frame0处 M=G0^a·A^idle: 旋转 max 164.148°  平移 max 1.6656 (med 0.3657)
+
+######################################################################
+=== 模型 shoutao (NJ=46 verts=42 带权重骨=1) ===
+
+[A] frame0 跨 15 条动作逐骨稳定性（原始 .ani 轴, R=I）
+    平移 max|Δt| < 1e-6 的骨 2/46 ; 旋转 max夹角 < 0.01° 的骨 2/46
+    平移 spread: median 9.433e-01  p90 1.296e+00  max 2.2824 (bip01_l_toe0)
+    旋转 spread: median 110.5692° p90 168.8521° max 177.8357° (bip01_r_finger0)
+    平移 spread 最大的 8 根骨:
+      bip01_l_toe0               max|Δt|=2.2824  max夹角=128.873°
+      bip01_l_foot               max|Δt|=1.4660  max夹角=127.818°
+      bip01_r_foot               max|Δt|=1.4449  max夹角=147.313°
+      bip01_r_finger0            max|Δt|=1.3860  max夹角=177.836°
+      bone12                     max|Δt|=1.3061  max夹角=89.012°
+      bone12_mirror02            max|Δt|=1.2850  max夹角=143.059°
+      bip01_l_finger0            max|Δt|=1.2550  max夹角=162.317°
+      bip01_r_toe0               max|Δt|=1.1925  max夹角=162.111°
+
+[B] frame0(idle01) vs bind B（原始 .ani 轴）
+    逐骨 |Δt|: min 0.0000 median 1.9157 max 2.2569 ; =0(<1e-6) 的骨 2
+    逐骨旋转角差: min 0.000° median 115.853° max 178.291° ; <0.01° 的骨 2
+    E=G0·B⁻¹（bind 锚的 frame0 误差）: 旋转角 min 0.00° med 115.85° max 178.29°；E 平移 |Et| med 1.7628 max 2.2660
+    E 的旋转部分逐骨互差（vs 最近正交平均）: median 58.106° max 174.252° -> 逐骨不同，不是单一全局刚体差
+    E 的平移部分逐骨互差: median 1.0194 max 2.4095 -> 逐骨不同
+    |Δt| 最大的 10 根骨（frame0 vs bind）:
+      bip01_r_upperarm           |Δt|=2.2569  角差=  66.77°  |Et|=2.2660  E角=  66.77°
+      bip01_r_clavicle           |Δt|=2.2437  角差=  37.47°  |Et|=2.2407  E角=  37.47°
+      bip01_r_forearm            |Δt|=2.2259  角差=  85.08°  |Et|=2.2099  E角=  85.08°
+      bip01_l_forearm            |Δt|=2.2175  角差=  70.18°  |Et|=2.0992  E角=  70.18°
+      bip01_l_upperarm           |Δt|=2.1812  角差=  61.39°  |Et|=2.1500  E角=  61.39°
+      bip01_l_finger1            |Δt|=2.1563  角差= 147.82°  |Et|=2.1700  E角= 147.82°
+      bone06                     |Δt|=2.1351  角差=  99.35°  |Et|=1.6182  E角=  99.35°
+      bone08                     |Δt|=2.1246  角差= 111.88°  |Et|=1.6038  E角= 111.88°
+      bip01_l_hand               |Δt|=2.1115  角差= 132.51°  |Et|=1.7926  E角= 132.51°
+      bip01_l_finger0            |Δt|=2.1069  角差= 131.08°  |Et|=1.5803  E角= 131.08°
+
+[C] shoutao 无蒙皮顶点（全部绑根骨 000），重心判据与蒙皮统计跳过
+

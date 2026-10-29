@@ -1,0 +1,306 @@
+===== MeshModel2 vtable 140ef6f10 =====
+ +0 idx0 140238ea0 func=0x140238ea0 size=5
+ +8 idx1 1405a3270 func=0x1405a3270 size=5
+ +16 idx2 1409c0d60 func=0x1409c0d60 size=1388
+ +24 idx3 1400f37e0 func=0x1400f37e0 size=3
+ +32 idx4 140607380 func=0x140607380 size=58
+ +40 idx5 1409c1530 func=0x1409c1530 size=163
+ +48 idx6 1409c12d0 func=0x1409c12d0 size=326
+ +56 idx7 1406073d0 func=0x1406073d0 size=4
+ +64 idx8 1409c1420 func=0x1409c1420 size=270
+ +72 idx9 1409c15e0 func=0x1409c15e0 size=8
+ +80 idx10 14077a3e0 func=0x14077a3e0 size=8
+ +88 idx11 1409c15f0 func=0x1409c15f0 size=8
+ +96 idx12 1409c1600 func=0x1409c1600 size=668
+ +104 idx13 1409c18a0 func=0x1409c18a0 size=269
+ +112 idx14 1409c19b0 func=0x1409c19b0 size=866
+ +120 idx15 1409c1d20 func=0x1409c1d20 size=1099
+ +128 idx16 1400e8350 func=0x1400e8350 size=3
+ +136 idx17 1400e8350 func=0x1400e8350 size=3
+ +144 idx18 14065ae60 func=0x14065ae60 size=677
+ +152 idx19 14020df90 func=0x14020df90 size=3
+ +160 idx20 14020df90 func=0x14020df90 size=3
+ +168 idx21 14065b150 func=0x14065b150 size=110
+ +176 idx22 1400e8350 func=0x1400e8350 size=3
+ +184 idx23 1400e8350 func=0x1400e8350 size=3
+ +192 idx24 1409c24a0 func=0x1409c24a0 size=37
+ +200 idx25 1409c24d0 func=0x1409c24d0 size=71
+ +208 idx26 1409c2520 func=0x1409c2520 size=63
+ +216 idx27 140622360 func=0x140622360 size=38
+ +224 idx28 1400e9ae0 func=0x1400e9ae0 size=3
+ +232 idx29 1409c2560 func=0x1409c2560 size=174
+ +240 idx30 1409c2610 func=0x1409c2610 size=56
+ +248 idx31 1409c2650 func=0x1409c2650 size=122
+ +256 idx32 1409c26d0 func=0x1409c26d0 size=329
+ +264 idx33 1409c2820 func=0x1409c2820 size=710
+ +272 idx34 1409c2af0 func=0x1409c2af0 size=671
+ +280 idx35 1409c2d90 func=0x1409c2d90 size=286
+ +288 idx36 1409c2eb0 func=0x1409c2eb0 size=705
+ +296 idx37 1409c2170 func=0x1409c2170 size=276
+ +304 idx38 1409c2290 func=0x1409c2290 size=61
+ +312 idx39 1409c22d0 func=0x1409c22d0 size=70
+
+===== MeshModel2 +96 -> 1409c1600 =====
+// Hidden C++ exception states: #wind=2
+__int64 __fastcall sub_1409C1600(
+        _BYTE *a1,
+        __int64 a2,
+        __int64 a3,
+        __int64 a4,
+        __int64 a5,
+        unsigned __int8 a6,
+        char a7)
+{
+  __int64 v11; // r14
+  unsigned __int8 v12; // di
+  __int64 v13; // rdx
+  __int64 v14; // rcx
+  _QWORD *v15; // rdi
+  __int64 v16; // rax
+  __int64 v17; // rax
+  _QWORD *v18; // rax
+  __int64 v20; // [rsp+60h] [rbp+8h]
+
+  EnterCriticalSection((LPCRITICAL_SECTION)(a1 + 48));
+  v20 = *((_QWORD *)a1 + 14);
+  *((_QWORD *)a1 + 14) = a4;
+  v11 = qword_1410AB158;
+  if ( *((_QWORD *)a1 + 11) != *(_QWORD *)a2 )
+    (*(void (__fastcall **)(_BYTE *))(*(_QWORD *)a1 + 248LL))(a1);
+  if ( *((_QWORD *)a1 + 11) != *(_QWORD *)a2 || a7 )
+  {
+    _InterlockedIncrement((volatile signed __int32 *)(*(_QWORD *)a2 + 8LL));
+    sub_1401369D0(*((_QWORD *)a1 + 11));
+    *((_QWORD *)a1 + 11) = *(_QWORD *)a2;
+    _InterlockedIncrement((volatile signed __int32 *)(*(_QWORD *)a3 + 8LL));
+    sub_1401369D0(*((_QWORD *)a1 + 12));
+    *((_QWORD *)a1 + 12) = *(_QWORD *)a3;
+    a1[128] = 0;
+    a1[129] = 0;
+    if ( a1[130] )
+    {
+      a1[130] = 0;
+      (*(void (__fastcall **)(_BYTE *, _QWORD))(*(_QWORD *)a1 + 280LL))(a1, a6);
+    }
+  }
+  if ( a4 )
+    (*(void (__fastcall **)(__int64, _BYTE *, __int64, _QWORD))(*(_QWORD *)a4 + 112LL))(a4, a1, a5, a6);
+  if ( !a7 )
+    (*(void (__fastcall **)(_BYTE *))(*(_QWORD *)a1 + 232LL))(a1);
+  if ( a6 )
+  {
+    if ( a7 || a1[134] )
+    {
+      (*(void (__fastcall **)(_BYTE *, __int64, _QWORD))(*(_QWORD *)a1 + 256LL))(a1, a2, a6);
+      v12 = 1;
+      goto LABEL_27;
+    }
+LABEL_26:
+    v12 = sub_1409A5EC0(v11, a1, a2);
+    goto LABEL_27;
+  }
+  if ( !a7 )
+    goto LABEL_26;
+  v15 = j__malloc_base(0x48u);
+  *v15 = 0;
+  if ( !qword_1410B5C38 )
+    sub_1401375C0(v14, v13);
+  _InterlockedIncrement((volatile signed __int32 *)(qword_1410A74A8 + 8));
+  v16 = qword_1410A74A8;
+  v15[4] = qword_1410A74A8;
+  if ( !qword_1410B5C38 )
+  {
+    sub_1401375C0(v14, v13);
+    v16 = qword_1410A74A8;
+  }
+  _InterlockedIncrement((volatile signed __int32 *)(v16 + 8));
+  v17 = qword_1410A74A8;
+  v15[5] = qword_1410A74A8;
+  if ( !qword_1410B5C38 )
+  {
+    sub_1401375C0(v14, v13);
+    v17 = qword_1410A74A8;
+  }
+  _InterlockedIncrement((volatile signed __int32 *)(v17 + 8));
+  v15[6] = qword_1410A74A8;
+  *((_DWORD *)v15 + 14) = 9;
+  *((_BYTE *)v15 + 65) = 0;
+  v15[1] = (*(__int64 (__fastcall **)(_BYTE *))(*(_QWORD *)a1 + 192LL))(a1);
+  _InterlockedIncrement((volatile signed __int32 *)(*(_QWORD *)a2 + 8LL));
+  sub_1401369D0(v15[4]);
+  v15[4] = *(_QWORD *)a2;
+  *((_BYTE *)v15 + 65) = (*(unsigned int (__fastcall **)(_QWORD, __int64, _QWORD *))(**(_QWORD **)(qword_1410A7DD8 + 16)
+                                                                                   + 40LL))(
+                           *(_QWORD *)(qword_1410A7DD8 + 16),
+                           a2,
+                           v15 + 5) != 0;
+  EnterCriticalSection((LPCRITICAL_SECTION)(v11 + 248));
+  v18 = *(_QWORD **)(v11 + 32);
+  if ( v18 )
+    *v18 = v15;
+  else
+    *(_QWORD *)(v11 + 24) = v15;
+  *(_QWORD *)(v11 + 32) = v15;
+  ReleaseSemaphore(*(HANDLE *)(v11 + 192), 1, nullptr);
+  LeaveCriticalSection((LPCRITICAL_SECTION)(v11 + 248));
+  v12 = 1;
+LABEL_27:
+  *((_QWORD *)a1 + 14) = v20;
+  LeaveCriticalSection((LPCRITICAL_SECTION)(a1 + 48));
+  return v12;
+}
+
+
+===== ModelST2 vtable 140ef68a0 =====
+ +0 idx0 140238ea0 func=0x140238ea0 size=5
+ +8 idx1 1405a3270 func=0x1405a3270 size=5
+ +16 idx2 1409c0d60 func=0x1409c0d60 size=1388
+ +24 idx3 1400f37e0 func=0x1400f37e0 size=3
+ +32 idx4 140607380 func=0x140607380 size=58
+ +40 idx5 1409c1530 func=0x1409c1530 size=163
+ +48 idx6 1409c12d0 func=0x1409c12d0 size=326
+ +56 idx7 1406073d0 func=0x1406073d0 size=4
+ +64 idx8 1409c1420 func=0x1409c1420 size=270
+ +72 idx9 1409c15e0 func=0x1409c15e0 size=8
+ +80 idx10 14077a3e0 func=0x14077a3e0 size=8
+ +88 idx11 1409c15f0 func=0x1409c15f0 size=8
+ +96 idx12 1409c1600 func=0x1409c1600 size=668
+ +104 idx13 1409c18a0 func=0x1409c18a0 size=269
+ +112 idx14 1409c19b0 func=0x1409c19b0 size=866
+ +120 idx15 1409c1d20 func=0x1409c1d20 size=1099
+ +128 idx16 1400e8350 func=0x1400e8350 size=3
+ +136 idx17 1400e8350 func=0x1400e8350 size=3
+ +144 idx18 14064b410 func=0x14064b410 size=125
+ +152 idx19 14064b490 func=0x14064b490 size=3069
+ +160 idx20 14064c090 func=0x14064c090 size=546
+ +168 idx21 14064c2c0 func=0x14064c2c0 size=1520
+ +176 idx22 1400e8350 func=0x1400e8350 size=3
+ +184 idx23 1400e8350 func=0x1400e8350 size=3
+ +192 idx24 1409c24a0 func=0x1409c24a0 size=37
+ +200 idx25 1409c24d0 func=0x1409c24d0 size=71
+ +208 idx26 1409c2520 func=0x1409c2520 size=63
+ +216 idx27 140622360 func=0x140622360 size=38
+ +224 idx28 1400e9ae0 func=0x1400e9ae0 size=3
+ +232 idx29 1409c2560 func=0x1409c2560 size=174
+ +240 idx30 1409c2610 func=0x1409c2610 size=56
+ +248 idx31 1409c2650 func=0x1409c2650 size=122
+ +256 idx32 1409c26d0 func=0x1409c26d0 size=329
+ +264 idx33 1409c2820 func=0x1409c2820 size=710
+ +272 idx34 1409c2af0 func=0x1409c2af0 size=671
+ +280 idx35 1409c2d90 func=0x1409c2d90 size=286
+ +288 idx36 1409c2eb0 func=0x1409c2eb0 size=705
+ +296 idx37 1409c2170 func=0x1409c2170 size=276
+ +304 idx38 1409c2290 func=0x1409c2290 size=61
+ +312 idx39 1409c22d0 func=0x1409c22d0 size=70
+
+===== ModelST2 +96 -> 1409c1600 =====
+// Hidden C++ exception states: #wind=2
+__int64 __fastcall sub_1409C1600(
+        _BYTE *a1,
+        __int64 a2,
+        __int64 a3,
+        __int64 a4,
+        __int64 a5,
+        unsigned __int8 a6,
+        char a7)
+{
+  __int64 v11; // r14
+  unsigned __int8 v12; // di
+  __int64 v13; // rdx
+  __int64 v14; // rcx
+  _QWORD *v15; // rdi
+  __int64 v16; // rax
+  __int64 v17; // rax
+  _QWORD *v18; // rax
+  __int64 v20; // [rsp+60h] [rbp+8h]
+
+  EnterCriticalSection((LPCRITICAL_SECTION)(a1 + 48));
+  v20 = *((_QWORD *)a1 + 14);
+  *((_QWORD *)a1 + 14) = a4;
+  v11 = qword_1410AB158;
+  if ( *((_QWORD *)a1 + 11) != *(_QWORD *)a2 )
+    (*(void (__fastcall **)(_BYTE *))(*(_QWORD *)a1 + 248LL))(a1);
+  if ( *((_QWORD *)a1 + 11) != *(_QWORD *)a2 || a7 )
+  {
+    _InterlockedIncrement((volatile signed __int32 *)(*(_QWORD *)a2 + 8LL));
+    sub_1401369D0(*((_QWORD *)a1 + 11));
+    *((_QWORD *)a1 + 11) = *(_QWORD *)a2;
+    _InterlockedIncrement((volatile signed __int32 *)(*(_QWORD *)a3 + 8LL));
+    sub_1401369D0(*((_QWORD *)a1 + 12));
+    *((_QWORD *)a1 + 12) = *(_QWORD *)a3;
+    a1[128] = 0;
+    a1[129] = 0;
+    if ( a1[130] )
+    {
+      a1[130] = 0;
+      (*(void (__fastcall **)(_BYTE *, _QWORD))(*(_QWORD *)a1 + 280LL))(a1, a6);
+    }
+  }
+  if ( a4 )
+    (*(void (__fastcall **)(__int64, _BYTE *, __int64, _QWORD))(*(_QWORD *)a4 + 112LL))(a4, a1, a5, a6);
+  if ( !a7 )
+    (*(void (__fastcall **)(_BYTE *))(*(_QWORD *)a1 + 232LL))(a1);
+  if ( a6 )
+  {
+    if ( a7 || a1[134] )
+    {
+      (*(void (__fastcall **)(_BYTE *, __int64, _QWORD))(*(_QWORD *)a1 + 256LL))(a1, a2, a6);
+      v12 = 1;
+      goto LABEL_27;
+    }
+LABEL_26:
+    v12 = sub_1409A5EC0(v11, a1, a2);
+    goto LABEL_27;
+  }
+  if ( !a7 )
+    goto LABEL_26;
+  v15 = j__malloc_base(0x48u);
+  *v15 = 0;
+  if ( !qword_1410B5C38 )
+    sub_1401375C0(v14, v13);
+  _InterlockedIncrement((volatile signed __int32 *)(qword_1410A74A8 + 8));
+  v16 = qword_1410A74A8;
+  v15[4] = qword_1410A74A8;
+  if ( !qword_1410B5C38 )
+  {
+    sub_1401375C0(v14, v13);
+    v16 = qword_1410A74A8;
+  }
+  _InterlockedIncrement((volatile signed __int32 *)(v16 + 8));
+  v17 = qword_1410A74A8;
+  v15[5] = qword_1410A74A8;
+  if ( !qword_1410B5C38 )
+  {
+    sub_1401375C0(v14, v13);
+    v17 = qword_1410A74A8;
+  }
+  _InterlockedIncrement((volatile signed __int32 *)(v17 + 8));
+  v15[6] = qword_1410A74A8;
+  *((_DWORD *)v15 + 14) = 9;
+  *((_BYTE *)v15 + 65) = 0;
+  v15[1] = (*(__int64 (__fastcall **)(_BYTE *))(*(_QWORD *)a1 + 192LL))(a1);
+  _InterlockedIncrement((volatile signed __int32 *)(*(_QWORD *)a2 + 8LL));
+  sub_1401369D0(v15[4]);
+  v15[4] = *(_QWORD *)a2;
+  *((_BYTE *)v15 + 65) = (*(unsigned int (__fastcall **)(_QWORD, __int64, _QWORD *))(**(_QWORD **)(qword_1410A7DD8 + 16)
+                                                                                   + 40LL))(
+                           *(_QWORD *)(qword_1410A7DD8 + 16),
+                           a2,
+                           v15 + 5) != 0;
+  EnterCriticalSection((LPCRITICAL_SECTION)(v11 + 248));
+  v18 = *(_QWORD **)(v11 + 32);
+  if ( v18 )
+    *v18 = v15;
+  else
+    *(_QWORD *)(v11 + 24) = v15;
+  *(_QWORD *)(v11 + 32) = v15;
+  ReleaseSemaphore(*(HANDLE *)(v11 + 192), 1, nullptr);
+  LeaveCriticalSection((LPCRITICAL_SECTION)(v11 + 248));
+  v12 = 1;
+LABEL_27:
+  *((_QWORD *)a1 + 14) = v20;
+  LeaveCriticalSection((LPCRITICAL_SECTION)(a1 + 48));
+  return v12;
+}
+
+

@@ -1,0 +1,13 @@
+const list = await (await fetch("http://127.0.0.1:9222/json/list")).json();
+const page = list.find((t) => t.type === "page" && t.webSocketDebuggerUrl);
+const ws = new WebSocket(page.webSocketDebuggerUrl);
+let id = 0;
+const send = (m, p = {}) => new Promise((res) => { const mid = ++id; const on = (e) => { const x = JSON.parse(e.data); if (x.id === mid) { ws.removeEventListener("message", on); res(x.result); } }; ws.addEventListener("message", on); ws.send(JSON.stringify({ id: mid, method: m, params: p })); });
+await new Promise((r) => ws.addEventListener("open", r, { once: true }));
+const ev = async (e) => { const r = await send("Runtime.evaluate", { expression: e, returnByValue: true }); if (r?.exceptionDetails) return "抛错:" + r.exceptionDetails.text; return r?.result?.value; };
+console.log("#rows 在不在：", await ev(`!!document.getElementById("rows")`));
+console.log("#rows 子节点：", await ev(`(document.getElementById("rows")||{children:{length:-1}}).children.length`));
+console.log("#rows 可见性：", await ev(`(() => { const r=document.getElementById("rows"); if(!r) return "无"; let n=r, chain=[]; while(n && n!==document.body){ const cs=getComputedStyle(n); chain.push((n.id?"#"+n.id:"."+String(n.className).split(" ")[0])+(n.hidden?"[hidden]":"")+(cs.display==="none"?"[display:none]":"")); n=n.parentElement; } return chain.join(" < "); })()`));
+console.log(".row-item 数：", await ev(`document.querySelectorAll(".row-item").length`));
+console.log("列表里有没有别的行类：", await ev(`(() => { const r=document.getElementById("rows"); if(!r) return "无"; return [...new Set([...r.querySelectorAll("*")].slice(0,40).map(e=>e.className))].join("|").slice(0,120); })()`));
+ws.close();

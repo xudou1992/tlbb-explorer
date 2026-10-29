@@ -1,0 +1,23 @@
+const list = await (await fetch("http://127.0.0.1:9222/json/list")).json();
+const page = list.find((t) => t.type === "page" && t.webSocketDebuggerUrl);
+const ws = new WebSocket(page.webSocketDebuggerUrl);
+let id = 0;
+const events = [];
+const send = (m, p = {}) => new Promise((res) => { const mid = ++id; const on = (e) => { const x = JSON.parse(e.data); if (x.id === mid) { ws.removeEventListener("message", on); res(x.result); } }; ws.addEventListener("message", on); ws.send(JSON.stringify({ id: mid, method: m, params: p })); });
+await new Promise((r) => ws.addEventListener("open", r, { once: true }));
+ws.addEventListener("message", (e) => {
+  const x = JSON.parse(e.data);
+  if (x.method === "Runtime.exceptionThrown") events.push("异常 " + (((x.params.exceptionDetails.exception || {}).description) || x.params.exceptionDetails.text || "").split("\n").slice(0, 4).join(" / "));
+  if (x.method === "Runtime.consoleAPICalled") events.push("console." + x.params.type + " " + x.params.args.map((a) => a.value ?? a.description ?? a.type).join(" ").slice(0, 200));
+});
+await send("Runtime.enable");
+await send("Page.enable");
+await send("Page.addScriptToEvaluateOnNewDocument", { source: "window.__errs=[];window.addEventListener('error',e=>window.__errs.push('E:'+e.message+' @'+e.filename+':'+e.lineno));window.addEventListener('unhandledrejection',e=>window.__errs.push('R:'+String(e.reason&&e.reason.message||e.reason)));" });
+await send("Page.reload", { ignoreCache: true });
+await new Promise((r) => setTimeout(r, 9000));
+const ev = async (e) => { const r = await send("Runtime.evaluate", { expression: e, returnByValue: true }); return r?.result?.value; };
+console.log("捕获到的事件：");
+console.log(events.slice(0, 10).join("\n") || "  （无）");
+console.log("页面自记错误：", await ev("JSON.stringify(window.__errs||[])"));
+console.log("行数：", await ev(`document.querySelectorAll(".row-item").length`));
+ws.close();

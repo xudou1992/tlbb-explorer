@@ -1,0 +1,6 @@
+V2（互异影响表）走通: 2208 / 2696  （V0=1072 V1=1439）
+  起点: {'root-flag': 1104, 'origin': 1104}
+  挂点数 0 的: 1008
+  剩余失败: {'tx-not-eof': 128, 'no-candidate': 171, 'roots': 17, 'stuck': 171, 'child-listed-twice': 1}
+  stuck 按前缀 top12: [('w1351_monster', 46), ('w1351_pets', 35), ('w1351_model', 26), ('w1351_boss', 26), ('w1351_npc', 24), ('w1351_new', 10), ('w1351_zuoqi', 4)]
+  stuck 卡点值形态（前400份）: {'float-ish': 148, 'small<4096': 23}

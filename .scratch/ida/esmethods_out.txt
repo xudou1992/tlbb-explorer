@@ -1,0 +1,380 @@
+
+########## 0x14073f2c0 ##########
+// Hidden C++ exception states: #wind=4
+char __fastcall sub_14073F2C0(_QWORD *a1, __int64 a2, char a3)
+{
+  char v3; // r15
+  _QWORD *v6; // r14
+  _QWORD *v7; // rbx
+  void *v8; // rbx
+  __int64 v9; // rax
+  __int64 v10; // rax
+  void (__fastcall ***v11)(_QWORD); // rbx
+  _DWORD *v12; // rdi
+  void (__fastcall **v13)(_QWORD); // rdx
+  __int64 *v14; // r8
+  __int64 *v15; // rax
+  __int64 *v16; // rcx
+  __int64 v17; // rax
+  _QWORD *v18; // rbx
+  __int64 *v19; // rax
+  __int64 *v20; // rcx
+  __int64 *v21; // rdx
+  __int64 *v22; // rsi
+  __int64 *v23; // rax
+  __int64 *v24; // rcx
+  __int64 *v25; // rax
+  __int64 *v26; // rcx
+  __int64 *v27; // rdx
+  int v28; // edi
+  int v29; // eax
+  int v30; // ecx
+  __int64 v31; // r15
+  unsigned __int64 v32; // r8
+  __int64 *v33; // rdx
+  __int64 *v34; // rcx
+  unsigned __int64 v35; // rsi
+  __int64 v36; // rdi
+  _QWORD *v37; // rax
+  int v38; // edi
+  int v39; // eax
+  int v40; // ecx
+  __int64 v41; // rax
+  __int64 **v42; // rax
+  __int64 i; // rax
+  __int64 *j; // rcx
+  void *Block[2]; // [rsp+30h] [rbp-39h] BYREF
+  unsigned __int64 v47; // [rsp+40h] [rbp-29h]
+  __int64 v48; // [rsp+48h] [rbp-21h]
+  _QWORD v49[3]; // [rsp+50h] [rbp-19h] BYREF
+  __int64 v50; // [rsp+68h] [rbp-1h]
+  __int64 *v51; // [rsp+70h] [rbp+7h] BYREF
+  int v52; // [rsp+78h] [rbp+Fh]
+  __int64 *v53; // [rsp+80h] [rbp+17h]
+  _BYTE v54[16]; // [rsp+90h] [rbp+27h] BYREF
+
+  v3 = a3;
+  v6 = a1 - 1;
+  v7 = (_QWORD *)a1[30];
+  sub_140652660(a1 + 30, a1 + 30, v7[1]);
+  v7[1] = v7;
+  *v7 = v7;
+  v7[2] = v7;
+  v6[32] = 0;
+  v8 = qword_1410AB160;
+  v9 = (*(__int64 (__fastcall **)(_QWORD *))(*a1 + 8LL))(a1);
+  v10 = sub_1409A81D0(a2, v9, (__int64)v8 + 112, 1);
+  v11 = (void (__fastcall ***)(_QWORD))v10;
+  if ( v10 )
+  {
+    v12 = (_DWORD *)(*(__int64 (__fastcall **)(__int64))(*(_QWORD *)v10 + 24LL))(v10);
+    v13 = *v11;
+    if ( v12 )
+    {
+      if ( ((unsigned int (__fastcall *)(_QWORD))v13[1])(v11) >= 4 && *v12 == 1178813002 )
+      {
+        sub_140741E80(v6, v11);
+        goto LABEL_9;
+      }
+      sub_1407423F0(v6, v11);
+      (**v11)(v11);
+    }
+    else
+    {
+      (*v13)(v11);
+    }
+    (*(void (__fastcall **)(_QWORD *))(*a1 + 248LL))(a1);
+  }
+LABEL_9:
+  v14 = (__int64 *)a1[38];
+  v15 = (__int64 *)v14[1];
+  v16 = v14;
+  while ( !*((_BYTE *)v15 + 25) )
+  {
+    if ( (unsigned __int64)v15[4] >= a1[29] )
+    {
+      v16 = v15;
+      v15 = (__int64 *)*v15;
+    }
+    else
+    {
+      v15 = (__int64 *)v15[2];
+    }
+  }
+  if ( !*((_BYTE *)v16 + 25) && a1[29] >= (unsigned __int64)v16[4] && v16 != v14 && !*((_BYTE *)v16 + 40) )
+  {
+    v17 = sub_140651EE0(a1 + 30, a1 + 29);
+    sub_140651DA0(Block, v17);
+    v18 = *(_QWORD **)Block[0];
+    while ( v18 != Block[0] )
+    {
+      v19 = (__int64 *)a1[25];
+      v20 = (__int64 *)v19[1];
+      v21 = v19;
+      while ( !*((_BYTE *)v20 + 25) )
+      {
+        if ( (unsigned __int64)v20[4] >= v18[4] )
+        {
+          v21 = v20;
+          v20 = (__int64 *)*v20;
+        }
+        else
+        {
+          v20 = (__int64 *)v20[2];
+        }
+      }
+      if ( *((_BYTE *)v21 + 25) || v18[4] < (unsigned __int64)v21[4] || v21 == v19 )
+      {
+        v22 = (__int64 *)a1[32];
+        v23 = (__int64 *)v22[1];
+        v24 = v22;
+        if ( !*((_BYTE *)v23 + 25) )
+        {
+          do
+          {
+            if ( (unsigned __int64)v23[4] >= v18[4] )
+            {
+              v22 = v23;
+              v23 = (__int64 *)*v23;
+            }
+            else
+            {
+              v23 = (__int64 *)v23[2];
+            }
+          }
+          while ( !*((_BYTE *)v23 + 25) );
+          v24 = (__int64 *)a1[32];
+        }
+        if ( *((_BYTE *)v22 + 25) || v18[4] < (unsigned __int64)v22[4] || v22 == v24 )
+        {
+          v38 = (int)a1;
+          if ( !v6 )
+            v38 = 0;
+          v39 = (*(__int64 (__fastcall **)(_QWORD *))(*a1 + 8LL))(a1);
+          v41 = sub_1406C5EB0(v40, (int)v18 + 40, v39, v38, v3);
+          v49[0] = v18[4];
+          _InterlockedIncrement((volatile signed __int32 *)(v49[0] + 8LL));
+          v49[1] = v41;
+          sub_1405F4280(a1 + 25, v54, v49);
+          sub_1401369D0(v49[0]);
+        }
+        else
+        {
+          v25 = (__int64 *)a1[36];
+          v26 = (__int64 *)v25[1];
+          v27 = v25;
+          while ( !*((_BYTE *)v26 + 25) )
+          {
+            if ( v26[4] >= (unsigned __int64)v22[5] )
+            {
+              v27 = v26;
+              v26 = (__int64 *)*v26;
+            }
+            else
+            {
+              v26 = (__int64 *)v26[2];
+            }
+          }
+          if ( *((_BYTE *)v27 + 25) || v22[5] < (unsigned __int64)v27[4] || v27 == v25 )
+          {
+            v28 = (int)a1;
+            if ( !v6 )
+              v28 = 0;
+            v29 = (*(__int64 (__fastcall **)(_QWORD *))(*a1 + 8LL))(a1);
+            v31 = sub_1406C6100(v30, (int)v22 + 40, v29, v28, v3);
+            v32 = v22[5];
+            v47 = v32;
+            _InterlockedIncrement((volatile signed __int32 *)(v32 + 8));
+            v48 = v31;
+            v33 = (__int64 *)a1[36];
+            v34 = (__int64 *)v33[1];
+            v51 = v34;
+            v52 = 0;
+            v53 = v33;
+            while ( !*((_BYTE *)v34 + 25) )
+            {
+              v51 = v34;
+              if ( v34[4] >= v32 )
+              {
+                v52 = 1;
+                v33 = v34;
+                v53 = v34;
+                v34 = (__int64 *)*v34;
+              }
+              else
+              {
+                v52 = 0;
+                v34 = (__int64 *)v34[2];
+              }
+            }
+            v35 = v47;
+            if ( *((_BYTE *)v33 + 25) || v47 < v33[4] )
+            {
+              if ( a1[37] == 0x555555555555555LL )
+                unknown_libname_1();
+              v36 = a1[36];
+              v49[2] = a1 + 36;
+              v50 = 0;
+              v37 = operator new(0x30u);
+              v37[4] = v35;
+              _InterlockedIncrement((volatile signed __int32 *)(v35 + 8));
+              v37[5] = v31;
+              *v37 = v36;
+              v37[1] = v36;
+              v37[2] = v36;
+              *((_WORD *)v37 + 12) = 0;
+              v50 = 0;
+              sub_1400EF490(a1 + 36, &v51, v37);
+              v35 = v47;
+            }
+            sub_1401369D0(v35);
+            v6 = a1 - 1;
+            v3 = a3;
+          }
+        }
+      }
+      v42 = (__int64 **)v18[2];
+      if ( *((_BYTE *)v42 + 25) )
+      {
+        for ( i = v18[1]; !*(_BYTE *)(i + 25); i = *(_QWORD *)(i + 8) )
+        {
+          if ( v18 != *(_QWORD **)(i + 16) )
+            break;
+          v18 = (_QWORD *)i;
+        }
+        v18 = (_QWORD *)i;
+      }
+      else
+      {
+        v18 = (_QWORD *)v18[2];
+        for ( j = *v42; !*((_BYTE *)j + 25); j = (__int64 *)*j )
+          v18 = j;
+      }
+    }
+    *(_BYTE *)sub_140742C50(a1 + 38, a1 + 29) = 1;
+    sub_1406529A0(Block, Block, *((_QWORD *)Block[0] + 1));
+    j_j_j__free_base_0(Block[0]);
+  }
+  (*(void (__fastcall **)(_QWORD *))(*a1 + 248LL))(a1);
+  return 1;
+}
+
+
+########## 0x14073f060 ##########
+// Hidden C++ exception states: #wind=2
+char __fastcall sub_14073F060(__int64 a1, __int64 a2)
+{
+  __int64 v2; // r13
+  __int64 v3; // rsi
+  _QWORD *v4; // rax
+  _QWORD *v5; // rdi
+  __int64 v6; // rbp
+  int v7; // r12d
+  __int64 v8; // rdx
+  __int64 v9; // r15
+  __int64 v10; // r14
+  __int64 v11; // rsi
+  __int64 v12; // rbx
+  __int64 **v13; // rax
+  __int64 i; // rax
+  __int64 *j; // rcx
+  __int64 *v16; // rbx
+  __int64 v17; // rcx
+  __int64 **v18; // rax
+  __int64 *k; // rax
+  __int64 *m; // rcx
+  __int64 v22; // [rsp+20h] [rbp-68h]
+  _QWORD v23[2]; // [rsp+30h] [rbp-58h] BYREF
+  char v24[72]; // [rsp+40h] [rbp-48h] BYREF
+  __int64 v26; // [rsp+A8h] [rbp+20h] BYREF
+
+  v2 = a1;
+  if ( !qword_1410B5C38 )
+    sub_1401375C0(a1, a2);
+  _InterlockedIncrement((volatile signed __int32 *)(qword_1410A74A8 + 8));
+  v3 = qword_1410A74A8;
+  v22 = qword_1410A74A8;
+  v4 = *(_QWORD **)(v2 + 288);
+  v5 = (_QWORD *)*v4;
+  if ( (_QWORD *)*v4 != v4 )
+  {
+    do
+    {
+      v6 = v5[5];
+      v7 = 0;
+      v8 = *(_QWORD *)(v6 + 160);
+      if ( (*(_QWORD *)(v6 + 168) - v8) >> 3 )
+      {
+        v9 = 0;
+        do
+        {
+          v10 = *(_QWORD *)(v9 + v8);
+          sub_140136B90(&v26);
+          v11 = v26;
+          _InterlockedIncrement((volatile signed __int32 *)(v26 + 8));
+          sub_1401369D0(v22);
+          v12 = v26;
+          v22 = v26;
+          sub_1401369D0(v26);
+          (*(void (__fastcall **)(__int64))(*(_QWORD *)v10 + 16LL))(v10);
+          v23[0] = v12;
+          _InterlockedIncrement((volatile signed __int32 *)(v11 + 8));
+          v23[1] = v10;
+          sub_1405F4280(v2 + 200, v24, v23);
+          sub_1401369D0(v26);
+          ++v7;
+          v9 += 8;
+          v8 = *(_QWORD *)(v6 + 160);
+        }
+        while ( v7 < (unsigned __int64)((*(_QWORD *)(v6 + 168) - v8) >> 3) );
+        v2 = a1;
+      }
+      v13 = (__int64 **)v5[2];
+      if ( *((_BYTE *)v13 + 25) )
+      {
+        for ( i = v5[1]; !*(_BYTE *)(i + 25); i = *(_QWORD *)(i + 8) )
+        {
+          if ( v5 != *(_QWORD **)(i + 16) )
+            break;
+          v5 = (_QWORD *)i;
+        }
+        v5 = (_QWORD *)i;
+      }
+      else
+      {
+        v5 = (_QWORD *)v5[2];
+        for ( j = *v13; !*((_BYTE *)j + 25); j = (__int64 *)*j )
+          v5 = j;
+      }
+    }
+    while ( v5 != *(_QWORD **)(v2 + 288) );
+    v3 = v22;
+  }
+  v16 = **(__int64 ***)(v2 + 200);
+  while ( !*((_BYTE *)v16 + 25) )
+  {
+    v17 = v16[5];
+    if ( v17 && *(_DWORD *)(v17 + 208) == 14 )
+      sub_140732CD0(v17, v2 - 8);
+    v18 = (__int64 **)v16[2];
+    if ( *((_BYTE *)v18 + 25) )
+    {
+      for ( k = (__int64 *)v16[1]; !*((_BYTE *)k + 25); k = (__int64 *)k[1] )
+      {
+        if ( v16 != (__int64 *)k[2] )
+          break;
+        v16 = k;
+      }
+      v16 = k;
+    }
+    else
+    {
+      v16 = (__int64 *)v16[2];
+      for ( m = *v18; !*((_BYTE *)m + 25); m = (__int64 *)*m )
+        v16 = m;
+    }
+  }
+  sub_1401369D0(v3);
+  return 1;
+}
+

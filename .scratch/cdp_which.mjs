@@ -1,0 +1,12 @@
+const list = await (await fetch("http://127.0.0.1:9222/json/list")).json();
+const pages = list.filter((t) => t.type === "page" && t.webSocketDebuggerUrl);
+console.log("窗口数：", pages.length, pages.map((p) => p.title.slice(0, 20)));
+const ws = new WebSocket(pages[0].webSocketDebuggerUrl);
+let id = 0;
+const send = (m, p = {}) => new Promise((res) => { const mid = ++id; const on = (e) => { const x = JSON.parse(e.data); if (x.id === mid) { ws.removeEventListener("message", on); res(x.result); } }; ws.addEventListener("message", on); ws.send(JSON.stringify({ id: mid, method: m, params: p })); });
+await new Promise((r) => ws.addEventListener("open", r, { once: true }));
+const ev = async (e) => { const r = await send("Runtime.evaluate", { expression: e, returnByValue: true, awaitPromise: true }); if (r?.exceptionDetails) return "抛错:" + (r.exceptionDetails.exception?.description || r.exceptionDetails.text).slice(0, 300); return r?.result?.value; };
+console.log("fxPick 节点在不在（在=新界面）：", await ev(`!!document.getElementById("fxPick")`));
+console.log("detail.js 里特效取数怎么调的：", await ev(`(() => { const s=document.querySelector('script[src*="detail"]'); return s? s.src : (window.__fxSrc||"看不到 script"); })()`));
+console.log("直接问后端 effect_view(399, \"\")：", await ev(`(async () => { const t=window.__TAURI__; if(!t) return "没有 __TAURI__"; const r=await t.core.invoke("effect_view",{gid:399,file:""}); return JSON.stringify({file:r.file,files:r.files.length}); })()`));
+ws.close();

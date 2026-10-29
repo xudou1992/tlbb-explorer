@@ -1,0 +1,1 @@
+{"content": [{"type": "text", "text": "[{\"data\":[],\"next_offset\":null}]"}], "structuredContent": {"result": [{"data": [], "next_offset": null}]}, "isError": false}

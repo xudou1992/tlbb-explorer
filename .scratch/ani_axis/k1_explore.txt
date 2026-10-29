@@ -1,0 +1,33 @@
+=== [0] 结构 ===
+yifu: NJ=46 verts=781 tris?(~846) | shoutao: NJ=46 verts=42
+骨名序列一致: True
+父链一致: True
+[yifu] 占位骨(无96B记录, 局部=I) 12 根: 000, bip01_footsteps, bip01_spine1, bip01_neck, bip01_head, bip01_l_clavicle, bip01_l_forearm, bip01_l_thigh, bip01_r_thigh, bone10, bone10_mirror02, bone10_mirror01
+[yifu] 带蒙皮权重的骨 27 根; 占位骨中有权重的 1 根: 000
+[yifu] root_only 顶点 252 / 781; wsum<0.999 的顶点 0
+[shoutao] 占位骨(无96B记录, 局部=I) 12 根: 000, bip01_footsteps, bip01_spine1, bip01_neck, bip01_head, bip01_l_clavicle, bip01_l_forearm, bip01_l_thigh, bip01_r_thigh, bone10, bone10_mirror02, bone10_mirror01
+[shoutao] 带蒙皮权重的骨 1 根; 占位骨中有权重的 1 根: 000
+[shoutao] root_only 顶点 42 / 42; wsum<0.999 的顶点 0
+
+=== [1] 动画清单与帧数 ===
+[yifu] 15 条动作: {"behit01": 21, "dead": 2, "deadbegin": 65, "fight_idle01": 56, "flyingdead": 65, "flyingdeadbegin": 2, "hit01": 31, "hit02": 36, "hit03": 36, "idle01": 41, "idle02": 61, "idle03": 41, "run": 26, "vertigo": 41, "walk": 31}
+[shoutao] 15 条动作: {"behit01": 21, "dead": 2, "deadbegin": 65, "fight_idle01": 56, "flyingdead": 65, "flyingdeadbegin": 2, "hit01": 31, "hit02": 36, "hit03": 36, "idle01": 41, "idle02": 61, "idle03": 41, "run": 26, "vertigo": 41, "walk": 31}
+
+=== [2] 两模型动画数据同一性 ===
+动作名集合相同: True
+  behit01          逐骨逐帧 max|Δt|=0.000e+00 max|Δq|=0.000e+00
+  dead             逐骨逐帧 max|Δt|=0.000e+00 max|Δq|=0.000e+00
+  deadbegin        逐骨逐帧 max|Δt|=0.000e+00 max|Δq|=0.000e+00
+  fight_idle01     逐骨逐帧 max|Δt|=0.000e+00 max|Δq|=0.000e+00
+  flyingdead       逐骨逐帧 max|Δt|=0.000e+00 max|Δq|=0.000e+00
+  flyingdeadbegin  逐骨逐帧 max|Δt|=0.000e+00 max|Δq|=0.000e+00
+  hit01            逐骨逐帧 max|Δt|=0.000e+00 max|Δq|=0.000e+00
+  hit02            逐骨逐帧 max|Δt|=0.000e+00 max|Δq|=0.000e+00
+  hit03            逐骨逐帧 max|Δt|=0.000e+00 max|Δq|=0.000e+00
+  idle01           逐骨逐帧 max|Δt|=0.000e+00 max|Δq|=0.000e+00
+  idle02           逐骨逐帧 max|Δt|=0.000e+00 max|Δq|=0.000e+00
+  idle03           逐骨逐帧 max|Δt|=0.000e+00 max|Δq|=0.000e+00
+  run              逐骨逐帧 max|Δt|=0.000e+00 max|Δq|=0.000e+00
+  vertigo          逐骨逐帧 max|Δt|=0.000e+00 max|Δq|=0.000e+00
+  walk             逐骨逐帧 max|Δt|=0.000e+00 max|Δq|=0.000e+00
+两模型动画数据最大差: |Δt|=0.000e+00 |Δq|=0.000e+00 (最不一致的动作: )

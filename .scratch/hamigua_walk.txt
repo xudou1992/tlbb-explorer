@@ -1,0 +1,72 @@
+declared>0 的 .mesh 共 2696，广义 walker 走通 1439
+起点类别：{'root-flag': 339, 'origin': 1100}
+挂点段 (flag,count) 直方 top10：[((1, 5), 430), ((1, 0), 246), ((1, 4), 195), ((1, 2), 138), ((1, 6), 107), ((1, 3), 102), ((1, 7), 60), ((1, 1), 36), ((1, 15), 30), ((1, 8), 29)]
+
+仍走不通的按错误聚类：
+    171  no-candidate
+     11  stuck@0x5c8 u32=3087262515(0xb803e333)
+      8  stuck@0x8018 u32=1068242182(0x3fac1506)
+      6  tx-not-eof@0x1760-of-0x17d4
+      6  stuck@0xc780 u32=3158716033(0xbc462e81)
+      5  roots=['b_bone_001', 'b_bone_002', 'b_bone_003', 'b_bone_004']
+      5  stuck@0x888c u32=3205692663(0xbf12fcf7)
+      5  stuck@0xdda8 u32=626248133(0x2553c9c5)
+      5  stuck@0x15a08 u32=285(0x11d)
+      4  stuck@0x88c u32=3148060278(0xbba39676)
+      4  stuck@0x3c90 u32=1068242182(0x3fac1506)
+      4  tx-not-eof@0x2348-of-0x24bc
+      4  stuck@0x3f40 u32=1068242182(0x3fac1506)
+      4  stuck@0x91dc u32=8(0x8)
+      3  stuck@0x1ed8 u32=13(0xd)
+      3  stuck@0x683c u32=24(0x18)
+      3  stuck@0x10c28 u32=522(0x20a)
+      3  tx-not-eof@0x630-of-0x6a4
+      3  stuck@0x6e7c u32=1953653072(0x74726150)
+      3  tx-not-eof@0x668f8-of-0x990f8
+      3  tx-not-eof@0x56eb0-of-0x7fd68
+      3  stuck@0x4f8c u32=26(0x1a)
+      3  stuck@0x45e0 u32=28(0x1c)
+      3  stuck@0xa048 u32=84(0x54)
+      3  stuck@0x664c u32=860024237(0x3342edad)
+
+走通样本（前 40，按 declared 排）：
+  w1351_shenghuo_dami1.mesh                      declared=1    vc=648    start=0x5e1c root-flag tx=(1,1) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_dami2.mesh                      declared=1    vc=842    start=0x7b90 root-flag tx=(1,1) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_dami3.mesh                      declared=1    vc=842    start=0x7b90 root-flag tx=(1,1) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_gaoliang1.mesh                  declared=1    vc=2760   start=0x1862c origin tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_gaoliang2.mesh                  declared=1    vc=2080   start=0x1255c origin tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_gaoliang3.mesh                  declared=1    vc=2080   start=0x1255c origin tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_hongshu1.mesh                   declared=1    vc=199    start=0x1e10 origin tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_hongshu2.mesh                   declared=1    vc=411    start=0x3bb4 origin tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_hongshu3.mesh                   declared=1    vc=329    start=0x3120 origin tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_huangdou1.mesh                  declared=1    vc=5508   start=0x30884 origin tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_huangdou2.mesh                  declared=1    vc=5888   start=0x33c78 origin tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_huasheng2.mesh                  declared=1    vc=5274   start=0x2e5c8 root-flag tx=(1,1) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_huasheng3.mesh                  declared=1    vc=4698   start=0x29708 root-flag tx=(1,1) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_lvdou1.mesh                     declared=1    vc=199    start=0x1e10 origin tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_lvdou2.mesh                     declared=1    vc=411    start=0x3bb4 origin tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_lvdou3.mesh                     declared=1    vc=1525   start=0xd4a4 origin tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_xiaomai1.mesh                   declared=1    vc=1472   start=0xd014 root-flag tx=(1,1) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_xiaomai2.mesh                   declared=1    vc=1384   start=0xc4c0 root-flag tx=(1,1) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_xiaomai3.mesh                   declared=1    vc=1858   start=0xf7e4 root-flag tx=(1,1) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_yumi1.mesh                      declared=1    vc=2080   start=0x1255c root-flag tx=(1,1) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_yumi2.mesh                      declared=1    vc=2656   start=0x1795c root-flag tx=(1,1) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_yumi3.mesh                      declared=1    vc=2656   start=0x1795c root-flag tx=(1,1) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_zhima1.mesh                     declared=1    vc=5508   start=0x30884 origin tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_shenghuo_zhima2.mesh                     declared=1    vc=5508   start=0x30884 origin tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_model_dqz_dici_z001.mesh                 declared=1    vc=288    start=0x2954 root-flag tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_model_dunpai_z001.mesh                   declared=1    vc=228    start=0x24bc root-flag tx=(1,3) 块=(0, 0, 0) 名=['000']
+  w1351_model_hongbaoshi_s001.mesh               declared=1    vc=287    start=0x273c root-flag tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_model_jgsb_jian_z001.mesh                declared=1    vc=662    start=0x5cc4 root-flag tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_model_knife_h01.mesh                     declared=1    vc=530    start=0x573c root-flag tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_model_qf_h001.mesh                       declared=1    vc=24     start=0x490 root-flag tx=(1,1) 块=(0, 0, 0) 名=['000']
+  w1351_model_rlsz_z001.mesh                     declared=1    vc=25     start=0x4fc root-flag tx=(1,1) 块=(0, 0, 0) 名=['000']
+  w1351_model_sl_wuqi_h01.mesh                   declared=1    vc=839    start=0x975c root-flag tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_model_sword_h01.mesh                     declared=1    vc=444    start=0x4cbc root-flag tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_model_ui_kuijia_z01.mesh                 declared=1    vc=836    start=0x891c root-flag tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_model_wd_nan_wq_big_h01.mesh             declared=1    vc=102    start=0x13cc root-flag tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_model_wd_wq_h02.mesh                     declared=1    vc=351    start=0x404c root-flag tx=(1,1) 块=(0, 0, 0) 名=['000']
+  w1351_model_wq_em_h001.mesh                    declared=1    vc=5233   start=0x32d3c root-flag tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_model_wq_em_h01.mesh                     declared=1    vc=1694   start=0xe82c root-flag tx=(1,0) 块=(0, 0, 0) 名=['000']
+  w1351_model_wq_xy_nan_h01.mesh                 declared=1    vc=753    start=0x89fc root-flag tx=(1,0) 块=(0, 0, 0) 名=['000']
+  decal.mesh                                     declared=1    vc=24     start=0x464 origin tx=(1,0) 块=(0, 0, 0) 名=['bone002']

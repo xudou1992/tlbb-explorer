@@ -1,0 +1,234 @@
+
+===== 140645fc0 size=400 =====
+__int64 __fastcall sub_140645FC0(_QWORD *a1)
+{
+  __int64 v2; // rdi
+  unsigned int v3; // eax
+  unsigned int v4; // r8d
+  __int64 v5; // rax
+  __int64 v6; // r8
+  int v7; // ebp
+  __int64 v8; // rdx
+  __int64 result; // rax
+  __int64 v10; // rdi
+  __int64 v11; // rax
+  __int64 v12; // rsi
+  unsigned int v13; // eax
+  unsigned int v14; // r8d
+  __int64 v15; // rax
+
+  if ( a1[153] )
+  {
+    sub_14063AB30();
+    v2 = a1[153];
+    if ( v2 )
+    {
+      v3 = sub_1409BCB60();
+      v4 = v3;
+      if ( v3 )
+        v5 = *((_QWORD *)&unk_1410ADB48 + ((unsigned __int64)v3 >> 14) + 17) + 24LL * (v3 & 0x3FFF);
+      else
+        v5 = 0;
+      *(_QWORD *)(v5 + 8) = v2;
+      sub_1405DF410(&unk_1410AD778, v4);
+    }
+    a1[153] = 0;
+  }
+  v6 = a1[141];
+  v7 = 0;
+  v8 = a1[140];
+  result = (v6 - v8) >> 3;
+  if ( result )
+  {
+    v10 = 0;
+    do
+    {
+      v11 = *(_QWORD *)(v10 + v8);
+      if ( v11 )
+      {
+        *(_BYTE *)(v11 + 28) = 0;
+        v12 = *(_QWORD *)(v10 + a1[140]);
+        if ( v12 )
+        {
+          if ( _InterlockedExchangeAdd((volatile signed __int32 *)(v12 + 24), 0xFFFFFFFF) == 1 )
+          {
+            v13 = sub_1409BCB60();
+            v14 = v13;
+            if ( v13 )
+              v15 = *((_QWORD *)&unk_1410ADB48 + ((unsigned __int64)v13 >> 14) + 17) + 24LL * (v13 & 0x3FFF);
+            else
+              v15 = 0;
+            *(_QWORD *)(v15 + 8) = v12;
+            sub_1405DF410(&unk_1410AD778, v14);
+          }
+          *(_QWORD *)(v10 + a1[140]) = 0;
+        }
+      }
+      v6 = a1[141];
+      ++v7;
+      v8 = a1[140];
+      result = v7;
+      v10 += 8;
+    }
+    while ( v7 < (unsigned __int64)((v6 - v8) >> 3) );
+  }
+  if ( v8 != v6 )
+    a1[141] = v8;
+  return result;
+}
+
+===== 140642a40 size=222 =====
+// Hidden C++ exception states: #wind=1
+void __fastcall sub_140642A40(__int64 a1, __int64 a2, int a3)
+{
+  int v5; // ebx
+  __int64 v6; // rax
+  __int64 v7; // [rsp+20h] [rbp-38h] BYREF
+  int v8; // [rsp+28h] [rbp-30h]
+  _BYTE v9[40]; // [rsp+30h] [rbp-28h] BYREF
+  __int64 v10; // [rsp+60h] [rbp+8h] BYREF
+
+  *(_QWORD *)(a1 + 80) = a2;
+  v7 = a1;
+  v8 = a3;
+  if ( !qword_1410AB1B8 || dword_1410A813C || (v5 = *(_DWORD *)(qword_1410AB1B8 + 68), GetCurrentThreadId() == v5) )
+  {
+    *(_DWORD *)(a1 + 72) = a3;
+  }
+  else if ( byte_1410A7DF4 || byte_1410A7DBF && GetCurrentThreadId() != dword_1410A8134 )
+  {
+    v6 = sub_140646DF0(v9);
+    sub_140647020(v6, &v10, &v7);
+    if ( v10 )
+      sub_1405CFEA0();
+  }
+  else
+  {
+    *(_DWORD *)(v7 + 72) = a3;
+  }
+}
+
+===== 140642b20 size=275 =====
+// Hidden C++ exception states: #wind=1
+int __fastcall sub_140642B20(_DWORD *a1, int a2, int a3, unsigned int a4, unsigned int a5)
+{
+  _UNKNOWN **v5; // rax
+  unsigned int v9; // r14d
+  int v10; // ebx
+  _DWORD *v11; // rcx
+  __int64 v12; // rax
+  _BYTE v14[24]; // [rsp+20h] [rbp-58h] BYREF
+  _DWORD *v15; // [rsp+38h] [rbp-40h] BYREF
+  int v16; // [rsp+40h] [rbp-38h]
+  int v17; // [rsp+44h] [rbp-34h]
+  unsigned __int64 v18; // [rsp+48h] [rbp-30h]
+  int v19; // [rsp+50h] [rbp-28h]
+  _UNKNOWN *retaddr; // [rsp+78h] [rbp+0h] BYREF
+  __int64 v21; // [rsp+80h] [rbp+8h] BYREF
+
+  v5 = &retaddr;
+  v9 = a5;
+  a1[9] = a5;
+  a1[12] = a3;
+  v15 = a1;
+  v16 = a2;
+  v17 = a3;
+  v18 = __PAIR64__(v9, a4);
+  v19 = 1;
+  if ( !qword_1410AB1B8
+    || (LODWORD(v5) = dword_1410A813C) != 0
+    || (v10 = *(_DWORD *)(qword_1410AB1B8 + 68), LODWORD(v5) = GetCurrentThreadId(), (_DWORD)v5 == v10) )
+  {
+    a1[13] = a2;
+    a1[8] = a4;
+    a1[10] = v9;
+    a1[11] = 1;
+  }
+  else if ( byte_1410A7DF4 || byte_1410A7DBF && GetCurrentThreadId() != dword_1410A8134 )
+  {
+    v12 = sub_140646C00(v14);
+    LODWORD(v5) = sub_1405E3540(v12, &v21, &v15);
+    if ( v21 )
+      LODWORD(v5) = sub_1405CFEA0();
+  }
+  else
+  {
+    v11 = v15;
+    v15[13] = a2;
+    v11[8] = a4;
+    v5 = (_UNKNOWN **)HIDWORD(v18);
+    v11[10] = HIDWORD(v18);
+    v11[11] = 1;
+  }
+  return (int)v5;
+}
+
+===== 140642c40 size=246 =====
+// Hidden C++ exception states: #wind=1
+void __fastcall sub_140642C40(__int64 a1, __int64 a2)
+{
+  int v4; // ebx
+  __int64 v5; // rax
+  __int64 v6; // rax
+  __int64 v7; // [rsp+20h] [rbp-38h] BYREF
+  int v8; // [rsp+28h] [rbp-30h]
+  __int64 v9; // [rsp+30h] [rbp-28h]
+  _BYTE v10[32]; // [rsp+38h] [rbp-20h] BYREF
+  __int64 v11; // [rsp+60h] [rbp+8h] BYREF
+
+  v7 = a1;
+  v8 = 2;
+  v9 = a2;
+  if ( !qword_1410AB1B8 || dword_1410A813C || (v4 = *(_DWORD *)(qword_1410AB1B8 + 68), GetCurrentThreadId() == v4) )
+  {
+    *(_QWORD *)(a1 + 64) = a2;
+    *(_DWORD *)(a1 + 56) = 2;
+  }
+  else if ( byte_1410A7DF4 || byte_1410A7DBF && GetCurrentThreadId() != dword_1410A8134 )
+  {
+    v6 = sub_1406469F0(v10);
+    sub_1405E3660(v6, &v11, &v7);
+    if ( v11 )
+      sub_1405CFEA0();
+  }
+  else
+  {
+    v5 = v7;
+    *(_QWORD *)(v7 + 64) = a2;
+    *(_DWORD *)(v5 + 56) = 2;
+  }
+}
+
+===== 14063a7b0 size=207 =====
+// Hidden C++ exception states: #wind=2
+__int64 __fastcall sub_14063A7B0(__int64 a1)
+{
+  int v2; // ebx
+  __int64 result; // rax
+  __int64 v4; // rax
+  _BYTE v5[40]; // [rsp+20h] [rbp-28h] BYREF
+  __int64 v6; // [rsp+50h] [rbp+8h] BYREF
+  __int64 v7; // [rsp+58h] [rbp+10h] BYREF
+
+  v6 = a1;
+  if ( !qword_1410AB1B8 )
+    return (*(__int64 (__fastcall **)(__int64))(*(_QWORD *)a1 + 48LL))(a1);
+  if ( dword_1410A813C )
+    return (*(__int64 (__fastcall **)(__int64))(*(_QWORD *)a1 + 48LL))(a1);
+  v2 = *(_DWORD *)(qword_1410AB1B8 + 68);
+  if ( GetCurrentThreadId() == v2 )
+    return (*(__int64 (__fastcall **)(__int64))(*(_QWORD *)a1 + 48LL))(a1);
+  if ( byte_1410A7DF4 || byte_1410A7DBF && GetCurrentThreadId() != dword_1410A8134 )
+  {
+    v4 = sub_14063C580(v5);
+    result = sub_1405E3930(v4, &v7, &v6);
+    if ( v7 )
+      return sub_1405CFEA0();
+  }
+  else
+  {
+    v6 = 0;
+    return (*(__int64 (__fastcall **)(__int64))(*(_QWORD *)a1 + 48LL))(a1);
+  }
+  return result;
+}

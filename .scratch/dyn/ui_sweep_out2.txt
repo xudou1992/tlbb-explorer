@@ -1,0 +1,42 @@
+renzheshengua_b1 · preview: 1112 字 · 画布[445x278] · 图 2  「w1351_pets_renzheshengua_b1 B 主体定位 NPC / 怪物 w1351_pets_renzheshengua_b1 · 2 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路」
+renzheshengua_b1 · resource: 537 字 · 画布[] · 图 0  「w1351_pets_renzheshengua_b1 B 主体定位 NPC / 怪物 w1351_pets_renzheshengua_b1 · 2 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路」
+renzheshengua_b1 · skeleton: 269 字 · 画布[] · 图 0  「w1351_pets_renzheshengua_b1 B 主体定位 NPC / 怪物 w1351_pets_renzheshengua_b1 · 2 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路」
+renzheshengua_b1 · animation: 292 字 · 画布[] · 图 0  「w1351_pets_renzheshengua_b1 B 主体定位 NPC / 怪物 w1351_pets_renzheshengua_b1 · 2 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路」
+renzheshengua_b1 · effect: 281 字 · 画布[] · 图 0  「w1351_pets_renzheshengua_b1 B 主体定位 NPC / 怪物 w1351_pets_renzheshengua_b1 · 2 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路」
+renzheshengua_b1 · material: 353 字 · 画布[] · 图 0  「w1351_pets_renzheshengua_b1 B 主体定位 NPC / 怪物 w1351_pets_renzheshengua_b1 · 2 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路」
+renzheshengua_b1 · relations: 806 字 · 画布[] · 图 0  「w1351_pets_renzheshengua_b1 B 主体定位 NPC / 怪物 w1351_pets_renzheshengua_b1 · 2 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路」
+flower_lf004 · preview: 1114 字 · 画布[445x278] · 图 2  「w1351_pets_renzheshengua_b1 B 主体定位 NPC / 怪物 w1351_pets_renzheshengua_b1 · 2 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路」
+flower_lf004 · resource: 539 字 · 画布[] · 图 0  「w1351_pets_renzheshengua_b1 B 主体定位 NPC / 怪物 w1351_pets_renzheshengua_b1 · 2 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路」
+flower_lf004 · skeleton: 271 字 · 画布[] · 图 0  「w1351_pets_renzheshengua_b1 B 主体定位 NPC / 怪物 w1351_pets_renzheshengua_b1 · 2 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路」
+flower_lf004 · animation: 294 字 · 画布[] · 图 0  「w1351_pets_renzheshengua_b1 B 主体定位 NPC / 怪物 w1351_pets_renzheshengua_b1 · 2 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路」
+flower_lf004 · effect: 283 字 · 画布[] · 图 0  「w1351_pets_renzheshengua_b1 B 主体定位 NPC / 怪物 w1351_pets_renzheshengua_b1 · 2 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路」
+flower_lf004 · material: 353 字 · 画布[] · 图 0  「w1351_pets_renzheshengua_b1 B 主体定位 NPC / 怪物 w1351_pets_renzheshengua_b1 · 2 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路」
+flower_lf004 · relations: 806 字 · 画布[] · 图 0  「w1351_pets_renzheshengua_b1 B 主体定位 NPC / 怪物 w1351_pets_renzheshengua_b1 · 2 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路」
+huayao01 · preview: 1663 字 · 画布[44x44,44x44,445x278] · 图 15  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+huayao01 · resource: 553 字 · 画布[44x44,44x44] · 图 0  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+huayao01 · skeleton: 512 字 · 画布[44x44,44x44] · 图 0  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+huayao01 · animation: 1146 字 · 画布[44x44,44x44,445x358] · 图 0  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+huayao01 · effect: 266 字 · 画布[44x44,44x44] · 图 0  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+huayao01 · material: 530 字 · 画布[44x44,44x44] · 图 0  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+huayao01 · relations: 4065 字 · 画布[44x44,44x44] · 图 0  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+machao · preview: 1668 字 · 画布[445x278] · 图 15  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+machao · resource: 558 字 · 画布[] · 图 0  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+machao · skeleton: 517 字 · 画布[] · 图 0  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+machao · animation: 1302 字 · 画布[445x358] · 图 0  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+machao · effect: 268 字 · 画布[] · 图 0  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+machao · material: 530 字 · 画布[] · 图 0  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+machao · relations: 4065 字 · 画布[] · 图 0  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+daishu_b1 · preview: 1668 字 · 画布[445x278] · 图 15  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+daishu_b1 · resource: 558 字 · 画布[] · 图 0  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+daishu_b1 · skeleton: 517 字 · 画布[] · 图 0  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+daishu_b1 · animation: 1302 字 · 画布[445x358] · 图 0  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+daishu_b1 · effect: 268 字 · 画布[] · 图 0  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+daishu_b1 · material: 530 字 · 画布[] · 图 0  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+daishu_b1 · relations: 4065 字 · 画布[] · 图 0  「w1351_npc_huayao03 B 主体定位 NPC / 怪物 w1351_npc_huayao03 · 35 个文件 · 贴图引用 0/8 对上了文件（另有 4 张走客户端转换路径） · data/source/」
+ciwei · preview: 765 字 · 画布[44x44,445x278] · 图 2  「w1351_pets_ciwei_b1 B 主体定位 NPC / 怪物 w1351_pets_ciwei_b1 · 25 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · data/sourc」
+ciwei · resource: 556 字 · 画布[44x44] · 图 0  「w1351_pets_ciwei_b1 B 主体定位 NPC / 怪物 w1351_pets_ciwei_b1 · 25 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · data/sourc」
+ciwei · skeleton: 446 字 · 画布[44x44] · 图 0  「w1351_pets_ciwei_b1 B 主体定位 NPC / 怪物 w1351_pets_ciwei_b1 · 25 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · data/sourc」
+ciwei · animation: 706 字 · 画布[44x44,445x358] · 图 0  「w1351_pets_ciwei_b1 B 主体定位 NPC / 怪物 w1351_pets_ciwei_b1 · 25 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · data/sourc」
+ciwei · effect: 269 字 · 画布[44x44] · 图 0  「w1351_pets_ciwei_b1 B 主体定位 NPC / 怪物 w1351_pets_ciwei_b1 · 25 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · data/sourc」
+ciwei · material: 509 字 · 画布[44x44] · 图 0  「w1351_pets_ciwei_b1 B 主体定位 NPC / 怪物 w1351_pets_ciwei_b1 · 25 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · data/sourc」
+ciwei · relations: 3831 字 · 画布[44x44] · 图 0  「w1351_pets_ciwei_b1 B 主体定位 NPC / 怪物 w1351_pets_ciwei_b1 · 25 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · data/sourc」

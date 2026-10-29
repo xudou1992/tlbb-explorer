@@ -1,0 +1,87 @@
+全库 .mesh 7996 份；变体判据命中 >=1 条的文件 2103 份
+  其中 现有解析器 0 条（纯变体）= 26 份；与 96B 记录混用 = 2077 份
+  变体表把整张网格顶点 100% 覆盖的文件 = 452 份（能全覆盖说明命中是真的，噪声覆盖不了）
+  记录链 L=228+8N 全吻合（>=2 条且无一失配）= 163 份
+  两者都满足（强证据=真记录阵）= 89 份
+
+### 5 份异常文件在统一口径下的读数
+  文件名  声明骨  现有A  变体v  链吻合/对  覆盖/顶点  权重和≈1
+  w1351_model_bell_h002.mesh                       69     0    69   68/68    21627/21627   21627
+  w1351_model_fazhen_ani_lf001.mesh                50     0    49   48/48      256/256       256
+  w1351_model_glass_ani_lf001.mesh                 55     0    54   53/53     2575/2575     2575
+  w1351_model_mj_nan_stone_h01.mesh                79     0    79   78/78    10300/10300   10300
+  w1351_model_ymg01_stone01.mesh                   38     0    37   36/36     6000/6000     6000
+
+### 命中条数分档（全部命中文件）
+  [('1 条', 574), ('2-4 条', 520), ('5-29 条', 920), ('>=30 条', 89)]
+  按覆盖分： [('全覆盖(真)', 452), ('未全覆盖(需看)', 1651)]
+
+命中但既没链上、顶点也没全覆盖的文件（最像误命中）= 940 份
+   v= 62 a=  70 bones= 132 cov=2344/2850 chain=0/61  w1351_ani_model_lianhua_h002.mesh
+   v= 45 a= 127 bones= 172 cov=2187/5166 chain=0/44  w1351_model_dingchunqiu_hand01.mesh
+   v= 44 a=  58 bones= 104 cov=1162/1887 chain=0/43  w1351_ani_model_lianhua_h001.mesh
+   v= 24 a=  65 bones= 103 cov=318/1065 chain=0/23  w1351_boss_shuangying_yifu_001.mesh
+   v= 23 a=  96 bones= 128 cov=142/603 chain=0/22  w1351_boss_qiannianbingpo_yifu_001.mesh
+   v= 23 a=  47 bones=  71 cov=295/1360 chain=0/22  w1351_monster_xingluowushi.mesh
+   v= 23 a=  76 bones= 127 cov=704/7047 chain=0/22  w1351_zuoqi_dafeng.mesh
+   v= 22 a=  90 bones= 133 cov=596/3176 chain=0/21  w1351_nan_s_yifu_mjrmdz.mesh
+   v= 21 a=  90 bones= 133 cov=1244/4013 chain=0/20  w1351_nan_s_yifu_txfh_moreng.mesh
+   v= 20 a=  90 bones= 133 cov=676/3955 chain=0/19  w1351_nan_s_yifu_mrrmdz.mesh
+   v= 20 a=  90 bones= 133 cov=1015/3597 chain=0/19  w1351_nan_s_yifu_new_wdrmdz.mesh
+   v= 20 a=  90 bones= 133 cov=1270/5138 chain=0/19  w1351_nan_s_yifu_slrmdz.mesh
+
+====================================================================================================
+### 题面要求的 30 份正常文件误命中实测
+取样口径：按路径排序，取「现有解析器已认到 >=5 条 96B 记录」的前 30 份（排除那 5 份异常文件）
+  实际取样 30 份
+  file                                                 bones     A    变体v      链    覆盖/顶点       判定
+  w1351_model_pl_h006.mesh                               134    89      0      0    0/155        无命中
+  w1351_model_yanzi_lf001a.mesh                           28    19     10      0 823/1500      疑似误命中
+  w1351_model_zhuahen_lf002.mesh                         104    69      0      0    0/333        无命中
+  w1351_caiji_duchanchu_01.mesh                           26    21      5      0   65/218      疑似误命中
+  w1351_caiji_duwugong_01.mesh                            24    15      9      6  143/291      疑似误命中
+  w1351_caiji_duzhizhu_01.mesh                            46    36     10      1  182/406      疑似误命中
+  w1351_caiji_heihou_01.mesh                              29    22      6      0   69/315      疑似误命中
+  w1351_caiji_honghou_01.mesh                             29    22      6      0   69/315      疑似误命中
+  w1351_caiji_huihou_01.mesh                              29    22      6      0   69/315      疑似误命中
+  w1351_caiji_meiguihua_001.mesh                          35    21     13      1 963/1103      疑似误命中
+  w1351_caiji_xiaobaishe_01.mesh                          15    14      1      0    8/153      疑似误命中
+  w1351_caiji_xiaohongshe_01.mesh                         15    14      1      0    8/153      疑似误命中
+  w1351_caiji_xiaoqingshe_01.mesh                         15    14      1      0    8/153      疑似误命中
+  w1351_diancang_beimingshengong.mesh                     12    10      0      0    0/626        无命中
+  w1351_diancang_douzhuanxingyi.mesh                      12    10      0      0    0/653        无命中
+  w1351_diancang_hama_lian_001.mesh                       96    75      1      0     8/58      疑似误命中
+  w1351_diancang_hama_toufa_001.mesh                      96    75      4      0   36/575      疑似误命中
+  w1351_diancang_hama_yifu_001.mesh                       96    75     13      4  122/583      疑似误命中
+  w1351_diancang_huagongdafa.mesh                         12    10      0      0    0/626        无命中
+  w1351_diancang_lingboweibu.mesh                         12    10      0      0    0/618        无命中
+  w1351_diancang_longzhuashou.mesh                        12    10      0      0    0/596        无命中
+  w1351_diancang_lvboxiangludao.mesh                       7     6      0      0    0/331        无命中
+  w1351_diancang_panguanbi.mesh                           16    13      0      0    0/386        无命中
+  w1351_diancang_qiannianbingcan.mesh                     11     7      4      2  122/228      疑似误命中
+  w1351_diancang_qiannianlingzhi.mesh                     10     6      4      1 1111/2058      疑似误命中
+  w1351_diancang_qiannianrenshen.mesh                     12     9      2      0 333/1257      疑似误命中
+  w1351_diancang_rousisuo.mesh                            17    15      0      0    0/300        无命中
+  w1351_diancang_ruanbian.mesh                            32    29      0      0   0/1244        无命中
+  w1351_diancang_shandiandiao.mesh                        45    35      3      0 764/2079      疑似误命中
+  w1351_diancang_shengsifu.mesh                           12    10      0      0    0/618        无命中
+  ⇒ 30 份里出现命中的文件 18 份，命中条数合计 99 条
+  ⇒ 其中判为「疑似误命中」（链不接且顶点没全覆盖）的文件：
+     w1351_model_yanzi_lf001a.mesh  v=10 a=19 bones=28 cov=823/1500 chain=0/9
+     w1351_caiji_duchanchu_01.mesh  v=5 a=21 bones=26 cov=65/218 chain=0/4
+     w1351_caiji_duwugong_01.mesh  v=9 a=15 bones=24 cov=143/291 chain=6/8
+     w1351_caiji_duzhizhu_01.mesh  v=10 a=36 bones=46 cov=182/406 chain=1/9
+     w1351_caiji_heihou_01.mesh  v=6 a=22 bones=29 cov=69/315 chain=0/5
+     w1351_caiji_honghou_01.mesh  v=6 a=22 bones=29 cov=69/315 chain=0/5
+     w1351_caiji_huihou_01.mesh  v=6 a=22 bones=29 cov=69/315 chain=0/5
+     w1351_caiji_meiguihua_001.mesh  v=13 a=21 bones=35 cov=963/1103 chain=1/12
+     w1351_caiji_xiaobaishe_01.mesh  v=1 a=14 bones=15 cov=8/153 chain=0/0
+     w1351_caiji_xiaohongshe_01.mesh  v=1 a=14 bones=15 cov=8/153 chain=0/0
+     w1351_caiji_xiaoqingshe_01.mesh  v=1 a=14 bones=15 cov=8/153 chain=0/0
+     w1351_diancang_hama_lian_001.mesh  v=1 a=75 bones=96 cov=8/58 chain=0/0
+     w1351_diancang_hama_toufa_001.mesh  v=4 a=75 bones=96 cov=36/575 chain=0/3
+     w1351_diancang_hama_yifu_001.mesh  v=13 a=75 bones=96 cov=122/583 chain=4/12
+     w1351_diancang_qiannianbingcan.mesh  v=4 a=7 bones=11 cov=122/228 chain=2/3
+     w1351_diancang_qiannianlingzhi.mesh  v=4 a=6 bones=10 cov=1111/2058 chain=1/3
+     w1351_diancang_qiannianrenshen.mesh  v=2 a=9 bones=12 cov=333/1257 chain=0/1
+     w1351_diancang_shandiandiao.mesh  v=3 a=35 bones=45 cov=764/2079 chain=0/2

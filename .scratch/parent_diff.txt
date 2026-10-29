@@ -1,0 +1,686 @@
+总 .mesh=3032,有声明骨数的=155 种骨数:[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 110, 111, 114, 115, 117, 118, 120, 121, 123, 124, 125, 126, 127, 128, 130, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 145, 148, 149, 150, 151, 155, 159, 160, 161, 172, 176, 179, 181, 182, 187, 189, 211, 229, 236, 240, 249]
+抽样 681 份跑全语法
+
+❌ w1351_caiji_sanluodunpai.mesh declared=1 err=no origin-record walk
+❌ w1351_shenghuo_candou1.mesh declared=1 err=no origin-record walk
+❌ w1351_shenghuo_candou2.mesh declared=1 err=no origin-record walk
+❌ w1351_shenghuo_candou3.mesh declared=1 err=no origin-record walk
+❌ w1351_shenghuo_dami1.mesh declared=1 err=node count 0 != declared 1
+❌ w1351_shenghuo_dami2.mesh declared=1 err=no origin-record walk
+❌ w1351_caiji_bosijihao_01.mesh declared=2 err=no origin-record walk
+❌ w1351_caiji_hamigua_01.mesh declared=2 err=no origin-record walk
+❌ w1351_caiji_hongzhuangsuguo_01.mesh declared=2 err=no origin-record walk
+❌ w1351_caiji_jinbi_01.mesh declared=2 err=no origin-record walk
+❌ w1351_caiji_liaoguojihao_01.mesh declared=2 err=no origin-record walk
+❌ w1351_caiji_meirenzhuahonglian_01.mesh declared=2 err=no origin-record walk
+❌ w1351_diancang_yemingzhu.mesh declared=3 err=no origin-record walk
+❌ w1351_mrsz_tielian_001.mesh declared=3 err=no origin-record walk
+❌ w1351_an_model_wave_h001.mesh declared=3 err=no origin-record walk
+❌ w1351_model_ani_new_jiumozhi_skill04_h001.mesh declared=3 err=no origin-record walk
+❌ w1351_model_em_nan_sword01.mesh declared=3 err=no origin-record walk
+❌ w1351_model_hudie_h002.mesh declared=3 err=no origin-record walk
+❌ w1351_caiji_shuiqiu.mesh declared=4 err=no origin-record walk
+❌ w1351_caiji_xiguateng_001.mesh declared=4 err=no origin-record walk
+❌ w1351_caiji_xiguateng_002.mesh declared=4 err=no origin-record walk
+❌ w1351_caiji_xiguateng_003.mesh declared=4 err=no origin-record walk
+❌ w1351_caiji_xiguateng_004.mesh declared=4 err=no origin-record walk
+❌ w1351_model_ani_zhenshoufuti_huandie04_w003.mesh declared=4 err=no origin-record walk
+❌ w1351_model_ani_liqinglu_skill03_h001.mesh declared=5 err=no origin-record walk
+❌ w1351_model_ani_liqinglu_skill04_h001.mesh declared=5 err=no origin-record walk
+❌ w1351_model_hxw_dun_c001.mesh declared=5 err=no origin-record walk
+❌ w1351_model_ts_canying_h001.mesh declared=5 err=no origin-record walk
+❌ w1351_model_xin_ani_lf002.mesh declared=5 err=no origin-record walk
+❌ w1351_model_xin_ani_lf003.mesh declared=5 err=no origin-record walk
+❌ w1351_model_ani_npc_liqinglu_hit_h001.mesh declared=6 err=no origin-record walk
+❌ w1351_model_ani_npc_liqinglu_skill02_h001.mesh declared=6 err=no origin-record walk
+❌ w1351_model_ani_npc_liqinglu_skill02_h002.mesh declared=6 err=no origin-record walk
+❌ w1351_model_hudie_c001.mesh declared=6 err=no origin-record walk
+❌ w1351_model_pets_xhl_b7_c01.mesh declared=6 err=no origin-record walk
+❌ w1351_model_qinhuangdigong_zuanshi_s001.mesh declared=6 err=no origin-record walk
+❌ w1351_diancang_lvboxiangludao.mesh declared=7 err=no origin-record walk
+❌ w1351_mrsz_ludeng_001.mesh declared=7 err=no origin-record walk
+❌ w1351_ani_model_9999_h005.mesh declared=7 err=no origin-record walk
+❌ w1351_model_emei_h003.mesh declared=7 err=no origin-record walk
+❌ w1351_model_emei_h004.mesh declared=7 err=no origin-record walk
+❌ w1351_diancang_tianlongbabutu.mesh declared=8 err=no origin-record walk
+❌ w1351_model_ani_zhenshoufuti_youlong01_c01.mesh declared=8 err=no origin-record walk
+❌ w1351_model_mr_cj_nan_jianzhen_glow_lf001.mesh declared=8 err=no origin-record walk
+❌ w1351_model_mr_cj_nan_jianzhen_glow_lf002.mesh declared=8 err=no origin-record walk
+❌ w1351_model_mr_cj_nan_jianzhen_lf001.mesh declared=8 err=no origin-record walk
+❌ w1351_model_mr_cj_nan_jianzhen_lf002.mesh declared=8 err=no origin-record walk
+❌ w1351_model_wd_wq_small_h01.mesh declared=9 err=no origin-record walk
+❌ w1351_model_wq_mrf_wq_h01.mesh declared=9 err=no origin-record walk
+❌ w1351_modle_yxh_queqiao_stars01.mesh declared=9 err=no origin-record walk
+❌ w1351_npc_lvshuijing01_lian_001.mesh declared=9 err=no origin-record walk
+❌ w1351_npc_lvshuijing01_yifu_001.mesh declared=9 err=no origin-record walk
+❌ w1351_npc_lvshuijing02_lian_001.mesh declared=9 err=no origin-record walk
+❌ w1351_diancang_qiannianlingzhi.mesh declared=10 err=no origin-record walk
+❌ w1351_model_baiheliangchi_h001.mesh declared=10 err=no origin-record walk
+❌ w1351_model_spider_dsxj_h01.mesh declared=10 err=no origin-record walk
+❌ w1351_model_spider_h03.mesh declared=10 err=no origin-record walk
+❌ w1351_model_spider_h04.mesh declared=10 err=no origin-record walk
+❌ w1351_model_tianwaifeixian_h001.mesh declared=10 err=no origin-record walk
+❌ w1351_diancang_qiannianbingcan.mesh declared=11 err=no origin-record walk
+❌ w1351_model_daoju_bixin_h001.mesh declared=11 err=no origin-record walk
+❌ w1351_model_daoju_bixin_h002.mesh declared=11 err=no origin-record walk
+❌ w1351_model_flower_lf001a.mesh declared=11 err=no origin-record walk
+❌ w1351_model_ls_tukuai_z001.mesh declared=11 err=no origin-record walk
+❌ w1351_model_pmf_lqs_ymgz_c01.mesh declared=11 err=no origin-record walk
+❌ w1351_diancang_beimingshengong.mesh declared=12 err=no origin-record walk
+❌ w1351_diancang_douzhuanxingyi.mesh declared=12 err=no origin-record walk
+❌ w1351_diancang_huagongdafa.mesh declared=12 err=no origin-record walk
+❌ w1351_diancang_lingboweibu.mesh declared=12 err=no origin-record walk
+❌ w1351_diancang_longzhuashou.mesh declared=12 err=no origin-record walk
+❌ w1351_diancang_qiannianrenshen.mesh declared=12 err=no origin-record walk
+❌ w1351_mrsz_bulian_001.mesh declared=13 err=no origin-record walk
+❌ w1351_model_gb_hand_h01.mesh declared=13 err=no origin-record walk
+❌ w1351_model_shici_w003.mesh declared=13 err=no origin-record walk
+❌ w1351_model_trail_line_s1.mesh declared=13 err=no origin-record walk
+❌ w1351_model_trail_line_s2.mesh declared=13 err=no origin-record walk
+❌ w1351_model_trail_line_s3.mesh declared=13 err=no origin-record walk
+❌ w1351_model_ani_zhenshoufuti_huandie01_w001.mesh declared=14 err=no origin-record walk
+❌ w1351_model_luoyingjian_h001.mesh declared=14 err=no origin-record walk
+❌ w1351_model_mr_cj_nv_jianzhen_glow_lf003.mesh declared=14 err=no origin-record walk
+❌ w1351_model_mr_cj_nv_jianzhen_lf003.mesh declared=14 err=no origin-record walk
+✅ w1351_monster_baihu_xiezi_001.mesh                   声明=14   节点=14   根=['000'] 环=0  双bind对=7   带内=3   X分布={4294967295: 1, 1: 13}
+❌ w1351_monster_baihu_yifu_001.mesh declared=14 err=no origin-record walk
+❌ w1351_caiji_xiaobaishe_01.mesh declared=15 err=no origin-record walk
+❌ w1351_caiji_xiaohongshe_01.mesh declared=15 err=no origin-record walk
+❌ w1351_caiji_xiaoqingshe_01.mesh declared=15 err=no origin-record walk
+❌ w1351_ani_model_qixiayingri_jian_c01.mesh declared=15 err=no origin-record walk
+❌ w1351_model_link_h02.mesh declared=15 err=no origin-record walk
+❌ w1351_model_link_h02_fire01.mesh declared=15 err=no origin-record walk
+❌ w1351_diancang_panguanbi.mesh declared=16 err=no origin-record walk
+❌ w1351_diancang_tianshanxuelian.mesh declared=16 err=no origin-record walk
+❌ w1351_ui_baoxiang_01.mesh declared=16 err=no origin-record walk
+❌ w1351_ui_baoxiang_02.mesh declared=16 err=no origin-record walk
+❌ w1351_ui_baoxiang_03.mesh declared=16 err=no origin-record walk
+❌ w1351_ui_baoxiang_04.mesh declared=16 err=no origin-record walk
+❌ w1351_diancang_rousisuo.mesh declared=17 err=no origin-record walk
+❌ w1351_ui_baoxiang_10.mesh declared=17 err=no origin-record walk
+❌ w1351_model_butterfly_lf001.mesh declared=17 err=no origin-record walk
+❌ w1351_model_diaowenqizhen_s09.mesh declared=17 err=no origin-record walk
+❌ w1351_model_diaowenqizhen_s11.mesh declared=17 err=no origin-record walk
+❌ w1351_model_em_nv_lz_h002.mesh declared=17 err=no origin-record walk
+❌ w1351_model_ani_zhenshoufuti_huandie02_w001.mesh declared=18 err=no origin-record walk
+❌ w1351_model_ani_zhenshoufuti_huandie02_w002.mesh declared=18 err=no origin-record walk
+❌ w1351_model_ani_zhenshoufuti_huandie03_w001.mesh declared=18 err=no origin-record walk
+❌ w1351_model_ani_zhenshoufuti_huandie04_w001.mesh declared=18 err=no origin-record walk
+❌ w1351_model_guqin_nan.mesh declared=18 err=no origin-record walk
+❌ w1351_model_guqin_nan_h001.mesh declared=18 err=no origin-record walk
+❌ w1351_model_gfpy_z001.mesh declared=19 err=no origin-record walk
+❌ w1351_model_gfpy_z002.mesh declared=19 err=no origin-record walk
+❌ w1351_model_pmf_s012.mesh declared=19 err=no origin-record walk
+❌ w1351_model_san_lf002.mesh declared=19 err=no origin-record walk
+❌ w1351_model_wjg02_qp_h001.mesh declared=19 err=no origin-record walk
+❌ w1351_monster_toushiche_001.mesh declared=19 err=no origin-record walk
+❌ w1351_model_ani_flower_h001.mesh declared=20 err=no origin-record walk
+❌ w1351_model_ani_zhenshoufuti_huandie05_w001.mesh declared=20 err=no origin-record walk
+❌ w1351_model_ani_zhenshoufuti_youlong05plane_c01.mesh declared=20 err=no origin-record walk
+❌ w1351_model_kanshu_nan_c01_01.mesh declared=20 err=no origin-record walk
+❌ w1351_model_kanshu_nv_h001.mesh declared=20 err=no origin-record walk
+❌ w1351_model_kanshu_nv_h001_1.mesh declared=20 err=no origin-record walk
+❌ w1351_ui_baoxiang_06.mesh declared=21 err=no origin-record walk
+❌ w1351_model_butterfly_lf002.mesh declared=21 err=no origin-record walk
+❌ w1351_model_spider_line_h002.mesh declared=21 err=no origin-record walk
+❌ w1351_model_wind_lf017a.mesh declared=21 err=no origin-record walk
+❌ w1351_boss_sysz_feiying.mesh declared=21 err=no origin-record walk
+❌ w1351_pets_wugui_b0_yifu_001.mesh declared=21 err=no origin-record walk
+❌ w1351_mrsz_tongyongwujian_001.mesh declared=22 err=no origin-record walk
+❌ w1351_model_mj_nv_jt_link_x01.mesh declared=22 err=no origin-record walk
+❌ w1351_model_nv_xy_juanzhou_h001.mesh declared=22 err=no origin-record walk
+❌ w1351_model_shuishangxue_lf001.mesh declared=22 err=no origin-record walk
+❌ w1351_model_stone_lf001.mesh declared=22 err=no origin-record walk
+❌ w1351_model_xy_juanzhou_h001.mesh declared=22 err=no origin-record walk
+❌ w1351_ui_baoxiang_07.mesh declared=23 err=no origin-record walk
+❌ w1351_model_gbnv_long_l_gx_h001.mesh declared=23 err=no origin-record walk
+❌ w1351_model_qf_skill02_dragon_h02.mesh declared=23 err=no origin-record walk
+❌ w1351_model_qf_skill02_dragon_h06.mesh declared=23 err=no origin-record walk
+❌ w1351_model_ymg02_nv_flzt_jz_h001.mesh declared=23 err=no origin-record walk
+❌ w1351_npc_hanshizhong_lian_001.mesh declared=23 err=no origin-record walk
+❌ w1351_caiji_duwugong_01.mesh declared=24 err=no origin-record walk
+❌ w1351_model_stone_lf002.mesh declared=24 err=no origin-record walk
+❌ w1351_monster_boerlun_toufa_001.mesh declared=24 err=no origin-record walk
+❌ w1351_monster_boerlun_yifu_001.mesh declared=24 err=no origin-record walk
+❌ w1351_npc_chechuanzhi_yifu_001.mesh declared=24 err=no origin-record walk
+✅ w1351_npc_dalaozeng_lian_001.mesh                    声明=24   节点=24   根=['000'] 环=0  双bind对=14  带内=13  X分布={4294967295: 1, 1: 23}
+❌ w1351_model_xy_bxsq_h001.mesh declared=25 err=no origin-record walk
+❌ w1351_monster_baimaocaoren_lian_001.mesh declared=25 err=no origin-record walk
+✅ w1351_monster_baimaocaoren_yifu_001.mesh             声明=25   节点=25   根=['000'] 环=0  双bind对=15  带内=15  X分布={4294967295: 1, 1: 24}
+❌ w1351_monster_changmaoxueguai_lian_001.mesh declared=25 err=no origin-record walk
+✅ w1351_monster_changmaoxueguai_yifu_001.mesh          声明=25   节点=25   根=['bip01'] 环=0  双bind对=14  带内=11  X分布={4294967295: 1, 1: 24}
+❌ w1351_monster_wanglingkaijiawushi_lian_001.mesh declared=25 err=no origin-record walk
+❌ w1351_caiji_duchanchu_01.mesh declared=26 err=no origin-record walk
+❌ w1351_ui_baoxiang_08.mesh declared=26 err=no origin-record walk
+❌ w1351_model_ani_zhenshoufuti_youlong02_c01.mesh declared=26 err=no origin-record walk
+❌ w1351_model_ani_zhenshoufuti_youlong03_c01.mesh declared=26 err=no origin-record walk
+❌ w1351_model_ani_zhenshoufuti_youlong04_c01.mesh declared=26 err=no origin-record walk
+❌ w1351_model_ani_zhenshoufuti_youlong05_c01.mesh declared=26 err=no origin-record walk
+❌ w1351_model_san_lf001.mesh declared=27 err=no origin-record walk
+❌ w1351_boss_jinshang_lian_001.mesh declared=27 err=no origin-record walk
+❌ w1351_boss_jinshang_shoutao_001.mesh declared=27 err=node count 22 != declared 27
+❌ w1351_boss_jinshang_toufa_001.mesh declared=27 err=no origin-record walk
+❌ w1351_boss_jinshang_yifu_001.mesh declared=27 err=no origin-record walk
+❌ w1351_boss_sss_tufanfanseng_lian_001.mesh declared=27 err=no origin-record walk
+❌ w1351_model_stone_lf003.mesh declared=28 err=no origin-record walk
+❌ w1351_model_wjg02_piece_h001.mesh declared=28 err=no origin-record walk
+❌ w1351_model_yanzi_lf001.mesh declared=28 err=no origin-record walk
+✅ w1351_boss_caoshuang01_lian_001.mesh                 声明=28   节点=28   根=['000'] 环=0  双bind对=17  带内=14  X分布={4294967295: 1, 1: 27}
+❌ w1351_boss_caoshuang01_shoutao_001.mesh declared=28 err=no origin-record walk
+❌ w1351_boss_caoshuang01_yifu_001.mesh declared=28 err=no origin-record walk
+❌ w1351_caiji_heihou_01.mesh declared=29 err=no origin-record walk
+❌ w1351_caiji_honghou_01.mesh declared=29 err=no origin-record walk
+❌ w1351_caiji_huihou_01.mesh declared=29 err=no origin-record walk
+❌ w1351_model_phoenix_h01.mesh declared=29 err=no origin-record walk
+❌ w1351_model_phoenix_h02.mesh declared=29 err=no origin-record walk
+❌ w1351_model_phoenix_h03.mesh declared=29 err=no origin-record walk
+✅ w1351_boss_hxw_c001.mesh                             声明=30   节点=30   根=['000'] 环=0  双bind对=17  带内=15  X分布={4294967295: 1, 1: 29}
+❌ w1351_model_em_nan_jt_posui_ani_x01.mesh declared=30 err=no origin-record walk
+❌ w1351_model_hxw_lf002.mesh declared=30 err=no origin-record walk
+❌ w1351_modle_hxw_h001.mesh declared=30 err=no origin-record walk
+✅ w1351_boss_hongxiongwang.mesh                        声明=30   节点=30   根=['000'] 环=0  双bind对=17  带内=15  X分布={4294967295: 1, 1: 29}
+✅ w1351_boss_luzhishen_shoutao_001.mesh                声明=30   节点=30   根=['000'] 环=0  双bind对=15  带内=11  X分布={4294967295: 1, 1: 29}
+❌ w1351_model_feilongzaitian_h001.mesh declared=31 err=no origin-record walk
+❌ w1351_model_qianlongwuyong_h001.mesh declared=31 err=no origin-record walk
+❌ w1351_model_qunmoluanwu_h001.mesh declared=31 err=no origin-record walk
+❌ w1351_model_stone_c001.mesh declared=31 err=no origin-record walk
+❌ w1351_model_tianxiawugou_h001.mesh declared=31 err=no origin-record walk
+❌ w1351_monster_huagangshishi.mesh declared=31 err=no origin-record walk
+❌ w1351_diancang_ruanbian.mesh declared=32 err=no origin-record walk
+✅ w1351_boss_huyanping_lian_001.mesh                   声明=32   节点=32   根=['000'] 环=0  双bind对=17  带内=14  X分布={4294967295: 1, 1: 31}
+❌ w1351_boss_huyanping_shoutao_001.mesh declared=32 err=no origin-record walk
+❌ w1351_boss_huyanping_yifu_001.mesh declared=32 err=no origin-record walk
+❌ w1351_boss_mingjiang_lian_001.mesh declared=32 err=node count 30 != declared 32
+❌ w1351_boss_mingjiang_shoutao_001.mesh declared=32 err=no origin-record walk
+❌ w1351_ui_baoxiang_09.mesh declared=33 err=no origin-record walk
+❌ w1351_yqlygyw_xuyuanshu001_lian_001.mesh declared=33 err=no origin-record walk
+❌ w1351_yqlygyw_xuyuanshu001_shoutao_001.mesh declared=33 err=node count 0 != declared 33
+❌ w1351_yqlygyw_xuyuanshu001_yifu_001.mesh declared=33 err=no origin-record walk
+❌ w1351_model_em_pl_h02.mesh declared=33 err=no origin-record walk
+❌ w1351_model_em_pl_h03.mesh declared=33 err=no origin-record walk
+❌ w1351_boss_dunpaiyaoxing_lian_001.mesh declared=34 err=no origin-record walk
+❌ w1351_boss_dunpaiyaoxing_shoutao_001.mesh declared=34 err=node count 11 != declared 34
+❌ w1351_boss_dunpaiyaoxing_yifu_001.mesh declared=34 err=node count 11 != declared 34
+❌ w1351_boss_sss_jiumozhi.mesh declared=34 err=no origin-record walk
+❌ w1351_boss_xiaoyangyang_yifu_001.mesh declared=34 err=no origin-record walk
+❌ w1351_monster_lingjianshi.mesh declared=34 err=no origin-record walk
+❌ w1351_caiji_meiguihua_001.mesh declared=35 err=no origin-record walk
+❌ w1351_model_tiger_v1.mesh declared=35 err=no origin-record walk
+❌ w1351_boss_baobutong_lian_001.mesh declared=35 err=no origin-record walk
+❌ w1351_boss_baobutong_shoutao_001.mesh declared=35 err=no origin-record walk
+❌ w1351_boss_baobutong_yifu_001.mesh declared=35 err=node count 3 != declared 35
+❌ w1351_boss_wuxuanjiang_shoutao_001.mesh declared=35 err=no origin-record walk
+❌ w1351_model_mj_nv_jt_wing_x01.mesh declared=36 err=no origin-record walk
+❌ w1351_boss_hufengyaoxing_lian_001.mesh declared=36 err=no origin-record walk
+✅ w1351_boss_hufengyaoxing_shoutao_001.mesh            声明=36   节点=36   根=['000'] 环=0  双bind对=19  带内=16  X分布={4294967295: 1, 1: 35}
+✅ w1351_boss_hufengyaoxing_yifu_001.mesh               声明=36   节点=36   根=['000'] 环=0  双bind对=19  带内=16  X分布={4294967295: 1, 1: 35}
+❌ w1351_boss_sss_zhuangjuxian.mesh declared=36 err=no origin-record walk
+❌ w1351_boss_yaoxing_lian_001.mesh declared=36 err=no origin-record walk
+❌ w1351_model_bamenjinsuo_h001.mesh declared=37 err=no origin-record walk
+❌ w1351_boss_sysz_bailnghun.mesh declared=37 err=no origin-record walk
+❌ w1351_boss_zhushuai_yifu_001.mesh declared=37 err=no origin-record walk
+✅ w1351_monster_linghe.mesh                            声明=37   节点=37   根=['000'] 环=0  双bind对=11  带内=8   X分布={4294967295: 1, 1: 36}
+❌ w1351_monster_xiyujiefei_shoutao.mesh declared=37 err=node count 28 != declared 37
+❌ w1351_monster_xiyujiefei_yifu.mesh declared=37 err=no origin-record walk
+❌ w1351_model_ymg01_stone01.mesh declared=38 err=no origin-record walk
+❌ w1351_boss_xinyuelaosan01.mesh declared=38 err=no origin-record walk
+✅ w1351_boss_zhiliaota.mesh                            声明=38   节点=38   根=['000'] 环=0  双bind对=3   带内=1   X分布={4294967295: 1, 1: 37}
+❌ w1351_monster_shanyueyouhun_yifu_001.mesh declared=38 err=no origin-record walk
+❌ w1351_npc_daidaiqiu_toufa_001.mesh declared=38 err=no origin-record walk
+❌ w1351_npc_daidaiqiu_yifu_001.mesh declared=38 err=no origin-record walk
+❌ w1351_monster_boma_yifu_001.mesh declared=39 err=node count 12 != declared 39
+❌ w1351_monster_fangyuta1_yifu_001.mesh declared=39 err=no origin-record walk
+❌ w1351_monster_weiqian.mesh declared=39 err=no origin-record walk
+❌ w1351_monster_xixiabubin_shoutao_001.mesh declared=39 err=no origin-record walk
+❌ w1351_monster_xixiabubin_yifu_001.mesh declared=39 err=no origin-record walk
+❌ w1351_monster_yelvyan_lian_001.mesh declared=39 err=no origin-record walk
+❌ w1351_model_mhsn_nancq01.mesh declared=40 err=no origin-record walk
+❌ w1351_model_mhsn_nandd01.mesh declared=40 err=no origin-record walk
+❌ w1351_model_mhsn_nanhuan01.mesh declared=40 err=no origin-record walk
+❌ w1351_model_mhsn_nansd01.mesh declared=40 err=no origin-record walk
+❌ w1351_model_mhsn_nanshan01.mesh declared=40 err=no origin-record walk
+❌ w1351_boss_baidiliugui_lian_01.mesh declared=40 err=no origin-record walk
+❌ w1351_boss_sss_bingcan2.mesh declared=41 err=no origin-record walk
+❌ w1351_boss_sss_bingcan.mesh declared=41 err=no origin-record walk
+❌ w1351_boss_sysz_shisan.mesh declared=41 err=no origin-record walk
+❌ w1351_boss_youlingjisi_yifu_001.mesh declared=41 err=no origin-record walk
+❌ w1351_monster_goujiangshi_yifu_001.mesh declared=41 err=no origin-record walk
+✅ w1351_monster_jiguanshiren_shoutao_001.mesh          声明=41   节点=41   根=['000'] 环=0  双bind对=17  带内=16  X分布={4294967295: 1, 1: 40}
+❌ w1351_model_mhsn_nvhuan01.mesh declared=42 err=node count 0 != declared 42
+❌ w1351_model_mhsn_nvsd01.mesh declared=42 err=node count 0 != declared 42
+❌ w1351_boss_huyanzhuo.mesh declared=42 err=no origin-record walk
+❌ w1351_monster_fenglang_yifu_01.mesh declared=42 err=no origin-record walk
+❌ w1351_monster_shapolang.mesh declared=42 err=no origin-record walk
+❌ w1351_monster_xibeilang_yifu_01.mesh declared=42 err=node count 41 != declared 42
+❌ w1351_model_cloud_h002.mesh declared=43 err=node count 0 != declared 43
+❌ w1351_model_fenghuang_h001.mesh declared=43 err=no origin-record walk
+❌ w1351_model_hua_hjyw_w001.mesh declared=43 err=no origin-record walk
+❌ w1351_model_hua_zhaohuan_w001.mesh declared=43 err=no origin-record walk
+❌ w1351_model_hua_zhaohuan_w002.mesh declared=43 err=no origin-record walk
+❌ w1351_model_hua_zhaohuan_w003.mesh declared=43 err=no origin-record walk
+❌ w1351_model_cygg_flow_c01.mesh declared=44 err=no origin-record walk
+❌ w1351_model_jiuyinshenzhua_h001.mesh declared=44 err=no origin-record walk
+❌ w1351_boss_manggai01_lian_001.mesh declared=44 err=no origin-record walk
+✅ w1351_boss_manggai01_yifu_001.mesh                   声明=44   节点=44   根=['000'] 环=0  双bind对=22  带内=20  X分布={4294967295: 1, 1: 43}
+❌ w1351_boss_nianshou_yifu_001.mesh declared=44 err=no origin-record walk
+✅ w1351_boss_youjinshouwei_shoutao_001.mesh            声明=44   节点=44   根=['000'] 环=0  双bind对=16  带内=13  X分布={4294967295: 1, 1: 43}
+❌ w1351_diancang_shandiandiao.mesh declared=45 err=no origin-record walk
+❌ w1351_model_chuangjue_h001.mesh declared=45 err=node count 0 != declared 45
+✅ w1351_boss_dihou_yifu_001.mesh                       声明=45   节点=45   根=['000'] 环=0  双bind对=20  带内=13  X分布={4294967295: 1, 1: 44}
+❌ w1351_boss_qinming_lian_001.mesh declared=45 err=no origin-record walk
+❌ w1351_boss_qinming_shoutao_001.mesh declared=45 err=no origin-record walk
+❌ w1351_boss_qinming_yifu_001.mesh declared=45 err=no origin-record walk
+❌ w1351_caiji_duzhizhu_01.mesh declared=46 err=no origin-record walk
+❌ w1351_model_lion_h001.mesh declared=46 err=no origin-record walk
+❌ w1351_model_lion_h002.mesh declared=46 err=no origin-record walk
+❌ w1351_model_stone_lf004.mesh declared=46 err=no origin-record walk
+✅ w1351_boss_likui_lian_001.mesh                       声明=46   节点=46   根=['000'] 环=0  双bind对=20  带内=14  X分布={4294967295: 1, 1: 45}
+✅ w1351_boss_likui_yifu_001.mesh                       声明=46   节点=46   根=['000'] 环=0  双bind对=20  带内=14  X分布={4294967295: 1, 1: 45}
+❌ w1351_model_fish_h02.mesh declared=47 err=no origin-record walk
+❌ w1351_denglong01.mesh declared=47 err=no origin-record walk
+✅ w1351_monster_langzhushenhan_lian_001.mesh           声明=47   节点=47   根=['000'] 环=0  双bind对=22  带内=19  X分布={4294967295: 1, 1: 46}
+❌ w1351_monster_langzhushenhan_toufa_001.mesh declared=47 err=no origin-record walk
+❌ w1351_monster_langzhushenhan_yifu_001.mesh declared=47 err=no origin-record walk
+❌ w1351_monster_langzhutus_yifu_001.mesh declared=47 err=no origin-record walk
+✅ w1351_boss_qinhuangzhipo_lian_001.mesh               声明=48   节点=48   根=['000'] 环=0  双bind对=22  带内=13  X分布={4294967295: 1, 1: 47}
+❌ w1351_boss_qinhuangzhipo_yifu_001.mesh declared=48 err=no origin-record walk
+❌ w1351_monster_xixiajiangjunfu01.mesh declared=48 err=no origin-record walk
+✅ w1351_npc_duanyanqing.mesh                           声明=48   节点=48   根=['000'] 环=0  双bind对=18  带内=15  X分布={4294967295: 1, 1: 47}
+❌ w1351_npc_murongchui.mesh declared=48 err=no origin-record walk
+❌ w1351_npc_murongjieyinshi.mesh declared=48 err=no origin-record walk
+❌ w1351_model_sl_jiasha_h01.mesh declared=49 err=no origin-record walk
+❌ w1351_model_spider_h02.mesh declared=49 err=no origin-record walk
+❌ w1351_boss_xinduanyanqing01.mesh declared=49 err=no origin-record walk
+❌ w1351_npc_murongqingshan.mesh declared=49 err=no origin-record walk
+❌ w1351_pets_daxingxing_b0.mesh declared=49 err=no origin-record walk
+❌ w1351_pets_maomi_b0.mesh declared=49 err=no origin-record walk
+❌ w1351_model_fazhen_ani_lf001.mesh declared=50 err=no origin-record walk
+❌ w1351_model_gbnan_long_h003.mesh declared=50 err=no origin-record walk
+❌ w1351_model_gbnan_long_wy_h003.mesh declared=50 err=no origin-record walk
+❌ w1351_model_ymg02_nan_slbw_h001.mesh declared=50 err=node count 49 != declared 50
+❌ w1351_boss_mutongbo_lian_001.mesh declared=50 err=no origin-record walk
+❌ w1351_boss_mutongbo_yifu_001.mesh declared=50 err=no origin-record walk
+❌ w1351_model_jingji_buff_h01.mesh declared=51 err=no origin-record walk
+❌ w1351_model_jingji_l_h01.mesh declared=51 err=no origin-record walk
+❌ w1351_model_jingji_r_h01.mesh declared=51 err=no origin-record walk
+❌ w1351_model_jingji_skill02_hand01.mesh declared=51 err=no origin-record walk
+❌ w1351_model_tengji_skill02_buff_h01.mesh declared=51 err=no origin-record walk
+❌ w1351_boss_qiewang_shoutao_001.mesh declared=51 err=node count 45 != declared 51
+❌ w1351_model_em_nv_lz_h001.mesh declared=52 err=no origin-record walk
+❌ w1351_model_nan_wujian_piaodai_lf001.mesh declared=52 err=no origin-record walk
+❌ w1351_model_nv_wujian_piaodai_lf001.mesh declared=52 err=no origin-record walk
+❌ w1351_boss_baoxiangtongzi_yifu_001.mesh declared=52 err=no origin-record walk
+❌ w1351_monster_jintongzi.mesh declared=52 err=no origin-record walk
+❌ w1351_monster_minmo_shoutao_001.mesh declared=52 err=no origin-record walk
+❌ w1351_model_jingji_l_h02.mesh declared=53 err=no origin-record walk
+❌ w1351_model_jinyu_lf001.mesh declared=53 err=no origin-record walk
+❌ w1351_boss_mengmiandadao.mesh declared=53 err=no origin-record walk
+❌ w1351_boss_sysz_yelvhongyou.mesh declared=53 err=no origin-record walk
+❌ w1351_new_npc_zhaixingzi.mesh declared=53 err=no origin-record walk
+❌ w1351_npc_huamei_toufa_001.mesh declared=53 err=no origin-record walk
+❌ w1351_boss_yeerniang02_yifu_001.mesh declared=54 err=no origin-record walk
+❌ w1351_boss_yeerniang.mesh declared=54 err=no origin-record walk
+❌ w1351_monster_santouquan.mesh declared=54 err=no origin-record walk
+✅ w1351_monster_huagangshiren.mesh                     声明=54   节点=54   根=['bip01'] 环=0  双bind对=8   带内=7   X分布={4294967295: 1, 1: 53}
+✅ w1351_monster_longxueshiren.mesh                     声明=54   节点=54   根=['bip01'] 环=0  双bind对=8   带内=7   X分布={4294967295: 1, 1: 53}
+✅ w1351_monster_nvwashiren.mesh                        声明=54   节点=54   根=['bip01'] 环=0  双bind对=8   带内=7   X分布={4294967295: 1, 1: 53}
+❌ w1351_model_gb_long_h001.mesh declared=55 err=no origin-record walk
+❌ w1351_model_gbnan_long_h002.mesh declared=55 err=no origin-record walk
+❌ w1351_model_glass_ani_lf001.mesh declared=55 err=no origin-record walk
+❌ w1351_model_sl_nan_zhong_x01.mesh declared=55 err=node count 0 != declared 55
+❌ w1351_model_sl_nan_zhong_x02.mesh declared=55 err=node count 0 != declared 55
+❌ w1351_model_sl_nan_zhong_x02_2.mesh declared=55 err=node count 0 != declared 55
+❌ w1351_monster_digongyouling_shoutao_001.mesh declared=56 err=node count 46 != declared 56
+❌ w1351_monster_digongyouling_yifu_001.mesh declared=56 err=no origin-record walk
+❌ w1351_monster_tieyiniu_lian_001.mesh declared=56 err=no origin-record walk
+❌ w1351_monster_tieyiniu_shoutao_001.mesh declared=56 err=no origin-record walk
+❌ w1351_monster_tieyiniu_yifu_001.mesh declared=56 err=no origin-record walk
+❌ w1351_monster_yiniu_lian_001.mesh declared=56 err=no origin-record walk
+❌ w1351_model_hdb_dilie_lf001.mesh declared=57 err=no origin-record walk
+❌ w1351_boss_liedixingzhe_lian_001.mesh declared=57 err=no origin-record walk
+❌ w1351_boss_liedixingzhe_yifu_001.mesh declared=57 err=no origin-record walk
+❌ w1351_npc_liedexingzhelinghun_lian.mesh declared=57 err=no origin-record walk
+❌ w1351_npc_liedexingzhelinghun_yifu.mesh declared=57 err=no origin-record walk
+❌ w1351_boss_mengmei_lian_001.mesh declared=57 err=no origin-record walk
+❌ w1351_model_ymg_hyrdg_w001.mesh declared=58 err=no origin-record walk
+✅ w1351_boss_sunmeimei_lian_001.mesh                   声明=58   节点=58   根=['000'] 环=0  双bind对=25  带内=19  X分布={4294967295: 1, 1: 57}
+❌ w1351_boss_sunmeimei_yifu_001.mesh declared=58 err=no origin-record walk
+❌ w1351_boss_wuyong_shoutao_001.mesh declared=58 err=node count 41 != declared 58
+✅ w1351_boss_wuyong_yifu_001.mesh                      声明=58   节点=58   根=['000'] 环=0  双bind对=30  带内=24  X分布={4294967295: 1, 1: 57}
+❌ w1351_monster_shifuniao.mesh declared=58 err=no origin-record walk
+❌ w1351_model_ymg01_qf_h001.mesh declared=59 err=no origin-record walk
+❌ w1351_boss_qiushisanniang.mesh declared=59 err=no origin-record walk
+❌ w1351_monster_dujiangshi.mesh declared=59 err=no origin-record walk
+❌ w1351_monster_putongjiangshi.mesh declared=59 err=no origin-record walk
+❌ w1351_monster_xixuebianfu_yifu_001.mesh declared=59 err=node count 58 != declared 59
+❌ w1351_monster_yaoxiezhizhu.mesh declared=59 err=no origin-record walk
+❌ w1351_model_hxw_stone_h01.mesh declared=60 err=no origin-record walk
+❌ w1351_model_nv_cj_canying_h001.mesh declared=60 err=no origin-record walk
+❌ w1351_boss_gerong_lian_001.mesh declared=60 err=no origin-record walk
+❌ w1351_boss_gerong_shoutao_001.mesh declared=60 err=no origin-record walk
+❌ w1351_boss_gerong_toufa_001.mesh declared=60 err=no origin-record walk
+❌ w1351_boss_gerong_yifu_001.mesh declared=60 err=no origin-record walk
+❌ w1351_boss_baolong_yifu_001.mesh declared=61 err=no origin-record walk
+❌ w1351_boss_yezhuwang_lian_001.mesh declared=61 err=node count 42 != declared 61
+❌ w1351_boss_yezhuwang_yifu_001.mesh declared=61 err=no origin-record walk
+❌ w1351_new_npc_liuzhongfu.mesh declared=61 err=no origin-record walk
+❌ w1351_npc_heiyirenlouluo_dao.mesh declared=61 err=no origin-record walk
+❌ w1351_npc_heiyirenlouluo_jian.mesh declared=61 err=no origin-record walk
+❌ w1351_new_npc_haolaizi.mesh declared=62 err=no origin-record walk
+❌ w1351_npc_guanyuzhihun_shoutao_001.mesh declared=62 err=no origin-record walk
+✅ w1351_npc_guanyuzhihun_yifu_001.mesh                 声明=62   节点=62   根=['000'] 环=0  双bind对=31  带内=19  X分布={4294967295: 1, 1: 61}
+❌ w1351_npc_heiyirenfushou.mesh declared=62 err=no origin-record walk
+❌ w1351_zuoqi_fuwenqishi.mesh declared=62 err=node count 0 != declared 62
+❌ w1351_zuoqi_maisuima.mesh declared=62 err=no origin-record walk
+❌ w1351_monster_taoqing.mesh declared=63 err=no origin-record walk
+❌ w1351_npc_biluosanren_yifu_001.mesh declared=63 err=no origin-record walk
+❌ w1351_npc_laosuntou_lian_001.mesh declared=63 err=no origin-record walk
+✅ w1351_npc_laosuntou_xiezi_001.mesh                   声明=63   节点=63   根=['000'] 环=0  双bind对=35  带内=32  X分布={4294967295: 1, 1: 62}
+✅ w1351_npc_laosuntou_yifu_001.mesh                    声明=63   节点=63   根=['000'] 环=0  双bind对=35  带内=32  X分布={4294967295: 1, 1: 62}
+❌ w1351_npc_wusensen_yifu_001.mesh declared=63 err=no origin-record walk
+❌ w1351_boss_yunjuanshu.mesh declared=64 err=no origin-record walk
+❌ w1351_npc_husiluohan_lian_001.mesh declared=64 err=no origin-record walk
+❌ w1351_npc_husiluohan_shoutao_001.mesh declared=64 err=no origin-record walk
+❌ w1351_npc_husiluohan_xiezi_001.mesh declared=64 err=node count 0 != declared 64
+❌ w1351_npc_husiluohan_yifu_001.mesh declared=64 err=node count 0 != declared 64
+❌ w1351_npc_yudongshenshi_02_lian_001.mesh declared=64 err=no origin-record walk
+❌ w1351_boss_gongsunsheng_shoutao_001.mesh declared=65 err=no origin-record walk
+✅ w1351_boss_gongsunsheng_yifu_001.mesh                声明=65   节点=65   根=['000'] 环=0  双bind对=30  带内=26  X分布={4294967295: 1, 1: 64}
+❌ w1351_boss_gongsunshengfenshen_shoutao_001.mesh declared=65 err=no origin-record walk
+✅ w1351_boss_gongsunshengfenshen_yifu_001.mesh         声明=65   节点=65   根=['000'] 环=0  双bind对=30  带内=26  X分布={4294967295: 1, 1: 64}
+❌ w1351_boss_wusong_lian_001.mesh declared=65 err=no origin-record walk
+❌ w1351_boss_wusong_yifu_001.mesh declared=65 err=no origin-record walk
+❌ w1351_npc_xiaoyuanshanqizi.mesh declared=66 err=no origin-record walk
+❌ w1351_boss_longgui_yifu_001.mesh declared=67 err=no origin-record walk
+❌ w1351_boss_pangqi.mesh declared=67 err=no origin-record walk
+❌ w1351_pets_longgui_b0.mesh declared=67 err=no origin-record walk
+❌ w1351_pets_xuanhaima_b0.mesh declared=67 err=no origin-record walk
+❌ w1351_pets_yuansukonglong_b3.mesh declared=67 err=no origin-record walk
+❌ w1351_boss_songjiang_lian_001.mesh declared=68 err=no origin-record walk
+❌ w1351_boss_songjiang_yifu_001.mesh declared=68 err=no origin-record walk
+❌ w1351_new_npc_xuanci.mesh declared=68 err=no origin-record walk
+❌ w1351_pets_huanyizhiling_b0.mesh declared=68 err=no origin-record walk
+❌ w1351_model_bell_h002.mesh declared=69 err=no origin-record walk
+❌ w1351_npc_lianzhouzi_yifu_001.mesh declared=69 err=no origin-record walk
+❌ w1351_npc_qiuerga_lian_001.mesh declared=69 err=node count 55 != declared 69
+✅ w1351_npc_qiuerga_shoutao_001.mesh                   声明=69   节点=69   根=['000'] 环=0  双bind对=42  带内=35  X分布={4294967295: 1, 1: 68}
+❌ w1351_npc_qiuerga_toufa_001.mesh declared=69 err=node count 47 != declared 69
+❌ w1351_npc_qiuerga_xiezi_001.mesh declared=69 err=node count 57 != declared 69
+❌ w1351_npc_xiguaguai_001.mesh declared=70 err=no origin-record walk
+❌ w1351_npc_xiguaguai_002.mesh declared=70 err=no origin-record walk
+❌ w1351_npc_xiguaguai_003.mesh declared=70 err=no origin-record walk
+❌ w1351_npc_xiguaguai_004.mesh declared=70 err=no origin-record walk
+❌ w1351_pets_renzheshengua_b0.mesh declared=70 err=no origin-record walk
+❌ w1351_pets_renzheshengua_b3.mesh declared=70 err=no origin-record walk
+❌ w1351_monster_xingluowushi.mesh declared=71 err=no origin-record walk
+❌ w1351_new_npc_potan.mesh declared=71 err=no origin-record walk
+❌ w1351_pets_jiuxiaozhanlong_b0.mesh declared=71 err=no origin-record walk
+❌ w1351_model_jingji_r_h02.mesh declared=72 err=no origin-record walk
+❌ w1351_model_jingji_r_h03.mesh declared=72 err=no origin-record walk
+❌ w1351_model_stone_lf005.mesh declared=72 err=no origin-record walk
+❌ w1351_boss_taishici_shoutao.mesh declared=72 err=no origin-record walk
+❌ w1351_boss_taishici_xiezi.mesh declared=72 err=no origin-record walk
+❌ w1351_boss_taishici_yifu.mesh declared=72 err=no origin-record walk
+❌ w1351_model_ts_jinzhanguaji_s001.mesh declared=73 err=no origin-record walk
+❌ w1351_boss_pangtong_xiezi.mesh declared=73 err=no origin-record walk
+❌ w1351_boss_pangtong_yifu.mesh declared=73 err=no origin-record walk
+❌ w1351_npc_xiaoyuanshanqizi01.mesh declared=73 err=no origin-record walk
+❌ w1351_zuoqi_hema.mesh declared=73 err=no origin-record walk
+❌ w1351_pets_huanyizhiling_b1.mesh declared=74 err=no origin-record walk
+✅ w1351_boss_banshandaoren_yifu_001.mesh               声明=75   节点=75   根=['000'] 环=0  双bind对=26  带内=21  X分布={4294967295: 1, 1: 74}
+❌ w1351_monster_qinyun_xiezi_001.mesh declared=75 err=no origin-record walk
+❌ w1351_monster_qinyun_yifu_001.mesh declared=75 err=no origin-record walk
+❌ w1351_npc_biaoche2.mesh declared=75 err=no origin-record walk
+❌ w1351_npc_tongshuai2_lian_001.mesh declared=75 err=node count 61 != declared 75
+❌ w1351_npc_tongshuai2_shoutao_001.mesh declared=75 err=no origin-record walk
+❌ w1351_boss_jiaxu.mesh declared=76 err=no origin-record walk
+❌ w1351_pets_yuansukonglong_b1.mesh declared=76 err=no origin-record walk
+❌ w1351_boss_jiumozhi.mesh declared=77 err=no origin-record walk
+❌ w1351_boss_zhouyu_xiezi.mesh declared=77 err=no origin-record walk
+❌ w1351_boss_zhouyu_yifu.mesh declared=77 err=no origin-record walk
+❌ w1351_npc_ailianghe_yifu_001.mesh declared=77 err=no origin-record walk
+❌ w1351_npc_huhuoshi_shoutao_001.mesh declared=77 err=no origin-record walk
+❌ w1351_npc_huhuoshi_toufa_001.mesh declared=77 err=no origin-record walk
+❌ w1351_boss_zhizhuwang.mesh declared=78 err=no origin-record walk
+❌ w1351_model_mj_nan_stone_h01.mesh declared=79 err=no origin-record walk
+❌ w1351_model_yzh_teng_lf001.mesh declared=79 err=no origin-record walk
+❌ w1351_modle_bird_h001.mesh declared=79 err=no origin-record walk
+❌ w1351_npc_xunshanxianv_01_lian_001.mesh declared=80 err=no origin-record walk
+❌ w1351_npc_xunshanxianv_01_toufa_001.mesh declared=80 err=no origin-record walk
+✅ w1351_npc_xunshanxianv_01_xiezi_001.mesh             声明=80   节点=80   根=['000'] 环=0  双bind对=34  带内=31  X分布={4294967295: 1, 1: 79}
+❌ w1351_npc_xunshanxianv_01_yifu_001.mesh declared=80 err=no origin-record walk
+❌ w1351_npc_biaoche1.mesh declared=81 err=no origin-record walk
+❌ w1351_npc_haolaizi_yifu_001.mesh declared=81 err=no origin-record walk
+❌ w1351_guajian_ysym_moren.mesh declared=82 err=no origin-record walk
+❌ w1351_model_tl_ftxd_jt_x01.mesh declared=82 err=no origin-record walk
+❌ w1351_model_tl_ftxd_jt_x02.mesh declared=82 err=no origin-record walk
+❌ w1351_npc_tongshuai1_shoutao_001.mesh declared=82 err=no origin-record walk
+❌ w1351_npc_tongshuai1_toufa_001.mesh declared=82 err=no origin-record walk
+❌ w1351_npc_tongshuai1_xiezi_001.mesh declared=82 err=no origin-record walk
+❌ w1351_boss_aihu_toufa_001.mesh declared=83 err=no origin-record walk
+❌ w1351_boss_aihu_yifu_001.mesh declared=83 err=no origin-record walk
+❌ w1351_boss_guansheng_shoutao_001.mesh declared=83 err=node count 70 != declared 83
+❌ w1351_boss_guansheng_yifu_001.mesh declared=83 err=no origin-record walk
+❌ w1351_boss_yunpiaopiao_yifu_001.mesh declared=83 err=no origin-record walk
+✅ w1351_monster_kaimingshou.mesh                       声明=83   节点=83   根=['000'] 环=0  双bind对=37  带内=33  X分布={4294967295: 1, 1: 82}
+❌ w1351_model_wd_nv_cy_h01.mesh declared=84 err=no origin-record walk
+❌ w1351_boss_zhangjiao_xiezi.mesh declared=84 err=no origin-record walk
+❌ w1351_boss_zhangjiao_yifu.mesh declared=84 err=no origin-record walk
+❌ w1351_pets_jianyinghu_b0.mesh declared=84 err=no origin-record walk
+❌ w1351_pets_jianyinghu_b1.mesh declared=84 err=no origin-record walk
+❌ w1351_pets_jianyinghu_b3.mesh declared=84 err=no origin-record walk
+❌ w1351_boss_pomozunzhe_yifu_001.mesh declared=85 err=no origin-record walk
+❌ w1351_npc_poyanzunzhelinghun.mesh declared=85 err=no origin-record walk
+❌ w1351_boss_wudumoshi_yifu_001.mesh declared=85 err=no origin-record walk
+❌ w1351_npc_wudumoshilinghun.mesh declared=85 err=no origin-record walk
+❌ w1351_pets_lianyishou_b0.mesh declared=85 err=no origin-record walk
+❌ w1351_pets_lianyishou_b1.mesh declared=85 err=no origin-record walk
+❌ w1351_boss_xiaoqiao.mesh declared=87 err=no origin-record walk
+❌ w1351_npc_husijingang_01_lian_001.mesh declared=87 err=node count 68 != declared 87
+❌ w1351_npc_husijingang_01_toufa_001.mesh declared=87 err=no origin-record walk
+❌ w1351_npc_husijingang_01_xiezi_001.mesh declared=87 err=no origin-record walk
+❌ w1351_npc_husijingang_01_yifu_001.mesh declared=87 err=no origin-record walk
+❌ w1351_npc_husijingang_02_lian_001.mesh declared=87 err=no origin-record walk
+✅ w1351_npc_xunshanxianzi_01.mesh                      声明=88   节点=88   根=['000'] 环=0  双bind对=36  带内=35  X分布={4294967295: 1, 1: 87}
+❌ w1351_npc_xunshanxianzi_01_a.mesh declared=88 err=node count 82 != declared 88
+✅ w1351_npc_xunshanxianzi_01_b.mesh                    声明=88   节点=88   根=['000'] 环=0  双bind对=36  带内=35  X分布={4294967295: 1, 1: 87}
+❌ w1351_npc_xunshanxianzi_01_d.mesh declared=88 err=node count 69 != declared 88
+✅ w1351_npc_xunshanxianzi_02.mesh                      声明=88   节点=88   根=['000'] 环=0  双bind对=36  带内=33  X分布={4294967295: 1, 1: 87}
+❌ w1351_npc_xunshanxianzi_02_a.mesh declared=88 err=no origin-record walk
+❌ w1351_model_zq_fish_h001.mesh declared=89 err=no origin-record walk
+❌ w1351_boss_sysz_fenwujiou.mesh declared=89 err=no origin-record walk
+❌ w1351_monster_huiyinfan001.mesh declared=89 err=no origin-record walk
+❌ w1351_npc_xinxiaoyuanshanqizi.mesh declared=89 err=no origin-record walk
+❌ w1351_pets_xiaomuling_b3.mesh declared=89 err=no origin-record walk
+❌ w1351_pets_xuanhuangtengshe_b0.mesh declared=89 err=no origin-record walk
+❌ w1351_model_hehua_h001_pbr.mesh declared=90 err=no origin-record walk
+❌ w1351_model_jingji_b_h02.mesh declared=90 err=no origin-record walk
+❌ w1351_model_tengji_skill02_buff_h02.mesh declared=90 err=no origin-record walk
+❌ w1351_boss_xuanjijingang_lian_001.mesh declared=90 err=no origin-record walk
+❌ w1351_boss_xuanjijingang_shoutao_001.mesh declared=90 err=no origin-record walk
+✅ w1351_boss_xuanjijingang_toufa_001.mesh              声明=90   节点=90   根=['000'] 环=0  双bind对=27  带内=13  X分布={4294967295: 1, 1: 89}
+❌ w1351_pets_lingtushuangjie_b0_lian_001.mesh declared=91 err=no origin-record walk
+❌ w1351_pets_lingtushuangjie_b0_yifu_001.mesh declared=91 err=no origin-record walk
+❌ w1351_pets_mofamifeng_b0.mesh declared=91 err=no origin-record walk
+❌ w1351_model_qf_skill02_dragon_h04.mesh declared=92 err=no origin-record walk
+❌ w1351_boss_sifengmo_toufa_001.mesh declared=92 err=no origin-record walk
+❌ w1351_boss_sifengmo_yifu_001.mesh declared=92 err=no origin-record walk
+❌ w1351_npc_sifengmolinghun_toufa.mesh declared=92 err=no origin-record walk
+❌ w1351_npc_sifengmolinghun_yifu.mesh declared=92 err=no origin-record walk
+❌ w1351_monster_tengmanzhongz.mesh declared=92 err=no origin-record walk
+❌ w1351_npc_huyuanzunzhe_02_lian_001.mesh declared=93 err=no origin-record walk
+❌ w1351_npc_huyuanzunzhe_02_xiezi_001.mesh declared=93 err=no origin-record walk
+❌ w1351_npc_huyuanzunzhe_02_yifu_001.mesh declared=93 err=no origin-record walk
+❌ w1351_zuoqi_jinjiashi.mesh declared=93 err=no origin-record walk
+❌ w1351_npc_huyuanzunzhe_01_lian_001.mesh declared=94 err=no origin-record walk
+❌ w1351_npc_huyuanzunzhe_01_xiezi_001.mesh declared=94 err=no origin-record walk
+❌ w1351_npc_huyuanzunzhe_01_yifu_001.mesh declared=94 err=no origin-record walk
+❌ w1351_npc_yudongshenshi_01_lian_001.mesh declared=94 err=node count 73 != declared 94
+❌ w1351_npc_yudongshenshi_01_toufa_001.mesh declared=94 err=node count 90 != declared 94
+✅ w1351_npc_yudongshenshi_01_xiezi_001.mesh            声明=94   节点=94   根=['000'] 环=0  双bind对=42  带内=36  X分布={4294967295: 1, 1: 93}
+❌ w1351_pets_lianyishou_b3.mesh declared=95 err=no origin-record walk
+❌ w1351_pets_lianyishou_b5.mesh declared=95 err=no origin-record walk
+❌ w1351_zuoqi_haohuahuache.mesh declared=95 err=no origin-record walk
+❌ w1351_diancang_hama_lian_001.mesh declared=96 err=no origin-record walk
+❌ w1351_diancang_hama_toufa_001.mesh declared=96 err=no origin-record walk
+❌ w1351_diancang_hama_yifu_001.mesh declared=96 err=no origin-record walk
+❌ w1351_boss_mangguzhuhawang_lian_001.mesh declared=96 err=no origin-record walk
+❌ w1351_boss_mangguzhuhawang_toufa_001.mesh declared=96 err=no origin-record walk
+❌ w1351_boss_mangguzhuhawang_yifu_001.mesh declared=96 err=node count 0 != declared 96
+❌ w1351_boss_hongjiyaowang_toufa_001.mesh declared=97 err=no origin-record walk
+✅ w1351_boss_hongjiyaowang_yifu_001.mesh               声明=97   节点=97   根=['000'] 环=0  双bind对=34  带内=25  X分布={4294967295: 1, 1: 96}
+❌ w1351_npc_heiyirendage.mesh declared=97 err=no origin-record walk
+❌ w1351_model_wd_xianhe_h001.mesh declared=98 err=no origin-record walk
+❌ w1351_npc_xiuzhendaozhang_01_lian_001.mesh declared=98 err=no origin-record walk
+❌ w1351_npc_xiuzhendaozhang_01_toufa_001.mesh declared=98 err=no origin-record walk
+❌ w1351_npc_xiuzhendaozhang_01_xiezi_001.mesh declared=98 err=node count 92 != declared 98
+❌ w1351_npc_xiuzhendaozhang_01_yifu_001.mesh declared=98 err=no origin-record walk
+❌ w1351_pets_niulangzhinv_b0.mesh declared=98 err=no origin-record walk
+❌ w1351_boss_lujunyi_lian_001.mesh declared=99 err=no origin-record walk
+❌ w1351_boss_lujunyi_shoutao_001.mesh declared=99 err=no origin-record walk
+❌ w1351_boss_lujunyi_toufa_001.mesh declared=99 err=no origin-record walk
+❌ w1351_boss_lujunyi_xiezi_001.mesh declared=99 err=node count 0 != declared 99
+❌ w1351_boss_lujunyi_yifu_001.mesh declared=99 err=node count 0 != declared 99
+❌ w1351_boss_wangyan_lian_001.mesh declared=99 err=no origin-record walk
+❌ w1351_pets_xuanhaima_b1.mesh declared=100 err=no origin-record walk
+❌ w1351_model_jingji_b_h01.mesh declared=101 err=no origin-record walk
+❌ w1351_npc_xingwenshizhe_01_lian_001.mesh declared=101 err=node count 78 != declared 101
+❌ w1351_npc_xingwenshizhe_01_toufa_001.mesh declared=101 err=node count 88 != declared 101
+❌ w1351_npc_xingwenshizhe_01_xiezi_001.mesh declared=101 err=no origin-record walk
+✅ w1351_npc_xingwenshizhe_01_yifu_001.mesh             声明=101  节点=101  根=['000'] 环=0  双bind对=38  带内=33  X分布={4294967295: 1, 1: 100}
+❌ w1351_pets_mofamifeng_b7.mesh declared=101 err=no origin-record walk
+❌ w1351_new_npc_youtanzhi.mesh declared=102 err=no origin-record walk
+❌ w1351_npc_kangmin.mesh declared=102 err=no origin-record walk
+❌ w1351_pets_xiaomuling_b0.mesh declared=102 err=no origin-record walk
+❌ w1351_pets_xiaomuling_b1.mesh declared=102 err=no origin-record walk
+❌ w1351_pets_xiaomuling_b7.mesh declared=102 err=no origin-record walk
+❌ w1351_boss_shuangying_lian_001.mesh declared=103 err=no origin-record walk
+❌ w1351_boss_shuangying_toufa_001.mesh declared=103 err=no origin-record walk
+❌ w1351_boss_shuangying_yifu_001.mesh declared=103 err=no origin-record walk
+❌ w1351_zuoqi_guchengfeisha.mesh declared=103 err=no origin-record walk
+❌ w1351_zuoqi_yuexiaxun.mesh declared=103 err=no origin-record walk
+❌ w1351_ani_model_lianhua_h001.mesh declared=104 err=no origin-record walk
+✅ w1351_boss_shuifeitouling_shoutao_001.mesh           声明=104  节点=104  根=['000'] 环=0  双bind对=38  带内=23  X分布={4294967295: 1, 1: 103}
+❌ w1351_boss_shuifeitouling_yifu_001.mesh declared=104 err=no origin-record walk
+❌ w1351_cj_diao.mesh declared=104 err=no origin-record walk
+❌ w1351_boss_huoyanyaomo_shoutao_001.mesh declared=105 err=no origin-record walk
+❌ w1351_boss_huoyanyaomo_toufa_001.mesh declared=105 err=no origin-record walk
+❌ w1351_boss_huoyanyaomo_yifu_001.mesh declared=105 err=no origin-record walk
+❌ w1351_monster_qibing_001_yifu_001.mesh declared=105 err=node count 0 != declared 105
+❌ w1351_pets_tuxiaoyao_b3.mesh declared=105 err=no origin-record walk
+❌ w1351_model_gbnan_long_h001.mesh declared=106 err=no origin-record walk
+❌ w1351_model_gbnan_long_lg_h001.mesh declared=106 err=no origin-record walk
+❌ w1351_model_gbnan_long_wy_h001.mesh declared=106 err=no origin-record walk
+❌ w1351_model_gbnv_long_l_h001.mesh declared=106 err=no origin-record walk
+❌ w1351_model_gbnv_long_l_lg_h001.mesh declared=106 err=no origin-record walk
+❌ w1351_model_gbnv_long_r_h001.mesh declared=106 err=no origin-record walk
+❌ w1351_model_ymg02_nan_slbw_h002.mesh declared=107 err=no origin-record walk
+❌ w1351_model_ymg02_nan_slbw_h003.mesh declared=107 err=no origin-record walk
+❌ w1351_model_ymg02_nan_slbw_lg_h002.mesh declared=107 err=no origin-record walk
+❌ w1351_model_ymg02_nan_slbw_lg_h003.mesh declared=107 err=no origin-record walk
+❌ w1351_model_ymg02_nv_flzt_h001.mesh declared=107 err=no origin-record walk
+❌ w1351_model_ymg02_nv_flzt_lg_h001.mesh declared=107 err=no origin-record walk
+❌ w1351_npc_zhaotianshi.mesh declared=108 err=no origin-record walk
+❌ w1351_boss_yuanguqihun_lian_001.mesh declared=110 err=node count 93 != declared 110
+❌ w1351_boss_yuanguqihun_shoutao_001.mesh declared=110 err=no origin-record walk
+❌ w1351_boss_yuanguqihun_toufa_001.mesh declared=110 err=node count 81 != declared 110
+❌ w1351_boss_yuanguqihun_yifu_001.mesh declared=110 err=no origin-record walk
+❌ w1351_boss_zhenbaolongwang_lian_001.mesh declared=110 err=no origin-record walk
+❌ w1351_boss_zhenbaolongwang_toufa_001.mesh declared=110 err=no origin-record walk
+❌ w1351_pets_tangguotianxin_b0.mesh declared=111 err=no origin-record walk
+❌ w1351_pets_tangguotianxin_b1.mesh declared=111 err=no origin-record walk
+❌ w1351_pets_tangguotianxin_b3.mesh declared=111 err=no origin-record walk
+❌ w1351_pets_tangguotianxin_b5.mesh declared=111 err=no origin-record walk
+❌ w1351_pets_tangguotianxin_b7.mesh declared=111 err=no origin-record walk
+❌ w1351_new_npc_tianshantonglao.mesh declared=114 err=no origin-record walk
+✅ w1351_zuoqi_jixiangruyi_jin.mesh                     声明=115  节点=115  根=['000'] 环=0  双bind对=59  带内=53  X分布={4294967295: 1, 1: 114}
+❌ w1351_model_wing_h01.mesh declared=117 err=no origin-record walk
+❌ w1351_pets_lianyishou_b7.mesh declared=117 err=no origin-record walk
+❌ w1351_npc_yujiulian_lian_001.mesh declared=118 err=no origin-record walk
+❌ w1351_npc_yujiulian_shoutao_001.mesh declared=118 err=no origin-record walk
+❌ w1351_npc_yujiulian_toufa_001.mesh declared=118 err=no origin-record walk
+❌ w1351_npc_yujiulian_xiezi_001.mesh declared=118 err=no origin-record walk
+❌ w1351_npc_yujiuliani_yifu_001.mesh declared=118 err=no origin-record walk
+✅ w1351_npc_zhaotianshi_lian_001.mesh                  声明=118  节点=118  根=['000'] 环=0  双bind对=53  带内=34  X分布={4294967295: 1, 1: 117}
+❌ w1351_ani_ysym_bird_h002.mesh declared=120 err=no origin-record walk
+❌ w1351_modle_caiji_niao01.mesh declared=120 err=no origin-record walk
+❌ w1351_new_npc_duanyanqing.mesh declared=120 err=no origin-record walk
+❌ w1351_new_wuqi_duanyanqing.mesh declared=120 err=no origin-record walk
+❌ w1351_modle_yxh_queqiao_niao01.mesh declared=121 err=no origin-record walk
+❌ w1351_modle_yxh_queqiao_niao02.mesh declared=121 err=no origin-record walk
+❌ w1351_pets_xiaomuling_b5.mesh declared=123 err=no origin-record walk
+❌ w1351_zuoqi_menghuan.mesh declared=124 err=no origin-record walk
+❌ w1351_model_tengji_h001.mesh declared=125 err=no origin-record walk
+❌ w1351_boss_wangyuyan.mesh declared=125 err=no origin-record walk
+❌ w1351_new_npc_jiumozhi.mesh declared=126 err=no origin-record walk
+❌ w1351_npc_xuzhu.mesh declared=126 err=no origin-record walk
+❌ w1351_new_npc_daobaifeng.mesh declared=127 err=no origin-record walk
+❌ w1351_pets_huanyizhiling_b5.mesh declared=127 err=no origin-record walk
+❌ w1351_zuoqi_dafeng.mesh declared=127 err=no origin-record walk
+❌ w1351_boss_qiannianbingpo_lian_001.mesh declared=128 err=node count 119 != declared 128
+✅ w1351_boss_qiannianbingpo_yifu_001.mesh              声明=128  节点=128  根=['000'] 环=0  双bind对=63  带内=51  X分布={4294967295: 1, 1: 127}
+❌ w1351_pets_xuanhaima_b5.mesh declared=130 err=no origin-record walk
+❌ w1351_ani_model_lianhua_h002.mesh declared=132 err=no origin-record walk
+❌ w1351_nv_s_yifu_emrmdz.mesh declared=132 err=no origin-record walk
+❌ w1351_boss_yi_xiezi_001.mesh declared=133 err=no origin-record walk
+❌ w1351_boss_yi_yifu_001.mesh declared=133 err=no origin-record walk
+❌ w1351_nan_t_lian_chushi_001.mesh declared=133 err=no origin-record walk
+❌ w1351_nan_t_lian_chushi_002.mesh declared=133 err=no origin-record walk
+❌ w1351_nan_t_lian_chushi_003.mesh declared=133 err=no origin-record walk
+❌ w1351_nan_t_lian_chushi_004.mesh declared=133 err=no origin-record walk
+❌ w1351_ani_ysym_bird_h001.mesh declared=134 err=no origin-record walk
+❌ w1351_model_bird_lf001.mesh declared=134 err=no origin-record walk
+❌ w1351_model_bird_lf002.mesh declared=134 err=no origin-record walk
+❌ w1351_model_yuexiaxun_bird_lf001.mesh declared=134 err=no origin-record walk
+❌ w1351_nv_kong.mesh declared=134 err=no origin-record walk
+❌ w1351_nv_t_lian_chushi_001.mesh declared=134 err=no origin-record walk
+❌ w1351_model_ymg01_jt02_h003.mesh declared=135 err=no origin-record walk
+❌ w1351_pets_xuanhaima_b3.mesh declared=135 err=no origin-record walk
+❌ w1351_boss_jiuweihu.mesh declared=136 err=no origin-record walk
+❌ w1351_new_npc_liqinglu.mesh declared=136 err=no origin-record walk
+❌ w1351_model_lens02_qf_h01.mesh declared=137 err=no origin-record walk
+❌ w1351_npc_xiaoyuanshan.mesh declared=137 err=no origin-record walk
+❌ w1351_npc_biaoche3.mesh declared=138 err=no origin-record walk
+❌ w1351_npc_biaoche4.mesh declared=138 err=no origin-record walk
+❌ w1351_npc_biaoche5.mesh declared=138 err=no origin-record walk
+❌ w1351_pets_jinyubaobao_b5.mesh declared=138 err=no origin-record walk
+❌ w1351_pets_huanyizhiling_b7.mesh declared=139 err=no origin-record walk
+❌ w1351_npc_qiaofeng.mesh declared=140 err=no origin-record walk
+❌ w1351_new_npc_azhu.mesh declared=141 err=no origin-record walk
+❌ w1351_model_link_h01.mesh declared=142 err=no origin-record walk
+❌ w1351_pets_mofamifeng_b1.mesh declared=142 err=no origin-record walk
+❌ w1351_pets_tuxiaoyao_b7.mesh declared=143 err=no origin-record walk
+❌ w1351_new_npc_zhongling_shoutao_001.mesh declared=145 err=no origin-record walk
+❌ w1351_new_npc_zhongling_yifu_001.mesh declared=145 err=no origin-record walk
+❌ w1351_zuoqi_linghu.mesh declared=148 err=no origin-record walk
+❌ w1351_new_npc_dingchunqiu.mesh declared=149 err=no origin-record walk
+❌ w1351_new_npc_xinazi.mesh declared=150 err=no origin-record walk
+❌ w1351_pets_tangguotianxin_b9.mesh declared=151 err=no origin-record walk
+❌ w1351_pets_xiaohualing_b0.mesh declared=151 err=no origin-record walk
+❌ w1351_pets_xiaohualing_b1.mesh declared=151 err=no origin-record walk
+❌ w1351_pets_xiaohualing_b3.mesh declared=151 err=no origin-record walk
+❌ w1351_new_npc_muwanqing.mesh declared=155 err=no origin-record walk
+❌ w1351_pets_xianglong_b1.mesh declared=159 err=no origin-record walk
+❌ w1351_pets_xianglong_b0.mesh declared=160 err=no origin-record walk
+❌ w1351_npc_xinxiaoyuanshan.mesh declared=161 err=node count 3 != declared 161
+❌ w1351_pets_rongyanjushou_b5.mesh declared=161 err=no origin-record walk
+❌ w1351_pets_rongyanjushou_b7.mesh declared=161 err=no origin-record walk
+❌ w1351_model_dingchunqiu_hand01.mesh declared=172 err=no origin-record walk
+❌ w1351_pets_xianglong_b3.mesh declared=176 err=no origin-record walk
+❌ w1351_pets_xianglong_b5.mesh declared=179 err=no origin-record walk
+❌ w1351_model_lion_h004.mesh declared=181 err=no origin-record walk
+❌ w1351_model_lion_h004_1.mesh declared=181 err=no origin-record walk
+❌ w1351_npc_xinduanyu.mesh declared=182 err=no origin-record walk
+❌ w1351_pets_xuanhaima_b7.mesh declared=187 err=no origin-record walk
+❌ w1351_npc_xinmurongfu.mesh declared=189 err=no origin-record walk
+❌ w1351_pets_jinyubaobao_b7.mesh declared=189 err=no origin-record walk
+❌ w1351_model_ymg02_jn_long_h002.mesh declared=211 err=no origin-record walk
+❌ w1351_model_ymg02_jn_long_lg_h002.mesh declared=211 err=no origin-record walk
+❌ w1351_model_sl_cleave_h01.mesh declared=229 err=node count 0 != declared 229
+❌ w1351_pets_xianglong_b7.mesh declared=236 err=no origin-record walk
+❌ w1351_pets_xiaohualing_b5.mesh declared=240 err=no origin-record walk
+❌ w1351_pets_xiaohualing_b7.mesh declared=240 err=no origin-record walk
+❌ w1351_zuoqi_wanlishanhebai.mesh declared=249 err=no origin-record walk
+❌ w1351_zuoqi_wanlishanhehong.mesh declared=249 err=no origin-record walk
+
+走通 47 / 681

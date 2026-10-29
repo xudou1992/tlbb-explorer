@@ -1,0 +1,30 @@
+pub fn unify_weights(infl: &[(usize, f32)], root: usize) -> (Vec<(usize, f32)>, WeightCase) {
+    if infl.is_empty() {
+        return (vec![(root, 1.0)], WeightCase::Uncovered);
+    }
+    let sum: f32 = infl.iter().map(|(_, w)| w).sum();
+    let mut out = infl.to_vec();
+    // 根骨已经在表里时把差额**并进它那一项**：另起一项会让同一个骨号在 4 个槽位里
+    // 出现两次，官方校验器按 ACCESSOR_JOINTS_INDEX_DUPLICATE 判 error，蒙皮也会把根骨
+    // 算两遍（本样本根骨 `000` 没有影响表，今天 0 命中，但这是数据形状一换就会踩的坑）。
+    let root_slot = out.iter().position(|(j, _)| *j == root);
+    let case;
+    if (sum - 1.0).abs() <= WEIGHT_SUM_TOLERANCE {
+        case = WeightCase::Normalized;
+    } else if sum < 1.0 && (out.len() < MAX_INFLUENCES || root_slot.is_some()) {
+        match root_slot {
+            Some(k) => out[k].1 += 1.0 - sum,
+            None => out.push((root, 1.0 - sum)),
+        }
+        return (out, WeightCase::RootFilled);
+    } else {
+        case = WeightCase::Rescaled;
+    }
+    if sum > f32::EPSILON {
+        for (_, w) in out.iter_mut() {
+            *w /= sum;
+        }
+    }
+    (out, case)
+}
+

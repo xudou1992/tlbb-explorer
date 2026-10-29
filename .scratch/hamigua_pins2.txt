@@ -1,0 +1,43 @@
+== hamigua 挂点/矩阵钉值 ==
+nodes: [('000', ['bone001']), ('bone001', [])] tx: (1, 0)
+binds keys: ['bone001']
+bone001 bind m15=1 t=(-0,0,-0)
+bone001 rows: [['1', '-0', '0'], ['-0', '1.192e-07', '1'], ['0', '-1', '1.192e-07']]
+
+== heihou 距离钉值（6位精度）==
+pairs: 16
+  bip01_r_upperarm       <- bip01_r_clavicle     1.101731
+  bip01_tail1            <- bip01_tail           1.034929
+  bip01_l_forearm        <- bip01_l_upperarm     0.850345
+  bip01_r_forearm        <- bip01_r_upperarm     0.850345
+  bip01_spine            <- bip01_pelvis         0.706730
+  bip01_pelvis           <- bip01                0.510331
+  bip01_r_hand           <- bip01_r_forearm      0.483170
+  bip01_l_hand           <- bip01_l_forearm      0.483170
+  bip01_r_foot           <- bip01_r_calf         0.372800
+  bip01_l_foot           <- bip01_l_calf         0.372800
+  bip01_r_clavicle       <- bip01_neck           0.117349
+  bip01_ponytail2        <- bip01_head           0.116224
+  bip01_tail2            <- bip01_tail1          0.098817
+  bip01_tail             <- bip01_spine          0.082794
+  bip01_r_toe0           <- bip01_r_foot         0.020200
+  bip01_l_toe0           <- bip01_l_foot         0.020200
+root: ['000']
+neck 链: bip01_neck1 bip01_neck bip01_spine1
+tail 链: bip01_tail bip01_spine
+
+== jiuyinshenzhua 挂点名 ==
+declared=44 nodes=44 tx_flag=1 tx_count=0
+root: ['000']
+  bip01              <- 000              实际=000
+  bip01_pelvis       <- bip01            实际=bip01
+  bip01_spine        <- bip01_pelvis     实际=bip01_pelvis
+  bip01_l_calf       <- bip01_l_thigh    实际=bip01_l_thigh
+  bip01_l_foot       <- bip01_l_calf     实际=bip01_l_calf
+  bip01_l_toe0       <- bip01_l_foot     实际=bip01_l_foot
+  bip01_head         <- bip01_neck       实际=bip01_neck
+socket 段 @0xf9d0 flag=1 cnt=0
+== yuanguqihun_yifu_001 ==
+Traceback (most recent call last):
+  File "<stdin>", line 33, in <module>
+TypeError: 'NoneType' object is not subscriptable

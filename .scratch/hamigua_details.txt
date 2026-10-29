@@ -1,0 +1,48 @@
+== 1. 真·旧口径逐文件重跑（origin 起点分析器=census.analyze，等价旧 Rust）==
+旧口径走通: 1072  新口径走通: 1439
+回退（旧走通但新不走通）: 0
+纯新增: 367
+
+== 2. root-flag × 挂点数 交叉表 ==
+    ('origin', 'tx=0') 28
+    ('origin', 'tx=1') 9
+    ('origin', 'tx>=2') 1063
+    ('root-flag', 'tx=0') 218
+    ('root-flag', 'tx=1') 27
+    ('root-flag', 'tx>=2') 94
+root-flag 且挂点=0（=hamigua 完全变体）: 218
+
+== 3. 两份 .ani 不等样本的现场 ==
+  w1351_model_dunpai_z001.mesh size=11848 declared=1 newok=True
+  w1351_model_jiumozhi_hoqiu_w002.mesh size=5820 declared=4 newok=True
+
+== 4. hits0 的两份（bip01 名但 0 条解剖命中）==
+  w1351_model_pl_h006.mesh declared=134 名单前8=['000', 'w_bip01', 'w_bip01_footsteps', 'w_bip01_pelvis', 'w_bip01_spine', 'w_bip01_l_thigh', 'w_bip01_l_calf', 'w_bip01_l_foot']
+  w1351_model_wd_nv_cy_h01.mesh declared=84 名单前8=['000', 'w_bip01', 'w_bip01_footsteps', 'w_bip01_pelvis', 'w_bip01_spine', 'w_bip01_l_thigh', 'w_bip01_l_calf', 'w_bip01_l_foot']
+
+== 5. origin 起点但挂点=0 的新增样本（老前奏+空挂点）==
+  w1351_caiji_shuishangxue_001.mesh            declared=2   start=0x2c0 旧口径=失败
+  w1351_shenghuo_gaoliang1.mesh                declared=1   start=0x1862c 旧口径=失败
+  w1351_shenghuo_gaoliang2.mesh                declared=1   start=0x1255c 旧口径=失败
+  w1351_shenghuo_gaoliang3.mesh                declared=1   start=0x1255c 旧口径=失败
+  w1351_shenghuo_hongshu1.mesh                 declared=1   start=0x1e10 旧口径=失败
+  w1351_shenghuo_hongshu2.mesh                 declared=1   start=0x3bb4 旧口径=失败
+  w1351_shenghuo_hongshu3.mesh                 declared=1   start=0x3120 旧口径=失败
+  w1351_shenghuo_huangdou1.mesh                declared=1   start=0x30884 旧口径=失败
+
+== 6. 对照组（origin 前奏）尾部起点现场 ==
+  0x07690 record=origin
+  0x076f0 record=top
+  0x07750 record=None
+  0x07754 record=None
+  0x07758 record=None
+  0x0775c record=None
+  第一个 -1 @0x7750 名字=000/000
+  hamigua 对照：尾部起点=-1 @0xc9c（前奏 0 条）
+
+== 7. 测试钉子样本的 hash ==
+  data/source/npc/changjingdaoju/w1351_caiji_hamigua_01/w1351_caiji_hamigua_01.mesh hash=9965146e8d18307d pak=data original=4252
+  data/source/npc/changjingdaoju/w1351_caiji_heihou_01/w1351_caiji_heihou_01.mesh hash=9eee824e77088ebc pak=data original=24320
+  data/source/npc/changjingdaoju/w1351_caiji_honghou_01/w1351_caiji_honghou_01.mesh hash=6d77306e42259ae6 pak=data original=24320
+  data/source/npc/changjingdaoju/w1351_caiji_huihou_01/w1351_caiji_huihou_01.mesh hash=9780ca6eb98d6aae pak=data original=24320
+  data/source/npc/model/w1351_model_jiuyinshenzhua_h001/w1351_model_jiuyinshenzhua_h001.mesh hash=b1603c3d42d9063f pak=data original=63952

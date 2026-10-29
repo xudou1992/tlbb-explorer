@@ -1,0 +1,163 @@
+
+
+===== 140325aa0 size=152 =====
+callees: 
+// Hidden C++ exception states: #wind=2
+_QWORD *__fastcall sub_140325AA0(__int64 a1)
+{
+  _QWORD *result; // rax
+  _QWORD *v2; // rbx
+  __int64 v3; // rcx
+  __int64 v4; // rax
+
+  result = (_QWORD *)(***(__int64 (__fastcall ****)(_QWORD, __int64, _QWORD))(a1 + 232))(*(_QWORD *)(a1 + 232), 56, 0);
+  v2 = result;
+  if ( result )
+  {
+    ++dword_1410A7D70;
+    *result = &UI::NamedTexture::`vftable';
+    v3 = (unsigned int)dword_1410ABB38;
+    if ( !dword_1410ABB38 )
+    {
+      sub_140135BC0(0);
+      v3 = (unsigned int)dword_1410ABB38;
+    }
+    v4 = qword_1410A7D60;
+    ++*(_DWORD *)(qword_1410A7D60 + 20);
+    v2[1] = v4;
+    if ( !(_DWORD)v3 )
+    {
+      sub_140135BC0(v3);
+      v4 = qword_1410A7D60;
+    }
+    ++*(_DWORD *)(v4 + 20);
+    v2[2] = v4;
+    v2[3] = 0;
+    *((_DWORD *)v2 + 8) = 1065353216;
+    *((_DWORD *)v2 + 9) = 1065353216;
+    v2[5] = 0;
+    *((_DWORD *)v2 + 12) = 0;
+    *((_BYTE *)v2 + 52) = 0;
+    return v2;
+  }
+  return result;
+}
+
+
+===== 140325b40 size=117 =====
+callees: 
+// Hidden C++ exception states: #wind=1
+_QWORD *__fastcall sub_140325B40(__int64 a1)
+{
+  _QWORD *result; // rax
+  __int64 v2; // rcx
+  _QWORD *v3; // rbx
+  __int64 v4; // rax
+
+  result = (_QWORD *)(***(__int64 (__fastcall ****)(_QWORD, __int64, _QWORD))(a1 + 232))(*(_QWORD *)(a1 + 232), 56, 0);
+  v3 = result;
+  if ( result )
+  {
+    ++dword_1410A7D70;
+    *result = &UI::TextureFile::`vftable';
+    if ( !dword_1410ABB38 )
+      sub_140135BC0(v2);
+    v4 = qword_1410A7D60;
+    ++*(_DWORD *)(qword_1410A7D60 + 20);
+    v3[1] = v4;
+    v3[2] = 0;
+    v3[3] = 0;
+    v3[4] = 0;
+    v3[5] = 0;
+    *((_DWORD *)v3 + 12) = 48;
+    return v3;
+  }
+  return result;
+}
+
+
+===== 1401230b0 size=269 =====
+callees: 
+char __fastcall sub_1401230B0(__int64 a1, __int64 a2, __int64 a3, char a4, char a5, int a6)
+{
+  const char *v10; // r9
+  const char *v11; // r8
+  const char *v12; // rcx
+  const char *v13; // rax
+
+  v10 = (const char *)(*(_QWORD *)a3 + 24LL);
+  if ( *(_DWORD *)(*(_QWORD *)a3 + 20LL) )
+    v10 = *(const char **)v10;
+  v11 = (const char *)(*(_QWORD *)a2 + 24LL);
+  if ( *(_DWORD *)(*(_QWORD *)a2 + 20LL) )
+    v11 = *(const char **)v11;
+  v12 = "false";
+  v13 = "false";
+  if ( a5 )
+    v13 = "true";
+  if ( a4 )
+    v12 = "true";
+  sub_140133920(
+    6,
+    "TextureConvertDir:%s,Extend:%s,EnableConvertUI=%s,EnableConvert3D=%s,Format=%d.",
+    v11,
+    v10,
+    v12,
+    v13,
+    a6);
+  _InterlockedIncrement((volatile signed __int32 *)(*(_QWORD *)a2 + 8LL));
+  sub_1401369D0(*(_QWORD *)(a1 + 24));
+  *(_QWORD *)(a1 + 24) = *(_QWORD *)a2;
+  _InterlockedIncrement((volatile signed __int32 *)(*(_QWORD *)a3 + 8LL));
+  sub_1401369D0(*(_QWORD *)(a1 + 32));
+  *(_QWORD *)(a1 + 32) = *(_QWORD *)a3;
+  *(_BYTE *)(a1 + 378) = a4;
+  *(_DWORD *)(a1 + 360) = a6;
+  *(_DWORD *)(a1 + 172) = a6;
+  *(_BYTE *)(a1 + 176) = a4;
+  *(_BYTE *)(a1 + 379) = a5;
+  *(_DWORD *)(a1 + 168) = 1;
+  *(_BYTE *)(a1 + 177) = a5;
+  return 1;
+}
+
+
+===== 14010fde0 size=226 =====
+callees: 
+// Hidden C++ exception states: #wind=2
+__int64 __fastcall sub_14010FDE0(__int64 a1, __int64 a2)
+{
+  __int64 v3; // rax
+  _QWORD *v4; // rbx
+  __int64 v5; // rbx
+  __int64 v7; // [rsp+38h] [rbp+10h] BYREF
+  __int64 v8; // [rsp+40h] [rbp+18h] BYREF
+
+  if ( !qword_1410B5C38 )
+    sub_1401375C0(a1, a2);
+  _InterlockedIncrement((volatile signed __int32 *)(qword_1410A74A8 + 8));
+  v3 = qword_1410A74A8;
+  v7 = qword_1410A74A8;
+  if ( !qword_1410B5C38 )
+  {
+    sub_1401375C0(a1, a2);
+    v3 = qword_1410A74A8;
+  }
+  _InterlockedIncrement((volatile signed __int32 *)(v3 + 8));
+  v8 = qword_1410A74A8;
+  v4 = qword_1410A7408;
+  if ( qword_1410A7400 )
+    v4 = qword_1410A7400;
+  _InterlockedIncrement((volatile signed __int32 *)(v4[5] + 8LL));
+  sub_1401369D0(v7);
+  v7 = v4[5];
+  _InterlockedIncrement((volatile signed __int32 *)(v4[6] + 8LL));
+  sub_1401369D0(v8);
+  v5 = v4[6];
+  v8 = v5;
+  sub_1401371A0(&v7, a1);
+  sub_1401371A0(&v8, a1);
+  sub_1401369D0(v5);
+  sub_1401369D0(v7);
+  return 2;
+}

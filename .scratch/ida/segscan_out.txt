@@ -1,0 +1,9 @@
+segs 11
+seg .text 140001000..140c8b000 len=13148160
+  b'Copy' 0 
+  b'Copyright 2013' 0 
+  b'Copyright' 0 
+seg .text 1411df000..1411e3000 len=16384
+  b'Copy' 1 1411e1ec6(f=0)
+  b'Copyright 2013' 0 
+  b'Copyright' 0 

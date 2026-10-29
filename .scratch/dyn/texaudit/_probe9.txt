@@ -1,0 +1,4 @@
+  File "<stdin>", line 30
+    b=p.replace('\','/').split('/')[-1]
+                                 ^
+SyntaxError: unterminated string literal (detected at line 30)

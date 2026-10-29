@@ -1,0 +1,21 @@
+xinmurongfu · preview: 2125 字 · 画布[44x44,445x278] · 图 14  「w1351_npc_xinmurongfu B 主体定位 NPC / 怪物 w1351_npc_xinmurongfu · 27 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · data/s」
+xinmurongfu · resource: 563 字 · 画布[44x44] · 图 0  「w1351_npc_xinmurongfu B 主体定位 NPC / 怪物 w1351_npc_xinmurongfu · 27 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · data/s」
+xinmurongfu · skeleton: 380 字 · 画布[44x44] · 图 0  「w1351_npc_xinmurongfu B 主体定位 NPC / 怪物 w1351_npc_xinmurongfu · 27 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · data/s」
+xinmurongfu · animation: 1223 字 · 画布[44x44,445x358] · 图 0  「w1351_npc_xinmurongfu B 主体定位 NPC / 怪物 w1351_npc_xinmurongfu · 27 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · data/s」
+xinmurongfu · effect: 276 字 · 画布[44x44] · 图 0  「w1351_npc_xinmurongfu B 主体定位 NPC / 怪物 w1351_npc_xinmurongfu · 27 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · data/s」
+xinmurongfu · material: 336 字 · 画布[44x44] · 图 0  「w1351_npc_xinmurongfu B 主体定位 NPC / 怪物 w1351_npc_xinmurongfu · 27 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · data/s」
+xinmurongfu · relations: 3554 字 · 画布[44x44] · 图 0  「w1351_npc_xinmurongfu B 主体定位 NPC / 怪物 w1351_npc_xinmurongfu · 27 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · data/s」
+xiyuqiezei · preview: 1613 字 · 画布[44x44,445x278] · 图 12  「w1351_monster_xiyuqiezei B 主体定位 NPC / 怪物 w1351_monster_xiyuqiezei · 21 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · 」
+xiyuqiezei · resource: 571 字 · 画布[44x44] · 图 0  「w1351_monster_xiyuqiezei B 主体定位 NPC / 怪物 w1351_monster_xiyuqiezei · 21 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · 」
+xiyuqiezei · skeleton: 422 字 · 画布[44x44] · 图 0  「w1351_monster_xiyuqiezei B 主体定位 NPC / 怪物 w1351_monster_xiyuqiezei · 21 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · 」
+xiyuqiezei · animation: 1041 字 · 画布[44x44,445x358] · 图 0  「w1351_monster_xiyuqiezei B 主体定位 NPC / 怪物 w1351_monster_xiyuqiezei · 21 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · 」
+xiyuqiezei · effect: 284 字 · 画布[44x44] · 图 0  「w1351_monster_xiyuqiezei B 主体定位 NPC / 怪物 w1351_monster_xiyuqiezei · 21 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · 」
+xiyuqiezei · material: 396 字 · 画布[44x44] · 图 0  「w1351_monster_xiyuqiezei B 主体定位 NPC / 怪物 w1351_monster_xiyuqiezei · 21 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · 」
+xiyuqiezei · relations: 3230 字 · 画布[44x44] · 图 0  「w1351_monster_xiyuqiezei B 主体定位 NPC / 怪物 w1351_monster_xiyuqiezei · 21 个文件 · 贴图引用 0/2 对上了文件（另有 2 张走客户端转换路径） · 」
+w1351_model_flower · preview: 1483 字 · 画布[44x44,44x44,44x44,445x278] · 图 11  「w1351_model_flower_lf001a B 主体定位 NPC / 怪物 w1351_model_flower_lf001a · 5 个文件 · data/source/npc/model/w1351_mode」
+w1351_model_flower · resource: 490 字 · 画布[44x44,44x44,44x44] · 图 0  「w1351_model_flower_lf001a B 主体定位 NPC / 怪物 w1351_model_flower_lf001a · 5 个文件 · data/source/npc/model/w1351_mode」
+w1351_model_flower · skeleton: 327 字 · 画布[44x44,44x44,44x44] · 图 0  「w1351_model_flower_lf001a B 主体定位 NPC / 怪物 w1351_model_flower_lf001a · 5 个文件 · data/source/npc/model/w1351_mode」
+w1351_model_flower · animation: 473 字 · 画布[44x44,44x44,44x44,445x358] · 图 0  「w1351_model_flower_lf001a B 主体定位 NPC / 怪物 w1351_model_flower_lf001a · 5 个文件 · data/source/npc/model/w1351_mode」
+w1351_model_flower · effect: 250 字 · 画布[44x44,44x44,44x44] · 图 0  「w1351_model_flower_lf001a B 主体定位 NPC / 怪物 w1351_model_flower_lf001a · 5 个文件 · data/source/npc/model/w1351_mode」
+w1351_model_flower · material: 318 字 · 画布[44x44,44x44,44x44] · 图 0  「w1351_model_flower_lf001a B 主体定位 NPC / 怪物 w1351_model_flower_lf001a · 5 个文件 · data/source/npc/model/w1351_mode」
+w1351_model_flower · relations: 855 字 · 画布[44x44,44x44,44x44] · 图 0  「w1351_model_flower_lf001a B 主体定位 NPC / 怪物 w1351_model_flower_lf001a · 5 个文件 · data/source/npc/model/w1351_mode」

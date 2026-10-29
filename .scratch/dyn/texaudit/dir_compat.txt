@@ -1,0 +1,23 @@
+池内 1,650 张里夹得出目录的: 610 张，涉及目录 177 个
+目录分布前 12: [('data/effect/textures/mask', 65), ('data/effect/textures/model', 35), ('data/source/npc/wuqi', 22), ('data/effect/textures/ring', 20), ('data/effect/textures/pattern', 19), ('mobile_maps_source', 19), ('data/source/player/w1351_nan/w1351_nan_yifu', 18), ('mobile_maps/w1351_fb_piaomiao_004', 17), ('mobile_maps/w1351_ll_gbzdfb_001', 17), ('mobile_maps/w1351_ll_gbzdtxmp_001', 17), ('data/effect/textures/smoke', 16), ('data/source/player/w1351_nv/w1351_nv_yifu', 13)]
+
+有「mesh + mtl 目录 + 声明贴图名 + 榜首」四件套的样本: 553 条（覆盖 mesh 418 只）
+mtl 目录分布前 10: [('data/source/npc/quest/w1351_npc_attack_shanzhu01', 13), ('data/source/npc/quest/w1351_npc_attack_gaoshanbaiyuan01', 11), ('data/source/npc/quest/w1351_pets_jianyinghu_b0', 9), ('data/source/npc/quest/w1351_npc_huayao01', 8), ('data/source/npc/quest/w1351_pets_jianlong_b0', 7), ('data/source/npc/quest/w1351_pets_jiaoma_b0', 7), ('data/source/npc/quest/w1351_pets_xiniu_b0', 7), ('data/source/npc/quest/w1351_pets_xuanyishou_b0', 7), ('data/source/npc/quest/w1351_pets_beijixiong_b0', 6), ('data/source/npc/quest/w1351_pets_daxingxing_b0', 6)]
+
+可检样本（榜首贴图有夹出目录）: 234 条
+  榜首贴图的夹出目录 == 该 mesh 的 mtl 目录: 0 (0.0%)
+  粗粒度前两段一致: 37 (15.8%)
+  随机基线（同规模下撞目录）: 精确 0.06% / 粗粒度 43.60%
+  不一致例: decal.mesh mtl=data/source/npc/quest/decal 榜首=d822e62ee3f686aa 夹出=data/effect/textures/ring 名=['decal.tga']
+  不一致例: w1351_boss_hongxiongwang.mesh mtl=data/source/npc/quest/w1351_boss_hongxiongwang 榜首=0cc039d3b9fc2f36 夹出=data/effect/textures/mask 名=['w1351_boss_hongxiongwang.tga']
+  不一致例: w1351_boss_hxw_c001.mesh mtl=data/source/npc/model/w1351_boss_hxw_c001 榜首=0cc039d3b9fc2f36 夹出=data/effect/textures/mask 名=['w1351_boss_hongxiongwang_yifu_001.tga']
+  不一致例: w1351_boss_mengmiandadao.mesh mtl=data/source/npc/quest/w1351_boss_mengmiandadao 榜首=d88556d683c7c214 夹出=data/effect/textures/mask 名=['w1351_boss_mengmiandadao.tga']
+  不一致例: w1351_boss_sss_bingcan3.mesh mtl=data/source/npc/quest/w1351_boss_sss_bingcan3 榜首=4648be1348bf082b 夹出=data/effect/textures/ring 名=['w1351_boss_sss_bingcan3.tga']
+  不一致例: w1351_boss_xinyeerniang01.mesh mtl=data/source/npc/quest/w1351_boss_xinyeerniang01 榜首=c97d38778e721b6d 夹出=data/effect/textures/smoke 名=['w1351_boss_xinyeerniang01.tga']
+  不一致例: w1351_boss_xinyuelaosan01.mesh mtl=data/source/npc/quest/w1351_boss_xinyuelaosan01 榜首=0cc039d3b9fc2f36 夹出=data/effect/textures/mask 名=['w1351_boss_xinyuelaosan01.tga']
+  不一致例: w1351_boss_yeyanshiren.mesh mtl=data/source/npc/quest/w1351_boss_yeyanshiren 榜首=c594fd847cddb0f1 夹出=data/effect/textures/model 名=['w1351_boss_shanshen.tga']
+
+=== 若用「夹出目录」当硬过滤，池子会缩到多小 ===
+有目录的池内贴图 610 张分布在 177 个目录，平均每目录 3.4 张，最大目录 65 张
+目录大小分布: [('1', 103), ('2-5', 53), ('6-20', 18), ('>20', 3)]
+池内贴图→夹出目录 sidecar → D:/TLGL\.scratch/dyn/texaudit/pool_dir_map.json

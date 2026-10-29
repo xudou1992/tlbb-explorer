@@ -1,0 +1,35 @@
+536:fn glb_animation_channels_carry_stored_ani_values() {
+537-    let Some(c) = setup() else { return };
+538-    let chs = c.channels(&c.idle01());
+539-    let mut rot_checked = 0usize;
+540-    let mut tr_checked = 0usize;
+541-    for (node, ch) in &chs {
+542-        let bone = &c.h.bones[node - 1];
+543-        let t = c.a.tracks.iter().find(|t| t.bone == bone.name).expect("轨道存在");
+544-        let frames = c.a.frames;
+545-        assert_eq!(ch.times.len(), frames);
+546-        assert_eq!(ch.values.len(), frames * ch.comps);
+547-        for f in 0..frames {
+548-            let v = &ch.values[f * ch.comps..(f + 1) * ch.comps];
+549-            match ch.path.as_str() {
+550-                "rotation" => {
+551-                    assert_eq!(v, &t.rotations[f][..], "骨 {} 第 {f} 帧四元数应原样写出", bone.name);
+552-                    rot_checked += 1;
+553-                }
+554-                "translation" => {
+555-                    assert_eq!(v, &t.positions[f][..], "骨 {} 第 {f} 帧位移应原样写出", bone.name);
+556-                    tr_checked += 1;
+557-                }
+558-                "scale" => {
+559-                    let s = t.scales[f];
+560-                    assert_eq!(v, &[s, s, s], "骨 {} 第 {f} 帧缩放应原样写出", bone.name);
+561-                }
+562-                p => panic!("未知通道路径 {p}"),
+563-            }
+564-        }
+565-        // 关键帧时间 = 帧号 / tick（口径已在导出注释标注为「未证的解读」）
+566-        for (f, tt) in ch.times.iter().enumerate() {
+567-            assert!((tt - f as f32 / c.a.tick).abs() < 1e-6, "时间轴按 帧/tick 写");
+568-        }
+569-    }
+570-    eprintln!("原样性：rotation {rot_checked} 条 · translation {tr_checked} 条 · 逐元素相等");

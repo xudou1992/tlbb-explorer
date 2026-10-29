@@ -1,0 +1,124 @@
+====================================================================================================
+w1351_caiji_duwugong_01.mesh size=22660 vc=291 声明骨=24 A=15 V=9
+  A 记录名（次数, 首个偏移, 蒙皮条目数）:
+    bone01                     x1 @   0x3234 N=0
+    bone12                     x1 @   0x3358 N=33
+    bone21                     x1 @   0x35a4 N=19
+    bone04                     x1 @   0x3740 N=8
+    bone05                     x1 @   0x3884 N=19
+    bone06                     x1 @   0x3a20 N=19
+    bone20                     x1 @   0x3bfc N=9
+    bone08                     x1 @   0x3d48 N=19
+    bone09                     x1 @   0x3ee4 N=19
+    bone19                     x1 @   0x40c0 N=19
+    bone11                     x1 @   0x425c N=20
+    bone14_mirror01            x1 @   0x4420 N=54
+    bone15                     x1 @   0x46d4 N=9
+    bone15_mirror01            x1 @   0x4954 N=9
+    bone13                     x1 @   0x5594 N=27
+  A 蒙皮条目合计 283
+  V 记录（偏移, 名, N, 与前一条的间隔, 是否也在 A 名单里）:
+    @   0x47dc bone15                 N=   10 gap=                     在A名单=True
+    @   0x4a5c bone15_mirror01        N=   10 gap=    640 ≠            在A名单=True
+    @   0x4b90 bone17                 N=   16 gap=    308 =228+8N_prev 在A名单=False
+    @   0x4cf4 bone19                 N=   16 gap=    356 =228+8N_prev 在A名单=True
+    @   0x4e58 bone18                 N=   26 gap=    356 =228+8N_prev 在A名单=False
+    @   0x500c bone20                 N=   24 gap=    436 =228+8N_prev 在A名单=True
+    @   0x51b0 bone16                 N=   31 gap=    420 =228+8N_prev 在A名单=False
+    @   0x538c bone21                 N=   28 gap=    476 =228+8N_prev 在A名单=True
+    @   0x572c bone13                 N=   14 gap=    928 ≠            在A名单=True
+  V 蒙皮条目合计 175   A+V 条目=458  顶点数=291
+====================================================================================================
+w1351_diancang_hama_yifu_001.mesh size=58060 vc=583 声明骨=96 A=75 V=13
+  A 记录名（次数, 首个偏移, 蒙皮条目数）:
+    bip01                      x1 @   0x6684 N=0
+    bip01_pelvis               x1 @   0x67a8 N=0
+    bone062                    x1 @   0x69b0 N=46
+    bip01_spine1               x1 @   0x6c64 N=43
+    bip01_l_calf               x1 @   0x6ec0 N=39
+    bip01_l_foot               x1 @   0x70fc N=23
+    bip01_l_toe0               x1 @   0x72b8 N=12
+    bip01_r_calf               x1 @   0x7608 N=39
+    bip01_r_foot               x1 @   0x7844 N=28
+    bip01_r_toe0               x1 @   0x7a28 N=14
+    bip01_neck                 x1 @   0x7d88 N=82
+    bip01_r_clavicle           x1 @   0x815c N=0
+    bone054                    x1 @   0x8340 N=83
+    bone002                    x1 @   0x86dc N=12
+    bone003                    x1 @   0x8840 N=8
+    bone004                    x1 @   0x8984 N=8
+    bone005                    x1 @   0x8ac8 N=8
+    bone006                    x1 @   0x8c0c N=8
+    bone007                    x1 @   0x8d50 N=8
+    bone008                    x1 @   0x8e94 N=5
+    bone009                    x1 @   0x8fc0 N=0
+    bone010                    x1 @   0x90c4 N=0
+    bone031                    x1 @   0x930c N=69
+    bone012                    x1 @   0x9638 N=0
+    bone013                    x1 @   0x973c N=0
+    bone014                    x1 @   0x9840 N=0
+    bone015                    x1 @   0x9944 N=0
+    bone016                    x1 @   0x9a48 N=0
+    bone017                    x1 @   0x9b4c N=0
+    bone018                    x1 @   0x9c50 N=0
+    bone019                    x1 @   0x9d54 N=0
+    bone020                    x1 @   0x9e58 N=0
+    bone021                    x1 @   0x9f5c N=0
+    bone022                    x1 @   0xa060 N=0
+    bone023                    x1 @   0xa164 N=0
+    bone024                    x1 @   0xa268 N=0
+    bone026                    x1 @   0xa450 N=2
+    bone027                    x1 @   0xa564 N=5
+    bone029                    x1 @   0xa794 N=2
+    bone030                    x1 @   0xa8a8 N=1
+    bone032                    x1 @   0xaaa8 N=2
+    bone033                    x1 @   0xabbc N=5
+    bone035                    x1 @   0xadec N=0
+    bone036                    x1 @   0xaef0 N=0
+    bone037                    x1 @   0xaff4 N=0
+    bone039                    x1 @   0xb1dc N=0
+    bone040                    x1 @   0xb2e0 N=0
+    bone041                    x1 @   0xb3e4 N=0
+    bone043                    x1 @   0xb5cc N=18
+    bone045                    x1 @   0xb86c N=18
+    bone047                    x1 @   0xbb0c N=0
+    bone048                    x1 @   0xbc10 N=0
+    bone049                    x1 @   0xbd14 N=0
+    bone050                    x1 @   0xbe18 N=0
+    bone051                    x1 @   0xbf1c N=0
+    bone052                    x1 @   0xc020 N=0
+    bone053                    x1 @   0xc124 N=0
+    bone055                    x1 @   0xc30c N=0
+    bone056                    x1 @   0xc410 N=0
+    bone057                    x1 @   0xc514 N=0
+    bone058                    x1 @   0xc618 N=0
+    bone059                    x1 @   0xc71c N=0
+    bone060                    x1 @   0xc820 N=0
+    bone061                    x1 @   0xc924 N=0
+    bip01_l_upperarm           x1 @   0xcb0c N=10
+    bip01_l_forearm            x1 @   0xcc60 N=34
+    bip01_l_hand               x1 @   0xce74 N=14
+    bip01_l_finger2            x1 @   0xd028 N=20
+    bip01_r_upperarm           x1 @   0xd508 N=11
+    bip01_r_forearm            x1 @   0xd664 N=35
+    bip01_r_hand               x1 @   0xd880 N=15
+    bip01_r_finger2            x1 @   0xda3c N=20
+    bone063                    x1 @   0xdf1c N=0
+    bone064                    x1 @   0xe020 N=0
+    bone065                    x1 @   0xe124 N=0
+  A 蒙皮条目合计 747
+  V 记录（偏移, 名, N, 与前一条的间隔, 是否也在 A 名单里）:
+    @   0x73d8 bip01_l_toe0           N=   33 gap=                     在A名单=True
+    @   0x7b58 bip01_r_toe0           N=   33 gap=   1920 ≠            在A名单=True
+    @   0xa64c bone027                N=    4 gap=  10996 ≠            在A名单=True
+    @   0xa970 bone030                N=    2 gap=    804 ≠            在A名单=True
+    @   0xaca4 bone033                N=    4 gap=    820 ≠            在A名单=True
+    @   0xb71c bone043                N=    5 gap=   2680 ≠            在A名单=True
+    @   0xb9bc bone045                N=    5 gap=    672 ≠            在A名单=True
+    @   0xd188 bip01_l_finger0        N=    5 gap=   6092 ≠            在A名单=False
+    @   0xd294 bip01_l_finger1        N=    8 gap=    268 =228+8N_prev 在A名单=False
+    @   0xd3b8 bip01_l_finger2        N=    5 gap=    292 =228+8N_prev 在A名单=True
+    @   0xdb9c bip01_r_finger0        N=    5 gap=   2020 ≠            在A名单=False
+    @   0xdca8 bip01_r_finger1        N=    8 gap=    268 =228+8N_prev 在A名单=False
+    @   0xddcc bip01_r_finger2        N=    5 gap=    292 =228+8N_prev 在A名单=True
+  V 蒙皮条目合计 122   A+V 条目=869  顶点数=583

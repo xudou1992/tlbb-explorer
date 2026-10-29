@@ -1,0 +1,176 @@
+===== 1406c6e90 size=951 =====
+callees: 
+callers: 0x1405c1d41 0x140610cb6 0x1406139c3 0x140616be7 0x14061c862 0x14061c8a8 0x14061d82d 0x14061d8a1 0x14063d5da 0x14063d7f2 0x14063d896 0x14063d93a 0x1406a0ea6 0x1406d9739 0x1406d97f9 0x1406d98b9 0x1406ddfe0 0x1406de03e 0x1406df9cf 0x1406dfa2f
+// Hidden C++ exception states: #wind=1
+__int64 __fastcall TexturePool_GetOrCreate(
+        __int64 a1,
+        ULONG_PTR *a2,
+        __int64 a3,
+        char a4,
+        char a5,
+        char a6,
+        __int64 a7,
+        __int64 a8,
+        __int64 a9,
+        __int64 a10,
+        __int64 a11,
+        __int64 a12,
+        char a13,
+        __int64 a14,
+        __int64 a15,
+        char a16)
+{
+  struct _RTL_CRITICAL_SECTION *v19; // r15
+  struct _RTL_CRITICAL_SECTION *CriticalSection; // rax
+  PRTL_CRITICAL_SECTION_DEBUG DebugInfo; // rbx
+  __int64 v22; // rax
+  __int64 v23; // rdi
+  __int64 v24; // rdi
+  struct _LIST_ENTRY *Flink; // rcx
+  PRTL_CRITICAL_SECTION_DEBUG v26; // rdx
+  struct _RTL_CRITICAL_SECTION *i; // rax
+  struct _LIST_ENTRY *j; // rcx
+  _QWORD *v29; // rbx
+  __int64 v30; // rax
+  __int64 v31; // rax
+  __int64 v33; // rax
+  __int64 v34; // rbx
+  __int64 v35; // [rsp+30h] [rbp-68h]
+  __int64 v36; // [rsp+60h] [rbp-38h] BYREF
+  __int64 v37; // [rsp+68h] [rbp-30h]
+  _BYTE v38[16]; // [rsp+70h] [rbp-28h] BYREF
+
+  v19 = (struct _RTL_CRITICAL_SECTION *)qword_1410A7E18;
+  if ( !*(_DWORD *)(*a2 + 12) )
+    return 0;
+  if ( a6 )
+  {
+    v23 = sub_1406C77B0();
+    *(_BYTE *)(v23 + 251) = a6;
+    (*(void (__fastcall **)(__int64))(*(_QWORD *)(v23 + 8) + 208LL))(v23 + 8);
+    if ( !*(_DWORD *)(*(_QWORD *)(v23 + 144) + 12LL) )
+    {
+      _InterlockedIncrement((volatile signed __int32 *)(*a2 + 8));
+      sub_1401369D0(*(_QWORD *)(v23 + 144));
+      *(_QWORD *)(v23 + 144) = *a2;
+    }
+    EnterCriticalSection(v19 + 4);
+    v33 = (*(__int64 (__fastcall **)(__int64))(*(_QWORD *)(v23 + 8) + 192LL))(v23 + 8);
+    v34 = v33;
+    if ( v33 )
+    {
+      v36 = *a2;
+      _InterlockedIncrement((volatile signed __int32 *)(v36 + 8));
+      v37 = v33;
+      sub_1405F4280(v19, v38, &v36);
+      sub_1401369D0(v36);
+      if ( !v38[8] && _InterlockedExchangeAdd((volatile signed __int32 *)(v34 + 48), 0xFFFFFFFF) == 1 )
+      {
+        DeleteCriticalSection((LPCRITICAL_SECTION)(v34 + 8));
+        j__free_base((void *)v34);
+      }
+    }
+    LeaveCriticalSection(v19 + 4);
+    return v23;
+  }
+  EnterCriticalSection((LPCRITICAL_SECTION)(qword_1410A7E18 + 160));
+  CriticalSection = v19->DebugInfo->CriticalSection;
+  DebugInfo = v19->DebugInfo;
+  while ( !BYTE1(CriticalSection->LockSemaphore) )
+  {
+    if ( CriticalSection->SpinCount >= *a2 )
+    {
+      DebugInfo = (PRTL_CRITICAL_SECTION_DEBUG)CriticalSection;
+      CriticalSection = (struct _RTL_CRITICAL_SECTION *)CriticalSection->DebugInfo;
+    }
+    else
+    {
+      CriticalSection = (struct _RTL_CRITICAL_SECTION *)CriticalSection->OwningThread;
+    }
+  }
+  if ( !BYTE1(DebugInfo->ProcessLocksList.Blink)
+    && *a2 >= *(_QWORD *)&DebugInfo->EntryCount
+    && DebugInfo != v19->DebugInfo )
+  {
+    v22 = sub_1405E47A0(*(_QWORD *)&DebugInfo->Flags);
+    if ( v22 )
+    {
+      v23 = v22 - 8;
+      if ( v22 != 8 )
+      {
+LABEL_31:
+        LeaveCriticalSection(v19 + 4);
+        if ( v23 )
+        {
+          *(_BYTE *)(v23 + 157) = a16;
+          if ( a12 )
+          {
+            (*(void (__fastcall **)(__int64, __int64, _QWORD, _QWORD))(*(_QWORD *)a12 + 112LL))(
+              a12,
+              v23 + 8,
+              0,
+              (unsigned __int8)a13);
+            return v23;
+          }
+          return v23;
+        }
+        return 0;
+      }
+    }
+    v24 = *(_QWORD *)&DebugInfo->Flags;
+    if ( _InterlockedExchangeAdd((volatile signed __int32 *)(v24 + 48), 0xFFFFFFFF) == 1 )
+    {
+      DeleteCriticalSection((LPCRITICAL_SECTION)(v24 + 8));
+      if ( v24 )
+        j__free_base((void *)v24);
+    }
+    Flink = DebugInfo->ProcessLocksList.Flink;
+    v26 = DebugInfo;
+    if ( BYTE1(Flink[1].Blink) )
+    {
+      for ( i = DebugInfo->CriticalSection; !BYTE1(i->LockSemaphore); i = *(struct _RTL_CRITICAL_SECTION **)&i->LockCount )
+      {
+        if ( DebugInfo != i->OwningThread )
+          break;
+        DebugInfo = (PRTL_CRITICAL_SECTION_DEBUG)i;
+      }
+    }
+    else
+    {
+      for ( j = Flink->Flink; !BYTE1(j[1].Blink); j = j->Flink )
+        ;
+    }
+    v29 = (_QWORD *)sub_1400FCAA0(v19, v26);
+    sub_1401369D0(v29[4]);
+    if ( v29 )
+      j__free_base(v29);
+  }
+  v30 = sub_1406C77B0();
+  v23 = v30;
+  if ( !v30 )
+    goto LABEL_31;
+  (*(void (__fastcall **)(__int64))(*(_QWORD *)(v30 + 8) + 208LL))(v30 + 8);
+  if ( !*(_DWORD *)(*(_QWORD *)(v23 + 144) + 12LL) )
+  {
+    _InterlockedIncrement((volatile signed __int32 *)(*a2 + 8));
+    sub_1401369D0(*(_QWORD *)(v23 + 144));
+    *(_QWORD *)(v23 + 144) = *a2;
+  }
+  *(_BYTE *)(v23 + 251) = 0;
+  *(_WORD *)(v23 + 253) = 0;
+  *(_DWORD *)(v23 + 236) = dword_1410773B4;
+  *(_DWORD *)(v23 + 240) = dword_1410773B8;
+  v31 = (*(__int64 (__fastcall **)(__int64))(*(_QWORD *)(v23 + 8) + 192LL))(v23 + 8);
+  if ( v31 )
+  {
+    v36 = *a2;
+    _InterlockedIncrement((volatile signed __int32 *)(v36 + 8));
+    v37 = v31;
+    sub_1405F4280(v19, v38, &v36);
+    sub_1401369D0(v36);
+  }
+  LeaveCriticalSection(v19 + 4);
+  *(_BYTE *)(v23 + 157) = a16;
+  sub_1407A79A0(v23, (__int64)a2, a3, a12, a4, a5, v35, a8, a9, a13);
+  return v23;
+}

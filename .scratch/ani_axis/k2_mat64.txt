@@ -1,0 +1,116 @@
+########################################################################
+=== [yifu] .mesh 尾部条目流 ===
+  前奏记录: ['origin', 'top']
+  条目数 46 ; 挂点 4 个: [('tx_head', 'Bip01_Head'), ('tx_wuqi', 'Bone01'), ('tx_chest', 'Bip01_Spine1'), ('tx_shenti', 'Bip01_Spine')]
+  条目数 46
+  与 GLB 骨名序列一致: True
+  自带 96B 记录的条目 0（+孩子槽里的记录另计）
+  bone                        own96    u92    mat64       infN mat64|t|
+  000                             -      0        0            -
+  bip01                           -      1        0          0 -
+  bip01_footsteps                 -      1        0          0 -
+  bip01_pelvis                    -      1        1          0 0.0000
+  bip01_spine                     -      1        0         71 -
+  bip01_spine1                    -      1        0         74 -
+  bip01_neck                      -      1        0        127 -
+  bip01_head                      -      1        0          5 -
+  bip01_l_clavicle                -      1        1        107 0.0000
+  bip01_l_upperarm                -      1        0         39 -
+  bip01_l_forearm                 -      1        0         28 -
+  bip01_l_hand                    -      1        0         26 -
+  bip01_l_finger0                 -      1        0         40 -
+  bip01_l_finger1                 -      1        1         10 0.0000
+  bone09                          -      1        1         16 0.0000
+  bone08                          -      1        1          0 0.0000
+  bip01_r_clavicle                -      1        1         16 0.0000
+  bip01_r_upperarm                -      1        0         41 -
+  bip01_r_forearm                 -      1        0         25 -
+  bip01_r_hand                    -      1        0         26 -
+  bip01_r_finger0                 -      1        0         40 -
+  bip01_r_finger1                 -      1        1         20 0.0000
+  bone01                          -      1        1         16 0.0000
+  bone05                          -      1        1         56 0.0000
+  bone06                          -      1        0          0 -
+  bone07                          -      1        0          0 -
+  bip01_l_thigh                   -      1        1          0 0.0000
+  bip01_l_calf                    -      1        0         27 -
+  bip01_l_foot                    -      1        0         34 -
+  bip01_l_toe0                    -      1        0         36 -
+  bip01_r_thigh                   -      1        1         14 0.0000
+  bip01_r_calf                    -      1        0         27 -
+  bip01_r_foot                    -      1        0         34 -
+  bip01_r_toe0                    -      1        0         36 -
+  bone10                          -      1        1         14 0.0000
+  bone11                          -      1        0          4 -
+  bone12                          -      1        0         24 -
+  bone10_mirror02                 -      1        1         26 0.0000
+  bone11_mirror02                 -      1        0          4 -
+  bone12_mirror02                 -      1        0         14 -
+  bone10_mirror01                 -      1        1         24 0.0000
+  bone11_mirror01                 -      1        0          4 -
+  bone12_mirror01                 -      1        0         20 -
+  bone10_mirror02_mirror01        -      1        1         26 0.0000
+  bone11_mirror02_mirror01        -      1        0          4 -
+  bone12_mirror02_mirror01        -      1        0         14 -
+  带 mat64 的骨 15/46
+
+  [L] mat64(列口径) vs bind 局部 blocal（记录骨）
+    记录骨中: 旋转相等 0 / 平移相等 0 / 全等 0
+########################################################################
+=== [shoutao] .mesh 尾部条目流 ===
+  前奏记录: ['origin', 'top']
+  条目数 46 ; 挂点 4 个: [('tx_head', 'Bip01_Head'), ('tx_wuqi', 'Bone01'), ('tx_chest', 'Bip01_Spine1'), ('tx_shenti', 'Bip01_Spine')]
+  条目数 46
+  与 GLB 骨名序列一致: True
+  自带 96B 记录的条目 0（+孩子槽里的记录另计）
+  bone                        own96    u92    mat64       infN mat64|t|
+  000                             -      0        0            -
+  bip01                           -      1        0          0 -
+  bip01_footsteps                 -      1        0          0 -
+  bip01_pelvis                    -      1        1          0 0.0000
+  bip01_spine                     -      1        0          0 -
+  bip01_spine1                    -      1        0          0 -
+  bip01_neck                      -      1        0          0 -
+  bip01_head                      -      1        0          0 -
+  bip01_l_clavicle                -      1        1          0 0.0000
+  bip01_l_upperarm                -      1        0          0 -
+  bip01_l_forearm                 -      1        0          0 -
+  bip01_l_hand                    -      1        0          0 -
+  bip01_l_finger0                 -      1        0          0 -
+  bip01_l_finger1                 -      1        1          0 0.0000
+  bone09                          -      1        1          0 0.0000
+  bone08                          -      1        1         42 0.0000
+  bip01_r_clavicle                -      1        1          0 0.0000
+  bip01_r_upperarm                -      1        0          0 -
+  bip01_r_forearm                 -      1        0          0 -
+  bip01_r_hand                    -      1        0          0 -
+  bip01_r_finger0                 -      1        0          0 -
+  bip01_r_finger1                 -      1        1          0 0.0000
+  bone01                          -      1        1          0 0.0000
+  bone05                          -      1        1          0 0.0000
+  bone06                          -      1        0          0 -
+  bone07                          -      1        0          0 -
+  bip01_l_thigh                   -      1        1          0 0.0000
+  bip01_l_calf                    -      1        0          0 -
+  bip01_l_foot                    -      1        0          0 -
+  bip01_l_toe0                    -      1        0          0 -
+  bip01_r_thigh                   -      1        1          0 0.0000
+  bip01_r_calf                    -      1        0          0 -
+  bip01_r_foot                    -      1        0          0 -
+  bip01_r_toe0                    -      1        0          0 -
+  bone10                          -      1        1          0 0.0000
+  bone11                          -      1        0          0 -
+  bone12                          -      1        0          0 -
+  bone10_mirror02                 -      1        1          0 0.0000
+  bone11_mirror02                 -      1        0          0 -
+  bone12_mirror02                 -      1        0          0 -
+  bone10_mirror01                 -      1        1          0 0.0000
+  bone11_mirror01                 -      1        0          0 -
+  bone12_mirror01                 -      1        0          0 -
+  bone10_mirror02_mirror01        -      1        1          0 0.0000
+  bone11_mirror02_mirror01        -      1        0          0 -
+  bone12_mirror02_mirror01        -      1        0          0 -
+  带 mat64 的骨 15/46
+
+  [L] mat64(列口径) vs bind 局部 blocal（记录骨）
+    记录骨中: 旋转相等 0 / 平移相等 0 / 全等 0

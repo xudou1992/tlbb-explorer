@@ -1,0 +1,34 @@
+written D:\TLGL\.scratch\hamigua_walk.txt and json
+== A. 新走通（root-flag 类）的族群分布 ==
+root-flag 走通: 374  origin 走通: 1205
+按前缀 top15: [('w1351_model', 194), ('w1351_npc', 52), ('w1351_pets', 32), ('w1351_monster', 21), ('w1351_boss', 20), ('w1351_shenghuo', 12), ('w1351_wuqi', 12), ('w1351_diancang', 6), ('w1351_caiji', 5), ('w1351_drop', 4), ('w1351_ui', 4), ('w1351_modle', 2), ('w1351_chibang', 2), ('w1351_shuihu01', 1), ('w1351_ani', 1)]
+按声明骨数 top15: [(2, 54), (1, 33), (27, 18), (34, 16), (52, 10), (106, 10), (43, 9), (17, 8), (3, 8), (13, 8), (32, 8), (39, 8), (28, 7), (29, 7), (4, 6)]
+
+== B. root-flag 根条目名字分布 ==
+[('000', 369), ('bone023', 1), ('00000000', 1), ('bone_ball01', 1), ('sword_000', 1), ('bone08', 1)]
+
+== C. root-flag 走通样本里声明骨数 >=10 的（供解剖学抽验）==
+共 260 份；前 12：
+  w1351_model_ymg02_jn_long_h002.mesh                  declared=211  vc=13862   start=0x8b26c tx=(1,0) D:\TLGL\.scratch\out\tree\data\source\npc\model\w1351_model_ymg02_jn_long_h002\w1351_model_ymg02_jn_long_h002.mesh
+  w1351_model_ymg02_jn_long_lg_h002.mesh               declared=211  vc=11309   start=0x7734c tx=(1,0) D:\TLGL\.scratch\out\tree\data\source\npc\model\w1351_model_ymg02_jn_long_lg_h002\w1351_model_ymg02_jn_long_lg_h002.mesh
+  w1351_model_lion_h004.mesh                           declared=181  vc=2823    start=0x1d99c tx=(1,0) D:\TLGL\.scratch\out\tree\data\source\npc\model\w1351_model_lion_h004\w1351_model_lion_h004.mesh
+  w1351_model_lion_h004_1.mesh                         declared=181  vc=2823    start=0x1d99c tx=(1,0) D:\TLGL\.scratch\out\tree\data\source\npc\model\w1351_model_lion_h004_1\w1351_model_lion_h004_1.mesh
+  w1351_model_lens02_qf_h01.mesh                       declared=137  vc=4846    start=0x32f54 tx=(1,8) D:\TLGL\.scratch\out\tree\data\source\npc\model\w1351_model_lens02_qf_h01\w1351_model_lens02_qf_h01.mesh
+  w1351_model_pl_h006.mesh                             declared=134  vc=155     start=0x1bfc tx=(1,0) D:\TLGL\.scratch\out\tree\data\effect\effectmodel\w1351_model_pl_h006.mesh
+  w1351_model_tengji_h001.mesh                         declared=125  vc=19010   start=0xc725c tx=(1,0) D:\TLGL\.scratch\out\tree\data\source\npc\model\w1351_model_tengji_h001\w1351_model_tengji_h001.mesh
+  w1351_pets_xiaomuling_b5.mesh                        declared=123  vc=2331    start=0x16ce8 tx=(1,0) D:\TLGL\.scratch\out\tree\data\source\npc\quest\w1351_pets_xiaomuling_b5\w1351_pets_xiaomuling_b5.mesh
+  w1351_boss_yuanguqihun_lian_001.mesh                 declared=110  vc=126     start=0x179c tx=(1,8) D:\TLGL\.scratch\out\tree\data\source\npc\quest\w1351_boss_yuanguqihun\w1351_boss_yuanguqihun_lian_001.mesh
+  w1351_boss_yuanguqihun_shoutao_001.mesh              declared=110  vc=42      start=0x98c tx=(1,8) D:\TLGL\.scratch\out\tree\data\source\npc\quest\w1351_boss_yuanguqihun\w1351_boss_yuanguqihun_shoutao_001.mesh
+  w1351_boss_yuanguqihun_toufa_001.mesh                declared=110  vc=96      start=0x10dc tx=(1,8) D:\TLGL\.scratch\out\tree\data\source\npc\quest\w1351_boss_yuanguqihun\w1351_boss_yuanguqihun_toufa_001.mesh
+  w1351_boss_yuanguqihun_yifu_001.mesh                 declared=110  vc=1172    start=0xb364 tx=(1,8) D:\TLGL\.scratch\out\tree\data\source\npc\quest\w1351_boss_yuanguqihun\w1351_boss_yuanguqihun_yifu_001.mesh
+
+== D. 可疑 tx flag 复查 ==
+tx_flag != 1 的份数: 140
+  w1351_caiji_sanluodunpai.mesh                        tx=(34,0) declared=1
+  w1351_diancang_ezuijian.mesh                         tx=(630,0) declared=2
+  w1351_diancang_guitoudao.mesh                        tx=(216,0) declared=2
+  w1351_diancang_qingfengding.mesh                     tx=(76,0) declared=2
+  w1351_diancang_qinggangjian.mesh                     tx=(73,0) declared=2
+  w1351_diancang_xiuluodao.mesh                        tx=(115,0) declared=2
+  w1351_diancang_youlongjian.mesh                      tx=(2370,0) declared=2
+  w1351_pvpcaiji_mie.mesh                              tx=(12592,0) declared=2

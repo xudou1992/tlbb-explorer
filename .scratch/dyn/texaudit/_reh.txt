@@ -1,0 +1,14 @@
+base amembers roles: [('scene', 11383), ('animation', 11193), ('material', 8519), ('effect', 7806), ('mesh', 3941), ('model', 2061), ('skeleton', 1630), ('other', 1311)]
+base tex members named/anon: [(1, 25)]
+base agroups n_tex>0 组数: 25 合计贴图成员: 25
+base relations to_hash 指向匿名贴图: 0
+base refs to_hash 指向匿名贴图: 0
+base assets.primary_hash 匿名贴图: 0
+base same-stem 边里 to 是匿名贴图: 0
+rehar amembers roles: [('scene', 11383), ('animation', 11193), ('material', 8519), ('effect', 7806), ('mesh', 3941), ('model', 2061), ('skeleton', 1630), ('other', 1311)]
+rehar tex members named/anon: [(1, 25)]
+rehar agroups n_tex>0 组数: 25 合计贴图成员: 25
+rehar relations to_hash 指向匿名贴图: 0
+rehar refs to_hash 指向匿名贴图: 0
+rehar assets.primary_hash 匿名贴图: 0
+rehar same-stem 边里 to 是匿名贴图: 0

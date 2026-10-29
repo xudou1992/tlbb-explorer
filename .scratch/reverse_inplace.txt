@@ -1,0 +1,3 @@
+退回整页重刷后闸门变红：True
+AssertionError [ERR_ASSERTION]: 只剩撤销走整页重刷；确认再改成重刷就是退回去
+还原 md5 一致：True

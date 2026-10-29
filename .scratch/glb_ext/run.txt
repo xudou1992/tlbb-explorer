@@ -1,0 +1,10 @@
+w1351_boss_zhushuai_yifu_001: 关节 37 · 动作 15 · 第0帧 grow 1/1/1/1 drift 0/0/0/0
+w1351_monster_xiyuqiezei_shoutao_001: 关节 46 · 动作 15 · 第0帧 grow 1/1/1/1 drift 0/0/0/0
+w1351_monster_xiyuqiezei_yifu_001: 关节 46 · 动作 15 · 第0帧 grow 1/1/1/1 drift 0/0/0/0
+w1351_npc_wangruoyu_lian_001: 关节 33 · 动作 15 · 第0帧 grow 1/1/1/1 drift 0/0/0/0
+w1351_npc_wangruoyu_shoutao_001: 关节 33 · 动作 15 · 第0帧 grow 1/1/1/1 drift 0/0/0/0
+w1351_npc_wangruoyu_yifu_001: 关节 33 · 动作 15 · 第0帧 grow 1/1/1/1 drift 0/0/0/0
+w1351_pets_maomi_b6: 关节 59 · 动作 14 · 第0帧 grow 1/1/1/1 drift 0/0/0/0
+w1351_zuoqi_lingyang: 关节 57 · 动作 7 · 第0帧 grow 1/1/1/1 drift 0/0/0/0
+
+共 8 份，明细见 D:/TLGL/.scratch/glb_ext/measure.json

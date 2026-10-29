@@ -1,0 +1,14 @@
+V0=1072 V1=1439 V2=2208
+V0⊆V1: True  V1⊆V2: True  V0⊆V2: True
+V2 纯新增: 1136
+V2 起点: {'root-flag': 1104, 'origin': 1104}
+root-flag 族: 1104
+root-flag 且旧口径失败(=纯变体): 1104
+root-flag 族 .ani 轨道数对账: 相等 590 / 不等 4 / 无 510
+   不等: ('w1351_model_dunpai_z001.mesh', 1, 4, 'w1351_model_dunpai_z001_dile.ani')
+   不等: ('w1351_model_jiumozhi_hoqiu_w002.mesh', 4, 2, 'w1351_model_jiumozhi_hoqiu_w002_idel.ani')
+   不等: ('w1351_monster_heimoguai01.mesh', 26, 33, 'w1351_monster_heimoguai01_behit01.ani')
+   不等: ('w1351_pets_yuansukonglong_b3.mesh', 67, 69, 'w1351_pets_yuansukonglong_b3_behit01.ani')
+解剖学：declared>=14 的 root-flag 846 份，其中 bip01 命名 315 份；命中分布 [('hits10', 18), ('hits11', 272), ('hits6', 5), ('hits7', 3), ('hits8', 8), ('hits9', 9)]
+  逐关系未命中次数 top6: [('neck<-spine1', 23), ('head<-neck', 22), ('l_foot<-l_calf', 19), ('r_foot<-r_calf', 19), ('spine1<-spine', 8), ('l_thigh<-spine', 2)]
+heihou_01 在 V2: True root-flag

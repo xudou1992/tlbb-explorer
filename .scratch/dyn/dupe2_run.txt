@@ -1,0 +1,11 @@
+测试判完
+两份普查耗时 459 秒
+# 读到 7996 份 · 标准记录 >0 的 2776 份 · **有标准记录但链建不出树的 193 份**（这两者都为零的 5201 份）
+# 对账：有记录且链解得出 2583 份 · **没记录却链解得出 19 份**（合计链解得出 2602）
+# 读到 7996 份 · 有标准记录但建不出树 193 份 · 其中拿不到卡点 106 份
+# 卡点处「死在哪一步」（份数 · 标签 · 一例）：
+   106 份 · no-stuck-point(0x110 读不出) · 例 w1351_model_boss_cj_z005.mesh
+    65 份 · name1-unreadable · 例 w1351_model_bird_lf001.mesh
+    16 份 · walked-to-eof(卡的是树闸门) · 例 w1351_model_sl_nan_zhong_x02_2.mesh
+     4 份 · child-name-unreadable · 例 w1351_boss_shuangying_yifu_001.mesh
+     2 份 · entry-never-starts · 例 w1351_model_gb_long_h001.mesh

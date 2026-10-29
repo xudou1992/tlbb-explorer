@@ -1,0 +1,77 @@
+warning: value assigned to `root_bone` is never read
+   --> crates\core\src\export\gltf.rs:348:29
+    |
+348 |           let mut root_bone = 0usize;
+    |                               ^^^^^^ this value is reassigned later and never used
+...
+412 | /         root_bone = bones
+413 | |             .iter()
+414 | |             .position(|b| b.parent.is_none())
+415 | |             .ok_or_else(|| "骨架没有根骨（parse_hierarchy 保证单根，这里不该发生）".to_string())?;
+    | |_________________________________________________________________________________________________- `root_bone` is overwritten here before the previous value is read
+    |
+    = note: `#[warn(unused_assignments)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable `sentinels` is assigned to, but never used
+   --> crates\core\src\preview\anim.rs:366:9
+    |
+366 |     let mut sentinels = 0usize;
+    |         ^^^^^^^^^^^^^
+    |
+    = note: consider using `_sentinels` instead
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: value assigned to `sentinels` is never read
+   --> crates\core\src\preview\anim.rs:370:13
+    |
+370 |             sentinels += 1;
+    |             ^^^^^^^^^^^^^^
+    |
+    = help: maybe it is overwritten before being read?
+
+warning: `tlbb-core` (lib) generated 3 warnings
+    Finished `release` profile [optimized] target(s) in 0.10s
+     Running `D:\TLGL\tlbb-explorer\target\release\stretch_census.exe '--root=D:/TLGL/.scratch/out/sidecar_tree' --limit=150`
+== 边长尺普查（双口径）：D:/TLGL/.scratch/out/sidecar_tree（取前 150 份 .mesh）
+
+两种口径都量到的份数：147 · 只量到现口径 0 · 跳过（无骨架 2 / 无节点 0 / 无表 1 / 无动作 0）
+世界口径把峰值压掉 ≥25% 的：85 份 · 反而涨 ≥25% 的：18 份 · 其余：44 份
+混口径与世界口径的差别只在「没 bind 记录却有轨道」的骨上：这些份里无 bind 骨累计 2777 根，其中带轨道的 2630 根
+  世界口径（轨道全当世界）：配对 147 份 · 峰值 中位 18.2× / p90 37.7× / 均值 22.1× · 比现口径压掉 ≥25% 的 85 份 · 涨 ≥25% 的 18 份
+  混口径（有记录的骨才当世界）：配对 147 份 · 峰值 中位 18.2× / p90 37.7× / 均值 22.4× · 比现口径压掉 ≥25% 的 83 份 · 涨 ≥25% 的 18 份
+  带表骨/骨架骨 落在 0%~34%：7 份（配对 7 份）· 现口径峰值均值 42.2× → 世界口径 17.9×（世界口径更好）
+  带表骨/骨架骨 落在 34%~70%：121 份（配对 121 份）· 现口径峰值均值 37.1× → 世界口径 22.5×（世界口径更好）
+  带表骨/骨架骨 落在 70%~101%：19 份（配对 19 份）· 现口径峰值均值 28.0× → 世界口径 21.0×（世界口径更好）
+
+按族去重：41 个族（上面是 147 份文件）
+族 · 份数 · 现口径峰值 · 世界口径峰值
+  w1351_pets_huanyizhiling                      4 份 ·  221.3× →   80.5×
+  w1351_pets_jiuxiaozhanlong                    8 份 ·  134.9× →   37.7×
+  w1351_model_flower_lf004                      1 份 ·   89.5× →   31.6×
+  w1351_pets_renzheshengua                      5 份 ·   86.0× →   33.0×
+  w1351_pets_jinyubaobao                        4 份 ·   76.5× →   61.7×
+  w1351_pets_baozi                              4 份 ·   65.8× →   45.8×
+  w1351_boss_machao                             1 份 ·   64.2× →  113.7×
+  w1351_pets_huyaojianjun                       8 份 ·   56.6× →   45.3×
+  w1351_pets_daishu                             2 份 ·   52.1× →   35.3×
+  w1351_pets_ciwei                              3 份 ·   49.3× →   27.4×
+  w1351_pets_huaxianzi                          8 份 ·   45.3× →   15.4×
+  w1351_pets_eyu                                2 份 ·   42.8× →   31.6×
+  w1351_pets_jianlong                           6 份 ·   36.1× →   19.5×
+  w1351_pets_bianfu                             2 份 ·   36.0× →   15.1×
+  w1351_pets_chufeng                            7 份 ·   34.7× →   13.4×
+  w1351_pets_chaimao                            2 份 ·   34.6× →   24.7×
+
+现口径撕得最狠的 12 份（现 → 世界 · 带表骨/骨架 · 顶点 · 撕边/总边）：
+    221.3→   24.7x 骨  93/139 顶点  12923 撕边  40769/320496 w1351_pets_huanyizhiling_b8
+    134.9→   37.7x 骨  44/71  顶点   2136 撕边  14723/94050  w1351_pets_jiuxiaozhanlong_b5
+    134.9→   37.7x 骨  44/71  顶点   2136 撕边  14723/94050  w1351_pets_jiuxiaozhanlong_b6
+    134.9→   37.7x 骨  44/71  顶点   1991 撕边  15943/91586  w1351_pets_jiuxiaozhanlong_b3
+    134.9→   37.7x 骨  44/71  顶点   1875 撕边  14490/86680  w1351_pets_jiuxiaozhanlong_b1
+    134.9→   37.7x 骨  44/71  顶点   1875 撕边  14490/86680  w1351_pets_jiuxiaozhanlong_b2
+    134.9→   37.7x 骨  44/71  顶点   1985 撕边  15997/91454  w1351_pets_jiuxiaozhanlong_b4
+    134.9→   37.7x 骨  44/71  顶点   2219 撕边  14759/100298 w1351_pets_jiuxiaozhanlong_b7
+    134.9→   37.7x 骨  44/71  顶点   2220 撕边  14893/100826 w1351_pets_jiuxiaozhanlong_b8
+    113.3→   80.5x 骨  59/99  顶点   3200 撕边  33184/156849 w1351_pets_huanyizhiling_b4
+     89.5→   31.6x 骨  12/16  顶点   5080 撕边   4043/164403 w1351_model_flower_lf004
+     86.0→   24.3x 骨  16/70  顶点   2599 撕边   7420/83295  w1351_pets_renzheshengua_b1

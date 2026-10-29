@@ -1,0 +1,8 @@
+g_rebind_f0_t0 -> D:/TLGL/.scratch/glb_view/g_rebind_f0_t0.png
+    {"asset":"/.scratch/glb_rigged/m_db18794d0000cd38.glb","meshes":1,"verts":781,"skinned":1,"bones":0,"clipCount":15,"clip":"idle01","t":0,"view":"front","bbox":[-0.497,0.019,-0.217,0.498,2.24,0.758]}
+h_rebind_f0_t5 -> D:/TLGL/.scratch/glb_view/h_rebind_f0_t5.png
+    {"asset":"/.scratch/glb_rigged/m_db18794d0000cd38.glb","meshes":1,"verts":781,"skinned":1,"bones":0,"clipCount":15,"clip":"idle01","t":0.5,"view":"front","bbox":[-0.497,0.019,-0.217,0.498,2.24,0.758]}
+i_rebind_run_t3 -> D:/TLGL/.scratch/glb_view/i_rebind_run_t3.png
+    {"asset":"/.scratch/glb_rigged/m_db18794d0000cd38.glb","meshes":1,"verts":781,"skinned":1,"bones":0,"clipCount":15,"clip":"run","t":0.3,"view":"front","bbox":[-0.497,0.019,-0.217,0.498,2.24,0.758]}
+j_rebind_dead_t9 -> D:/TLGL/.scratch/glb_view/j_rebind_dead_t9.png
+    {"asset":"/.scratch/glb_rigged/m_db18794d0000cd38.glb","meshes":1,"verts":781,"skinned":1,"bones":0,"clipCount":15,"clip":"deadbegin","t":0.9,"view":"front","bbox":[-0.497,0.019,-0.217,0.498,2.24,0.758]}

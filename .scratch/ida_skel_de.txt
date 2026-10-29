@@ -1,0 +1,34 @@
+/* ==== 0x14060ec20 ==== */
+__int64 __fastcall sub_14060EC20(__int64 a1)
+{
+  return a1 + 144;
+}
+
+/* ==== 0x140299f90 ==== */
+__int64 __fastcall sub_140299F90(__int64 a1)
+{
+  return *(unsigned int *)(a1 + 152);
+}
+
+/* ==== 0x140607700 ==== */
+__int64 __fastcall sub_140607700(__int64 a1)
+{
+  unsigned __int32 v1; // ebx
+
+  v1 = _InterlockedIncrement((volatile signed __int32 *)(a1 + 132));
+  if ( v1 == 2 && *(_BYTE *)(a1 + 140) )
+    sub_1409A77D0(qword_1410AB158, *(_QWORD *)(a1 + 16));
+  return v1;
+}
+
+/* ==== 0x140607740 ==== */
+__int64 __fastcall sub_140607740(__int64 a1)
+{
+  return sub_1409C1420(a1 + 8);
+}
+
+/* ==== 0x140607750 ==== */
+__int64 __fastcall sub_140607750(__int64 a1)
+{
+  return *(unsigned int *)(a1 + 132);
+}

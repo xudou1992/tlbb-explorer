@@ -1,0 +1,22 @@
+w1351_model_bell_h002.mesh: 声明69  严格判据69  只去掉「表非空」这一道后69  差额0
+    严格命中的名字数=69  声明骨=69  差=0
+    同目录 .ske/.ani 里出现、但严格判据没认到的骨名 12 个：['bone03bone02bone01', 'bone09bone08bone07bone06bone05bon', 'bone15bone14bone13bone12bone11bon', 'bone21bone20bone19bone18bone17bon', 'bone27bone26bone25bone24bone23bon', 'bone33bone32bone31bone30bone29bon', 'bone39bone38bone37bone36bone35bon', 'bone45bone44bone43bone42bone41bon', 'bone51bone50bone49bone48bone47bon', 'bone57bone56bone55bone54bone53bon', 'bone63bone62bone61bone60bone59bon', 'bone69bone68bone67bone66bone65bon']
+
+w1351_model_fazhen_ani_lf001.mesh: 声明50  严格判据49  只去掉「表非空」这一道后50  差额1
+    被挡住: @0x2520 名=000 N=0 基长=1.00000 |平移|=0.00000
+    严格命中的名字数=49  声明骨=50  差=1
+    同目录 .ske/.ani 里出现、但严格判据没认到的骨名 10 个：['bone091boneabone124bone144bone123', 'bone097bone096bone095bone094bone0', 'bone105bone104bone106bone125bone1', 'bone110bone111bone112bone140bone1', 'bone114bone141bone116bone117bone1', 'bone115bone120bone118bone099bone0', 'bone122bone143bone121bone119', 'bone127bone129bone130bone131bone1', 'bone133bone134bone135bone138bone1', 'bone136bone108bone139bone109bone1']
+
+w1351_model_glass_ani_lf001.mesh: 声明55  严格判据54  只去掉「表非空」这一道后55  差额1
+    被挡住: @0x17968 名=000 N=0 基长=1.00000 |平移|=0.00000
+    严格命中的名字数=54  声明骨=55  差=1
+    同目录 .ske/.ani 里出现、但严格判据没认到的骨名 27 个：['bone_003fracture_bone_004fracture', 'bone_005fracture_bone_006fracture', 'bone_007fracture_bone_008fracture', 'bone_009fracture_bone_010fracture', 'bone_011fracture_bone_012fracture', 'bone_013fracture_bone_014fracture', 'bone_015fracture_bone_016fracture', 'bone_017fracture_bone_018fracture', 'bone_019fracture_bone_020fracture', 'bone_021fracture_bone_022fracture', 'bone_023fracture_bone_024fracture', 'bone_025fracture_bone_026fracture']
+
+w1351_model_mj_nan_stone_h01.mesh: 声明79  严格判据79  只去掉「表非空」这一道后79  差额0
+    严格命中的名字数=79  声明骨=79  差=0
+    同目录 .ske/.ani 里出现、但严格判据没认到的骨名 26 个：['bone_bone_001bone_bone_002bone_bo', 'bone_bone_004bone_bone_005bone_bo', 'bone_bone_007bone_bone_008bone_bo', 'bone_bone_010bone_bone_011bone_bo', 'bone_bone_013bone_bone_014bone_bo', 'bone_bone_016bone_bone_017bone_bo', 'bone_bone_019bone_bone_020bone_bo', 'bone_bone_022bone_bone_023bone_bo', 'bone_bone_025bone_bone_026bone_bo', 'bone_bone_028bone_bone_029bone_bo', 'bone_bone_031bone_bone_032bone_bo', 'bone_bone_034bone_bone_035bone_bo']
+
+w1351_model_ymg01_stone01.mesh: 声明38  严格判据37  只去掉「表非空」这一道后38  差额1
+    被挡住: @0x35840 名=000 N=0 基长=1.00000 |平移|=1.86850
+    严格命中的名字数=37  声明骨=38  差=1
+    同目录 .ske/.ani 里出现、但严格判据没认到的骨名 6 个：['bone01bone02bone03bone04bone05bon', 'bone07bone08bone09bone10bone11bon', 'bone13bone14bone15bone16bone17bon', 'bone19bone21bone22bone23bone24bon', 'bone26bone27bone28bone29bone30bon', 'bone32bone33bone34bone35bone36bon']

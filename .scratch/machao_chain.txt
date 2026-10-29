@@ -1,0 +1,18 @@
+   bip01                ¸¸Á´: bip01 <- 000
+   bip01_pelvis         ¸¸Á´: bip01_pelvis <- bip01 <- 000
+   bip01_spine          ¸¸Á´: bip01_spine <- bip01_pelvis <- bip01 <- 000
+   bip01_spine1         ¸¸Á´: bip01_spine1 <- bip01_spine <- bip01_pelvis <- bip01 <- 000
+   bip01_neck           ¸¸Á´: bip01_neck <- bip01_spine1 <- bip01_spine <- bip01_pelvis <- bip01 <- 000
+   bip01_head           ¸¸Á´: bip01_head <- bip01_neck <- bip01_spine1 <- bip01_spine <- bip01_pelvis <- bip01 <- 000
+   bip01_l_thigh        ¸¸Á´: bip01_l_thigh <- bip01_spine <- bip01_pelvis <- bip01 <- 000
+   bip01_l_calf         ¸¸Á´: bip01_l_calf <- bip01_l_thigh <- bip01_spine <- bip01_pelvis <- bip01 <- 000
+   bip01_l_foot         ¸¸Á´: bip01_l_foot <- bip01_l_calf <- bip01_l_thigh <- bip01_spine <- bip01_pelvis <- bip01 <- 000
+   bip01_r_thigh        ¸¸Á´: bip01_r_thigh <- bip01_spine <- bip01_pelvis <- bip01 <- 000
+   bip01_l_upperarm     ¸¸Á´: bip01_l_upperarm <- bip01_l_clavicle <- bip01_neck <- bip01_spine1 <- bip01_spine <- bip01_pelvis <- bip01 <- 000
+   bip01_l_forearm      ¸¸Á´: bip01_l_forearm <- bip01_l_upperarm <- bip01_l_clavicle <- bip01_neck <- bip01_spine1 <- bip01_spine <- bip01_pelvis <- bip01 <- 000
+   bip01_l_hand         ¸¸Á´: bip01_l_hand <- bip01_l_forearm <- bip01_l_upperarm <- bip01_l_clavicle <- bip01_neck <- bip01_spine1 <- bip01_spine <- bip01_pelvis <- bip01 <- 000
+   bip01_l_clavicle     ¸¸Á´: bip01_l_clavicle <- bip01_neck <- bip01_spine1 <- bip01_spine <- bip01_pelvis <- bip01 <- 000
+   bip01_r_clavicle     ¸¸Á´: bip01_r_clavicle <- bip01_neck <- bip01_spine1 <- bip01_spine <- bip01_pelvis <- bip01 <- 000
+   bone01               ¸¸Á´: bone01 <- bip01_head <- bip01_neck <- bip01_spine1 <- bip01_spine <- bip01_pelvis <- bip01 <- 000
+   bone15               ¸¸Á´: bone15 <- bip01_l_upperarm <- bip01_l_clavicle <- bip01_neck <- bip01_spine1 <- bip01_spine <- bip01_pelvis <- bip01 <- 000
+   bone85               ¸¸Á´: bone85 <- bone83 <- bone81 <- bone79 <- bip01_pelvis <- bip01 <- 000

@@ -1,0 +1,82 @@
+file=.scratch/ani/w1351_monster_xiyuqiezei_yifu_001.mesh size=52536 declared=46
+prelude: origin, top
+TX section: x=1 inf=24 count=4 entries=[('tx_head', 'Bip01_Head'), ('tx_wuqi', 'Bone01'), ('tx_chest', 'Bip01_Spine1'), ('tx_shenti', 'Bip01_Spine')]
+
+parsed nodes=46  err=None
+  000                            x=4294967295 mat=-   inf=-    u92=False kids=bip01*
+  bip01                          x=1   mat=-   inf=0    u92=True  kids=bip01_footsteps,bip01_pelvis*
+  bip01_footsteps                x=1   mat=-   inf=0    u92=True  kids=
+  bip01_pelvis                   x=1   mat=Y   inf=0    u92=True  kids=bip01_spine*
+  bip01_spine                    x=1   mat=-   inf=71   u92=True  kids=bip01_spine1,bip01_l_thigh,bip01_r_thigh,bone10,bone10_mirror02,bone10_mirror01,bone10_mirror02_mirror01*
+  bip01_spine1                   x=1   mat=-   inf=74   u92=True  kids=bip01_neck,bone05*
+  bip01_neck                     x=1   mat=-   inf=127  u92=True  kids=bip01_head,bip01_l_clavicle,bip01_r_clavicle*
+  bip01_head                     x=1   mat=-   inf=5    u92=True  kids=
+  bip01_l_clavicle               x=1   mat=Y   inf=107  u92=True  kids=bip01_l_upperarm*
+  bip01_l_upperarm               x=1   mat=-   inf=39   u92=True  kids=bip01_l_forearm,bone08*
+  bip01_l_forearm                x=1   mat=-   inf=28   u92=True  kids=bip01_l_hand*
+  bip01_l_hand                   x=1   mat=-   inf=26   u92=True  kids=bip01_l_finger0,bip01_l_finger1,bone09*
+  bip01_l_finger0                x=1   mat=-   inf=40   u92=True  kids=
+  bip01_l_finger1                x=1   mat=Y   inf=10   u92=True  kids=
+  bone09                         x=1   mat=Y   inf=16   u92=True  kids=
+  bone08                         x=1   mat=Y   inf=0    u92=True  kids=
+  bip01_r_clavicle               x=1   mat=Y   inf=16   u92=True  kids=bip01_r_upperarm*
+  bip01_r_upperarm               x=1   mat=-   inf=41   u92=True  kids=bip01_r_forearm*
+  bip01_r_forearm                x=1   mat=-   inf=25   u92=True  kids=bip01_r_hand*
+  bip01_r_hand                   x=1   mat=-   inf=26   u92=True  kids=bip01_r_finger0,bip01_r_finger1,bone01*
+  bip01_r_finger0                x=1   mat=-   inf=40   u92=True  kids=
+  bip01_r_finger1                x=1   mat=Y   inf=20   u92=True  kids=
+  bone01                         x=1   mat=Y   inf=16   u92=True  kids=
+  bone05                         x=1   mat=Y   inf=56   u92=True  kids=bone06*
+  bone06                         x=1   mat=-   inf=0    u92=True  kids=bone07*
+  bone07                         x=1   mat=-   inf=0    u92=True  kids=
+  bip01_l_thigh                  x=1   mat=Y   inf=0    u92=True  kids=bip01_l_calf*
+  bip01_l_calf                   x=1   mat=-   inf=27   u92=True  kids=bip01_l_foot*
+  bip01_l_foot                   x=1   mat=-   inf=34   u92=True  kids=bip01_l_toe0*
+  bip01_l_toe0                   x=1   mat=-   inf=36   u92=True  kids=
+  bip01_r_thigh                  x=1   mat=Y   inf=14   u92=True  kids=bip01_r_calf*
+  bip01_r_calf                   x=1   mat=-   inf=27   u92=True  kids=bip01_r_foot*
+  bip01_r_foot                   x=1   mat=-   inf=34   u92=True  kids=bip01_r_toe0*
+  bip01_r_toe0                   x=1   mat=-   inf=36   u92=True  kids=
+  bone10                         x=1   mat=Y   inf=14   u92=True  kids=bone11*
+  bone11                         x=1   mat=-   inf=4    u92=True  kids=bone12*
+  bone12                         x=1   mat=-   inf=24   u92=True  kids=
+  bone10_mirror02                x=1   mat=Y   inf=26   u92=True  kids=bone11_mirror02*
+  bone11_mirror02                x=1   mat=-   inf=4    u92=True  kids=bone12_mirror02*
+  bone12_mirror02                x=1   mat=-   inf=14   u92=True  kids=
+  bone10_mirror01                x=1   mat=Y   inf=24   u92=True  kids=bone11_mirror01*
+  bone11_mirror01                x=1   mat=-   inf=4    u92=True  kids=bone12_mirror01*
+  bone12_mirror01                x=1   mat=-   inf=20   u92=True  kids=
+  bone10_mirror02_mirror01       x=1   mat=Y   inf=26   u92=True  kids=bone11_mirror02_mirror01*
+  bone11_mirror02_mirror01       x=1   mat=-   inf=4    u92=True  kids=bone12_mirror02_mirror01*
+  bone12_mirror02_mirror01       x=1   mat=-   inf=14   u92=True  kids=
+
+roots=['000'] dup_children=[] declared=46 nodes=46
+cycles=[]
+parent-child pairs with local matrices: 0
+
+bind matrices available for 30 child-entries
+
+check: rel = bind_child ∘ inv(bind_parent)  vs local  (行向量)
+        or rel = inv(bind_parent) ∘ bind_child (列向量口径)
+
+bind-translation distances child vs parent:
+  bone06                     <- bone05                 dist=3.1799  BIG
+  bip01_r_upperarm           <- bip01_r_clavicle       dist=2.4485  BIG
+  bone11_mirror02_mirror01   <- bone10_mirror02_mirror01 dist=2.4030  BIG
+  bip01_r_forearm            <- bip01_r_upperarm       dist=1.8547  OK
+  bone08                     <- bip01_l_upperarm       dist=1.8546  OK
+  bip01_spine                <- bip01_pelvis           dist=1.5902  OK
+  bone01                     <- bip01_r_hand           dist=1.2481  OK
+  bone09                     <- bip01_l_hand           dist=1.2462  OK
+  bip01_pelvis               <- bip01                  dist=1.0991  OK
+  bip01_l_toe0               <- bip01_l_foot           dist=0.5460  OK
+  bip01_r_toe0               <- bip01_r_foot           dist=0.5459  OK
+  bip01_l_foot               <- bip01_l_calf           dist=0.4052  OK
+  bip01_r_foot               <- bip01_r_calf           dist=0.4052  OK
+  bip01_r_hand               <- bip01_r_forearm        dist=0.3922  OK
+  bone07                     <- bone06                 dist=0.3910  OK
+  bone12_mirror02_mirror01   <- bone11_mirror02_mirror01 dist=0.3436  OK
+  bone12_mirror02            <- bone11_mirror02        dist=0.3434  OK
+  bone12_mirror01            <- bone11_mirror01        dist=0.2480  OK
+  bone12                     <- bone11                 dist=0.2478  OK
+  bone10_mirror02_mirror01   <- bip01_spine            dist=0.1705  OK

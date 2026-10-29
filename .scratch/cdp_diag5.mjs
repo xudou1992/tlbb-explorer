@@ -1,0 +1,20 @@
+const list = await (await fetch("http://127.0.0.1:9222/json/list")).json();
+const page = list.find((t) => t.type === "page" && t.webSocketDebuggerUrl);
+const ws = new WebSocket(page.webSocketDebuggerUrl);
+let id = 0;
+const send = (m, p = {}) => new Promise((res) => { const mid = ++id; const on = (e) => { const x = JSON.parse(e.data); if (x.id === mid) { ws.removeEventListener("message", on); res(x.result); } }; ws.addEventListener("message", on); ws.send(JSON.stringify({ id: mid, method: m, params: p })); });
+await new Promise((r) => ws.addEventListener("open", r, { once: true }));
+const ev = async (e) => { const r = await send("Runtime.evaluate", { expression: e, returnByValue: true, awaitPromise: true }); if (r?.exceptionDetails) return "抛错:" + (r.exceptionDetails.text); return r?.result?.value; };
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const search = async (w) => {
+  await ev(`(() => { const q=document.getElementById("q"); q.value=${JSON.stringify(w)}; q.dispatchEvent(new Event("input",{bubbles:true})); return 1; })()`);
+  await wait(4500);
+  return ev(`document.querySelectorAll(".row-item").length`);
+};
+console.log("未点未命名 · w1351_monster →", await search("w1351_monster"));
+console.log("未点未命名 · xiyuqiezei →", await search("xiyuqiezei"));
+console.log("点「看未命名资产」：", await ev(`(() => { const b=[...document.querySelectorAll("button")].find(x=>x.textContent.includes("看未命名资产")); if(!b) return "没这个按钮"; b.click(); return "点了"; })()`));
+await wait(4000);
+console.log("点了之后 · xiyuqiezei →", await search("xiyuqiezei"));
+console.log("点了之后 · w1351_other_jh_hwpx →", await search("w1351_other_jh_hwpx"));
+ws.close();

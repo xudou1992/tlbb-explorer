@@ -1,0 +1,137 @@
+剔除根骨独占顶点版: 参与顶点 529, 根骨 joint 0 '000', 覆盖骨 27
+未剔除(污染)版: 参与顶点 781
+
+(2) 复现主 agent 的 1.84：
+   A=inv(Mraw) 原点 vs 干净重心                         n=26  mean=1.4393 median=1.3808 max=2.6391
+   A=inv(Mraw) 原点 vs 污染重心                         n=26  mean=1.4393 median=1.3808 max=2.6391
+   A vs 污染重心, 全部覆盖骨(含根骨)                          n=27  mean=1.4345 median=1.3651 max=2.6391
+   A vs 干净重心, 全部覆盖骨(含根骨)                          n=27  mean=1.4190 median=1.3651 max=2.6391
+   C=Mraw 平移列 vs 干净重心                             n=26  mean=0.1488 median=0.1576 max=0.2531
+   C=Mraw 平移列 vs 污染重心                             n=26  mean=0.1488 median=0.1576 max=0.2531
+
+(1) 逐骨表  (单位: GLB 场景空间)
+j  bone                        C=Mraw平移(未逆)             A=inv(Mraw)平移            重心 c_j                    sumw    v
+ 0 000                         (-0.0000 -0.0000 -0.0000)  ( 0.0000  0.0000  0.0000)  (-0.0035  0.8911 -0.0047)   34.9   88
+ 1 bip01                       (-0.0000 -0.0000  0.0000)  ( 0.0000  0.0000  0.0000)  (    nan     nan     nan)    0.0    0
+ 2 bip01_footsteps             (-0.0000 -0.0000  0.0000)  ( 0.0000  0.0000  0.0000)  (    nan     nan     nan)    0.0    0
+ 3 bip01_pelvis                (-0.0007  1.0979 -0.0507)  ( 0.0507  0.0007 -1.0979)  (    nan     nan     nan)    0.0    0
+ 4 bip01_spine                 (-0.0007  1.0979 -0.0507)  (-1.0979  0.0507  0.0007)  (-0.0022  1.1706 -0.0244)   23.0   53
+ 5 bip01_spine1                (-0.0007  1.0979 -0.0507)  (-1.0979  0.0507  0.0007)  (    nan     nan     nan)    0.0    0
+ 6 bip01_neck                  (-0.0007  1.0979 -0.0507)  (-1.0979  0.0507  0.0007)  (    nan     nan     nan)    0.0    0
+ 7 bip01_head                  (-0.0007  1.0979 -0.0507)  (-1.0979  0.0507  0.0007)  (    nan     nan     nan)    0.0    0
+ 8 bip01_l_clavicle            (-0.0007  1.0979 -0.0507)  (-1.0979  0.0507  0.0007)  (    nan     nan     nan)    0.0    0
+ 9 bip01_l_upperarm            ( 0.0802  1.7165 -0.0934)  (-0.0802 -0.0934 -1.7165)  ( 0.1898  1.7586 -0.0345)   29.2   38
+10 bip01_l_forearm             ( 0.0802  1.7165 -0.0934)  (-0.0802 -0.0934 -1.7165)  (    nan     nan     nan)    0.0    0
+11 bip01_l_hand                ( 0.3215  1.4304 -0.0960)  ( 1.2303  0.0950 -0.7976)  ( 0.3729  1.2519 -0.0668)   14.7   26
+12 bip01_l_finger0             ( 0.3215  1.4304 -0.0960)  ( 1.2303  0.0950 -0.7976)  (    nan     nan     nan)    0.0    0
+13 bip01_l_finger1             ( 0.3215  1.4304 -0.0960)  ( 1.2303  0.0950 -0.7976)  (    nan     nan     nan)    0.0    0
+14 bone09                      ( 0.4282  1.1359 -0.0334)  ( 0.9146  0.7739  0.1986)  ( 0.4371  1.0808 -0.0148)   24.7   35
+15 bone08                      ( 0.2134  1.7165 -0.0934)  ( 1.5294 -0.1588 -0.7976)  ( 0.2651  1.5691 -0.0874)   14.0   28
+16 bip01_r_clavicle            (-0.0007  1.7837 -0.0706)  (-1.6644  0.6455  0.0007)  ( 0.0006  1.8267 -0.0475)    4.0    4
+17 bip01_r_upperarm            (-0.0816  1.7165 -0.0934)  (-0.0816 -0.0934  1.7165)  (-0.1982  1.7642 -0.0273)   32.5   39
+18 bip01_r_forearm             (-0.2148  1.7165 -0.0934)  ( 1.5290 -0.1589  0.7989)  (-0.2667  1.5613 -0.0849)   13.3   25
+19 bip01_r_hand                (-0.3229  1.4304 -0.0960)  ( 1.2298  0.0948  0.7989)  (-0.3714  1.2523 -0.0667)   14.7   26
+20 bip01_r_finger0             (-0.3229  1.4304 -0.0960)  ( 1.2298  0.0948  0.7989)  (    nan     nan     nan)    0.0    0
+21 bip01_r_finger1             (-0.3229  1.4304 -0.0960)  ( 1.2298  0.0948  0.7989)  (    nan     nan     nan)    0.0    0
+22 bone01                      (-0.4296  1.1359 -0.0334)  ( 0.9141  0.7752 -0.1987)  (-0.4360  1.0809 -0.0152)   24.4   35
+23 bone05                      (-0.0007  1.4777 -0.0097)  (-1.4777  0.0109  0.0007)  ( 0.0096  1.6656 -0.0368)   97.7  127
+24 bone06                      ( 0.0000  1.7333 -0.1872)  ( 1.6581  0.5386  0.0000)  (    nan     nan     nan)    0.0    0
+25 bone07                      ( 0.0000  1.5622 -0.2230)  ( 1.5702  0.1576  0.0000)  (    nan     nan     nan)    0.0    0
+26 bip01_l_thigh               (-0.0007  1.0979 -0.0507)  (-1.0979  0.0507  0.0007)  (    nan     nan     nan)    0.0    0
+27 bip01_l_calf                ( 0.1407  1.0979 -0.0507)  ( 1.0897  0.0669  0.1892)  ( 0.1542  0.8502 -0.0280)   12.8   27
+28 bip01_l_foot                ( 0.1587  0.6932 -0.0564)  ( 0.6845  0.0670  0.1892)  ( 0.1450  0.4463 -0.0624)   22.6   34
+29 bip01_l_toe0                ( 0.1835  0.1399 -0.0642)  ( 0.1399  0.0297  0.1921)  ( 0.1863  0.0695 -0.0383)   19.7   28
+30 bip01_r_thigh               (-0.0007  1.0979 -0.0507)  (-1.0979  0.0507  0.0007)  (    nan     nan     nan)    0.0    0
+31 bip01_r_calf                (-0.1420  1.0979 -0.0507)  ( 1.0897  0.0669 -0.1906)  (-0.1510  0.8459 -0.0288)   12.5   27
+32 bip01_r_foot                (-0.1601  0.6932 -0.0564)  ( 0.6845  0.0670 -0.1906)  (-0.1448  0.4455 -0.0627)   22.7   34
+33 bip01_r_toe0                (-0.1849  0.1399 -0.0642)  ( 0.1399  0.0294 -0.1935)  (-0.1852  0.0694 -0.0383)   19.7   28
+34 bone10                      (-0.0007  1.0979 -0.0507)  (-1.0979  0.0507  0.0007)  (    nan     nan     nan)    0.0    0
+35 bone11                      (-0.1563  1.2696  0.0147)  ( 1.0196  0.7675  0.0892)  (-0.1916  1.1259  0.0747)    1.6    4
+36 bone12                      (-0.2165  1.1396  0.0653)  ( 1.0350  0.5201  0.0892)  (-0.2479  0.9865  0.0700)    9.9   20
+37 bone10_mirror02             (-0.0007  1.0979 -0.0507)  (-1.0979  0.0507  0.0007)  (    nan     nan     nan)    0.0    0
+38 bone11_mirror02             (-0.1525  1.2696 -0.0577)  ( 1.0102  0.7860 -0.0041)  (-0.2067  1.1427 -0.1027)    1.8    4
+39 bone12_mirror02             (-0.2194  1.1389 -0.0968)  ( 1.0739  0.4486 -0.0041)  (-0.2239  0.9844 -0.1457)    6.4   14
+40 bone10_mirror01             (-0.0007  1.0979 -0.0507)  (-1.0979  0.0507  0.0007)  (    nan     nan     nan)    0.0    0
+41 bone11_mirror01             ( 0.1531  1.2696  0.0147)  ( 1.0208  0.7654 -0.0872)  ( 0.1925  1.1267  0.0718)    1.7    4
+42 bone12_mirror01             ( 0.2134  1.1396  0.0653)  ( 1.0357  0.5178 -0.0872)  ( 0.2457  0.9841  0.0711)    9.7   20
+43 bone10_mirror02_mirror01    (-0.0007  1.2637 -0.0097)  (-1.2637  0.0107  0.0007)  ( 0.0585  1.2992 -0.0216)   52.7   74
+44 bone11_mirror02_mirror01    ( 0.1494  1.2696 -0.0577)  ( 1.0116  0.7837  0.0026)  ( 0.2073  1.1429 -0.0985)    1.8    4
+45 bone12_mirror02_mirror01    ( 0.2162  1.1389 -0.0968)  ( 1.0744  0.4459  0.0026)  ( 0.2220  0.9844 -0.1457)    6.4   14
+
+(4) Mraw 的 3x3：
+   000                         det=+1.0000  正交偏差=0.00e+00  奇异值=[1.0, 1.0, 1.0]
+   bip01                       det=+1.0000  正交偏差=0.00e+00  奇异值=[1.0, 1.0, 1.0]
+   bip01_footsteps             det=+1.0000  正交偏差=0.00e+00  奇异值=[1.0, 1.0, 1.0]
+   bip01_pelvis                det=+1.0000  正交偏差=2.59e-12  奇异值=[1.0, 1.0, 1.0]
+   bip01_spine                 det=+1.0000  正交偏差=1.09e-11  奇异值=[1.0, 1.0, 1.0]
+   bip01_spine1                det=+1.0000  正交偏差=1.09e-11  奇异值=[1.0, 1.0, 1.0]
+   bip01_neck                  det=+1.0000  正交偏差=1.09e-11  奇异值=[1.0, 1.0, 1.0]
+   bip01_head                  det=+1.0000  正交偏差=1.09e-11  奇异值=[1.0, 1.0, 1.0]
+   全部骨: 正交偏差 max=7.49e-07  median=1.78e-07 ; det 集合=[1.0] ; 缩放(奇异值)范围 1.0000..1.0000
+
+(3) 父子骨对：'父->子 的重心差方向' 与 矩阵列向量 的最小夹角(允许反向)
+    parent                      child                       |c_k-c_j|  Mraw列角°   inv列角° |t_k-t_j|Mraw
+    bip01_l_hand                bone09                         0.190      4.6     15.2    0.319
+    bip01_l_upperarm            bone08                         0.211     14.1     25.9    0.133
+    bip01_r_clavicle            bip01_r_upperarm               0.209     18.3     18.3    0.108
+    bip01_r_upperarm            bip01_r_forearm                0.222     14.7     21.2    0.133
+    bip01_r_forearm             bip01_r_hand                   0.327      4.2     19.5    0.306
+    bip01_r_hand                bone01                         0.190      4.5     37.2    0.319
+    bip01_l_calf                bip01_l_foot                   0.405      5.6      5.6    0.405
+    bip01_l_foot                bip01_l_toe0                   0.380      5.8      6.4    0.554
+    bip01_r_calf                bip01_r_foot                   0.402      5.3      4.5    0.405
+    bip01_r_foot                bip01_r_toe0                   0.379      5.7      8.0    0.554
+    bone11                      bone12                         0.150     15.3     36.9    0.152
+    bone11_mirror02             bone12_mirror02                0.165      9.6     46.8    0.152
+    bone11_mirror01             bone12_mirror01                0.152     13.2     40.4    0.152
+    bip01_spine                 bone10_mirror02_mirror01       0.142     25.3     25.3    0.171
+    bone10_mirror02_mirror01    bone11_mirror02_mirror01       0.229     16.4     15.3    0.158
+    bone11_mirror02_mirror01    bone12_mirror02_mirror01       0.166     11.2     13.2    0.152
+    汇总: Mraw 列对齐 mean=10.9° med=10.4° <20°:15/16 | inv(Mraw) 列对齐 mean=21.2° med=18.9° <20°:9/16
+
+(5) 层级自洽: local = inv(M_parent)·M_child 的平移长度 (应≈ 父子真实骨长，且远小于世界坐标)
+   bip01                       Mraw: |local t|= 0.000 rot=  90.0° | inv: |local t|= 0.000 rot=  90.0°
+   bip01_footsteps             Mraw: |local t|= 0.000 rot=   0.0° | inv: |local t|= 0.000 rot=   0.0°
+   bip01_pelvis                Mraw: |local t|= 1.099 rot=  90.0° | inv: |local t|= 1.099 rot=  90.0°
+   bip01_spine                 Mraw: |local t|= 0.000 rot= 120.0° | inv: |local t|= 1.590 rot= 120.0°
+   bip01_spine1                Mraw: |local t|= 0.000 rot=   0.0° | inv: |local t|= 0.000 rot=   0.0°
+   bip01_neck                  Mraw: |local t|= 0.000 rot=   0.0° | inv: |local t|= 0.000 rot=   0.0°
+   bip01_head                  Mraw: |local t|= 0.000 rot=   0.0° | inv: |local t|= 0.000 rot=   0.0°
+   bip01_l_clavicle            Mraw: |local t|= 0.000 rot=   0.0° | inv: |local t|= 0.000 rot=   0.0°
+   bip01_l_upperarm            Mraw: |local t|= 0.625 rot= 180.0° | inv: |local t|= 2.001 rot= 180.0°
+   bip01_l_forearm             Mraw: |local t|= 0.000 rot=   0.0° | inv: |local t|= 0.000 rot=   0.0°
+   bip01_l_hand                Mraw: |local t|= 0.374 rot=  70.6° | inv: |local t|= 1.612 rot=  70.6°
+   bip01_l_finger0             Mraw: |local t|= 0.000 rot=   0.0° | inv: |local t|= 0.000 rot=   0.0°
+   bip01_l_finger1             Mraw: |local t|= 0.000 rot=   0.0° | inv: |local t|= 0.000 rot=   0.0°
+   bone09                      Mraw: |local t|= 0.319 rot= 101.0° | inv: |local t|= 1.246 rot= 101.0°
+   bone08                      Mraw: |local t|= 0.133 rot=  69.4° | inv: |local t|= 1.855 rot=  69.4°
+   bip01_r_clavicle            Mraw: |local t|= 0.686 rot=  18.9° | inv: |local t|= 0.821 rot=  18.9°
+   bip01_r_upperarm            Mraw: |local t|= 0.108 rot= 166.6° | inv: |local t|= 2.448 rot= 166.6°
+   bip01_r_forearm             Mraw: |local t|= 0.133 rot=  69.4° | inv: |local t|= 1.855 rot=  69.4°
+   bip01_r_hand                Mraw: |local t|= 0.306 rot=  11.8° | inv: |local t|= 0.392 rot=  11.8°
+   bip01_r_finger0             Mraw: |local t|= 0.000 rot=   0.0° | inv: |local t|= 0.000 rot=   0.0°
+   bip01_r_finger1             Mraw: |local t|= 0.000 rot=   0.0° | inv: |local t|= 0.000 rot=   0.0°
+   bone01                      Mraw: |local t|= 0.319 rot= 101.0° | inv: |local t|= 1.248 rot= 101.0°
+   bone05                      Mraw: |local t|= 0.382 rot=   0.1° | inv: |local t|= 0.382 rot=   0.0°
+   bone06                      Mraw: |local t|= 0.311 rot= 180.0° | inv: |local t|= 3.180 rot= 180.0°
+   bone07                      Mraw: |local t|= 0.175 rot=  14.2° | inv: |local t|= 0.391 rot=  14.2°
+   bip01_l_thigh               Mraw: |local t|= 0.000 rot=   0.0° | inv: |local t|= 0.000 rot=   0.0°
+   bip01_l_calf                Mraw: |local t|= 0.141 rot= 177.4° | inv: |local t|= 2.196 rot= 177.4°
+   bip01_l_foot                Mraw: |local t|= 0.405 rot=   0.0° | inv: |local t|= 0.405 rot=   0.0°
+   bip01_l_toe0                Mraw: |local t|= 0.554 rot=  11.1° | inv: |local t|= 0.546 rot=  11.1°
+   bip01_r_thigh               Mraw: |local t|= 0.000 rot=   0.0° | inv: |local t|= 0.000 rot=   0.0°
+   bip01_r_calf                Mraw: |local t|= 0.141 rot= 177.4° | inv: |local t|= 2.196 rot= 177.4°
+   bip01_r_foot                Mraw: |local t|= 0.405 rot=   0.0° | inv: |local t|= 0.405 rot=   0.0°
+   bip01_r_toe0                Mraw: |local t|= 0.554 rot=  11.1° | inv: |local t|= 0.546 rot=  11.1°
+   bone10                      Mraw: |local t|= 0.000 rot=   0.0° | inv: |local t|= 0.000 rot=   0.0°
+   bone11                      Mraw: |local t|= 0.241 rot= 151.8° | inv: |local t|= 2.237 rot= 151.8°
+   bone12                      Mraw: |local t|= 0.152 rot=  14.8° | inv: |local t|= 0.248 rot=  14.8°
+   bone10_mirror02             Mraw: |local t|= 0.000 rot=   0.0° | inv: |local t|= 0.000 rot=   0.0°
+   bone11_mirror02             Mraw: |local t|= 0.229 rot= 165.3° | inv: |local t|= 2.233 rot= 165.3°
+   bone12_mirror02             Mraw: |local t|= 0.152 rot=  19.8° | inv: |local t|= 0.343 rot=  19.8°
+   bone10_mirror01             Mraw: |local t|= 0.000 rot=   0.0° | inv: |local t|= 0.000 rot=   0.0°
+   bone11_mirror01             Mraw: |local t|= 0.240 rot= 151.8° | inv: |local t|= 2.238 rot= 151.8°
+   bone12_mirror01             Mraw: |local t|= 0.152 rot=  14.8° | inv: |local t|= 0.248 rot=  14.8°
+   bone10_mirror02_mirror01    Mraw: |local t|= 0.171 rot=   0.1° | inv: |local t|= 0.171 rot=   0.0°
+   bone11_mirror02_mirror01    Mraw: |local t|= 0.158 rot= 165.3° | inv: |local t|= 2.403 rot= 165.3°
+   bone12_mirror02_mirror01    Mraw: |local t|= 0.152 rot=  19.8° | inv: |local t|= 0.344 rot=  19.8°

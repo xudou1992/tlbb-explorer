@@ -1,0 +1,8 @@
+ERR='无 UV' count=213 前 5: ['cj_byjt.mesh', 'w1351_boss_aihu_yifu_001.mesh', 'w1351_boss_jiaxu.mesh', 'w1351_boss_sss_murongbo.mesh', 'w1351_boss_sss_tufanfanseng_yifu_001.mesh']
+ERR='清单里解析不到 hash' count=229 前 5: ['w1351_boss_huoyanlaohu.mesh', 'w1351_guajian_ysym_01.mesh', 'w1351_guajian_ysym_biyuqing.mesh', 'w1351_guajian_ysym_chenxi.mesh', 'w1351_guajian_ysym_chijinliuyun.mesh']
+解不出 hash 的 mesh 名数: 229
+base 全清单可解: 2589 / 2818
+rehar 全清单可解: 2777 / 2818
+那 229 份在 base 可解: 0
+那 229 份在 rehearsal 可解: 188
+rehar: 这些 mesh 的路径示例: [('data/effect/effectmodel/w1351_an_model_wave_h002.mesh',), ('data/effect/effectmodel/w1351_jianmo_v1.mesh',), ('data/effect/effectmodel/w1351_jianmo_v2.mesh',)]

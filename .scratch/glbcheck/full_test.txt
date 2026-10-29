@@ -1,0 +1,237 @@
+   Compiling tlbb-core v0.1.0 (D:\TLGL\tlbb-explorer\crates\core)
+warning: value assigned to `root_bone` is never read
+   --> crates\core\src\export\gltf.rs:300:29
+    |
+300 |           let mut root_bone = 0usize;
+    |                               ^^^^^^ this value is reassigned later and never used
+...
+395 | /         root_bone = bones
+396 | |             .iter()
+397 | |             .position(|b| b.parent.is_none())
+398 | |             .ok_or_else(|| "骨架没有根骨（parse_hierarchy 保证单根，这里不该发生）".to_string())?;
+    | |_________________________________________________________________________________________________- `root_bone` is overwritten here before the previous value is read
+    |
+    = note: `#[warn(unused_assignments)]` (part of `#[warn(unused)]`) on by default
+
+warning: `tlbb-core` (lib) generated 1 warning
+warning: fields `mips` and `original` are never read
+   --> crates\core\src\bin\texture_cluster.rs:103:5
+    |
+ 96 | struct Tex {
+    |        --- fields in this struct
+...
+103 |     mips: i64,
+    |     ^^^^
+104 |     original: i64,
+    |     ^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `mean_lum` is never read
+   --> crates\core\src\bin\texture_cluster.rs:259:5
+    |
+253 | struct Pick {
+    |        ---- field in this struct
+...
+259 |     mean_lum: f64,
+    |     ^^^^^^^^
+
+warning: `tlbb-core` (bin "texture_cluster" test) generated 2 warnings
+warning: variable does not need to be mutable
+   --> crates\core\src\bin\scene_pick.rs:139:9
+    |
+139 |     let mut say = |s: String, log: &mut Vec<String>| {
+    |         ----^^^
+    |         |
+    |         help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `stride` is never read
+  --> crates\core\src\bin\scene_pick.rs:35:5
+   |
+24 | struct Cand {
+   |        ---- field in this struct
+...
+35 |     stride: usize,
+   |     ^^^^^^
+   |
+   = note: `Cand` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `tlbb-core` (bin "scene_pick" test) generated 2 warnings (run `cargo fix --bin "scene_pick" -p tlbb-core --tests` to apply 1 suggestion)
+warning: variable does not need to be mutable
+  --> crates\core\src\bin\scene_census.rs:46:9
+   |
+46 |     let mut say = |s: String, lines: &mut Vec<String>| {
+   |         ----^^^
+   |         |
+   |         help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: `tlbb-core` (bin "scene_census" test) generated 1 warning (run `cargo fix --bin "scene_census" -p tlbb-core --tests` to apply 1 suggestion)
+warning: function `判据M_违反则拒绝` should have a snake case name
+   --> crates\core\src\preview\scene.rs:528:8
+    |
+528 |     fn 判据M_违反则拒绝() {
+    |        ^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `判据_m_违反则拒绝`
+    |
+    = note: `#[warn(non_snake_case)]` (part of `#[warn(nonstandard_style)]`) on by default
+
+warning: function `判据N_违反则拒绝` should have a snake case name
+   --> crates\core\src\preview\scene.rs:556:8
+    |
+556 |     fn 判据N_违反则拒绝() {
+    |        ^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `判据_n_违反则拒绝`
+
+warning: function `尾部记录也满足判据MN说明不能靠它反推尾部` should have a snake case name
+   --> crates\core\src\preview\scene.rs:669:8
+    |
+669 |     fn 尾部记录也满足判据MN说明不能靠它反推尾部() {
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `尾部记录也满足判据_mn说明不能靠它反推尾部`
+
+warning: function `名字在偏移64且以NUL结尾` should have a snake case name
+   --> crates\core\src\preview\scene.rs:690:8
+    |
+690 |     fn 名字在偏移64且以NUL结尾() {
+    |        ^^^^^^^^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `名字在偏移64且以_nul结尾`
+
+warning: function `悬空槽位保持为_None_不编造_hash` should have a snake case name
+   --> crates\core\src\preview\summary.rs:564:8
+    |
+564 |     fn 悬空槽位保持为_None_不编造_hash() {
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `悬空槽位保持为_none_不编造_hash`
+
+warning: `tlbb-core` (lib test) generated 6 warnings (1 duplicate)
+warning: variable does not need to be mutable
+  --> crates\core\src\bin\scene_verify.rs:18:9
+   |
+18 |     let mut say = |s: String, log: &mut Vec<String>| {
+   |         ----^^^
+   |         |
+   |         help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: `tlbb-core` (bin "scene_verify" test) generated 1 warning (run `cargo fix --bin "scene_verify" -p tlbb-core --tests` to apply 1 suggestion)
+warning: `tlbb-core` (bin "scene_census") generated 1 warning (1 duplicate)
+warning: `tlbb-core` (bin "texture_cluster") generated 2 warnings (2 duplicates)
+warning: `tlbb-core` (bin "scene_verify") generated 1 warning (1 duplicate)
+warning: `tlbb-core` (bin "scene_pick") generated 2 warnings (2 duplicates)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 48.30s
+     Running unittests src\lib.rs (D:/TLGL/.scratch/rc3\debug\deps\tlbb_core-0c99fcc9892165e1.exe)
+
+running 93 tests
+test catalog::versiondiff::tests::added_and_removed_assets_are_named_as_such ... ok
+test catalog::versiondiff::tests::a_renamed_asset_pairs_on_its_members ... ok
+test catalog::versiondiff::tests::a_fingerprint_move_without_members_is_not_content ... ok
+test catalog::versiondiff::tests::an_unparsable_blob_names_both_formats ... ok
+test catalog::versiondiff::tests::a_texture_swap_is_not_a_model_change ... ok
+test catalog::versiondiff::tests::digests_are_multiset_and_stable ... ok
+test catalog::versiondiff::tests::foreign_basis_reports_no_content_but_still_counts_composition ... ok
+test catalog::versiondiff::tests::members_can_move_while_the_fingerprint_stays_put ... ok
+test catalog::versiondiff::tests::only_names_moved_is_flagged_as_a_collection_change ... ok
+test catalog::versiondiff::tests::identity_v2_shape_reads_in_and_keeps_packing_signals_separate ... ok
+test catalog::versiondiff::tests::repacking_is_not_content_either ... ok
+test catalog::versiondiff::tests::member_order_alone_changes_nothing ... ok
+test jbcf::parser::decode_tests::ascii_names_are_untouched ... ok
+test export::gltf::tests::animations_without_rig_are_refused ... ok
+test export::gltf::tests::slot_names_are_carried_through ... ok
+test catalog::versiondiff::tests::native_json_round_trips_and_diffs_to_nothing ... ok
+test export::gltf::tests::glb_container_and_document_shape ... ok
+test export::gltf::tests::empty_mesh_is_refused_not_exported ... ok
+test jbcf::parser::decode_tests::undecodable_bytes_do_not_panic ... ok
+test jbcf::parser::decode_tests::gbk_bytes_decode_to_chinese ... ok
+test pathmap::tests::parses_synthetic_and_looks_up_case_insensitively ... ok
+test pathmap::tests::real_cfg_matches_shipped_facts ... ok
+test export::gltf::tests::rigged_entry_without_rig_equals_static ... ok
+test export::gltf::tests::synthetic_rig_roundtrips ... ok
+test pathmap::tests::rejects_non_cfg ... ok
+test preview::anim::rest_tests::绑定旋转每条都是单位长 ... ok
+test preview::anim::tests::坏输入不硬猜 ... ok
+test preview::anim::rest_tests::骨架区不合就不硬给 ... ok
+test preview::anim::tests::真样本四份都解得出且四元数单位长 ... ok
+test preview::effect::tests::参数区按记录表确定性切分且补零对齐 ... ok
+test preview::effect::tests::合成容器解得开且分桶不误伤层名 ... ok
+test preview::effect::tests::坏输入不硬猜 ... ok
+test preview::effect::tests::未知键截断记录流但不否定整个文件 ... ok
+test preview::effect::tests::真特效参数块记录流走通 ... ok
+test preview::effect::tests::真特效解得开且能报出材质 ... ok
+test preview::geometry::tests::inconsistent_index_count_is_rejected ... ok
+test preview::geometry::tests::missing_normals_leaves_them_empty_not_garbage ... ok
+test preview::geometry::tests::out_of_range_index_is_rejected ... ok
+test preview::geometry::tests::multi_submesh_counts_array_is_located_and_split ... ok
+test preview::geometry::tests::plane_roundtrips ... ok
+test preview::geometry::tests::truncated_file_is_rejected ... ok
+test preview::pose::tests::affine_inverse_roundtrips ... ok
+test preview::pose::tests::bind_worlds_uses_stored_and_fills_the_chain ... ok
+test preview::pose::tests::mat_mul_composes_translations_additively ... ok
+test preview::pose::tests::pose_frame_composes_trs_along_parents ... ok
+test preview::pose::tests::posed_vertices_skin_and_identity_cases ... ok
+test preview::pose::tests::quat_to_mat_matches_hand_computed_rotations ... ok
+test preview::pose::tests::trs_scales_rows_and_puts_translation_in_the_last_row ... ok
+test preview::pose::tests::unify_weights_covers_the_four_cases ... ok
+test preview::pose::tests::skin_palette_order_keeps_vertex_attached_to_its_bone ... FAILED
+test preview::scene::tests::判据M_违反则拒绝 ... ok
+test preview::scene::tests::判据N_违反则拒绝 ... ok
+test preview::scene::tests::合成两条记录能解出来 ... ok
+test preview::scene::tests::名字在偏移64且以NUL结尾 ... ok
+test preview::scene::tests::声明被低估时仍走出全部头部记录 ... ok
+test preview::scene::tests::尾部记录也满足判据MN说明不能靠它反推尾部 ... ok
+test preview::scene::tests::尾部附加段只报字节数不编造实例 ... ok
+test preview::scene::tests::已知版本集合与_stride_表一致 ... ok
+test preview::scene::tests::布局走不通在中间时报_failed_at ... ok
+test preview::scene::tests::未知_tag_报_unknown_version ... ok
+test preview::scene::tests::空格子判定 ... ok
+test preview::scene::tests::长度不足12字节报_too_short ... ok
+test preview::summary::tests::去重保序 ... ok
+test preview::summary::tests::悬空槽位保持为_None_不编造_hash ... ok
+test preview::summary::tests::材质槽位保留悬空并保序 ... ok
+test preview::summary::tests::路由把常见扩展名送到对的预览器 ... ok
+test preview::uvfit::tests::black_bias_real_samples_v041 ... ignored, 依赖本机 D:/TLGL 真实数据（db/pak），v0.4.1 验收时手动跑
+test preview::geometry::tests::real_multi_submesh_samples ... ok
+test preview::uvfit::tests::replay_production_candidate_caches ... ignored, 依赖本机 D:/TLGL 真实数据（db/pak/旧缓存），离线对拍时手动跑
+test preview::scene::tests::真实样本 ... ok
+test preview::uvfit::tests::cand_summary_format_is_frozen ... ok
+test preview::uvfit::tests::cand_summary_v2_appends_only ... ok
+test preview::uvfit::tests::size_fit_anchors ... ok
+test preview::uvfit_batch::tests::增量跑完后再跑一遍不重算且manifest齐全 ... ignored, 要解码全池匿名贴图，一轮约 7 分钟，手动验证批量闭环时跑
+test preview::uvfit::tests::empty_mask_yields_no_candidates ... ok
+test preview::uvfit::tests::variance_and_score_math ... ok
+test preview::uvfit::tests::black_bias_triggers_and_floor_brings_score_back ... ok
+test preview::uvfit_batch::tests::分级阈值按两个口径各算一次 ... ok
+test preview::uvfit_batch::tests::旧缓存重扫不谎报v2口径 ... ok
+test preview::uvfit_batch::tests::缺值是_null_不是零 ... ok
+test preview::uvfit::tests::adjusted_ordering_aligned_above_misaligned ... ok
+test preview::uvfit::tests::normal_texture_adjusted_equals_score ... ok
+test preview::uvfit::tests::white_bias_symmetric ... ok
+test preview::scene::tests::任意截断与垃圾输入都不panic ... ok
+test preview::geometry::node_tests::skin_influences_sum_to_one_per_vertex ... ok
+test preview::geometry::node_tests::socket_entries_are_not_bones ... ok
+test preview::uvfit::tests::alpha_fit_branches ... ok
+test preview::geometry::node_tests::bind_translations_mirror_left_and_right ... ok
+test preview::geometry::node_tests::unsorted_vertex_ids_are_not_a_table ... ok
+test preview::geometry::node_tests::a_weight_out_of_range_kills_the_table ... ok
+test preview::geometry::node_tests::tampering_a_bind_row_breaks_the_mirror ... ok
+test preview::geometry::node_tests::skin_tables_are_per_part_not_per_model ... ok
+test preview::geometry::node_tests::declared_bone_count_equals_the_animation_track_count ... ok
+
+failures:
+
+---- preview::pose::tests::skin_palette_order_keeps_vertex_attached_to_its_bone stdout ----
+
+thread 'preview::pose::tests::skin_palette_order_keeps_vertex_attached_to_its_bone' (21760) panicked at crates\core\src\preview\pose.rs:662:9:
+assertion `left == right` failed: bind 姿态恒等式对两种顺序都成立
+  left: [0.99999994, 1.0, 0.0]
+ right: [1.0, 1.0, 0.0]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    preview::pose::tests::skin_palette_order_keeps_vertex_attached_to_its_bone
+
+test result: FAILED. 89 passed; 1 failed; 3 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `-p tlbb-core --lib`
+cargo_exit=101

@@ -1,0 +1,59 @@
+Mraw(未逆)     n=26 |c-t| mean=0.1488 med=0.1576 max=0.2531 | (c-t) 与矩阵列最小夹角 mean=12.4° med=8.9° <20°:21/26 | 选中列分布 {0: 25, 2: 1}
+inv(Mraw)    n=26 |c-t| mean=1.4393 med=1.3808 max=2.6391 | (c-t) 与矩阵列最小夹角 mean=39.4° med=42.1° <20°:1/26 | 选中列分布 {0: 3, 1: 15, 2: 8}
+重心相对原点的轴向符号: +1 占 100% (26 正 / 0 负)
+
+参与拟合的 26 根骨逐骨残差 (C=Mraw平移列 vs 重心):
+   bip01_spine                  |c-t|=0.0773  sumw=  23.0  verts= 53
+   bip01_l_upperarm             |c-t|=0.1314  sumw=  29.2  verts= 38
+   bip01_l_hand                 |c-t|=0.1881  sumw=  14.7  verts= 26
+   bone09                       |c-t|=0.0589  sumw=  24.7  verts= 35
+   bone08                       |c-t|=0.1563  sumw=  14.0  verts= 28
+   bip01_r_clavicle             |c-t|=0.0488  sumw=   4.0  verts=  4
+   bip01_r_upperarm             |c-t|=0.1423  sumw=  32.5  verts= 39
+   bip01_r_forearm              |c-t|=0.1638  sumw=  13.3  verts= 25
+   bip01_r_hand                 |c-t|=0.1870  sumw=  14.7  verts= 26
+   bone01                       |c-t|=0.0583  sumw=  24.4  verts= 35
+   bone05                       |c-t|=0.1901  sumw=  97.7  verts=127
+   bip01_l_calf                 |c-t|=0.2491  sumw=  12.8  verts= 27
+   bip01_l_foot                 |c-t|=0.2473  sumw=  22.6  verts= 34
+   bip01_l_toe0                 |c-t|=0.0750  sumw=  19.7  verts= 28
+   bip01_r_calf                 |c-t|=0.2531  sumw=  12.5  verts= 27
+   bip01_r_foot                 |c-t|=0.2482  sumw=  22.7  verts= 34
+   bip01_r_toe0                 |c-t|=0.0751  sumw=  19.7  verts= 28
+   bone11                       |c-t|=0.1596  sumw=   1.6  verts=  4
+   bone12                       |c-t|=0.1564  sumw=   9.9  verts= 20
+   bone11_mirror02              |c-t|=0.1451  sumw=   1.8  verts=  4
+   bone12_mirror02              |c-t|=0.1621  sumw=   6.4  verts= 14
+   bone11_mirror01              |c-t|=0.1588  sumw=   1.7  verts=  4
+   bone12_mirror01              |c-t|=0.1589  sumw=   9.7  verts= 20
+   bone10_mirror02_mirror01     |c-t|=0.0701  sumw=  52.7  verts= 74
+   bone11_mirror02_mirror01     |c-t|=0.1451  sumw=   1.8  verts=  4
+   bone12_mirror02_mirror01     |c-t|=0.1621  sumw=   6.4  verts= 14
+
+对照 inv(Mraw) 的逐骨残差:
+   bip01_spine                  |c-t|=1.5670
+   bip01_l_upperarm             |c-t|=2.5163
+   bip01_l_hand                 |c-t|=1.6148
+   bone09                       |c-t|=0.6064
+   bone08                       |c-t|=2.2558
+   bip01_r_clavicle             |c-t|=2.0420
+   bip01_r_upperarm             |c-t|=2.5505
+   bip01_r_forearm              |c-t|=2.6391
+   bip01_r_hand                 |c-t|=2.1570
+   bone01                       |c-t|=1.3964
+   bone05                       |c-t|=2.2252
+   bip01_l_calf                 |c-t|=1.2394
+   bip01_l_foot                 |c-t|=0.7059
+   bip01_l_toe0                 |c-t|=0.2384
+   bip01_r_calf                 |c-t|=1.4738
+   bip01_r_foot                 |c-t|=0.9205
+   bip01_r_toe0                 |c-t|=0.3624
+   bone11                       |c-t|=1.2632
+   bone12                       |c-t|=1.3651
+   bone11_mirror02              |c-t|=1.2719
+   bone12_mirror02              |c-t|=1.4112
+   bone11_mirror01              |c-t|=0.9175
+   bone12_mirror01              |c-t|=0.9309
+   bone10_mirror02_mirror01     |c-t|=1.8463
+   bone11_mirror02_mirror01     |c-t|=0.8867
+   bone12_mirror02_mirror01     |c-t|=1.0191

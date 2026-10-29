@@ -1,0 +1,3 @@
+result json keys: [('mesh', 2818), ('pool', 2818), ('coverage', 2818), ('hasUv', 2818), ('candidates', 2818), ('error', 442)]
+error dist: [('清单里解析不到 hash', 229), ('无 UV', 213)]
+withUv: 2376

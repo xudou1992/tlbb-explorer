@@ -1161,26 +1161,33 @@ export class MeshViewer {
   /// 只给带 UV 的池子网格套图；没有计划的保持灰模。异步加载完成后才落层，
   /// 中途换池（`this.pool !== pool`）或本网格又换了一批计划（token）就整批作废。
   setInstanceLayers(items) {
+    let any = false;
+    for (const it of Array.isArray(items) ? items : []) {
+      if (it && it.path && Array.isArray(it.layers)) {
+        if (this.setInstanceLayersFor(it.path, it.layers)) any = true;
+      }
+    }
+    return any;
+  }
+
+  /// 单件版本：地图按路径一个个到货就一个个贴，不必等全图 200 多份计划。
+  setInstanceLayersFor(path, layers) {
     const gl = this.gl;
     const pool = this.pool;
     if (!pool || !pool.length) return false;
-    const byPath = new Map();
-    for (const it of Array.isArray(items) ? items : []) {
-      if (it && it.path && Array.isArray(it.layers)) byPath.set(it.path, it.layers);
+    const geo = pool.find((g) => g.path === path);
+    if (!geo || !geo.buf.uv) return false;
+    const token = (geo.layerToken = (geo.layerToken || 0) + 1);
+    for (const l of geo.layers || []) {
+      if (l.tex) gl.deleteTexture(l.tex);
+      if (l.mask) gl.deleteTexture(l.mask);
     }
-    for (const geo of pool) {
-      const token = (geo.layerToken = (geo.layerToken || 0) + 1);
-      for (const l of geo.layers || []) {
-        if (l.tex) gl.deleteTexture(l.tex);
-        if (l.mask) gl.deleteTexture(l.mask);
-      }
-      geo.layers = [];
-      const layers = byPath.get(geo.path);
-      if (!layers || !layers.length || !geo.buf.uv) continue;
-      const list = layers.filter(
-        (l) => l && l.color && l.color.png && Number(l.faceCount) > 0,
-      );
-      const jobs = list.map(async (l) => {
+    geo.layers = [];
+    const list = (Array.isArray(layers) ? layers : []).filter(
+      (l) => l && l.color && l.color.png && Number(l.faceCount) > 0,
+    );
+    if (!list.length) return false;
+    const jobs = list.map(async (l) => {
         let img;
         try {
           img = await loadImage(l.color.png);
@@ -1218,7 +1225,6 @@ export class MeshViewer {
         geo.layers = ready;
         this.draw();
       });
-    }
     return true;
   }
 

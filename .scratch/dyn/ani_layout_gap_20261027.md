@@ -2468,3 +2468,11 @@ idle01 每帧最大骨转角 39.4°、walk 85.9°，而 behit01 119.9°、hit01 
 - 块区之后还有 1,536B（62 种 dword）和 3,448B（`02 22 52 09 …` 递增 token）两段，全部整数；
 - 全文件 **0 个可信浮点**。
 ⇒ 地形高度不在 `.map`；`mobile_maps/` 也没有高度图资源。界面「地形没解出」保持不变。
+
+### 地图贴图加载改进（15:51）
+
+- 原实现等 200 多份计划**全部**回来才一次性上色，且换图重解。改成：
+  1. `MeshViewer.setInstanceLayersFor(path, layers)` 单件上色（保留整批 `setInstanceLayers` 兼容）；
+  2. `map.js` 加进程内 `mapPlanCache`（路径→层），二次打开同图直接命中；
+  3. 并发限 6 逐件到货逐件贴。
+- 实测 `w1351_fb_sxzc_001` 重构后照常出图、0 异常（`.scratch/map_progressive.png`）。

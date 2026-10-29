@@ -156,20 +156,32 @@ function applyMapSky(v, scene) {
 
 /// 地图道具的贴图：这些网格不在任何资产组里，按路径取同茎 `.mtl` 的计划（后端反查）。
 /// 一件取不到就灰着，不挡画布、不改「地形未解」的口径。
+/// 路径 → 分层计划（含 PNG data URL）。同一件道具在多张图里反复出现，缓存后
+/// 二次打开不再重解；只活在这个进程里，不落盘。
+const mapPlanCache = new Map();
+
 async function applyMapPropTextures(v, scene) {
   const paths = [...new Set((scene.meshes || []).map((m) => m.path).filter(Boolean))];
   if (!paths.length) return;
-  const plans = [];
-  await Promise.all(
-    paths.map(async (p) => {
+  const todo = [];
+  for (const p of paths) {
+    if (mapPlanCache.has(p)) v.setInstanceLayersFor(p, mapPlanCache.get(p));
+    else todo.push(p);
+  }
+  // 逐件到货逐件上色；同时最多 6 个请求，别把 IPC 和 PNG 解码一次性打满。
+  let i = 0;
+  const worker = async () => {
+    while (i < todo.length) {
+      const p = todo[i++];
       try {
         const plan = await api.meshTexturePlanByPath(p);
         const layers = plan && Array.isArray(plan.layers) ? plan.layers : [];
-        if (layers.length) plans.push({ path: p, layers });
+        mapPlanCache.set(p, layers);
+        if (layers.length) v.setInstanceLayersFor(p, layers);
       } catch {}
-    }),
-  );
-  if (plans.length) v.setInstanceLayers(plans);
+    }
+  };
+  await Promise.all([worker(), worker(), worker(), worker(), worker(), worker()]);
 }
 
 function ensureTop() {

@@ -135,6 +135,9 @@ pub struct MapEnv {
     pub fog: Option<[f32; 3]>,
     pub ambient: Option<f32>,
     pub light: Option<f32>,
+    /// 雾的起止距离（`Fog global start/end`，客户端单位）。只用来做远景淡出。
+    pub fog_start: Option<f32>,
+    pub fog_end: Option<f32>,
     /// 来源原话（文件名 + 取不到的字段），界面照它说，别自己编。
     pub note: String,
 }
@@ -150,6 +153,8 @@ fn env_of(app: &AppData, id: &str) -> Option<MapEnv> {
     let fog = first_stop3(&raw, "Fog color");
     let ambient = first_stop1(&raw, "Scene amb intensity");
     let light = first_stop1(&raw, "Main light power");
+    let fog_start = first_stop1(&raw, "Fog global start");
+    let fog_end = first_stop1(&raw, "Fog global end");
     if sky.is_none() && fog.is_none() && ambient.is_none() && light.is_none() {
         return None;
     }
@@ -170,6 +175,8 @@ fn env_of(app: &AppData, id: &str) -> Option<MapEnv> {
         fog,
         ambient,
         light,
+        fog_start,
+        fog_end,
         note: format!("背景色取自客户端 {id}.sfl 的第一个关键帧（不是天空盒）{tail}"),
     })
 }

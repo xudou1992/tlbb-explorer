@@ -302,7 +302,7 @@ pub fn anim_pose_run(
         let frame = (frame as usize).min(frames - 1);
 
         let palette = reanchored_palette(&hier, &a, frame)
-            .ok_or_else(|| "骨架与动作对不上（骨数不一致），调不出蒙皮调色板。".to_string())?;
+            .ok_or_else(|| "调不出蒙皮调色板：有骨的姿态矩阵不可逆（缩放接近 0 或为零），这一份摆不了。".to_string())?;
         let nodes = attach_bone_skin(&hier, &parse_nodes(&raw), &raw);
         let posed = posed_vertices(&hier, &palette, &nodes, &geom.positions).ok_or_else(|| {
             "蒙皮没摆成：影响顶点表和骨架对不上（骨名对不上或顶点号越界），不硬摆。".to_string()
@@ -365,7 +365,7 @@ pub fn anim_pose_run(
         for p in &preps {
             let palette = reanchored_palette(&p.hier, &a, frame).ok_or_else(|| {
                 format!(
-                    "{} 的骨架与动作对不上（骨数不一致），调不出蒙皮调色板。",
+                    "{} 调不出蒙皮调色板：有骨的姿态矩阵不可逆（缩放接近 0 或为零），这一份摆不了。",
                     p.tail
                 )
             })?;

@@ -115,7 +115,9 @@ pub fn mat_inverse_affine(m: &[f32; 16]) -> Option<[f32; 16]> {
     let (d, e, f) = (m[4], m[5], m[6]);
     let (g, h, i) = (m[8], m[9], m[10]);
     let det = a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
-    if !det.is_finite() || det.abs() < 1e-12 {
+    // 1e-5 量级的缩放（剑阵这类「把某根骨缩没」的动作）行列式只有 1e-15，
+    // 按 1e-12 拒掉会把整份动作判死；阈值放到 1e-20，真正为零的矩阵仍拒绝。
+    if !det.is_finite() || det.abs() < 1e-20 {
         return None;
     }
     let iv = 1.0 / det;
@@ -297,18 +299,47 @@ pub fn pose_frame(h: &SkeletonHierarchy, anim: &Anim, frame: usize) -> Vec<[f32;
             continue; // 空轨道当没有
         }
         let f = frame.min(t.rotations.len() - 1).min(t.positions.len() - 1).min(t.scales.len() - 1);
-        local[i] = trs_matrix(&t.rotations[f], t.positions[f], t.scales[f]);
+        // 全零记录当「没有这条轨道」：有些模型（`w1351_model_jingji_r_h03`、
+        // `w1351_model_mr_cj_nan_jianzhen_lf002`）的静态区对部分骨写的是
+        // 四元数 (0,0,0,0)+缩放 (0,0,0)，照用会得到零矩阵、逆不出调色板，
+        // 客户端显然不是把它当缩放 0。回退到绑定姿态/恒等，至少能摆出来。
+        let q = t.rotations[f];
+        let s = t.scales[f];
+        let q_len2: f32 = q.iter().map(|v| v * v).sum();
+        let zero_scale = s.abs() < 1e-8;
+        if q_len2 < 1e-12 || zero_scale {
+            continue;
+        }
+        local[i] = trs_matrix(&q, t.positions[f], s);
         has_track[i] = true;
     }
     // 无轨道的骨：有 bind 用 bind（近似，见函数注释），没有保持恒等。
+    // bind 本身是零矩阵的也当没有——那种骨逆不出调色板，会把整份动作拖成黑屏。
     for i in 0..n {
         if !has_track[i] {
             if let Some(b) = h.bones[i].bind {
-                local[i] = b;
+                if affine_ok(&b) {
+                    local[i] = b;
+                }
             }
         }
     }
     compose_worlds(h, &local)
+}
+
+/// 3×3 部分是否可逆（行向量约定的仿射矩阵）。零/退化矩阵返回 false。
+fn affine_ok(m: &[f32; 16]) -> bool {
+    let a = m[0];
+    let b = m[1];
+    let c = m[2];
+    let d = m[4];
+    let e = m[5];
+    let f = m[6];
+    let g = m[8];
+    let h = m[9];
+    let i = m[10];
+    let det = a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
+    det.abs() > 1e-12
 }
 
 /// 蒙皮调色板：每根骨一张 `bind_i⁻¹ · world_i`，下标与 `h.bones` 一致。

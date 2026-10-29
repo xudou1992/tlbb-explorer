@@ -341,6 +341,41 @@ fn main() {
             println!("{tag} → 全帧撕边 {sum}");
         }
     }
+    // A/B：缩放通道全强制 1.0（客户端若忽略缩放，我们的条带会被多拉）。
+    {
+        let mut v = anim.clone();
+        for t in v.tracks.iter_mut() {
+            for x in t.scales.iter_mut() {
+                *x = 1.0;
+            }
+        }
+        let mut sum = 0usize;
+        for f in 0..v.frames {
+            let Some(pal) = pose::reanchored_palette(&h, &v, f) else { continue };
+            let Some(posed) = pose::posed_vertices(&h, &pal, &nodes, &g.positions) else { continue };
+            sum += pose::edge_stretch(&g.positions, &posed, &g.indices).over15;
+        }
+        println!("缩放全 1.0 → 全帧撕边 {sum}");
+    }
+    // 每帧「调色板相对单位阵」的最大转角：页面渲染的就是它；数值大 = 这一帧被摆得很野。
+    {
+        let mut per: Vec<(usize, f32)> = Vec::new();
+        for f in 0..anim.frames {
+            let Some(pal) = pose::reanchored_palette(&h, &anim, f) else { continue };
+            let mut mx = 0f32;
+            for m in &pal {
+                let tr = m[0] + m[5] + m[10];
+                let a = ((tr - 1.0) / 2.0).clamp(-1.0, 1.0).acos().to_degrees();
+                if a > mx { mx = a; }
+            }
+            per.push((f, mx));
+        }
+        let mut top = per.clone();
+        top.sort_by(|a, b| b.1.total_cmp(&a.1));
+        println!("调色板最大转角 top5 帧：{:?}", top.iter().take(5).collect::<Vec<_>>());
+        if let Some((_, a5)) = per.iter().find(|(f, _)| *f == 5) { println!("  第 5 帧最大转角 {a5:.1}°"); }
+        if let Some((_, a10)) = per.iter().find(|(f, _)| *f == 10) { println!("  第 10 帧最大转角 {a10:.1}°"); }
+    }
     // 锚口径对照：第 0 帧锚（预览）vs 网格绑定锚（游戏真正的蒙皮口径）。
     {
         let bind = pose::bind_worlds(&h);
@@ -499,6 +534,113 @@ fn main() {
             }
             let mut v: Vec<_> = by_bone.into_iter().collect();
             v.sort_by(|a, b| b.1.cmp(&a.1));
+            // 刚体守恒：两端都「只受一根骨、权重 1.0」的边，同一根骨下长度必须一点不变。
+            {
+                let mut single: Vec<Option<usize>> = vec![None; g.positions.len()];
+                let mut multi = vec![false; g.positions.len()];
+                for nd in &nodes {
+                    let Some(sk) = &nd.skin else { continue };
+                    let Some(j) = h.bones.iter().position(|b| b.name == nd.name) else { continue };
+                    for (&v, &w) in sk.vertices.iter().zip(sk.weights.iter()) {
+                        let vi = v as usize;
+                        if vi >= single.len() || w <= 0.0 { continue; }
+                        if single[vi].is_none() && (w - 1.0).abs() < 1e-4 { single[vi] = Some(j); }
+                        else { multi[vi] = true; }
+                    }
+                }
+                let (mut n_edges, mut bad, mut worst) = (0usize, 0usize, 1.0f32);
+                for tri in g.indices.chunks(3) {
+                    for k in 0..3 {
+                        let (i, j) = (tri[k] as usize, tri[(k + 1) % 3] as usize);
+                        if i >= posed.len() || j >= posed.len() || multi[i] || multi[j] { continue; }
+                        let (Some(a), Some(b)) = (single[i], single[j]) else { continue };
+                        if a != b { continue; }
+                        let (p, q) = (g.positions[i], g.positions[j]);
+                        let (pp, qq) = (posed[i], posed[j]);
+                        let l0 = ((p[0]-q[0]).powi(2)+(p[1]-q[1]).powi(2)+(p[2]-q[2]).powi(2)).sqrt();
+                        if l0 < 1e-4 { continue; }
+                        let l1 = ((pp[0]-qq[0]).powi(2)+(pp[1]-qq[1]).powi(2)+(pp[2]-qq[2]).powi(2)).sqrt();
+                        n_edges += 1;
+                        let r = l1 / l0;
+                        if (r - 1.0).abs() > 1e-3 { bad += 1; }
+                        if (r - 1.0).abs() > (worst - 1.0).abs() { worst = r; }
+                    }
+                }
+                println!("刚体守恒：同骨单影响边 {n_edges} 条，长度变化 >1e-3 的 {bad} 条（最大比 {worst:.4}）");
+            }
+            // 平移幅度：每根骨的局部平移相对第 0 帧的最大偏移。骨架近乎不转却散开时，
+            // 唯一的物理来源就是「骨在滑」。
+            {
+                let mut slides: Vec<(String, f32)> = Vec::new();
+                for t in &anim.tracks {
+                    if t.positions.len() < 2 { continue; }
+                    let p0 = t.positions[0];
+                    let mut m = 0f32;
+                    for p in &t.positions {
+                        let d = ((p[0]-p0[0]).powi(2)+(p[1]-p0[1]).powi(2)+(p[2]-p0[2]).powi(2)).sqrt();
+                        if d > m { m = d; }
+                    }
+                    slides.push((t.bone.clone(), m));
+                }
+                slides.sort_by(|a, b| b.1.total_cmp(&a.1));
+                println!(
+                    "局部平移最大偏移 top6：{:?}",
+                    slides.iter().take(6).map(|(n, d)| format!("{n} {d:.3}")).collect::<Vec<_>>()
+                );
+                let big = slides.iter().filter(|(_, d)| *d > 0.3).count();
+                println!("  偏移 >0.3 的骨：{big} / {}", slides.len());
+            }
+            // 关节弯曲角：每根骨相对父骨的世界旋转差（最狠帧）。极大值说明骨架本身在弯，
+            // 硬权重的相邻部件必然分开；正常值则说明「分开」另有原因。
+            {
+                let mut joints: Vec<(String, f32)> = Vec::new();
+                for (j, b) in h.bones.iter().enumerate() {
+                    let Some(p) = b.parent else { continue };
+                    let m = pal[j];
+                    let mp = pal[p];
+                    // R = M_j · M_p⁻¹（行向量），取旋转部分的夹角
+                    let inv = match pose::mat_inverse_affine(&mp) { Some(x) => x, None => continue };
+                    let r = pose::mat_mul(&m, &inv);
+                    let tr = r[0] + r[5] + r[10];
+                    let ang = ((tr - 1.0) / 2.0).clamp(-1.0, 1.0).acos().to_degrees();
+                    joints.push((b.name.clone(), ang));
+                }
+                joints.sort_by(|a, b| b.1.total_cmp(&a.1));
+                println!(
+                    "帧 {worst} 关节弯曲角 top6：{:?}",
+                    joints.iter().take(6).map(|(n, a)| format!("{n} {a:.1}°")).collect::<Vec<_>>()
+                );
+                let big = joints.iter().filter(|(_, a)| *a > 90.0).count();
+                println!("  弯曲 >90° 的关节：{big} / {}", joints.len());
+            }
+            // 同骨 / 跨骨 撕边拆分：同骨边若被拉开，说明蒙皮本身不刚体（我们的错）；
+            // 只有跨骨边被拉开，则是「不同骨把相邻部件带开」——刚性蒙皮的必然结果。
+            {
+                let mut same = 0usize;
+                let mut cross = 0usize;
+                let mut unknown = 0usize;
+                for tri in g.indices.chunks(3) {
+                    for k in 0..3 {
+                        let (i, j) = (tri[k] as usize, tri[(k + 1) % 3] as usize);
+                        if i >= posed.len() || j >= posed.len() {
+                            continue;
+                        }
+                        let (a, b) = (g.positions[i], g.positions[j]);
+                        let (pa, pb) = (posed[i], posed[j]);
+                        let l0 = ((a[0]-b[0]).powi(2)+(a[1]-b[1]).powi(2)+(a[2]-b[2]).powi(2)).sqrt();
+                        if l0 < 1e-4 { continue; }
+                        let l1 = ((pa[0]-pb[0]).powi(2)+(pa[1]-pb[1]).powi(2)+(pa[2]-pb[2]).powi(2)).sqrt();
+                        if l1 / l0 <= 1.5 { continue; }
+                        match (&owner[i], &owner[j]) {
+                            (Some((x, _)), Some((y, _))) => {
+                                if x == y { same += 1; } else { cross += 1; }
+                            }
+                            _ => unknown += 1,
+                        }
+                    }
+                }
+                println!("帧 {worst} 撕边拆分：同骨 {same} · 跨骨 {cross} · 无主骨 {unknown}");
+            }
             println!("帧 {worst} 撕边按主权重骨归属（前 12 根）:");
             for (n, c) in v.iter().take(12) {
                 println!("  {n:32} {c:6} 条");

@@ -8,8 +8,9 @@ import { el, esc, num, chips, markChips, errText } from "./ui.js";
 import * as api from "./api.js";
 import { state, saveState } from "./state.js";
 import { showDetail } from "./detail.js";
-import { listCount, railCount, rowMissChip, progressLine, emptyMessage } from "./lib/wording.js";
+import { listCount, railCount, rowMissChip, missChipTitle, progressLine, emptyMessage } from "./lib/wording.js";
 import { isNotReadyMsg } from "./lib/detailState.js";
+import { glossText, pinyinForChinese } from "./lib/gloss.js";
 import { makeSeq } from "./lib/seq.js";
 
 const ALL = { value: "全部", label: "全部" };
@@ -106,9 +107,13 @@ function rowHtml(c) {
     <span class="thumb" data-gid="${c.gid}"></span>
     <span class="body">
     <span class="t"><strong title="${esc(title)}">${esc(title)}</strong><em class="grade g${esc(c.grade)}" title="${esc(c.gradeNote)}">${esc(c.grade)}${qword ? ` ${esc(qword)}` : ""}</em></span>
-    <span class="s">${esc(sub)}</span>
+    <span class="s">${esc(sub)}${
+      glossText(c.name) ? `<em class="gloss" title="按拼音读出来的中文，不是客户端文案">${esc(glossText(c.name))}</em>` : ""
+    }</span>
     <span class="c">${
-      miss > 0 && rowMissChip(miss) ? `<i>${esc(rowMissChip(miss))}</i>` : ""
+      miss > 0 && rowMissChip(miss)
+        ? `<i class="missChip" data-miss="${miss}" title="${esc(missChipTitle(c))}">${esc(rowMissChip(miss))}</i>`
+        : ""
     }${parts || `<i class="dim">没读到部件</i>`}<i>${num(c.memberTotal)} 文件</i></span>
     </span>
   </button>`;
@@ -323,7 +328,8 @@ async function loadMore() {
 
 function currentFilter() {
   return {
-    query: state.query || null,
+    // 中文名（词表里那些）先翻成拼音再搜：输「高山白猿」也能找到 gaoshanbaiyuan 那批。
+    query: pinyinForChinese(state.query) || state.query || null,
     scenario: state.scenario,
     kind: state.kind,
     grade: state.grade,
@@ -362,6 +368,7 @@ export async function refresh(opts = {}) {
       page.queryWords.length > 1 ? `按这几种拼法都找了：${page.queryWords.join("、")}` : "";
     // 还有没列完的才把 sentinel 摆出来（它 hidden 时观察器不触发）。
     el("more").hidden = !(state.ready && page.total > page.items.length);
+    paintAutoTex(page.items);
     if (opts.top) el("rows").closest(".pane")?.scrollTo?.({ top: 0 });
   } catch (e) {
     if (seq.isStale(my)) return;
@@ -431,3 +438,26 @@ export function resetFilters() {
 }
 
 bindListEvents();
+
+/// 「贴图缺 N」里的可解数：只给**这一页的行**算，先画字再补数；
+/// 算不出就不补，原来那句口径说明仍然在，不会因此谎报。
+async function paintAutoTex(items) {
+  // 测试替身没有这个命令时直接跳过（别把「没装这个能力」变成未处理的 rejection）。
+  if (typeof api.textureAutoCounts !== "function") return;
+  const rows = (items || []).filter((c) => c.refTotal - c.locatedTotal > 0).slice(0, 80);
+  if (!rows.length) return;
+  try {
+    const counts = await api.textureAutoCounts(rows.map((c) => c.gid));
+    for (let i = 0; i < rows.length; i++) {
+      const auto = counts && counts[i] ? counts[i] : 0;
+      if (!auto) continue;
+      const c = rows[i];
+      const chip = el("rows").querySelector(`.row-item[data-gid="${c.gid}"] .missChip`);
+      if (!chip) continue;
+      chip.textContent = rowMissChip(c.refTotal - c.locatedTotal, auto);
+      chip.title = missChipTitle(c, auto);
+    }
+  } catch {
+    // 补不上就维持原样：数字仍是清单口径，说明里已写「会偏大」。
+  }
+}

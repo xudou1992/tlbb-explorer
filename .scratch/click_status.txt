@@ -1,1 +1,1 @@
-NO_WINDOW
+FG hwnd=331658 655x424 -> D:\TLGL\.scratch\game_live_20261028.png

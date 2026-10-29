@@ -2,8 +2,48 @@ tsv rows            : 7996
 both parsed         : 7996
 either side refused : 0
 normals verified    : 7891
-uv set 0 verified   : 7169
-face table (2*fc)   : 1651
-unexplained middle  : 3582
+uv set 0 verified   : 7891
+face table (2*fc)   : 5012
+unexplained middle  : 3353
 indices in range    : 7996
-field disagreements : 0
+field disagreements : 7444
+  ('uv_sets', 'data\\effect\\effectmodel\\w1351_model_7799_h002.mesh', 0, 1)
+  ('ft', 'data\\effect\\effectmodel\\w1351_model_7799_h002.mesh', 0, 1)
+  ('leftover', 'data\\effect\\effectmodel\\w1351_model_7799_h002.mesh', 116918, 0)
+  ('uv_sets', 'data\\effect\\effectmodel\\w1351_model_bhjl_rygs_w001.mesh', 0, 1)
+  ('ft', 'data\\effect\\effectmodel\\w1351_model_bhjl_rygs_w001.mesh', 0, 1)
+  ('leftover', 'data\\effect\\effectmodel\\w1351_model_bhjl_rygs_w001.mesh', 287506, 0)
+  ('uv_sets', 'data\\effect\\effectmodel\\w1351_model_biaocheb4_w001.mesh', 0, 1)
+  ('ft', 'data\\effect\\effectmodel\\w1351_model_biaocheb4_w001.mesh', 0, 1)
+  ('leftover', 'data\\effect\\effectmodel\\w1351_model_biaocheb4_w001.mesh', 19710, 0)
+  ('uv_sets', 'data\\effect\\effectmodel\\w1351_model_biaocheb5_w001.mesh', 0, 1)
+  ('ft', 'data\\effect\\effectmodel\\w1351_model_biaocheb5_w001.mesh', 0, 1)
+  ('leftover', 'data\\effect\\effectmodel\\w1351_model_biaocheb5_w001.mesh', 9406, 0)
+  ('uv_sets', 'data\\effect\\effectmodel\\w1351_model_chuan_lf001.mesh', 0, 1)
+  ('ft', 'data\\effect\\effectmodel\\w1351_model_chuan_lf001.mesh', 0, 1)
+  ('leftover', 'data\\effect\\effectmodel\\w1351_model_chuan_lf001.mesh', 7210, 0)
+  ('uv_sets', 'data\\effect\\effectmodel\\w1351_model_cylinder_lf009.mesh', 0, 1)
+  ('ft', 'data\\effect\\effectmodel\\w1351_model_cylinder_lf009.mesh', 0, 1)
+  ('leftover', 'data\\effect\\effectmodel\\w1351_model_cylinder_lf009.mesh', 4978, 0)
+  ('uv_sets', 'data\\effect\\effectmodel\\w1351_model_dc_gtd_c001.mesh', 0, 1)
+  ('ft', 'data\\effect\\effectmodel\\w1351_model_dc_gtd_c001.mesh', 0, 1)
+  ('leftover', 'data\\effect\\effectmodel\\w1351_model_dc_gtd_c001.mesh', 2246, 0)
+  ('uv_sets', 'data\\effect\\effectmodel\\w1351_model_dc_ylj_c001.mesh', 0, 1)
+  ('ft', 'data\\effect\\effectmodel\\w1351_model_dc_ylj_c001.mesh', 0, 1)
+  ('leftover', 'data\\effect\\effectmodel\\w1351_model_dc_ylj_c001.mesh', 26106, 0)
+  ('uv_sets', 'data\\effect\\effectmodel\\w1351_model_flower_h001.mesh', 0, 1)
+  ('ft', 'data\\effect\\effectmodel\\w1351_model_flower_h001.mesh', 0, 1)
+  ('leftover', 'data\\effect\\effectmodel\\w1351_model_flower_h001.mesh', 686, 0)
+  ('uv_sets', 'data\\effect\\effectmodel\\w1351_model_flower_lf002.mesh', 0, 1)
+  ('ft', 'data\\effect\\effectmodel\\w1351_model_flower_lf002.mesh', 0, 1)
+  ('leftover', 'data\\effect\\effectmodel\\w1351_model_flower_lf002.mesh', 1466, 0)
+  ('uv_sets', 'data\\effect\\effectmodel\\w1351_model_hjyw_hua_w001.mesh', 0, 1)
+  ('ft', 'data\\effect\\effectmodel\\w1351_model_hjyw_hua_w001.mesh', 0, 1)
+  ('leftover', 'data\\effect\\effectmodel\\w1351_model_hjyw_hua_w001.mesh', 36898, 0)
+  ('uv_sets', 'data\\effect\\effectmodel\\w1351_model_line_lf001a.mesh', 0, 1)
+  ('ft', 'data\\effect\\effectmodel\\w1351_model_line_lf001a.mesh', 0, 1)
+  ('leftover', 'data\\effect\\effectmodel\\w1351_model_line_lf001a.mesh', 3942, 0)
+  ('uv_sets', 'data\\effect\\effectmodel\\w1351_model_mmdd_w003.mesh', 0, 1)
+  ('ft', 'data\\effect\\effectmodel\\w1351_model_mmdd_w003.mesh', 0, 1)
+  ('leftover', 'data\\effect\\effectmodel\\w1351_model_mmdd_w003.mesh', 1950, 0)
+  ('uv_sets', 'data\\effect\\effectmodel\\w1351_model_nan_wujian_lf171_187.mesh', 0, 1)

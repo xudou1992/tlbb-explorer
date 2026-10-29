@@ -18,10 +18,15 @@ export function onReading(fn) {
 
 export const stats = () => call("stats");
 export const listGroups = (filter) => call("list_groups", { filter });
+export const textureAutoCounts = (gids) => call("texture_auto_counts", { gids });
 export const cardDetail = (gid) => call("card_detail", { gid });
 export const assetInspect = (gid) => call("asset_inspect", { gid });
 export const preview = (hash) => call("preview", { hash });
 export const meshData = (name, hash) => call("mesh_data", { name, hash: hash || null });
+/// 分层贴图：按 `.mtl` 顺序返回「哪段子网格用哪张图」，基础层 + 特效层。
+/// 带上 hash：网格尾部名会重名，光靠名字会定位到别的变体。
+export const meshTexturePlan = (gid, name, hash) =>
+  call("mesh_texture_plan", { gid, name, hash: hash || null });
 /// 绑定姿态的骨头连线。解不出骨架时回空表，不是失败。
 export const meshBoneLines = (name, hash) => call("mesh_bone_lines", { name, hash: hash || null });
 /// 「加载即贴」：这格槽位在覆盖表里有人工确认的贴图就回 PNG data URL，没有回 null。
@@ -41,8 +46,14 @@ export const mapFootprint = (id) => call("map_footprint", { id });
 export const groupPreview = (gid) => call("group_preview", { gid });
 export const groupMeshOutline = (gid) => call("group_mesh_outline", { gid });
 /// 贴图覆盖表：人工确认候选后写入 / 撤销。只写 .scratch 下的表，不碰原资源。
-export const textureOverrideSet = (slotName, cfgPath, hash, note) =>
-  call("texture_override_set", { slotName, cfgPath: cfgPath || null, hash, note: note || "" });
+export const textureOverrideSet = (slotName, cfgPath, hash, note, mesh) =>
+  call("texture_override_set", {
+    slotName,
+    cfgPath: cfgPath || null,
+    hash,
+    note: note || "",
+    mesh: mesh || null,
+  });
 export const textureOverrideClear = (slotName, cfgPath) =>
   call("texture_override_clear", { slotName, cfgPath: cfgPath || null });
 /// UV 岛分布图：这只网格的 UV 铺在 [0,1]² 的哪些格子上（亮=岛内，暗=岛外）。

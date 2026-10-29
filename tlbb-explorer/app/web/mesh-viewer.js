@@ -57,14 +57,27 @@ varying vec3 vView;
 varying vec2 vUv;
 uniform sampler2D uTex;
 uniform float uUseTex;
+uniform sampler2D uMask;
+uniform float uUseMask;
+// 特效层是发光的叠加片，不参与灰模的漫反射；基础层仍按半兰伯特打光。
+uniform float uUnlit;
 void main() {
   vec3 n = normalize(vNormal);
   vec3 l = normalize(vec3(0.35, 0.75, 0.6));
   float d = dot(n, l) * 0.5 + 0.5;
   float rim = pow(1.0 - abs(dot(normalize(-vView), n)), 2.0) * 0.25;
-  vec3 base = mix(vec3(0.62, 0.65, 0.69), texture2D(uTex, vUv).rgb, uUseTex);
-  vec3 col = base * (0.32 + 0.68 * d) + rim;
-  gl_FragColor = vec4(col, 1.0);
+  vec4 tex = texture2D(uTex, vUv);
+  float m = 1.0;
+  if (uUseMask > 0.5) {
+    vec4 mk = texture2D(uMask, vUv);
+    // 客户端 mask 有的用 alpha、有的用灰度；取两者最大，避免整层消失。
+    m = max(mk.a, max(mk.r, max(mk.g, mk.b)));
+  }
+  vec3 base = mix(vec3(0.62, 0.65, 0.69), tex.rgb, uUseTex);
+  vec3 lit = base * (0.32 + 0.68 * d) + rim;
+  vec3 col = mix(lit, tex.rgb, uUnlit);
+  float a = uUseTex > 0.5 ? (uUseMask > 0.5 ? tex.a * m : tex.a) : 1.0;
+  gl_FragColor = vec4(col, a);
 }`;
 
 // 骨头连线单独一条程序。灰模那对 VS/FS 的数字不动：没传骨头时这条程序不会被 use。
@@ -87,6 +100,25 @@ void main() {
 // 视场角。抽成常量是因为 draw() 用它投影、pickAt 用它反投影——
 // 两处各写一个数字，改了其中一处就会出现"看着点中了，其实偏一条街"。
 const FOV = Math.PI / 4.5;
+
+function loadImage(src) {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => res(img);
+    img.onerror = () => rej(new Error("贴图解码失败"));
+    img.src = src;
+  });
+}
+
+function uploadTexture(gl, img) {
+  const t = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  return t;
+}
 
 function compile(gl, type, src) {
   const sh = gl.createShader(type);
@@ -296,7 +328,13 @@ export class MeshViewer {
       use: gl.getUniformLocation(prog, "uUseInst"),
       tex: gl.getUniformLocation(prog, "uTex"),
       useTex: gl.getUniformLocation(prog, "uUseTex"),
+      mask: gl.getUniformLocation(prog, "uMask"),
+      useMask: gl.getUniformLocation(prog, "uUseMask"),
+      unlit: gl.getUniformLocation(prog, "uUnlit"),
     };
+    gl.useProgram(prog);
+    gl.uniform1i(this.un.tex, 0);
+    gl.uniform1i(this.un.mask, 1);
     // 老路径用的四个专用缓冲：单网格时不动，行为和以前一样。
     // uv 必须也在专用缓冲里：load() 换数据时若只换三个，UV 就永远进不了
     // 绘制路径（drawSingle 的 texReady 分支拿不到 buf.uv，套贴图永远无效）。
@@ -317,6 +355,8 @@ export class MeshViewer {
     this.inst = null;
     this.tex = null;
     this.texReady = false;
+    this.texLayers = [];
+    this.layerSeq = 0;
     this.pickBound = null;
 
     this.home = { dist: 3, rx: -0.25, ry: 0.6 };
@@ -324,9 +364,12 @@ export class MeshViewer {
     this.drag = null;
     this.raf = 0;
     this.mesh = null;
+    /// 只为诊断用的子网格切片：null = 全画；N = 只画第 N 个子网格。
+    this.faceRange = null;
     // 整组部件路径：每件一份独立缓冲，loadParts 建、unloadParts 收。
     // 与单网格 / 多实例互斥——同一时刻只有一种东西在画。
     this.parts = null;
+    this.partsSeq = 0;
     this.bindEvents();
   }
 
@@ -415,26 +458,261 @@ export class MeshViewer {
     this.start();
   }
 
-  /// 套候选贴图（data URL）。只动显存里的这份拷贝，不碰任何原始资源。
+  /// 套一张图到整只网格：人工确认/试贴走这条；分层贴图不走这里。
   setTexture(dataUrl) {
     const gl = this.gl;
-    const img = new Image();
-    img.onload = () => {
-      if (!this.tex) this.tex = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, this.tex);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    this.clearTextureLayers();
+    const my = this.layerSeq;
+    this.texReady = false;
+    loadImage(dataUrl).then((img) => {
+      if (my !== this.layerSeq) return;
+      if (this.tex) gl.deleteTexture(this.tex);
+      this.tex = uploadTexture(gl, img);
       this.texReady = true;
       this.draw();
-    };
-    img.src = dataUrl;
+    }).catch(() => {});
+  }
+
+  /// 分层贴图：每层一段子网格、自己的颜色图（可选 mask）。基础层不混合，
+  /// 特效层用 `SRC_ALPHA, ONE` 叠加——这正是 `.mtl` 里 `add_trans` 的意思。
+  setTextureLayers(layers) {
+    const gl = this.gl;
+    this.clearTextureLayers();
+    this.texReady = false;
+    const my = this.layerSeq;
+    const list = (Array.isArray(layers) ? layers : []).filter(
+      (l) => l && l.color && l.color.png && Number(l.faceCount) > 0,
+    );
+    const jobs = list.map(async (l) => {
+      let img;
+      try {
+        img = await loadImage(l.color.png);
+      } catch {
+        return null;
+      }
+      let mask = null;
+      if (l.mask && l.mask.png) {
+        try {
+          mask = await loadImage(l.mask.png);
+        } catch {
+          mask = null;
+        }
+      }
+      if (my !== this.layerSeq) {
+        return null;
+      }
+      return {
+        tex: uploadTexture(gl, img),
+        mask: mask ? uploadTexture(gl, mask) : null,
+        start: Math.max(0, Number(l.faceStart) || 0) * 3,
+        count: Math.max(0, Number(l.faceCount) || 0) * 3,
+        blend: l.blend === "add" ? "add" : "opaque",
+        slot: l.slot || (l.color && l.color.slot) || "",
+        maskSlot: (l.mask && l.mask.slot) || "",
+      };
+    });
+    Promise.allSettled(jobs).then((results) => {
+      const ready = results.filter((r) => r.status === "fulfilled" && r.value).map((r) => r.value);
+      if (my !== this.layerSeq) {
+        for (const l of ready) {
+          if (l.tex) gl.deleteTexture(l.tex);
+          if (l.mask) gl.deleteTexture(l.mask);
+        }
+        return;
+      }
+      this.texLayers = ready;
+      this.soloLayer = null;
+      this.draw();
+    });
+  }
+
+  /// 分层模式下只换某一条槽位的图（auto 卡「套上看看」用）：不把整只网格盖成一张。
+  /// 槽名对不上任何一层就回 false，调用方才走单张老路。
+  setLayerTexture(slotName, dataUrl) {
+    const gl = this.gl;
+    const want = String(slotName || "").toLowerCase();
+    if (!want || !this.texLayers.length) return false;
+    const colorHit = this.texLayers.find((l) => String(l.slot).toLowerCase() === want);
+    const maskHit = this.texLayers.find((l) => String(l.maskSlot).toLowerCase() === want);
+    if (!colorHit && !maskHit) return false;
+    const my = this.layerSeq;
+    loadImage(dataUrl).then((img) => {
+      if (my !== this.layerSeq) return;
+      const tex = uploadTexture(gl, img);
+      if (colorHit) {
+        if (colorHit.tex) gl.deleteTexture(colorHit.tex);
+        colorHit.tex = tex;
+      } else if (maskHit) {
+        if (maskHit.mask) gl.deleteTexture(maskHit.mask);
+        maskHit.mask = tex;
+      }
+      this.draw();
+    }).catch(() => {});
+    return true;
+  }
+
+  /// 只看某一层（核顺序用）：`null` = 全部层。只影响绘制，不动贴图数据。
+  /// 分层是「哪段几何配哪张图」的推断时，这个开关让人一眼看出配错没配错。
+  setLayerSolo(index) {
+    this.soloLayer = index == null ? null : Number(index);
+    this.draw();
+  }
+
+  /// 整组预览下只看当前件的某一层。`layerIndex=null` 恢复全部。
+  setPartLayerSolo(index, layerIndex) {
+    const part = this.parts && this.parts[index];
+    if (!part) return false;
+    part.solo = layerIndex == null ? null : Number(layerIndex);
+    this.draw();
+    return true;
+  }
+
+  clearTextureLayers() {
+    const gl = this.gl;
+    this.layerSeq++;
+    for (const l of this.texLayers) {
+      if (l.tex) gl.deleteTexture(l.tex);
+      if (l.mask) gl.deleteTexture(l.mask);
+    }
+    this.texLayers = [];
   }
 
   clearTexture() {
+    this.clearTextureLayers();
+    this.clearPartTextures();
     this.texReady = false;
     this.draw();
+  }
+
+  /// 整组预览：给第 i 件装它自己的分层贴图。与单网格的 setTextureLayers 同构，
+  /// 但每件独立，互不覆盖——黄蜂的身体和翅膀各有各的图。
+  setPartLayers(index, layers) {
+    const gl = this.gl;
+    const part = this.parts && this.parts[index];
+    if (!part) return false;
+    this.clearOnePartTextures(part);
+    part.layerToken = (part.layerToken || 0) + 1;
+    const token = part.layerToken;
+    const my = this.partsSeq;
+    const list = (Array.isArray(layers) ? layers : []).filter(
+      (l) => l && l.color && l.color.png && Number(l.faceCount) > 0,
+    );
+    const jobs = list.map(async (l) => {
+      let img;
+      try {
+        img = await loadImage(l.color.png);
+      } catch {
+        return null;
+      }
+      let mask = null;
+      if (l.mask && l.mask.png) {
+        try {
+          mask = await loadImage(l.mask.png);
+        } catch {
+          mask = null;
+        }
+      }
+      if (my !== this.partsSeq || part.layerToken !== token) return null;
+      return {
+        tex: uploadTexture(gl, img),
+        mask: mask ? uploadTexture(gl, mask) : null,
+        start: Math.max(0, Number(l.faceStart) || 0) * 3,
+        count: Math.max(0, Number(l.faceCount) || 0) * 3,
+        blend: l.blend === "add" ? "add" : "opaque",
+        slot: l.slot || (l.color && l.color.slot) || "",
+        maskSlot: (l.mask && l.mask.slot) || "",
+      };
+    });
+    Promise.allSettled(jobs).then((results) => {
+      const ready = results.filter((r) => r.status === "fulfilled" && r.value).map((r) => r.value);
+      if (my !== this.partsSeq || part.layerToken !== token) {
+        for (const l of ready) {
+          if (l.tex) gl.deleteTexture(l.tex);
+          if (l.mask) gl.deleteTexture(l.mask);
+        }
+        return;
+      }
+      part.layers = ready;
+      part.solo = null;
+      this.draw();
+    });
+    return true;
+  }
+
+  /// 分层模式下只换某一件的某一条槽位（auto 卡「套上看看」）。
+  setPartLayerTexture(index, slotName, dataUrl) {
+    const gl = this.gl;
+    const part = this.parts && this.parts[index];
+    const want = String(slotName || "").toLowerCase();
+    if (!part || !want || !part.layers || !part.layers.length) return false;
+    const colorHit = part.layers.find((l) => String(l.slot).toLowerCase() === want);
+    const maskHit = part.layers.find((l) => String(l.maskSlot).toLowerCase() === want);
+    if (!colorHit && !maskHit) return false;
+    const my = this.partsSeq;
+    loadImage(dataUrl).then((img) => {
+      if (my !== this.partsSeq || part !== this.parts[index]) return;
+      const tex = uploadTexture(gl, img);
+      if (colorHit) {
+        if (colorHit.tex) gl.deleteTexture(colorHit.tex);
+        colorHit.tex = tex;
+      } else {
+        if (maskHit.mask) gl.deleteTexture(maskHit.mask);
+        maskHit.mask = tex;
+      }
+      this.draw();
+    }).catch(() => {});
+    return true;
+  }
+
+  /// 整张候选试贴：只套到这一件，别的件不受影响。
+  setPartSingleTexture(index, dataUrl) {
+    const gl = this.gl;
+    const part = this.parts && this.parts[index];
+    if (!part) return false;
+    this.clearOnePartTextures(part);
+    const my = this.partsSeq;
+    loadImage(dataUrl).then((img) => {
+      if (my !== this.partsSeq || part !== this.parts[index]) return;
+      part.singleTex = uploadTexture(gl, img);
+      part.singleReady = true;
+      this.draw();
+    }).catch(() => {});
+    return true;
+  }
+
+  clearOnePartTextures(part) {
+    const gl = this.gl;
+    for (const l of part.layers || []) {
+      if (l.tex) gl.deleteTexture(l.tex);
+      if (l.mask) gl.deleteTexture(l.mask);
+    }
+    part.layers = [];
+    if (part.singleTex) gl.deleteTexture(part.singleTex);
+    part.singleTex = null;
+    part.singleReady = false;
+    part.layerToken = (part.layerToken || 0) + 1;
+  }
+
+  clearPartTextures() {
+    this.partsSeq++;
+    for (const p of this.parts || []) this.clearOnePartTextures(p);
+    this.draw();
+  }
+
+  /// 诊断用：只画指定子网格；传 null 回到整只网格。面数来自 mesh_data.faceCounts。
+  setSubmeshOnly(index) {
+    if (index === null || index === undefined) {
+      this.faceRange = null;
+      this.draw();
+      return true;
+    }
+    const counts = (this.mesh && this.mesh.faceCounts) || [];
+    if (!Number.isInteger(index) || index < 0 || index >= counts.length) return false;
+    let start = 0;
+    for (let i = 0; i < index; i++) start += counts[i] * 3;
+    this.faceRange = { start, count: counts[index] * 3 };
+    this.draw();
+    return true;
   }
 
   /// 把「按某帧动作摆好的顶点」写进现有位置缓冲（动作页蒙皮预览专用）。
@@ -474,7 +752,15 @@ export class MeshViewer {
     try {
       for (const data of list) {
         const geo = uploadMesh(gl, data);
-        fresh.push({ buf: geo.buf, ic: geo.ic, vertexCount: geo.vertexCount, ...viewOf(geo, data) });
+        fresh.push({
+          buf: geo.buf,
+          ic: geo.ic,
+          vertexCount: geo.vertexCount,
+          layers: [],
+          singleReady: false,
+          singleTex: null,
+          ...viewOf(geo, data),
+        });
       }
     } catch (e) {
       // uv 段可能没建（无 UV 的网格里它是 null），deleteBuffer 对 null 是空操作。
@@ -483,6 +769,9 @@ export class MeshViewer {
     }
     this.unloadParts();
     this.parts = fresh;
+    this.partsSeq++;
+    this.clearTextureLayers();
+    this.texReady = false;
     this.mesh = null;
     this.inst = null;
     this.pickBound = null;
@@ -498,8 +787,14 @@ export class MeshViewer {
   /// 每份部件缓冲整体换新/清空都从这里走，四个缓冲一个不漏（含可能为 null 的 uv）。
   unloadParts() {
     const gl = this.gl;
+    this.partsSeq++;
     for (const p of this.parts || []) {
       for (const b of [p.buf.pos, p.buf.nrm, p.buf.idx, p.buf.uv]) if (b) gl.deleteBuffer(b);
+      for (const l of p.layers || []) {
+        if (l.tex) gl.deleteTexture(l.tex);
+        if (l.mask) gl.deleteTexture(l.mask);
+      }
+      if (p.singleTex) gl.deleteTexture(p.singleTex);
     }
     this.parts = null;
   }
@@ -558,7 +853,12 @@ export class MeshViewer {
     this.unloadParts(); // 与整组路径互斥：老路径一上来，部件必须收干净
     // vertexCount 原本不在 viewOf 的产出里（那是单/多实例共用的口径函数），
     // 蒙皮预览的 setPose 要拿它核对回包顶点数——加在这里不动共享口径。
-    this.mesh = { ...viewOf(geo, data), vertexCount: geo.vertexCount };
+    this.mesh = {
+      ...viewOf(geo, data),
+      vertexCount: geo.vertexCount,
+      faceCounts: Array.isArray(data.faceCounts) ? data.faceCounts : [],
+    };
+    this.faceRange = null;
     this.inst = null;
     this.pickBound = null;
     // 单网格的"家"就是它自己的局部盒（跟扩展前一样）。这里不走实例那套
@@ -589,6 +889,7 @@ export class MeshViewer {
   /// 画面，设置 uUseInst 不会被谁挡住，渲染态也就不会在两条路径之间串。
   trackAllocation() {
     this.useInstanced(Boolean(this.inst));
+    this.clearTextureLayers();
     this.texReady = false;
   }
 
@@ -791,18 +1092,63 @@ export class MeshViewer {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buf.nrm);
     gl.enableVertexAttribArray(this.at.nrm);
     gl.vertexAttribPointer(this.at.nrm, 3, gl.FLOAT, false, 0, 0);
-    if (this.buf.uv && this.texReady) {
+    const layerPath = this.texLayers.length > 0 && this.buf.uv;
+    const singlePath = this.texReady && this.buf.uv && !layerPath;
+    if (layerPath || singlePath) {
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buf.uv);
       gl.enableVertexAttribArray(this.at.uv);
       gl.vertexAttribPointer(this.at.uv, 2, gl.FLOAT, false, 0, 0);
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, this.tex);
       gl.uniform1f(this.un.useTex, 1);
     } else {
       gl.uniform1f(this.un.useTex, 0);
+      gl.uniform1f(this.un.useMask, 0);
+      gl.uniform1f(this.un.unlit, 0);
     }
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buf.idx);
-    gl.drawElements(gl.TRIANGLES, this.mesh.ic, gl.UNSIGNED_SHORT, 0);
+    if (layerPath) {
+      for (const [li, l] of this.texLayers.entries()) {
+        if (!l.count) continue;
+        if (this.soloLayer != null && li !== this.soloLayer) continue;
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, l.tex);
+        if (l.mask) {
+          gl.activeTexture(gl.TEXTURE1);
+          gl.bindTexture(gl.TEXTURE_2D, l.mask);
+          gl.uniform1f(this.un.useMask, 1);
+        } else {
+          gl.uniform1f(this.un.useMask, 0);
+        }
+        if (l.blend === "add") {
+          gl.enable(gl.BLEND);
+          gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+          gl.depthMask(false);
+          gl.enable(gl.POLYGON_OFFSET_FILL);
+          gl.polygonOffset(-1, -1);
+          gl.uniform1f(this.un.unlit, 1);
+        } else {
+          gl.disable(gl.BLEND);
+          gl.depthMask(true);
+          gl.disable(gl.POLYGON_OFFSET_FILL);
+          gl.uniform1f(this.un.unlit, 0);
+        }
+        gl.drawElements(gl.TRIANGLES, l.count, gl.UNSIGNED_SHORT, l.start * 2);
+      }
+      gl.disable(gl.BLEND);
+      gl.depthMask(true);
+      gl.disable(gl.POLYGON_OFFSET_FILL);
+      gl.uniform1f(this.un.useMask, 0);
+      gl.uniform1f(this.un.unlit, 0);
+      return;
+    }
+    if (singlePath) {
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, this.tex);
+    }
+    if (this.faceRange) {
+      gl.drawElements(gl.TRIANGLES, this.faceRange.count, gl.UNSIGNED_SHORT, this.faceRange.start * 2);
+    } else {
+      gl.drawElements(gl.TRIANGLES, this.mesh.ic, gl.UNSIGNED_SHORT, 0);
+    }
   }
 
   /// 多实例：朴素但正确——**每个网格 bind 一次几何**，然后对引用它的每个实例
@@ -826,6 +1172,9 @@ export class MeshViewer {
     const gl = this.gl;
     const inst = this.inst;
     gl.uniform1f(this.un.use, 1);
+    gl.uniform1f(this.un.useTex, 0);
+    gl.uniform1f(this.un.useMask, 0);
+    gl.uniform1f(this.un.unlit, 0);
     for (let p = 0; p < this.pool.length; p++) {
       const geo = this.pool[p];
       gl.bindBuffer(gl.ARRAY_BUFFER, geo.buf.pos);
@@ -851,7 +1200,6 @@ export class MeshViewer {
   drawParts() {
     const gl = this.gl;
     gl.uniform1f(this.un.use, 0);
-    gl.uniform1f(this.un.useTex, 0);
     for (const p of this.parts) {
       gl.bindBuffer(gl.ARRAY_BUFFER, p.buf.pos);
       gl.enableVertexAttribArray(this.at.pos);
@@ -859,8 +1207,63 @@ export class MeshViewer {
       gl.bindBuffer(gl.ARRAY_BUFFER, p.buf.nrm);
       gl.enableVertexAttribArray(this.at.nrm);
       gl.vertexAttribPointer(this.at.nrm, 3, gl.FLOAT, false, 0, 0);
+      const layered = p.layers && p.layers.length && p.buf.uv;
+      const single = p.singleReady && p.buf.uv;
+      if (layered || single) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, p.buf.uv);
+        gl.enableVertexAttribArray(this.at.uv);
+        gl.vertexAttribPointer(this.at.uv, 2, gl.FLOAT, false, 0, 0);
+        gl.uniform1f(this.un.useTex, 1);
+      } else {
+        gl.uniform1f(this.un.useTex, 0);
+        gl.uniform1f(this.un.useMask, 0);
+        gl.uniform1f(this.un.unlit, 0);
+      }
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, p.buf.idx);
-      gl.drawElements(gl.TRIANGLES, p.ic, gl.UNSIGNED_SHORT, 0);
+      if (layered) {
+        for (const [li, l] of p.layers.entries()) {
+          if (!l.count) continue;
+          if (p.solo != null && li !== p.solo) continue;
+          gl.activeTexture(gl.TEXTURE0);
+          gl.bindTexture(gl.TEXTURE_2D, l.tex);
+          if (l.mask) {
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, l.mask);
+            gl.uniform1f(this.un.useMask, 1);
+          } else {
+            gl.uniform1f(this.un.useMask, 0);
+          }
+          if (l.blend === "add") {
+            gl.enable(gl.BLEND);
+            gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+            gl.depthMask(false);
+            gl.enable(gl.POLYGON_OFFSET_FILL);
+            gl.polygonOffset(-1, -1);
+            gl.uniform1f(this.un.unlit, 1);
+          } else {
+            gl.disable(gl.BLEND);
+            gl.depthMask(true);
+            gl.disable(gl.POLYGON_OFFSET_FILL);
+            gl.uniform1f(this.un.unlit, 0);
+          }
+          gl.drawElements(gl.TRIANGLES, l.count, gl.UNSIGNED_SHORT, l.start * 2);
+        }
+        gl.disable(gl.BLEND);
+        gl.depthMask(true);
+        gl.disable(gl.POLYGON_OFFSET_FILL);
+        gl.uniform1f(this.un.useMask, 0);
+        gl.uniform1f(this.un.unlit, 0);
+      } else if (single) {
+        gl.disable(gl.BLEND);
+        gl.depthMask(true);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, p.singleTex);
+        gl.uniform1f(this.un.useMask, 0);
+        gl.uniform1f(this.un.unlit, 0);
+        gl.drawElements(gl.TRIANGLES, p.ic, gl.UNSIGNED_SHORT, 0);
+      } else {
+        gl.drawElements(gl.TRIANGLES, p.ic, gl.UNSIGNED_SHORT, 0);
+      }
     }
   }
 

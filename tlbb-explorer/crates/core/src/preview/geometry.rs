@@ -12,8 +12,9 @@
 //! 0x94   4B   u32 子网格 / 材质槽数 sm（0 按 1 处理）
 //! 0x98…0x117  头部剩余（u16@0x114 与中间段布局强相关，语义未证实——只跳过）
 //! 0x118       位置流  vc × 3 × f32
-//!             中间段    = 12·vc 法线（实测恒为单位向量）
-//!                        [+ 8·vc UV] [+ 8·vc 第二套 UV] [+ 2·fc 面级 u16]
+//!             中间段    = 12·vc 法线（多数单位长度；平面着色那批不是，值不合格就只报空）
+//!                        [+ 2·fc 面级 u16（公共头 +0x48 的计数 >0 时才有）]
+//!                        [+ 8·vc UV] [+ 8·vc 第二套 UV]
 //!             p          u32 面数 × sm   ← 连续数组，步长 4 字节，Σ = fc
 //!             p + 4·sm   索引  fc × 3 × u16（各子网格按顺序紧挨着排）
 //!             …尾部       骨架条目流：origin/top 前奏 + 变长条目 ×N + tx_ 挂点表
@@ -43,9 +44,10 @@ pub struct MeshGeometry {
     /// 子网格 / 材质槽数（0x94）。引擎侧一个槽 = 一个 `REMesh` = 一次 draw call。
     pub submesh_count: u32,
     pub positions: Vec<[f32; 3]>,
-    /// 法线（vc × 3）。中间段开头恒为 12·vc 单位法线流，逐条校验通过才给。
+    /// 法线（vc × 3）。中间段开头恒为 12·vc 法线流（流长固定），逐条单位长度校验通过才给值。
     pub normals: Vec<[f32; 3]>,
-    /// 第一套 UV（vc × 2）。需要 middle ≥ 20·vc 且逐条校验通过。
+    /// 第一套 UV（vc × 2）。需要法线后的 UV 流完整且逐条校验通过。
+    /// 顺序按客户端装载器：法线 → 面级表（若有）→ UV；见 [`parse_mesh`] 注释。
     pub uvs: Vec<[f32; 2]>,
     /// 三角形索引（u16，长度 = 面数 × 3）。各子网格的索引**连续**排在一起，
     /// 切分位置见 [`MeshLayout::face_counts`]。
@@ -67,8 +69,10 @@ pub struct MeshLayout {
     pub face_counts: Vec<u32>,
     /// 读到几套 UV。只宣称第一套（第二套与切线等其它顶点属性在字节上分不开）。
     pub uv_sets: usize,
-    /// 中间段里是否还有一张 2·fc 的面级 u16 表（语义未证实，只报有没有）。
+    /// 中间段里是否有一张 2·fc 的面级 u16 表（在 UV 之前；语义未证实，只报有没有）。
     pub has_face_table: bool,
+    /// 法线之后是否还有一条 16 字节/顶点的流（客户端 `0x114 & 0x40` 时读；语义未证）。
+    pub has_16b_stream: bool,
     /// 中间段里没被 法线/UV/面级表 解释掉的字节数（不猜它是什么）。
     pub middle_leftover: usize,
 }
@@ -233,14 +237,40 @@ pub fn parse_mesh(raw: &[u8]) -> Result<MeshLayout, String> {
     // 中间段按几何 + 内容校验拆解，通不过校验的一律不给。
     // 只宣称第一套 UV：再往后的 8·vc 无法和切线之类的其它顶点属性区分开，
     // 宁可说"没读到"，也不给 glTF 编一个假的 TEXCOORD_1。
+    //
+    // 顺序按客户端 `sub_140736070`：法线 12·vc → **每面 2 字节表** → UV 8·vc。
+    // 那张面级表只在公共头 +0x48 的 u32 > 0 时读（例：`_w1351_boss_sysz_langying_yifu_001`
+    // =1、`w1351_nan_s_yifu_xianfeng_001` =1）；为 0 的份没有这张表，UV 紧跟法线。
+    // 2026-10-24 之前把面表放在 UV 后面，衣服/头发那族因此整段读偏：面表被当成 UV，
+    // 真正的 UV 往后错 2·fc 字节（不是 8 的倍数），f32 全变乱数 ⇒ 442/2,819 份「无 UV」。
     let normals = read_normals(raw, pos_end, vc);
-    // 法线没通过校验，整段中间段的布局就都不作数——游标不推进，剩余字节如实报满。
     let mut cursor = pos_end;
     let mut uvs = Vec::new();
     let mut uv_sets = 0usize;
-    if !normals.is_empty() {
+    let mut has_face_table = false;
+    let mut has_16b_stream = false;
+    let flags = u32_at(raw, 0x114).unwrap_or(0);
+    // 客户端的流长是固定的：flags 有 0x10（或 flags==0 的「全读」）就一定有 12·vc 法线流。
+    // 我们的「单位长度」只是**内容校验**，不通过只说明 normals 字段不给，不能据此停下——
+    // `cj_byjt` 那类 105 份法线是 ±0.0058（平面着色），UV 却完好；早停会把 UV 一起丢掉。
+    let has_normals_stream = flags == 0 || flags & 0x10 != 0;
+    if has_normals_stream && idx_at.saturating_sub(cursor) >= vc * 12 {
         cursor += vc * 12;
-        if idx_at - cursor >= vc * 8 {
+        let header_count = u32_at(raw, 0x48).unwrap_or(0);
+        if header_count > 0 {
+            // 客户端在 0x40 位时先读一条 16B/顶点流，再读 2·fc 面级表；两条都在 UV 之前。
+            if flags & 0x40 != 0 && idx_at - cursor >= vc * 16 {
+                has_16b_stream = true;
+                cursor += vc * 16;
+            }
+            if idx_at - cursor >= fc * 2 {
+                has_face_table = true;
+                cursor += fc * 2;
+            }
+        }
+        // 0 是个特例：客户端对 flags==0 走「全都读」。0x100/0x200/0x300 都有第一套 UV。
+        let has_uv_stream = flags == 0 || (flags & 0xF00) >= 0x100;
+        if has_uv_stream && idx_at - cursor >= vc * 8 {
             let read = read_uvs(raw, cursor, vc);
             if vc == 0 || !read.is_empty() {
                 uvs = read;
@@ -248,11 +278,6 @@ pub fn parse_mesh(raw: &[u8]) -> Result<MeshLayout, String> {
                 cursor += vc * 8;
             }
         }
-    }
-    // 实测布局里中间段只可能是 A·vc (+ 2·fc)；剩下恰好等于 2·fc 才认那张面级表。
-    let has_face_table = vc > 0 && idx_at - cursor == fc * 2;
-    if has_face_table {
-        cursor += fc * 2;
     }
     let middle_leftover = idx_at - cursor;
 
@@ -307,6 +332,7 @@ pub fn parse_mesh(raw: &[u8]) -> Result<MeshLayout, String> {
         face_counts,
         uv_sets,
         has_face_table,
+        has_16b_stream,
         middle_leftover,
     })
 }
@@ -661,6 +687,144 @@ pub fn bone_count(raw: &[u8]) -> Option<usize> {
 /// 于是 `w1351_npc_heiyirendage.mesh`（68 条记录全在 `≡2 mod 4`）这类文件被读成
 /// 「一条记录都没有」，导出时整张网格只能挂根骨。
 /// 现在按 0 相位扫，**空手时才试 2 相位**——原来认得出的文件一个字节都没变。
+
+
+/// 顺序扫「变长权重记录」，再把命中项按**骨架骨名**补成只带 `skin` 的节点。
+///
+/// 文法（2026-10-29 在 `w1351_pets_rongyanjushou_b5.mesh` 的 46 张表上逐张复核）：
+/// `骨名(32B，NUL 填充) + 64B 矩阵 + w(4B，恒 1.0f) + N(u32) + N 个顶点号 + N 个权重`，
+/// 一条长 `104 + 8N`；表与表之间还夹着别的变长记录，所以只能「合文法就整条跳过、不合前进 4 字节」。
+///
+/// 为什么另开一层而不并进 [`parse_nodes`]：这些骨**没有 96B/136B 节点记录**，
+/// 挂到 node 列表里会改变骨架语义；而播放/导出只把 node 当**权重源**、按骨名映射到骨架
+/// （见 [`super::pose::posed_vertices`]），所以补一串「只带 skin」的节点最安全。
+///
+/// 判据（宁缺毋滥）：名字后第 96 字节必须是 `1.0f`；顶点号互异且都 < 顶点数；权重 0..=1；
+/// 同名只取第一张；骨名必须在骨架里，否则不挂（不猜）。
+pub fn attach_bone_skin(h: &SkeletonHierarchy, nodes: &[Node], raw: &[u8]) -> Vec<Node> {
+    let vc = vertex_count(raw);
+    let mut out = nodes.to_vec();
+    if vc == 0 {
+        return out;
+    }
+    // 记录名允许 `(mirrored)` 这类括号后缀（实测 `bone015(mirrored)`/`bone014(mirrored)`），
+    // 匹配骨架时剥掉后缀取主名；其余字符仍按骨名闸门（字母数字 + `_-.'）。
+    let record_name = |at: usize| -> Option<(&str, String)> {
+        let slot = raw.get(at..at + NAME_FIELD)?;
+        let end = slot.iter().position(|&c| c == 0)?;
+        if end < 3 {
+            return None;
+        }
+        let full = &slot[..end];
+        let core = match full.iter().position(|&c| c == b'(') {
+            Some(p) if full.ends_with(b")") && p >= 3 => &full[..p],
+            _ => full,
+        };
+        if !core
+            .iter()
+            .all(|c| c.is_ascii_alphanumeric() || matches!(c, b'_' | b'-' | b'.'))
+        {
+            return None;
+        }
+        Some((
+            std::str::from_utf8(full).ok()?,
+            String::from_utf8_lossy(core).into_owned(),
+        ))
+    };
+    let mut by_bone: std::collections::HashMap<String, Vec<(u32, f32)>> = Default::default();
+    let mut i = 0usize;
+    while i + 104 <= raw.len() {
+        let Some((_full, core_name)) = record_name(i) else {
+            i += 4;
+            continue;
+        };
+        // 矩阵尾的 w 必须是 1.0f：错位起点过不了这一关（`duplicated_vertex_ids_are_not_a_table` 那种）。
+        let w = raw
+            .get(i + 96..i + 100)
+            .map(|b| f32::from_le_bytes(b.try_into().unwrap()))
+            .unwrap_or(f32::NAN);
+        if (w - 1.0).abs() > 1e-6 {
+            i += 4;
+            continue;
+        }
+        let n = u32::from_le_bytes(raw[i + 100..i + 104].try_into().unwrap()) as usize;
+        if n == 0 || n > vc || i + 104 + 8 * n > raw.len() {
+            i += 4;
+            continue;
+        }
+        let ib = &raw[i + 104..i + 104 + 4 * n];
+        let wb = &raw[i + 104 + 4 * n..i + 104 + 8 * n];
+        let mut seen = std::collections::HashSet::with_capacity(n.min(1024));
+        let mut vertices = Vec::with_capacity(n);
+        let mut ok = true;
+        for c in ib.chunks_exact(4) {
+            let v = u32::from_le_bytes(c.try_into().unwrap());
+            if v as usize >= vc || !seen.insert(v) {
+                ok = false;
+                break;
+            }
+            vertices.push(v);
+        }
+        let mut weights = Vec::with_capacity(n);
+        if ok {
+            for c in wb.chunks_exact(4) {
+                let x = f32::from_le_bytes(c.try_into().unwrap());
+                if !x.is_finite() || x < 0.0 || x > 1.0001 {
+                    ok = false;
+                    break;
+                }
+                weights.push(x);
+            }
+        }
+        if !ok {
+            i += 4;
+            continue;
+        }
+        let name = core_name;
+        // 同一根骨**可以有多张表**（实见 `bone015`：一张 29 条不含缺口、另一张才含），
+        // 所以按骨名归并、顶点号去重后再挂；骨名必须在骨架里。
+        if h.bones.iter().any(|b| b.name == name) {
+            let acc = by_bone.entry(name).or_insert_with(Vec::new);
+            for (v, wt) in vertices.into_iter().zip(weights.into_iter()) {
+                if !acc.iter().any(|(x, _)| *x == v) {
+                    acc.push((v, wt));
+                }
+            }
+        }
+        i += 104 + 8 * n; // 整条吃掉，避免 4 字节错位重读
+    }
+    for (name, pairs) in by_bone {
+        let sk = SkinInfluence {
+            vertices: pairs.iter().map(|(v, _)| *v).collect(),
+            weights: pairs.iter().map(|(_, w)| *w).collect(),
+        };
+        match out.iter_mut().find(|x| x.name == name) {
+            Some(x) => {
+                // 定长路径已经读到的表优先：只补它没有的顶点。
+                if let Some(cur) = &mut x.skin {
+                    for (v, w) in sk.vertices.iter().zip(sk.weights.iter()) {
+                        if !cur.vertices.contains(v) {
+                            cur.vertices.push(*v);
+                            cur.weights.push(*w);
+                        }
+                    }
+                } else {
+                    x.skin = Some(sk);
+                }
+            }
+            None => out.push(Node {
+                name,
+                bind: [
+                    1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
+                    0.0, 1.0,
+                ],
+                skin: Some(sk),
+            }),
+        }
+    }
+    out
+}
+
 pub fn parse_nodes(raw: &[u8]) -> Vec<Node> {
     let mut out = scan_nodes(raw, 0);
     // 两条相位**都**扫（不是只在空手时才试第二条）：`w1351_model_chuangjue_h001` 那种
@@ -685,6 +849,18 @@ pub fn parse_nodes(raw: &[u8]) -> Vec<Node> {
     //   那个性质不区分任何东西。
     // 现在留下的只有一条实的：变体给的是**另一套位置**（多数同名骨与标准值不同、少数只差 1~4 个 ULP），
     // 这套位置属于什么状态未证，并进去会静默改掉这些骨的位置。
+    // 2026-10-28：**只并权重，不并矩阵**。变体记录的矩阵语义仍未定（上面那段），
+    // 但它尾后那张影响表是无歧义的：`[u32 N][N 个顶点号][N 个权重]`，号互异且 < 顶点数、
+    // 权重全在 0..=1。样本 `w1351_npc_xinmurongfu.mesh`：`bip001_prop002` 的标准记录**没有表**，
+    // 而它的变体记录带一张 976 顶点的表（全 1.0 硬绑）——**全网格 16.4% 的顶点就挂在这根道具骨上**，
+    // 不并进来它们就没权重、落到「挂根骨」兜底，骨头一动它们不跟，预览里就是散开的碎片。
+    // 只给「同名且标准记录没表」的骨补表；不新增节点、不改 `bind`，骨架语义一个字节没动。
+    for v in scan_nodes_variant(raw) {
+        let Some(sk) = v.skin else { continue };
+        if let Some(n) = out.iter_mut().find(|n| n.name == v.name && n.skin.is_none()) {
+            n.skin = Some(sk);
+        }
+    }
     out
 }
 
@@ -1435,7 +1611,7 @@ fn tail_socket_label(raw: &[u8], at: usize) -> Option<(String, usize)> {
 /// **客户端顺序**的尾部走法（137 补从 `sub_14073A190` 读出来的，逐行对过）。
 ///
 /// 与 `tail_walk` 的区别只有「一根骨内部」怎么吃：
-/// ```
+/// ```text
 /// （可选）哨兵 u32 = -1
 /// 每根骨：name32 · 第二份名字 32（客户端 seek 跳过）· 孩子数 4 · 孩子名 32×c
 ///        · 矩阵 64 · 影响数 4 · id 4×n · 权重 4×n · 收尾 92（客户端原样读，不解释）
@@ -2224,18 +2400,25 @@ mod tests {
         v
     }
 
-    /// 真·多子网格 + 蒙皮布局：法线 [+ 两套 UV] + 面级 u16 表 + sm 个计数 + 连续索引。
-    fn synth_skinned_multi(sm: usize, two_uv_sets: bool) -> Vec<u8> {
+    /// 真·多子网格 + 蒙皮布局（客户端顺序）：
+    /// 法线 → [16B/顶点流] → 面级 u16 表 → [两套 UV] → sm 个计数 → 连续索引。
+    fn synth_skinned_multi(sm: usize, two_uv_sets: bool, sixteen: bool) -> Vec<u8> {
         let vc = 6usize;
         let counts = vec![2u32; sm];
         let fc: usize = counts.iter().map(|c| *c as usize).sum();
         let uv_bytes = if two_uv_sets { 16 } else { 8 };
-        let middle = vc * (12 + uv_bytes) + fc * 2;
+        let extra = if sixteen { vc * 16 } else { 0 };
+        let middle = vc * 12 + extra + fc * 2 + vc * uv_bytes;
         let mut v = vec![0u8; 0x118 + vc * 12 + middle + 4 * sm + fc * 6];
         v[0x40..0x44].copy_from_slice(b"mesh");
+        // 公共头 +0x48 的计数 >0 ⇒ 客户端会先读 16B 流 / 2·fc 面级表，再读 UV。
+        v[0x48..0x4C].copy_from_slice(&1u32.to_le_bytes());
         v[0x8C..0x90].copy_from_slice(&(vc as u32).to_le_bytes());
         v[0x90..0x94].copy_from_slice(&(fc as u32).to_le_bytes());
         v[0x94..0x98].copy_from_slice(&(sm as u32).to_le_bytes());
+        // 0x40 位：法线后多一条 16B/顶点流；0x100 是「有第一套 UV」（实测 0x152 一族）。
+        let flags: u32 = if sixteen { 0x40 | 0x100 | 0x12 } else { 0 };
+        v[0x114..0x118].copy_from_slice(&flags.to_le_bytes());
         for i in 0..vc {
             let off = 0x118 + i * 12;
             for k in 0..3 {
@@ -2244,16 +2427,16 @@ mod tests {
             let noff = 0x118 + vc * 12 + i * 12;
             v[noff + 4..noff + 8].copy_from_slice(&1.0f32.to_le_bytes());
             for s in 0..(uv_bytes / 8) {
-                let uoff = 0x118 + vc * (12 + 8 * s) + vc * 12 + i * 8;
+                let uoff = 0x118 + vc * 12 + vc * 12 + extra + fc * 2 + s * vc * 8 + i * 8;
                 v[uoff..uoff + 4].copy_from_slice(&(0.25 * i as f32).to_le_bytes());
                 v[uoff + 4..uoff + 8].copy_from_slice(&(0.5 * i as f32).to_le_bytes());
             }
         }
-        let face_at = 0x118 + vc * 12 + vc * (12 + uv_bytes);
+        let face_at = 0x118 + vc * 12 + vc * 12 + extra;
         for i in 0..fc {
             v[face_at + i * 2..face_at + i * 2 + 2].copy_from_slice(&(i as u16).to_le_bytes());
         }
-        let cnt_at = face_at + fc * 2;
+        let cnt_at = face_at + fc * 2 + vc * uv_bytes;
         for (i, c) in counts.iter().enumerate() {
             v[cnt_at + i * 4..cnt_at + i * 4 + 4].copy_from_slice(&c.to_le_bytes());
         }
@@ -2291,23 +2474,34 @@ mod tests {
     #[test]
     fn multi_submesh_counts_array_is_located_and_split() {
         // A=20·vc + 2·fc：法线 + 一套 UV + 面级表
-        let l = parse_mesh(&synth_skinned_multi(3, false)).expect("解析成功");
+        let l = parse_mesh(&synth_skinned_multi(3, false, false)).expect("解析成功");
         assert_eq!(l.face_counts, vec![2, 2, 2]);
         assert_eq!(l.uv_sets, 1);
         assert!(l.has_face_table);
         assert_eq!(l.middle_leftover, 0);
         assert_eq!(l.geometry.normals.len(), 6);
         assert_eq!(l.geometry.uvs.len(), 6);
+        // 读到的必须是 UV，不是前面那张面级表（面表值是 0..fc-1，这里应是 0.25i/0.5i）。
+        assert_eq!(l.geometry.uvs[5], [1.25, 2.5], "面表被当成 UV 就会读成小整数");
         // 第 i 块索引起点 = 3 × Σcounts[..i]
         assert_eq!(&l.geometry.indices[6..9], &[0, 1, 2]);
         assert_eq!(&l.geometry.indices[12..15], &[0, 1, 2]);
 
-        // A=28·vc：第二套 UV 与切线之类分不开，只认第一套，其余如实报剩余字节
-        let t = parse_mesh(&synth_skinned_multi(2, true)).expect("解析成功");
+        // 两套 UV 时第二套与切线之类分不开，只认第一套，其余如实报剩余字节
+        let t = parse_mesh(&synth_skinned_multi(2, true, false)).expect("解析成功");
         assert_eq!(t.uv_sets, 1);
-        assert!(!t.has_face_table);
-        assert_eq!(t.middle_leftover, 6 * 8 + 4 * 2);
+        assert!(t.has_face_table);
+        assert!(!t.has_16b_stream);
+        assert_eq!(t.middle_leftover, 6 * 8);
         assert_eq!(t.face_counts, vec![2, 2]);
+
+        // 0x40 位：法线后先来一条 16B/顶点流，面表与 UV 都往后挪；UV 仍要读到真值。
+        let s = parse_mesh(&synth_skinned_multi(1, false, true)).expect("解析成功");
+        assert!(s.has_16b_stream);
+        assert!(s.has_face_table);
+        assert_eq!(s.uv_sets, 1);
+        assert_eq!(s.geometry.uvs[5], [1.25, 2.5], "16B 流不能把 UV 顶偏");
+        assert_eq!(s.middle_leftover, 0);
     }
 
     /// 真实样本：两个多材质槽网格。旧实现在这两个文件上直接失败。
@@ -2348,14 +2542,17 @@ mod tests {
     #[test]
     fn missing_normals_leaves_them_empty_not_garbage() {
         // 把法线区改成非单位向量——宁可报缺，不许拿脏数据当法线画。
+        // 但客户端的法线流长是固定的：值不合格也要跳过 12·vc，后面的 UV 照读
+        // （`cj_byjt` 那类平面着色网格就是这样，UV 是好的）。
         let mut v = synth_plane();
         for i in 0..4 {
             let off = 0x118 + 48 + i * 12;
             v[off..off + 12].copy_from_slice(&[0x41u8; 12]);
         }
         let l = parse_mesh(&v).expect("定位不依赖法线，仍应成功");
-        assert!(l.geometry.normals.is_empty());
-        assert_eq!(l.uv_sets, 0);
+        assert!(l.geometry.normals.is_empty(), "法线值不合格就不给");
+        assert_eq!(l.uv_sets, 1, "法线校验失败不能连累后面的 UV");
+        assert_eq!(l.geometry.uvs[3], [0.0, 1.0], "UV 要读真值");
         assert_eq!(l.geometry.indices, vec![0, 1, 2, 2, 3, 0]);
     }
 

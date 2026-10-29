@@ -7,6 +7,7 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { skeletonLead, animationLead, effectLead, materialLead } from "../web/lib/plain.js";
 
 const 黑话 = ["绑定位移", "影响顶点表", "驻留字符串", "参数块", "关键帧轨道", "JBCF"];
@@ -78,10 +79,12 @@ test("动作导语：帧数、骨数、画布摆的是哪路顶点都要在", ()
   assert.equal(animationLead({ tracks: [] }), "这条动作没读到关键帧数据。");
 });
 
-test("特效导语：说清是什么、参数没破译完，驻留字符串/参数块这类词不许出现", () => {
-  const s = effectLead({ name: "a", group: "skill", string_total: 59, param_bytes: 6739 });
+test("特效导语：参数名字已解、数值含义未定，驻留字符串/参数块这类词不许出现", () => {
+  const s = effectLead({ name: "a", group: "skill", string_total: 59, param_bytes: 6739, param_records: 12 });
   assert.ok(s.includes("「a」"), s);
-  assert.ok(s.includes("还没破译完"), s);
+  assert.ok(s.includes("12 条参数"), s);
+  assert.ok(s.includes("名字已经读出来"), s);
+  assert.ok(s.includes("还没定"), s);
   for (const w of 黑话) assert.ok(!s.includes(w), `导语里不许出现「${w}」：${s}`);
   assert.ok(!effectLead({ name: "x" }).includes("「x」没有") , "没名字时别编句子");
 });
@@ -104,4 +107,14 @@ test("材质导语：.mtl 报对上/没带，.mdl 说清是说明书", () => {
   });
   assert.ok(mdl.includes("说明书"), mdl);
   assert.ok(mdl.includes("一共 3 条"), mdl);
+});
+
+test("「贴图缺 N」角标要带口径说明：它只按清单统计，转换路径能解的不算在内", async () => {
+  const w = await import("../web/lib/wording.js");
+  const t = w.missChipTitle({ locatedTotal: 1, refTotal: 10 });
+  assert.ok(t.includes("1/10"), t);
+  assert.ok(t.includes("清单"), t);
+  assert.ok(t.includes("转换路径"), "要说明另有转换路径可解，数字偏大：" + t);
+  const src = readFileSync(new URL("../web/list.js", import.meta.url), "utf8");
+  assert.match(src, /missChipTitle\(c\)/, "角标要把这句挂成 title");
 });

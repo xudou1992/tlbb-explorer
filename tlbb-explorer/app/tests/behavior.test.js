@@ -145,8 +145,10 @@ async function sandbox(entry, mock = {}, expose = {}) {
 }
 
 const noop = () => {};
-const meshMock = { showMeshes: noop, hideMeshes: noop, applyTexture: () => true, remesh: noop,
-  setTrialProvider: noop, clearMeshTexture: () => true };
+const meshMock = { showMeshes: noop, hideMeshes: noop, applyTexture: () => true, tryLayerTexture: () => false,
+  remesh: noop, setTrialProvider: noop, setTexturePlanProvider: noop, setTexturePlanObserver: noop,
+  refreshTexturePlan: async () => null,
+  clearMeshTexture: () => true, onActiveMesh: noop, currentMeshName: () => "" };
 
 // 详情用的两份夹具直接从 detailState 的用例里借，免得两处夹具各写各的。
 const fixtureSource = fs.readFileSync(path.join(here, "detailState.test.js"), "utf8");
@@ -281,8 +283,19 @@ test("后台批量试贴的接线不能被拆：没有候选榜时那颗按钮�
   assert.ok(warm >= 0, "那颗按钮的分支还在");
   assert.ok(guard >= 0, "texReply 守卫还在");
   assert.ok(warm < guard, "warm 分支必须在 texReply 守卫之前——没有榜时 texReply 正是空的");
-  assert.match(src, /texBlock\(insp, warmStatus\)/, "状态要真传进纯函数那一层");
+  assert.match(src, /texBlock\((insp|reply|view), warmStatus\)/, "状态要真传进纯函数那一层");
   assert.match(src, /api\s*\.\s*textureWarmStatus|\.textureWarmStatus\(\)/, "打开详情时要问一次还差多少只");
+});
+
+test("分层标题要报可核的那对数：颜色贴图几张 vs 子网格几段", () => {
+  const src = fs.readFileSync(path.join(web, "detail.js"), "utf8");
+  assert.match(src, /evidenceShort\(/, "标题的三形状话术要走同一份纯函数，别在接线里各写一套");
+  const lib = fs.readFileSync(path.join(web, "lib/layerChips.js"), "utf8");
+  assert.match(lib, /按基础层铺/, "颜色少时要写清剩余段按基础层铺");
+  assert.match(lib, /叠在基础段上/, "颜色多时要写清多出的叠在基础段上");
+  const mesh = fs.readFileSync(path.join(web, "mesh.js"), "utf8");
+  assert.match(mesh, /paintLayers\(null\)/, "换网格/空资产要收掉上一只的层筹码");
+  assert.match(mesh, /setLayerSolo|setPartLayerSolo/, "「只看这一层」要接到 viewer 上");
 });
 
 test("多份榜的按钮要认得自己那份：取榜靠 data-gi，下拉在自己那份里找", async () => {
@@ -290,6 +303,13 @@ test("多份榜的按钮要认得自己那份：取榜靠 data-gi，下拉在自
   assert.match(src, /groups\[Number\(b\.dataset\.gi\)\]/, "按钮不能再一律用第一份榜");
   assert.ok(!/textureCandidates \|\| \[\]\)\[0\]/.test(src), "旧的第一份硬取要清掉");
   assert.match(src, /closest\("\.tex-group"\)[\s\S]{0,40}tex-slot-pick/, "确认下拉要在按钮所在的那份榜里找");
+});
+
+test("当前网格的候选榜排第一份：画布给完整路径、榜里只有文件名，要按最后一段比", () => {
+  const src = fs.readFileSync(path.join(web, "detail.js"), "utf8");
+  assert.match(src, /function activeMeshSorted/, "要有按当前网格重排的那一步");
+  assert.ok(src.includes('split("/").pop()'), "路径与文件名不能直接等号比");
+  assert.match(src, /onActiveMesh\(/, "换网格要真的触发重排");
 });
 
 test("确认不许改标到别的槽位，重刷要回到这一栏自己的资产", async () => {
@@ -308,16 +328,20 @@ test("确认不许改标到别的槽位，重刷要回到这一栏自己的资�
   assert.match(seg, /texSlotsHtml\(slots/, "确认只重画槽位清单");
   assert.ok(!/showDetail\(/.test(seg), "确认不许再整页重刷——2.8 秒的重画是标注吞吐的大头");
   assert.ok(/act === "confirm"[\s\S]*textureOverrideSet/.test(src), "确认这条链仍然真写覆盖表");
+  assert.match(seg, /textureOverrideSet\([\s\S]{0,220}group\.mesh/,
+    "确认要把「画布上那只网格」一起写进表——槽名和网格名不同名时全靠这个绑定");
 });
 
 test("确认之后当场套上确认的那张，不许还挂着「未确认」那句", async () => {
   const src = fs.readFileSync(path.join(web, "detail.js"), "utf8");
   const seg = src.slice(src.indexOf('act === "confirm"'), src.indexOf('act === "clear"'));
+  assert.match(seg, /refreshTexturePlan\(\)/,
+    "确认后要先重取分层计划：确认的可能只是某个特效槽");
   assert.match(seg, /api\.meshTextureOverride\(group\.mesh\)/,
-    "要按这份榜自己的网格名去问确认层，不是拿界面上随便哪个名字");
-  assert.match(seg, /applyTexture\(r\.png\)/, "后端给了图就当场套上");
+    "分层取不到时仍按这份榜自己的网格名问确认层");
+  assert.match(seg, /applyTexture\(r\.png\)/, "后端给了单张图就当场套上");
   assert.match(seg, /已套用人工确认的贴图/, "标题那句得换掉——10-11 实测点完确认仍写着未确认");
-  assert.match(seg, /split\(" · 已套试贴"\)\[0\]/, "先剥掉旧的试贴那句，两句并排就是自相矛盾");
+  assert.match(seg, /meshMetaHead\(\)/, "标题只保留顶点/面数两段，旧状态要剥掉");
   assert.match(seg, /解不出来/, "图解不出来要承认，不装作套上了");
 });
 
@@ -525,8 +549,9 @@ test("特效页：点开才取数，材质链要真列成表、参数块未解�
     materials: ["x.mtl", "y.mtl"], textures: ["t.tga"], meshes: [], blends: ["add"],
     renderers: ["Billboard"], emitters: ["Circle"], updaters: ["TextureAnimator"],
     dynamics: ["dyn_random"], other: [], string_total: 59, files: ["a.pu"],
-    param_floats: 72, param_bytes: 6739, anims: 0,
-    missing: ["参数块的字段语法未解：块里 6739 字节、72 个像浮点的数", "播放未做"],
+    param_floats: 72, param_bytes: 6739, param_records: 1, anims: 0,
+    params: [{ cls: 7, fld: 33, name: "position", words: [0, 1065353216, 0], floats: [0, 1, 0] }],
+    missing: ["参数块已按记录读出（1 条）；字段名已解，值的语义未定", "播放未做"],
   };
   let calls = 0;
   const detail = await sandbox("detail.js", {
@@ -550,10 +575,13 @@ test("特效页：点开才取数，材质链要真列成表、参数块未解�
   const table = detail.el("fxTable").innerHTML;
   assert.ok(table.includes("x.mtl") && table.includes("y.mtl"), `材质链要列得出：${table.slice(0, 80)}`);
   assert.ok(!table.includes(">网格<"), "空的类别不摆行——空行不等于「没有」");
-  assert.ok(detail.el("fxSum").textContent.includes("还没破译完"), "导语要说清参数还没破译完");
+  assert.ok(detail.el("fxSum").textContent.includes("名字已经读出来"), "导语说清字段名已解");
+  assert.ok(detail.el("fxSum").textContent.includes("还没定"), "导语说清值的含义未定");
   assert.ok(!detail.el("fxSum").textContent.includes("参数块"), "导语是人话，术语不许出现");
   assert.ok(detail.el("fxTable").innerHTML.includes("6739"), "参数块大小要写进折叠区注记");
-  assert.ok(detail.el("fxMissing").innerHTML.includes("参数块"), "字段语法未解必须同屏");
+  assert.ok(table.includes("position") && table.includes("3f800000"), `参数字段名与原始词要摆出来：${table.slice(-200)}`);
+  assert.ok(table.includes("0 · 1 · 0"), `数值要按 cls 解成浮点：${table.slice(-200)}`);
+  assert.ok(detail.el("fxMissing").innerHTML.includes("参数块"), "参数记录的限制必须同屏");
   assert.equal(detail.el("tabFxCount").textContent, "59");
   assert.equal(detail.el("fxPick").children.length, 0, "只登记一份特效时不该摆选择条");
 });
@@ -1246,9 +1274,16 @@ test("自动试贴的接线不能被拆：🟢 优先、无提供者不套、原
   const mesh = fs.readFileSync(path.join(web, "mesh.js"), "utf8");
   assert.match(src, /setTrialProvider\(async \(name\) =>/, "详情页要注册试贴提供者");
   assert.match(src, /trialPick\(g\)/, "套不套由纯函数判，不在接线里写规则");
-  assert.match(mesh, /if \(applied \|\| !trialProvider\) return;/, "有 🟢 确认或没提供者就到此为止");
+  assert.match(
+    mesh,
+    /if \(applied \|\| noColorExplained \|\| !trialProvider\) return;/,
+    "有 🟢 确认、着色器件已说明、或没提供者就到此为止",
+  );
+  assert.match(mesh, /只有着色器（无颜色图）|plan\.note/, "材质表没颜色图要说清是着色器画的，不静默留灰模");
   assert.match(mesh, /已套试贴：.*（未确认/, "套上必须写明未确认");
   assert.match(mesh, /没套试贴：\$\{t\.skip\}/, "不套也要把原因说出来，不能静默留灰模");
+  assert.ok(!/find\(.*\)\s*\|\|\s*groups\[0\]/.test(src), "找不到当前网格的榜时不许退回第一份（脸套到头发上）");
+  assert.ok(src.includes("这只网格没有候选榜"), "没有榜要明说，不能拿别家的榜顶上");
 });
 
 test("UV 岛分布图的接线不能被拆：每份榜顶上都要有一格，取不到说取不到", async () => {

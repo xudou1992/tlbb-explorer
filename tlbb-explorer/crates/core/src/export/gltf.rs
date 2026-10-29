@@ -174,7 +174,7 @@ pub struct RigStats {
     pub normalized_vertices: usize,
     /// Σw 明显不足 1.0、把差额 `1 − Σw` 挂到根骨的顶点数（主样本实测 114）。
     /// 挂根骨 = 那一份不跟随变形：不给没带 96B 记录的骨编影响比例。
-    pub root_fill_vertices: usize,
+    pub renormalized_vertices: usize,
     /// 既不能挂根骨补差额、也不在容差窗口内（Σw > 1，或 4 个槽位占满），
     /// 只能按和归一的顶点数。
     pub weight_sum_off_vertices: usize,
@@ -468,7 +468,7 @@ pub fn to_glb_rigged(
             match case {
                 pose::WeightCase::Uncovered => stats.uncovered_vertices += 1,
                 pose::WeightCase::Normalized => stats.normalized_vertices += 1,
-                pose::WeightCase::RootFilled => stats.root_fill_vertices += 1,
+                pose::WeightCase::Renormalized => stats.renormalized_vertices += 1,
                 pose::WeightCase::Rescaled => stats.weight_sum_off_vertices += 1,
             }
             let mut ji = [0u16; pose::MAX_INFLUENCES];
@@ -797,8 +797,8 @@ fn rig_stats_json(name: &str, s: &RigStats) -> Value {
             "uncoveredVertices": s.uncovered_vertices,
             "uncoveredVerticesNote": "没被任何影响表覆盖的顶点挂根骨权重 1（glTF 的 skin 对整份网格生效）；根骨导出世界为恒等阵时保持存储位置",
             "normalizedVertices": s.normalized_vertices,
-            "rootFillVertices": s.root_fill_vertices,
-            "rootFillNote": "Σw 不足 1.0 的顶点把差额挂根骨（glTF 硬要求每顶点权重和为 1.0，官方校验器会对不合的报 ACCESSOR_WEIGHTS_NON_NORMALIZED）；不给没带 96B 记录的骨编影响比例，那一份就是「不跟随变形」",
+            "renormalizedVertices": s.renormalized_vertices,
+            "renormalizedNote": "Σw 不足 1.0 的顶点按比例归一（glTF 硬要求每顶点权重和为 1.0）；旧口径把差额挂根骨，会让那部分顶点不跟随骨骼",
             "weightSumOffVertices": s.weight_sum_off_vertices,
             "weightSumOffNote": "只能按和归一的顶点（Σw > 1，或 4 个槽位占满装不下差额）",
             "overInfluencedVertices": s.over_influenced_vertices,
@@ -827,7 +827,7 @@ fn report_stats(name: &str, s: &RigStats) {
         s.bones_without_bind.len(),
         s.covered_vertices,
         s.normalized_vertices,
-        s.root_fill_vertices,
+        s.renormalized_vertices,
         s.weight_sum_off_vertices,
         s.uncovered_vertices,
         s.over_influenced_vertices,
@@ -1273,11 +1273,11 @@ mod tests {
         // 权重四情形（`pose::unify_weights`）：
         // 顶点 0 = root 0.25 + child 0.75，Σ=1 → Normalized；
         // 顶点 1 = root 1.0（child 那条是 0 权重，剔除后 Σ 仍 1）→ Normalized；
-        // 顶点 2 = child 0.5，Σ=0.5 不足 → 差额 0.5 挂根骨 → RootFilled；
+        // 顶点 2 = child 0.5，Σ=0.5 不足 → 按比例归一 → Renormalized；
         // 顶点 3 = 没有任何表覆盖 → Uncovered（整份权重挂根骨）。
         // 剔掉 0 权重项是官方校验器的要求（ACCESSOR_JOINTS_USED_ZERO_WEIGHT）。
         assert_eq!(extras["normalizedVertices"], json!(2));
-        assert_eq!(extras["rootFillVertices"], json!(1)); // 顶点 2
+        assert_eq!(extras["renormalizedVertices"], json!(1)); // 顶点 2
         assert_eq!(extras["weightSumOffVertices"], json!(0));
         assert_eq!(extras["uncoveredVertices"], json!(1)); // 顶点 3
     }

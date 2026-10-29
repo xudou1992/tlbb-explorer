@@ -271,7 +271,7 @@ export function paintEffect(rep, onPick) {
       onPick,
     );
   }
-  el("fxTable").innerHTML = groups.length
+  const namesFold = groups.length
     ? fold(
         "它登记的名字",
         `${groups.length} 类`,
@@ -284,6 +284,39 @@ export function paintEffect(rep, onPick) {
             .join("")}</tbody></table>`,
       )
     : `<p class="dim">这份 .pu 里没归出任何一类名字，只有字符串表本身。</p>`;
+  // 参数字段名来自客户端 611 条属性表（表外的留空）；值的语义没定，只摆原始词。
+  const params = rep.params || [];
+  // cls 是载荷编码：数字本身不猜单位，只把 words 按编码读成人能看的数。
+  const clsWord = (c) =>
+    ({ 0: "开关", 1: "浮点", 6: "二维", 7: "三维", 8: "四元/颜色", 9: "四元/颜色",
+      10: "四元/颜色", 14: "时间+颜色", 17: "三浮点" }[c] ||
+      (c <= 15 ? "无载荷" : `未知 cls ${c}`));
+  const fmtNum = (v) => Number(v).toFixed(4).replace(/\.?0+$/, "");
+  const paramRows = params.slice(0, 100).map((p, i) => {
+    const words = (p.words || [])
+      .map((w) => `0x${Number(w).toString(16).padStart(8, "0")}`)
+      .join(" ");
+    const floats = (p.floats || []).map(fmtNum).join(" · ");
+    const hasWords = (p.words || []).length > 0;
+    const value = floats || (hasWords ? "（编码未知）" : "无载荷");
+    return `<tr><td class="n">${i + 1}</td><td title="cls=${esc(p.cls)}">${esc(
+      clsWord(Number(p.cls)),
+    )}</td><td class="n">${esc(p.fld)}</td><td>${
+      p.name ? esc(p.name) : `<span class="dim">表外</span>`
+    }</td><td class="mono" title="${esc(words ? "原始词 " + words : "")}">${
+      words ? esc(value) : `<span class="dim">${esc(value)}</span>`
+    }</td></tr>`;
+  }).join("");
+  const paramFold = params.length
+    ? fold(
+        "参数记录（字段名已解，值语义未定）",
+        `${params.length} 条`,
+        `<p class="dim">字段名来自客户端 611 条属性表，表外的留空；数值按 cls 的编码读（浮点/二维/三维/颜色/时间+颜色），单位与含义还没定，原始 32 位词在悬停提示里。</p>` +
+          `<table class="hl-table fx-params"><thead><tr><th>#</th><th>类</th><th>字段</th><th>名字</th><th>数值</th></tr></thead><tbody>${paramRows}</tbody></table>` +
+          (params.length > 100 ? `<p class="dim">还有 ${params.length - 100} 条未展开。</p>` : ""),
+      )
+    : `<p class="dim">这份 .pu 的参数记录一条都没走出来（可能这份文件本身没有参数区）。</p>`;
+  el("fxTable").innerHTML = namesFold + paramFold;
   el("fxMissing").innerHTML = (rep.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
 }
 

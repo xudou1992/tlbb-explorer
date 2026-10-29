@@ -53,6 +53,10 @@ fn decode_name(raw: &[u8]) -> String {
 /// (7806/7806)。cls=0(裸值)与 cls=7(vec3)是全类统一规则,不占本表;
 /// cls=2/3/5/11 等的载荷全是小整数,「N 词载荷」与「N 条裸值记录」字节同形,
 /// 本表按走通全库的口径记录。
+///
+/// **2026-10-25**：按 cls 统计后，宽度其实是**按 cls 统一**的（见 [`param_pw`]）；
+/// 本表里 8 条 `(1,fld,0)` 是误推，已不再使用。表保留作历史基线，`param_pw`
+/// 只在未知 cls 时查它。
 pub(crate) const PARAM_PW: &[(u16, u16, u8)] = &[
         (1, 1, 1),
         (1, 2, 1),
@@ -384,9 +388,23 @@ pub(crate) const PARAM_PW: &[(u16, u16, u8)] = &[
 
 /// 查 (cls,fld) 的载荷词数。cls=0 是裸值(fld 本身就是值),cls=7 是 vec3。
 fn param_pw(cls: u16, fld: u16) -> Option<usize> {
+    // 2026-10-25：`PARAM_PW` 只列了「全库 7,806 份走通时见过的键」，51 份在**没见过的
+    // (cls,fld)** 上停住；按 cls 统计后，2/3/4/5/11/12/13/15 的载荷词数**全是 0**，
+    // 6→2、8/9/10→4、14→5、17→3 也各自统一。先按 cls 给默认，表只留给 cls=1 的
+    // 8 个宽度 0 例外和未知 cls。走法仍要求整份精确到词尾，默认错了会立刻在 pustop 里显形。
     match cls {
         0 => Some(0),
         7 => Some(3),
+        2 | 3 | 4 | 5 | 11 | 12 | 13 | 15 => Some(0),
+        6 => Some(2),
+        8 | 9 | 10 => Some(4),
+        14 => Some(5),
+        17 => Some(3),
+        // cls=1 是单浮点，宽度恒 1。旧表里 8 条 `(1, fld, 0)` 是误推：
+        // 2026-10-25 在 pak 版 `w1351_skill_chongloujie_01.pu` 上看到
+        // `000101dc 3f733333`（fld 476 后跟 0.95）、`000101e0 43b40000`（480→360）——
+        // 按表里的 0 词走，下一把 key 就会读到浮点位型（cls=16243 的垃圾键）。
+        1 => Some(1),
         _ => PARAM_PW
             .iter()
             .find(|(c, f, _)| *c == cls && *f == fld)
@@ -655,6 +673,25 @@ mod tests {
         assert_eq!(pu_field_name(6), Some("initial_colour"));
         assert_eq!(pu_field_name(609), Some("total"));
         assert_eq!(pu_field_name(65535), None, "表外不许编名字");
+    }
+
+    /// 载荷宽度按 cls 统一：51 份停在「没见过的 (cls,fld)」上，但同 cls 的已见键宽度一致。
+    #[test]
+    fn param_width_defaults_cover_cls_with_uniform_payload() {
+        assert_eq!(param_pw(2, 212), Some(0), "accurate_facing");
+        assert_eq!(param_pw(3, 148), Some(0), "texture_coords");
+        assert_eq!(param_pw(5, 272), Some(0), "decal_renderer_malname");
+        assert_eq!(param_pw(2, 475), Some(0), "base_speed_aff_auto_direction");
+        assert_eq!(param_pw(6, 1), Some(2));
+        assert_eq!(param_pw(8, 1), Some(4));
+        assert_eq!(param_pw(14, 1), Some(5));
+        assert_eq!(param_pw(17, 1), Some(3));
+        // cls=1 是单浮点，宽度恒 1（旧表的 8 条宽度 0 是误推，见函数注释）。
+        assert_eq!(param_pw(1, 1), Some(1));
+        assert_eq!(param_pw(1, 475), Some(1), "旧表的宽度 0 例外作废");
+        assert_eq!(param_pw(1, 476), Some(1), "polar_radius_min 后面跟 0.95");
+        assert_eq!(param_pw(1, 60000), Some(1), "cls=1 未见过的 fld");
+        assert_eq!(param_pw(99, 1), None, "未知 cls 不许瞎给宽度");
     }
 
     use super::*;

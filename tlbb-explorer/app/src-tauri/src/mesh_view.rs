@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use serde::Serialize;
 use tauri::State;
-use tlbb_core::preview::MeshGeometry;
+use tlbb_core::preview::{MeshGeometry, MeshLayout};
 
 use crate::data::AppData;
 use crate::inspector::b64;/// 一个网格的二进制顶点缓冲：base64(小端) = 位置 vc×3×f32 → 法线(可选) → UV(可选) → 索引 ic×u16。
@@ -16,8 +16,10 @@ pub struct MeshData {
     pub vertex_count: usize,
     pub face_count: usize,
     pub index_count: usize,
-    /// 0x94 处的子网格计数；多子网格的索引分块尚未解出（M2-3）。
+    /// 0x94 处的子网格计数。
     pub submesh_count: usize,
+    /// 每个子网格的面数，顺序与索引块一致；`mesh_data` 用它按层切片绘制。
+    pub face_counts: Vec<u32>,
     pub has_normals: bool,
     pub has_uvs: bool,
     pub bbox_min: [f32; 3],
@@ -52,45 +54,41 @@ fn pack(g: &MeshGeometry) -> Vec<u8> {
 }
 
 impl MeshData {
-    /// 俯视缩略图的瘦身形态：只留包围盒与规模，几何不打包（`buffer` 为空串）。
-    /// 字段名与完整形态一字不差，前端不必学第二套契约——只是画不了 3D。
-    pub fn outline(path: String, g: &MeshGeometry) -> Self {
+    fn from_geometry(path: String, g: &MeshGeometry, face_counts: Vec<u32>, with_buffer: bool) -> Self {
         Self {
             path,
             vertex_count: g.positions.len(),
             face_count: g.indices.len() / 3,
             index_count: g.indices.len(),
             submesh_count: g.submesh_count as usize,
+            face_counts,
             has_normals: g.normals.len() == g.positions.len() && !g.positions.is_empty(),
             has_uvs: g.uvs.len() == g.positions.len() && !g.positions.is_empty(),
             bbox_min: g.bbox_min,
             bbox_max: g.bbox_max,
             middle_bytes: g.middle_bytes,
             trailing_bytes: g.trailing_bytes,
-            buffer: String::new(),
+            buffer: if with_buffer { b64(&pack(g)) } else { String::new() },
         }
+    }
+
+    /// 俯视缩略图的瘦身形态：只留包围盒与规模，几何不打包（`buffer` 为空串）。
+    /// 字段名与完整形态一字不差，前端不必学第二套契约——只是画不了 3D。
+    pub fn outline(path: String, g: &MeshGeometry) -> Self {
+        Self::from_geometry(path, g, Vec::new(), false)
     }
 }
 
 impl From<(String, MeshGeometry)> for MeshData {
     fn from((path, g): (String, MeshGeometry)) -> Self {
-        let has_normals = g.normals.len() == g.positions.len() && !g.positions.is_empty();
-        let has_uvs = g.uvs.len() == g.positions.len() && !g.positions.is_empty();
-        let buffer = b64(&pack(&g));
-        Self {
-            path,
-            vertex_count: g.positions.len(),
-            face_count: g.indices.len() / 3,
-            index_count: g.indices.len(),
-            submesh_count: g.submesh_count as usize,
-            has_normals,
-            has_uvs,
-            bbox_min: g.bbox_min,
-            bbox_max: g.bbox_max,
-            middle_bytes: g.middle_bytes,
-            trailing_bytes: g.trailing_bytes,
-            buffer,
-        }
+        Self::from_geometry(path, &g, Vec::new(), true)
+    }
+}
+
+impl From<(String, MeshLayout)> for MeshData {
+    fn from((path, l): (String, MeshLayout)) -> Self {
+        let MeshLayout { geometry, face_counts, .. } = l;
+        Self::from_geometry(path, &geometry, face_counts, true)
     }
 }
 
@@ -102,7 +100,7 @@ pub async fn mesh_data(
 ) -> Result<MeshData, String> {
     let app = Arc::clone(&app);
     tauri::async_runtime::spawn_blocking(move || {
-        app.mesh_geometry(&name, hash.as_deref()).map(Into::into)
+        app.mesh_layout(&name, hash.as_deref()).map(Into::into)
     })
     .await
     .map_err(|e| e.to_string())?

@@ -36,9 +36,11 @@ export function animationLead(rep) {
 export function effectLead(rep) {
   if (!rep) return "";
   const head = rep.name ? `这份特效叫「${rep.name}」` : "这份特效脚本";
+  const n = rep.params ? rep.params.length : rep.param_records;
+  const count = Number.isFinite(n) && n > 0 ? `一共 ${n} 条参数，` : "";
   return (
     `${head}，登记了自己要用的贴图、材质和零件，名字清单在下面。` +
-    "每个粒子怎么飞的参数还没破译完，破译完特效就能真正播出来。"
+    `${count}每个参数叫什么名字已经读出来了；每个数代表什么还没定，所以还不能真正播放。`
   );
 }
 

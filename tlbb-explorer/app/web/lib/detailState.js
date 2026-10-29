@@ -93,17 +93,28 @@ export function nameCell(name) {
 /// 「缺」只留给真该有而没有的资源文件。两类引用标了也不算损失：
 ///   着色器        —— 程序里的名字，不是文件；
 ///   template_* 父材质 —— 引擎拼装用的模板，客户端本来就不带。
-export function slotRow(name, role, dest, resolved) {
+export function slotRow(name, role, dest, resolved, autoPath, note, trial) {
   const hit = Boolean(dest) || resolved === true;
   const at = dest ? esc(dest) : "已定位，但客户端没给路径";
+  // 清单里没有身份、但名字能按客户端转换路径解出字节：不能只写「缺」，
+  // 否则读者会以为这张贴图坏了（预览页其实能把它画出来）。
+  if (!hit && autoPath) {
+    return `<li class="hit auto"><span class="kd">${esc(role)}</span>${nameCell(name)}
+      → <em class="na">清单里没登记，可按客户端转换路径解出</em>
+      <span class="at">${esc(autoPath)}</span></li>`;
+  }
   if (!hit) {
     const n = String(name || "");
     if (String(role).includes("着色器"))
       return `<li><span class="kd">${esc(role)}</span>${nameCell(n)} → <em class="na">程序里的着色器名，不是文件</em></li>`;
     if (String(role).includes("父材质") && /^template_/i.test(n))
       return `<li><span class="kd">${esc(role)}</span>${nameCell(n)} → <em class="na">模板材质，资源包里没有</em></li>`;
+    const hint = note ? ` <span class="at">（${esc(note)}）</span>` : "";
+    const btn = trial && trial.name && trial.hash
+      ? ` <button type="button" class="mini" data-trial-mesh="${esc(trial.name)}" data-trial-hash="${esc(trial.hash)}" title="按哈希直接从容器里取这份网格来画；名字是推出来的，清单没登记">试画它</button>`
+      : "";
     return `<li class="miss"><span class="kd">${esc(role)}</span>${nameCell(n)}
-      → <em class="miss">缺</em></li>`;
+      → <em class="miss">缺</em>${hint}${btn}</li>`;
   }
   return `<li class="hit">
     <span class="kd">${esc(role)}</span>${nameCell(name)}
@@ -143,11 +154,19 @@ export function treeHtml(mdl, members) {
           const slots = (b.textureSlots || []).length
             ? `<li class="label">这个材质用到的</li><ul class="lines sub">${b.textureSlots
                 .slice(0, ROWCAP)
-                .map((t) => slotRow(t.name, t.role, t.path, t.resolved))
+                .map((t) => slotRow(t.name, t.role, t.path, t.resolved, t.autoPath))
                 .join("")}${capNote("引用", b.textureSlots.length)}</ul>`
             : "";
           for (const x of [b.mesh, b.material]) if (x) inTree.add(x.name);
-          return `${label}${slotRow(b.mesh.name, "网格", b.mesh.path, b.mesh.resolved)}${slotRow(
+          return `${label}${slotRow(
+            b.mesh.name,
+            "网格",
+            b.mesh.path,
+            b.mesh.resolved,
+            null,
+            b.mesh.resolved || !b.siblingMesh ? null : `同目录另有 ${b.siblingMesh}，清单里没登记这个名字`,
+            b.mesh.resolved ? null : { name: b.siblingMesh, hash: b.siblingMeshHash },
+          )}${slotRow(
             b.material.name,
             "材质",
             b.material.path,
@@ -250,9 +269,36 @@ export function absencesOf(insp, card) {
 
   // 立体模型
   const bodies = mdl && mdl.bodies ? mdl.bodies : [];
-  const drawable = bodies.filter((b) => b.mesh && b.mesh.hash).length;
+  const trialBodies = bodies.filter((b) => !(b.mesh && b.mesh.hash) && b.siblingMeshHash).length;
+  const drawable = bodies.filter((b) => (b.mesh && b.mesh.hash) || b.siblingMeshHash).length;
   const meshHit = resolvedOf("mesh");
-  if (drawable) out.push(abs("立体模型", "ok", `${drawable} 个网格能定位到，可以画`));
+  const namedBodies = bodies.filter((b) => b.mesh && b.mesh.name).length;
+  if (drawable)
+    out.push(
+      abs(
+        "立体模型",
+        "ok",
+        `${drawable} 个网格能画${
+          trialBodies ? `（其中 ${trialBodies} 个的名字是推出来的：清单没登记，按同目录同茎文件 + 路径哈希核出来的）` : ""
+        }`,
+      ),
+    );
+  else if (insp.autoMesh && insp.autoMesh.hash)
+    out.push(
+      abs(
+        "立体模型",
+        "ok",
+        `能画一份候选网格 ${insp.autoMesh.name}（名字是推出来的：清单没登记，按同目录同茎文件 + 路径哈希核出来的）`,
+      ),
+    );
+  else if (namedBodies)
+    out.push(
+      abs(
+        "立体模型",
+        "unknown",
+        `模型定义里有 ${namedBodies} 件，但网格名没在清单里对上实体（变体件常见），暂时画不出`,
+      ),
+    );
   else if (meshHit) out.push(abs("立体模型", "unknown", `有 ${meshHit} 个网格文件，但这组没有模型定义把它们串起来，暂时画不出`));
   else if (ofRole("mesh").length) out.push(abs("立体模型", "missing", `记了 ${ofRole("mesh").length} 个网格，但客户端未含这些文件`));
   else out.push(abs("立体模型", "missing", "这组里没有网格文件，画不出形状"));
@@ -266,11 +312,21 @@ export function absencesOf(insp, card) {
   // 贴图：以真解出像素为准；没解出来要分清"没引用"还是"引用了但没路径"
   const pv = insp.previews;
   const realPv = pv && pv.items ? pv.items.filter((p) => p.ok).length : 0;
+  // 自动对图的那些张（客户端 convert/* 路径）：名字在清单里没登记路径，但图**已经解出来了**。
+  // 不说这一句，同一行里就会一边写「解出 10 张图」一边写「还有 9 张没对上文件」——自相矛盾。
+  const autoPv = pv && pv.items
+    ? pv.items.filter((p) => p.ok && String(p.label || "").includes("客户端转换路径")).length
+    : 0;
   const texHit = resolvedOf("texture");
+  // 没登记路径的名字里，有多少**其实已经解出来了**（按客户端转换路径）。
+  // 全是这一类时不许再说「还引用了 N 个名字没登记路径」——那是自己打自己。
+  const texMissing = Math.max(0, danglingTex - autoPv);
   if (realPv) {
-    const tail = danglingTex
-      ? `；引用的贴图里还有 ${danglingTex} 张没对上文件（下面「缺什么」逐条说）`
-      : "";
+    const tail = texMissing
+      ? `；另有 ${texMissing} 个名字既没登记路径也没解出图（逐条见下面「缺什么」）`
+      : autoPv
+        ? `；这些图都在客户端转换路径下——清单里没登记，但能解出来`
+        : "";
     out.push(abs("贴图", "ok", `解出了 ${realPv} 张能看的图${tail}`));
   } else if (danglingTex && locatedTex)
     out.push(abs(
@@ -327,7 +383,14 @@ export function loaded(gid, d, insp) {
 
   // 分母只有贴图引用（骨架/网格/材质不在里面），标签必须写清；
   // 一组压根没提到贴图时不说这句，0/0 只会让人以为全断了。
-  const tex = Number(card.refTotal) > 0 ? ` · ${texPair(card.locatedTotal, card.refTotal)}` : "";
+  // 「对上了文件」是清单口径（名字→路径）；另有几张是客户端 `convert/*` 转换路径对上的，
+  // 那些在清单里没有路径、所以不计进分子——不点明，读者会把「1/10」当成「只有 1 张能用」。
+  const autoTex = insp.previews && insp.previews.items
+    ? insp.previews.items.filter((p) => p.ok && String(p.label || "").includes("客户端转换路径")).length
+    : 0;
+  const tex = Number(card.refTotal) > 0
+    ? ` · ${texPair(card.locatedTotal, card.refTotal)}${autoTex ? `（另有 ${autoTex} 张走客户端转换路径）` : ""}`
+    : "";
   s.sum = `${insp.what} · ${num(insp.parts)} 个文件${tex}` + (insp.dir ? ` · ${insp.dir}` : "");
 
   s.tree = { html: treeHtml(insp.mdl, insp.members || []), count: `${num(insp.parts)} 个文件` };
@@ -364,9 +427,33 @@ export function loaded(gid, d, insp) {
   s.previews = previewsOf(insp.previews);
 
   // 立体预览：只有定位到实体的网格才许诺；多网格时默认画第一个。
+  // 立体预览：能定位到实体的照旧；清单没登记名字、但同目录同茎文件核得上的，
+  // 也一并画出来并标记 trial —— 名字是推出来的，界面必须说明。
   const meshes = (insp.mdl && insp.mdl.bodies ? insp.mdl.bodies : [])
-    .filter((b) => b.mesh && b.mesh.hash)
-    .map((b) => ({ name: b.mesh.path || b.mesh.name, hash: b.mesh.hash, label: b.mesh.name }));
+    .map((b) => {
+      if (b.mesh && b.mesh.hash) {
+        return {
+          name: b.mesh.path || b.mesh.name,
+          hash: b.mesh.hash,
+          label: b.mesh.name,
+          sidecar: Boolean(b.mesh.sidecar),
+        };
+      }
+      if (b.siblingMeshHash && b.siblingMesh) {
+        return { name: b.siblingMesh, hash: b.siblingMeshHash, label: b.siblingMesh, trial: true };
+      }
+      return null;
+    })
+    .filter(Boolean);
+  // 组里连模型定义都没有（如部分 NPC/怪物组）时，后端会按同茎兄弟给一份候选。
+  if (!meshes.length && insp.autoMesh && insp.autoMesh.hash) {
+    meshes.push({
+      name: insp.autoMesh.name,
+      hash: insp.autoMesh.hash,
+      label: insp.autoMesh.name,
+      trial: true,
+    });
+  }
   // 面板常驻：画不出时最忌讳整块隐藏——用户看到的是"工具坏了"。原因不在这儿另编
   // 一套，直接复用 absencesOf 里那条「立体模型」，两边说的必须是同一处判断。
   const meshRow = absences.find((a) => a.label === "立体模型") || null;

@@ -27,7 +27,7 @@ use serde_json::{json, Value};
 use tlbb_core::catalog::labels::kind_zh;
 use tlbb_core::export::gltf::{to_glb, to_glb_rigged, RigExport};
 use tlbb_core::preview::parse_ani;
-use tlbb_core::preview::{parse_hierarchy, parse_mesh, parse_nodes, Anim, MeshLayout};
+use tlbb_core::preview::{attach_bone_skin, parse_hierarchy, parse_mesh, parse_nodes, Anim, MeshLayout};
 
 fn arg(argv: &[String], name: &str) -> Option<String> {
     let want = format!("--{name}=");
@@ -71,7 +71,8 @@ fn rigged_glb(
     l: &MeshLayout,
 ) -> Option<Result<(Vec<u8>, Vec<String>, Vec<String>), String>> {
     let hierarchy = parse_hierarchy(raw)?;
-    let influences = parse_nodes(raw);
+    // 导出与预览用同一份权重：变长权重记录按骨名补表（见 `attach_bone_skin`）。
+    let influences = attach_bone_skin(&hierarchy, &parse_nodes(raw), raw);
     // 动作在网格同目录的 ani/ 子目录里（客户端摆放：<组名>_<动作>.ani）。
     // 展示名剥掉与网格干名的公共前缀（`w1351_monster_xiyuqiezei_idle01` 对
     // `…_yifu_001` → `idle01`）——前缀来自两份文件名本身，是事实不是猜的；

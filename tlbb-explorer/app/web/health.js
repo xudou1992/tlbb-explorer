@@ -40,6 +40,9 @@ function summaryHtml(h) {
   return `
   <p class="plain">客户端文件里写下的「谁用到谁」，有多少真能对上我们手上的文件。对不上的部分不是解析漏了，
   而是发布包当初就没带这些资源——所以照实列出来，不藏。</p>
+  <p class="dim">注意口径：这里的「对上」只按<b>资源清单登记的名字/路径</b>算。
+  贴图另有客户端 <code>convert/*</code> 转换路径可解出一批（详情页逐条标出、列表角标写作「可解 N」），
+  这批没有身份记录，<b>不计入</b>上面的百分比——所以真实可用比例比这里高。</p>
 
   <div class="hl-cards">
     <div class="hl-card"><dt>引用总数</dt><dd>${num(h.refsTotal)}</dd><span>客户端文件里写下的引用条目</span></div>

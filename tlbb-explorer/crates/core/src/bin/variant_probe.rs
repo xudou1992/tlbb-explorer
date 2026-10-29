@@ -2320,6 +2320,12 @@ fn main() {
             files += 1;
             if ef.param_walk_complete { continue }
             incomplete += 1;
+            if let Some((c, f, q, why)) = ef.param_stop {
+                println!(
+                    "  file {n} · key=({c},{f}) 名字={} · 词下标={q} · {why}",
+                    tlbb_core::preview::pu_field_name(f).unwrap_or("?")
+                );
+            }
             match ef.param_stop {
                 Some((c, f, q, why)) => {
                     let nm = tlbb_core::preview::pu_field_name(f).unwrap_or("?");

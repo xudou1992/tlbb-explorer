@@ -34,6 +34,16 @@ pub struct MdlSlot {
     pub hash: Option<String>,
     /// 对上时的资源路径；悬空为 null。绝不编造。
     pub path: Option<String>,
+    /// 清单里没有、但**按客户端转换路径能解出字节**时的那个路径（如 `convert/dxt/...`）。
+    /// 与 `resolved` 分开：`resolved` 是「清单里有身份」，这个是「名字能对上客户端导出物」。
+    /// 界面不能只写「缺」——那会说服读者这贴图坏了，而它其实打得开。
+    pub auto_path: Option<String>,
+}
+
+/// 只对贴图名去试转换路径桥（骨骼/网格/材质走这条只会白查一遍）。
+pub(crate) fn is_image_name(n: &str) -> bool {
+    let l = n.to_ascii_lowercase();
+    l.ends_with(".tga") || l.ends_with(".dds") || l.ends_with(".png") || l.ends_with(".bmp")
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -214,12 +224,21 @@ fn pak_cache() -> &'static PakCache {
 
 fn slot_of(con: &rusqlite::Connection, s: &SlotSummary) -> MdlSlot {
     let path = s.resolved.and_then(|h| asset_path(con, h));
+    let auto_path = if s.resolved.is_none() && is_image_name(&s.name) {
+        let (root, _) = roots();
+        crate::inspector::pathmap_of(&root)
+            .and_then(|pm| crate::texture_override::auto_texture_hash(pm, con, &s.name))
+            .map(|(_, p)| p)
+    } else {
+        None
+    };
     MdlSlot {
         role: s.role.clone(),
         name: s.name.clone(),
         resolved: s.resolved.is_some(),
         hash: s.resolved.map(|h| format!("{h:016x}")),
         path,
+        auto_path,
     }
 }
 
@@ -308,6 +327,7 @@ fn animations_of(con: &rusqlite::Connection, hash: u64) -> Vec<MdlSlot> {
             resolved: hit.is_some(),
             hash: hit.map(|(h, _)| format!("{h:016x}")),
             path,
+            auto_path: None, // 动作不是贴图，没有转换路径这一说
             name,
         });
     }

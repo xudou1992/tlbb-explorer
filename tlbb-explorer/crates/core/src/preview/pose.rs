@@ -412,7 +412,9 @@ pub enum WeightCase {
     /// Σw 落在 1.0 的容差窗口内：按和归一，清掉浮点尾差。
     Normalized,
     /// Σw 明显不足 1.0：差额 `1 − Σw` 挂根骨 = 那一份不跟随变形。
-    RootFilled,
+    /// 权重和明显不足 1：按比例归一。2026-10-29 受控取景实测三只资产画面都更好；
+    /// 60 条动作普查：两种锚的撕边总量都下降，且「第 0 帧锚优于 bind 锚」仍成立（6.22M vs 7.89M、32/60 更低）。
+    Renormalized,
     /// 其余（Σw > 1，或 4 个槽位被占满装不下差额）：只能按和归一。
     Rescaled,
 }
@@ -443,11 +445,14 @@ pub fn unify_weights(infl: &[(usize, f32)], root: usize) -> (Vec<(usize, f32)>, 
     if (sum - 1.0).abs() <= WEIGHT_SUM_TOLERANCE {
         case = WeightCase::Normalized;
     } else if sum < 1.0 && (out.len() < MAX_INFLUENCES || root_slot.is_some()) {
-        match root_slot {
-            Some(k) => out[k].1 += 1.0 - sum,
-            None => out.push((root, 1.0 - sum)),
+        // 和<1：按比例归一（旧口径把差额挂根骨，那部分顶点不跟随骨骼）。
+        let _ = root_slot;
+        if sum > f32::EPSILON {
+            for (_, w) in out.iter_mut() {
+                *w /= sum;
+            }
         }
-        return (out, WeightCase::RootFilled);
+        return (out, WeightCase::Renormalized);
     } else {
         case = WeightCase::Rescaled;
     }
@@ -811,8 +816,8 @@ mod tests {
         assert!((p.iter().map(|(_, w)| *w).sum::<f32>() - 1.0).abs() < 1e-6, "清尾差");
 
         let (p, case) = unify_weights(&[(0, 0.5)], 7);
-        assert_eq!(case, WeightCase::RootFilled);
-        assert_eq!(p, vec![(0, 0.5), (7, 0.5)], "差额原样挂根骨，已知那项的比例一动不动");
+        assert_eq!(case, WeightCase::Renormalized);
+        assert_eq!(p, vec![(0, 1.0)], "和不足 1：按比例归一（旧口径是差额挂根骨）");
 
         // 4 个槽位占满，差额没地方放：只能按和归一
         let (p, case) = unify_weights(&[(0, 0.2), (1, 0.2), (2, 0.2), (3, 0.2)], 7);
@@ -847,8 +852,8 @@ mod tests {
         assert_eq!(out[0], [2.0, 0.0, 0.0], "权重 1：跟骨平移");
         assert_eq!(
             out[1],
-            [1.5, 0.0, 0.0],
-            "Σw=0.5：已知那份跟骨 (2,0,0)，缺的 0.5 挂根骨（恒等）= 原地 (1,0,0)，合起来 1.5"
+            [2.0, 0.0, 0.0],
+            "Σw=0.5：按比例归一（唯一那份权重变成 1.0）⇒ 整根跟着骨走 (2,0,0)；旧口径差额挂根骨时是 1.5"
         );
         assert_eq!(out[2], [9.0, 9.0, 9.0], "没被表覆盖的顶点跟根骨走，根骨恒等即原地");
         // world == bind：恒等式对每一种顶点都成立

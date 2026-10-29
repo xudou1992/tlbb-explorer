@@ -318,6 +318,23 @@ impl Catalog {
     }
 
     /// Members of a group, joined to `resources` so each one carries its pak location.
+
+    /// 按**成员哈希**反查组：界面上到处能看到 16 位哈希（悬停提示、技术信息），
+    /// 用户把哈希粘进搜索框时应当能落到那个资产上。前缀（≥4 位）也认。
+    pub fn gids_by_member_hash(&self, hex_prefix: &str) -> Result<Vec<i64>> {
+        let p = hex_prefix.trim().to_ascii_lowercase();
+        if p.len() < 4 || p.len() > 16 || !p.bytes().all(|b| b.is_ascii_hexdigit()) {
+            return Ok(Vec::new());
+        }
+        let like = format!("{p}%");
+        self.rows(
+            "SELECT DISTINCT gid FROM amembers WHERE hash LIKE ?1 ORDER BY gid LIMIT 50",
+            &[&like],
+            |r| r.get::<_, i64>(0),
+        )
+    }
+
+
     pub fn members(&self, gid: i64) -> Result<Vec<Member>> {
         self.rows(
             "SELECT m.hash, m.role, r.path, r.type, r.pak, r.offset, r.original, r.ver              FROM amembers m LEFT JOIN resources r ON r.hash = m.hash WHERE m.gid = ?1              ORDER BY m.role, r.path",

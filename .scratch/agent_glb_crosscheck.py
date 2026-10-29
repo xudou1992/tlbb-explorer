@@ -12,8 +12,8 @@ sys.path.insert(0, r"D:\TLGL\.scratch")
 import agent_fmt_lib as lib  # noqa: E402
 
 ROOT = Path(r"D:\TLGL\.scratch\out\tree")
-TSV = Path(r"D:\TLGL\.scratch\agent_glb_mesh.tsv")
-OUT = Path(r"D:\TLGL\.scratch\agent_glb_crosscheck.txt")
+TSV = Path(r"D:\TLGL\.scratch\dyn\mesh_gate_20261025c.tsv")
+OUT = Path(r"D:\TLGL\.scratch\dyn\agent_glb_crosscheck_20261025c.txt")
 L = []
 
 
@@ -37,22 +37,33 @@ def py_parse(raw):
     rem = middle
     norms = 0
     cursor = 0
-    if rem >= vc * 12:
+    hdr = struct.unpack_from("<I", raw, 0x48)[0]
+    flags = struct.unpack_from("<I", raw, 0x114)[0]
+    # 客户端的流长是固定的：有 0x10（或 flags==0 全读）就有 12·vc 法线流；
+    # 单位长度只是内容校验，不通过仍要跳过这 12·vc 去读后面的 UV。
+    has_norm_stream = (flags == 0 or (flags & 0x10)) and rem >= vc * 12
+    if has_norm_stream:
         f = struct.unpack_from("<%df" % (vc * 3), raw, pos_end)
         unit = all(abs((f[i] * f[i] + f[i + 1] ** 2 + f[i + 2] ** 2) ** 0.5 - 1.0) <= 0.01
                    for i in range(0, vc * 3, 3))
         if unit:
             norms = vc
-            cursor = vc * 12
+        cursor = vc * 12
+    # 客户端 sub_140736070 的顺序：法线 → [16B/顶点流（flags&0x40）] →
+    # 2·fc 面级表（公共头 +0x48 的计数 >0）→ UV（flags==0 或 flags&0xF00>=0x100）。
     uv = 0
-    if norms and rem - cursor >= vc * 8:
+    ft = 0
+    if has_norm_stream and hdr > 0:
+        if (flags & 0x40) and rem - cursor >= vc * 16:
+            cursor += vc * 16
+        if rem - cursor >= fc * 2:
+            ft = 1
+            cursor += fc * 2
+    if has_norm_stream and (flags == 0 or (flags & 0xF00) >= 0x100) and rem - cursor >= vc * 8:
         g = struct.unpack_from("<%df" % (vc * 2), raw, pos_end + cursor)
         if all(abs(v) <= 4096.0 for v in g):
             uv = 1
             cursor += vc * 8
-    ft = (vc > 0) and (rem - cursor == fc * 2)
-    if ft:
-        cursor += fc * 2
     idx = struct.unpack_from("<%dH" % (fc * 3), raw, p + 4 * sm)
     return {
         "n": n, "vc": vc, "fc": fc, "sm": smf, "middle": middle,

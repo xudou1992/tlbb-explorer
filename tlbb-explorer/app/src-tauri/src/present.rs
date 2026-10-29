@@ -69,6 +69,7 @@ pub fn is_named(g: &Group) -> bool {
 }
 
 /// Subtitle built only by cutting the name apart, so it can never invent a translation.
+
 pub fn subtitle(stem: &str, kind: &str) -> String {
     let tail = stem
         .split(['_', '-', '.'])

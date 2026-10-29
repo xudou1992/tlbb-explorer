@@ -459,6 +459,38 @@ impl AppData {
                 .unwrap_or_else(|| hex(m.hash));
             return Ok(Some(Arc::new(mesh_view::outline_of(&g, path))));
         }
+        // 组里没有网格成员时，网格可能**在容器里但清单没登记名字**
+        //（实例 w1351_nv_s_yifu_yszm_qingfeng：.mdl 引用的是没发货的默认款）。
+        // 目录/茎从 catalog 的 Asset 取（Member 上不一定带路径），用路径哈希去容器核，核得上才画。
+        let mut dirs: Vec<String> = Vec::new();
+        let mut stems: Vec<String> = vec![l.group.stem.clone()];
+        for m in l.members.iter() {
+            if let Some(a) = self.asset(m.hash) {
+                if !a.dir.is_empty() && !dirs.iter().any(|d| d == &a.dir) {
+                    dirs.push(a.dir.clone());
+                }
+                if let Some((stem, _)) = a.name.rsplit_once('.') {
+                    let stem = stem.to_string();
+                    if !stem.is_empty() && !stems.iter().any(|x| x == &stem) {
+                        stems.push(stem);
+                    }
+                }
+            }
+        }
+        for dir in &dirs {
+            for stem in &stems {
+                let cand = format!("{dir}/{stem}.mesh");
+                let h = tlbb_core::jpak::crypto::path_hash(&cand);
+                let Some(raw) = self.read(h) else { continue };
+                let Ok(g) = preview::parse_geometry(&raw) else {
+                    continue;
+                };
+                if g.positions.is_empty() {
+                    continue;
+                }
+                return Ok(Some(Arc::new(mesh_view::outline_of(&g, cand))));
+            }
+        }
         Ok(None)
     }
 
@@ -476,6 +508,17 @@ impl AppData {
         requested: &str,
         hash: Option<&str>,
     ) -> Result<(String, preview::MeshGeometry), String> {
+        self.mesh_layout(requested, hash)
+            .map(|(path, l)| (path, l.geometry))
+    }
+
+    /// 与 [`Self::mesh_geometry`] 同一套查找，但把子网格切分（`face_counts`）一起交出去。
+    /// 预览分层贴图必须知道每个子网格的索引起点，只给总数无法按层画。
+    pub fn mesh_layout(
+        &self,
+        requested: &str,
+        hash: Option<&str>,
+    ) -> Result<(String, preview::MeshLayout), String> {
         let input = requested.trim();
         let label = if input.is_empty() { "这个网格" } else { input };
         let key = match hash.map(str::trim).filter(|s| !s.is_empty()).and_then(unhex) {
@@ -505,9 +548,8 @@ impl AppData {
         let raw = self
             .read(key)
             .ok_or_else(|| format!("无法从客户端容器读取网格：{path}"))?;
-        let geometry =
-            preview::parse_geometry(&raw).map_err(|e| format!("网格几何解析失败：{e}"))?;
-        Ok((path, geometry))
+        let layout = preview::parse_mesh(&raw).map_err(|e| format!("网格几何解析失败：{e}"))?;
+        Ok((path, layout))
     }
 
     pub fn lite_of(&self, gid: i64) -> Option<Arc<Lite>> {
@@ -993,6 +1035,29 @@ impl AppData {
                 }
             }
         }
+        // 哈希前缀也能搜：界面里到处能看到 16 位哈希（悬停提示、技术信息），
+        // 粘进搜索框应当落到那个资产上，而不是「没有符合条件的资产」。
+        let hexish = (4..=16).contains(&ql.len()) && ql.bytes().all(|b| b.is_ascii_hexdigit());
+        if hexish {
+            let gids: Vec<i64> = self.q(|c| c.gids_by_member_hash(&ql));
+            if !gids.is_empty() {
+                let missing: Vec<i64> = gids
+                    .iter()
+                    .copied()
+                    .filter(|g| self.lite_of(*g).is_none())
+                    .collect();
+                if !missing.is_empty() {
+                    self.ensure(&missing);
+                }
+                for gid in gids {
+                    if let Some(l) = self.lite_of(gid) {
+                        if !hits.iter().any(|h| h.group.id == gid) {
+                            hits.push(l);
+                        }
+                    }
+                }
+            }
+        }
         // 第一眼要看得懂：有名字的排前面，其次是有贴图线索的，再按组成规模；
         // 只能靠编号区分的组沉到最后（默认列表不列它们，见 Filter::named）。
         let rank = |l: &Lite| {
@@ -1150,7 +1215,7 @@ fn is_none_or(opt: &Option<String>, ok: impl Fn(&str) -> bool) -> bool {
 
 /// 缓存结构版本。DTO 或词表（场景/占位/缺口这些 &'static str 的取值集合）变动
 /// 时必须 +1，旧缓存会整体作废重预热——宁可慢一次，不能摆错数据。
-const WARM_CACHE_REV: u32 = 1;
+const WARM_CACHE_REV: u32 = 1; // 2: 副标题加了拼音→中文注，旧缓存里的 subtitle 要重建
 const WARM_CACHE_MAGIC: &str = "TLBWARM";
 
 #[derive(serde::Serialize, serde::Deserialize)]

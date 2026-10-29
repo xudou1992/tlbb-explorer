@@ -87,7 +87,25 @@ export const CITED_NOTE =
   "每一行都是一份客户端文件的原文里写着这个名字。这只是「提到」，不代表它们共用了同一份资源。";
 
 /// 列表里每行的红色「缺」曾经铺满整屏，等于没有信息量——只在详情里强调。
-export const rowMissChip = (miss) => (miss > 0 ? `贴图缺 ${miss}` : "");
+export const rowMissChip = (miss, auto = 0) => {
+  if (miss <= 0) return "";
+  // 全都能按转换路径解出时，不该再写「缺」——那是自己吓自己。
+  if (auto >= miss) return `贴图 ${miss} 张按转换路径解出`;
+  if (auto > 0) return `贴图缺 ${miss}·可解 ${auto}`;
+  return `贴图缺 ${miss}`;
+};
+
+/// 「贴图缺 N」角标的鼠标说明。这个数来自**资源清单**（名字→路径），
+/// **不含**客户端 `convert/*` 转换路径能对上的那批（它们在清单里没有路径）⇒ 数字天然偏大。
+/// 详情页有「另有 N 张走客户端转换路径」可以对照，所以这里把口径写清楚，别让人以为真缺这么多。
+export const missChipTitle = (c, auto = 0) => {
+  const located = c && c.locatedTotal != null ? c.locatedTotal : "?";
+  const ref = c && c.refTotal != null ? c.refTotal : "?";
+  const tail = auto > 0
+    ? `；其中 ${auto} 张已确认可按客户端转换路径解出（详情页逐条标注）`
+    : "；另有部分贴图走客户端转换路径可解（打开详情可见），这个数会偏大";
+  return `按清单登记的名字/路径统计：${located}/${ref} 条对上文件${tail}`;
+};
 
 /// 一张图一条都摆不出来时的那句话。分三种情况，一种都不能含糊：
 /// 格子文件根本没交记录、交了记录但摆的本来不是网格、记录指的是网格却取不出文件——

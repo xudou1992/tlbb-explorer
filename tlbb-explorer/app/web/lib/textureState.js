@@ -19,17 +19,46 @@ function hash8(h) {
 /// 槽位清单：每行一个槽，🟢 带「撤销」。
 /// 🟡 只许标"试贴榜里排出来的候选"（tried=true）；离线试贴没跑过时这个槽
 /// 只是"材质引用了、包里没对上文件"的名字——挂 🟡 会把名字清单冒充成候选榜。
-export function texSlotsHtml(slots = [], tried = true) {
+/// noUv=true 说的是"批量试贴真跑过、这只网格读不出 UV"——跟"还没跑"是两回事，
+/// 不能共用「离线试贴还没跑」那句（那会让人一直等一件不会发生的事）。
+export function texSlotsHtml(slots = [], tried = true, noUv = false) {
   if (!slots.length) return "";
+  const autoText = (s) =>
+    s.autoHash
+      ? `客户端自动对上文件 ${s.autoWidth ?? "?"}×${s.autoHeight ?? "?"} ${esc(s.autoCodec || "")}${
+          s.autoPath ? `（${esc(s.autoPath)}）` : ""
+        }`
+      : "";
   return `<ul class="tex-slots">` + slots.map((s) => {
     if (s.overrideHash) {
+      const auto = autoText(s);
+      const clash = s.autoHash && String(s.autoHash).toLowerCase() !== String(s.overrideHash).toLowerCase();
       return `<li>🟢 <b>${esc(s.name)}</b>：已人工确认 → ${hash8(s.overrideHash)}…
+        ${auto ? ` · ${auto}` : ""}${clash ? " · <b>⚠ 人工标注与自动对上的不是同一张</b>" : ""}
         <button type="button" data-act="clear" data-slot="${esc(s.name)}" data-cfg="${esc(s.cfgPath || "")}">撤销</button></li>`;
     }
-    if (tried) {
-      return `<li>🟡 <b>${esc(s.name)}</b>：候选未确认${s.cfgPath ? `（出处 ${esc(s.cfgPath)}）` : ""}</li>`;
+    if (s.autoHash) {
+      return `<li>🔵 <b>${esc(s.name)}</b>：${autoText(s)}（客户端转换路径，不是候选榜猜的）</li>`;
     }
-    return `<li>⬜ <b>${esc(s.name)}</b>：引用未确认${s.cfgPath ? `（cfg 登记路径 ${esc(s.cfgPath)}，包里没有该文件；离线试贴还没跑）` : "（离线试贴还没跑）"}</li>`;
+    if (tried) {
+      const icon = s.resolved ? "；库里对上的可能是 UI 小图标" : "";
+      return `<li>🟡 <b>${esc(s.name)}</b>：候选未确认${
+        s.cfgPath ? `（出处 ${esc(s.cfgPath)}${icon}）` : icon ? `（${icon.slice(1)}）` : ""
+      }</li>`;
+    }
+    // 已对上实体的名字也可能是 UI 小图标（玩家衣服基础色实测如此）；
+    // 它仍是模型贴图槽，要允许改标，但不能把「对上了」说成「包里没有」。
+    const where = s.cfgPath
+      ? s.resolved
+        ? `cfg 登记路径 ${esc(s.cfgPath)}，已对上实体（可能是 UI 小图标，不一定是模型大图）`
+        : `cfg 登记路径 ${esc(s.cfgPath)}，包里没有该文件`
+      : s.resolved
+        ? "已对上实体（可能是 UI 小图标，不一定是模型大图）"
+        : "";
+    if (noUv) {
+      return `<li>⬜ <b>${esc(s.name)}</b>：引用未确认${where ? `（${where}；这只网格读不出 UV，试贴排不出候选）` : "（这只网格读不出 UV，试贴排不出候选）"}</li>`;
+    }
+    return `<li>⬜ <b>${esc(s.name)}</b>：引用未确认${where ? `（${where}；离线试贴还没跑）` : "（离线试贴还没跑）"}</li>`;
   }).join("") + `</ul>`;
 }
 
@@ -151,14 +180,44 @@ export function texCandidatesHtml(group, slots = [], gi = 0, gn = 1) {
     <figure class="tex-cand">
       ${img}
       <figcaption>候选 ${i + 1} · ${esc(c.w)}×${esc(c.h)} ${esc(c.codec)} · ${esc(c.mips)} 级 mip<br>
-      ${scoreLine(c)}<br>${factorLine(c)}${spreadLine(c)}</figcaption>
-      <button type="button" data-act="try" data-gi="${gi}" data-idx="${i}">套上看看</button>
-      <button type="button" data-act="confirm" data-gi="${gi}" data-idx="${i}">确认这张</button>
+      ${scoreLine(c)}
+      <details class="tex-why"><summary>凭什么排它</summary>${factorLine(c)}${spreadLine(c)}</details></figcaption>
+      <div class="tex-btns">
+        <button type="button" data-act="try" data-gi="${gi}" data-idx="${i}">套上看看</button>
+        <button type="button" data-act="confirm" data-gi="${gi}" data-idx="${i}">确认这张</button>
+      </div>
     </figure>`;
   });
-  return `<div class="tex-group" data-gi="${gi}">${head}${warn}` +
-    `<div class="tex-uvmap-slot" data-uvmap-for="${esc(group.mesh)}"></div>` +
-    `${pick}<div class="tex-grid">${cards.join("")}</div></div>`;
+  // 客户端自动对上的真文件单独一排放在候选榜前面：它不是「猜」，是引擎自己的转换路径。
+  const stem = String(group.mesh || "").replace(/\.mesh$/i, "").toLowerCase();
+  const autos = slots.filter((s) => s.autoHash && (
+    String(s.name || "").replace(/\.[^.]+$/, "").toLowerCase() === stem || s.overrideHash
+  ));
+  const autoCards = autos.length
+    ? `<div class="tex-auto"><p class="dim">客户端自动对上（convert/dxt 路径，不是候选榜猜的；确认后写覆盖表）</p><div class="tex-grid">` +
+      autos.map((s) => {
+        const same = s.overrideHash && String(s.overrideHash).toLowerCase() === String(s.autoHash).toLowerCase();
+        const clash = s.overrideHash && !same;
+        return `<figure class="tex-cand tex-auto-card">
+        <span class="tex-ph" data-ph-for="${esc(s.autoHash)}">正在解客户端文件…</span>
+        <img alt="客户端自动对上" data-need-png="1" data-hash="${esc(s.autoHash)}">
+        <figcaption><b>自动对上</b> · ${esc(s.autoWidth ?? "?")}×${esc(s.autoHeight ?? "?")} ${esc(s.autoCodec || "")}<br>
+        <span class="dim">${esc(s.autoPath || "")}</span>${
+          clash ? `<br><b>⚠ 人工标注是另一张</b>` : ""
+        }</figcaption>
+        <div class="tex-btns">
+          <button type="button" data-act="try-auto" data-gi="${gi}" data-hash="${esc(s.autoHash)}" data-slot="${esc(s.name)}">套上看看</button>
+          ${same
+            ? `<span class="dim">已确认这张</span>`
+            : `<button type="button" data-act="confirm-auto" data-gi="${gi}" data-hash="${esc(s.autoHash)}" data-slot="${esc(s.name)}" data-cfg="${esc(s.cfgPath || "")}">确认这张</button>`}
+        </div>
+      </figure>`;
+      }).join("") + `</div></div>`
+    : "";
+  // 候选图排在最前，UV 分布图排到图后：先让人看到「能换哪几张」，证据跟着走。
+  return `<div class="tex-group" data-gi="${gi}">${head}${warn}${pick}${autoCards}` +
+    `<div class="tex-grid">${cards.join("")}</div>` +
+    `<div class="tex-uvmap-slot" data-uvmap-for="${esc(group.mesh)}"></div></div>`;
 }
 
 /// 立体预览自动试贴的取舍：**只有说得出「凭什么试这张」才套**。
@@ -211,26 +270,49 @@ function warmControl(warm) {
 
 /// 回包 → 区块内容。没有候选也没有槽位就回 null（区块整个不出现）。
 /// `warm` 是后台批量试贴的状态，只影响「没有榜」时的那句话。
+///
+/// `textureNoUv` 是后端在批量缓存里**明确读到**的「无 UV」网格名。它跟「还没跑」
+/// 必须分开说：前者等多久都不会有候选，后者才是进度问题。
 export function texBlock(reply, warm = null) {
   const slots = (reply && reply.texSlots) || [];
   const groups = (reply && reply.textureCandidates) || [];
-  if (!slots.length && !groups.length) return null;
+  const noUv = (reply && reply.textureNoUv) || [];
+  if (!slots.length && !groups.length && !noUv.length) return null;
   const group = groups[0] || null;
   const confirmed = slots.filter((s) => s.overrideHash).length;
   // 排序依据这句话跟着后端口径走（group.ranked）：综合分怎么算、什么时候才重排，
   // 规则在 Rust 那边，前端照着它写的说，免得改了公式而这句话还在说「按 UV 排」。
   const basis = group && group.ranked ? "UV 贴合 × 尺寸 × 透明边界的综合分" : "UV 岛内外方差比";
   const many = groups.length > 1 ? `这一组有 ${groups.length} 只网格，各出一份榜（` : "按网格 " + esc(group?.mesh) + " 的离线试贴排序（";
+  const noUvWho = noUv.length === 1 ? `网格 ${esc(noUv[0])} 读不出贴图坐标（UV）` : `${noUv.length} 只网格读不出贴图坐标（UV）`;
+  const resolvedCount = slots.filter((s) => s.resolved).length;
+  const autoCount = slots.filter((s) => s.autoHash).length;
+  const facts = [];
+  if (autoCount) facts.push(`${autoCount} 个客户端转换路径自动对上`);
+  if (resolvedCount) facts.push(`${resolvedCount} 个已对上实体（可能是 UI 小图标）`);
+  const slotCount = facts.length
+    ? `引用了 ${slots.length} 张贴图（其中 ${facts.join("、")}）`
+    : `引用了 ${slots.length} 张贴图，包里都没对上文件`;
   const note = group
-    ? `${many}${basis}） · 从 ${group.pool} 张匿名贴图中选出 · 全部未确认`
-    : `引用了 ${slots.length} 张贴图，包里都没对上文件；离线试贴还没跑，下面只是名字清单，不是候选榜`;
+    ? `${many}${basis}） · 从 ${group.pool} 张匿名贴图中选出 · 全部未确认${noUv.length ? ` · 另有 ${noUvWho}` : ""}`
+    : noUv.length
+      ? `${slots.length ? `${slotCount}；` : ""}${noUvWho}，离线试贴排不出候选${
+          autoCount ? `；自动对上的 ${autoCount} 个槽仍可直接套用` : "——名字清单在，暂时没法自动套图"
+        }`
+      : `${slotCount}；${
+          autoCount
+            ? `自动对上的 ${autoCount} 个槽可直接套用，其余没有候选榜`
+            : "离线试贴还没跑，下面只是名字清单，不是候选榜"
+        }`;
   return {
-    slotsHtml: texSlotsHtml(slots, Boolean(group)) + (group ? "" : warmControl(warm)),
+    // 读不出 UV 的份不再挂「还没跑」进度话术——那会让人以为等等就好。
+    slotsHtml: texSlotsHtml(slots, Boolean(group), noUv.length > 0) + (group || noUv.length ? "" : warmControl(warm)),
     // 有榜就摆一颗撤图按钮：自动试贴会把贴图盖在模型上，得有一眼可见的路退回灰模。
-    candHtml:
-      groups.map((g, i) => texCandidatesHtml(g, slots, i, groups.length)).join("") +
-      `<p class="dim"><button type="button" data-act="clearTrial">退回灰模</button>` +
-      ` 立体预览可能自动套着榜首候选作试贴——那是猜测，不是客户端认定的那张。</p>`,
+    candHtml: groups.length
+      ? groups.map((g, i) => texCandidatesHtml(g, slots, i, groups.length)).join("") +
+        `<p class="dim"><button type="button" data-act="clearTrial">退回灰模</button>` +
+        ` 立体预览可能自动套着榜首候选作试贴——那是猜测，不是客户端认定的那张。</p>`
+      : "",
     note,
     confirmed,
     total: slots.length,

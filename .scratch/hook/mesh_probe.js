@@ -42,9 +42,7 @@ if (ReadFile) {
       this.h = args[0].toString();
       this.buf = args[1];
       this.len = args[2].toInt32();
-      this.mesh = handles.get(this.h) || null;
-    },
-    onLeave(ret) {
+.nLeave(ret) {
       if (!this.mesh) return;
       if (ret.toInt32() === 0) return; // 失败
       let n = this.len;

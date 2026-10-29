@@ -342,6 +342,8 @@ em.na { color: var(--muted); font-style: normal; }
 /* 立体模型 */
 .mesh-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 9px; }
 .mesh-head p { font-size: 12px; }
+#meshLayers { margin-bottom: 9px; }
+#meshLayers .chip { font-size: 11.5px; padding: 4px 8px; }
 .mesh-stage {
   position: relative; height: 360px; overflow: hidden;
   border: 1px solid var(--line); border-radius: var(--radius-l);
@@ -522,6 +524,25 @@ em.na { color: var(--muted); font-style: normal; }
 .tex-slots li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; color: var(--muted); }
 .tex-slots b { color: var(--text); }
 .tex-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(146px, 1fr)); gap: 10px; }
+/* 说明行原来是 h3 里的一句内联字，挤得标题断成三行；单独一行更好读。 */
+#secTex #texNote { margin: -2px 0 8px; font-size: 12px; line-height: 1.6; }
+/* 预览页里候选横着排一行：模型下面先看到一排图，点一张就套上，不用滚一屏。
+   卡片本身不变，宽屏能并排看到 6~8 张，窄了就横向滚。 */
+#secTex .tex-grid {
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: 156px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+/* 预览页是「一眼挑图」：缩略图小一点、说明只留尺寸和分数，因子证据折起来要一点才展开。 */
+#secTex .tex-cand img { height: 96px; }
+#secMesh .mesh-stage { height: 280px; }
+.tex-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+.tex-btns button { justify-self: auto; }
+.tex-why { margin-top: 2px; }
+.tex-why summary { color: var(--faint); font-size: 11px; cursor: pointer; }
+.tex-why .tex-facts { display: block; margin-top: 2px; }
 .tex-cand { min-width: 0; margin: 0; display: grid; gap: 6px; align-content: start; }
 .tex-cand img {
   display: block; width: 100%; height: 118px; object-fit: contain;
@@ -555,6 +576,12 @@ em.na { color: var(--muted); font-style: normal; }
   vertical-align: middle;
 }
 .tex-cand button { justify-self: start; }
+/* 客户端自动对上的真文件：单独一排，描边和候选卡分开，别让人以为它也是「猜」。 */
+.tex-auto { margin: 4px 0 10px; }
+.tex-auto-card { border: 1px solid var(--teal-line); border-radius: var(--radius); padding: 6px; }
+/* 特效参数表：原始 32 位词是证据，等宽、可断行；别让它把表撑出屏幕。 */
+.fx-params td.mono { font: 11px/1.5 var(--mono); color: var(--muted); overflow-wrap: anywhere; }
+.fx-params th, .fx-params td { vertical-align: top; }
 
 /* ---- 地图浏览器浮层 ---- */
 .map-banner {
@@ -758,3 +785,6 @@ details.fold[open] > summary {
 .tab-extra[hidden] { display: none; }
 .tab-more { color: var(--muted); }
 .tab-more.on, .tab-more:hover { color: var(--teal-deep); }
+
+/* 拼音名的中文读注：小一号、偏暗，别抢标题 */
+.gloss { font-style: normal; margin-left: 6px; color: var(--dim, #7d8b86); font-size: 12px; }

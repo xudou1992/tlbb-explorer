@@ -6,11 +6,25 @@
 
 import { el, errText, num, chips } from "./ui.js";
 import * as api from "./api.js";
+import { evidenceShort } from "./lib/layerChips.js";
 import { state } from "./state.js";
 import { makeSeq } from "./lib/seq.js";
 import { empty, loading, failed, notReady, loaded, isNotReadyMsg } from "./lib/detailState.js";
 import { titleHtml } from "./lib/wording.js";
-import { showMeshes, hideMeshes, applyTexture, remesh, setTrialProvider, clearMeshTexture } from "./mesh.js";
+import {
+  showMeshes,
+  hideMeshes,
+  applyTexture,
+  tryLayerTexture,
+  remesh,
+  setTrialProvider,
+  setTexturePlanProvider,
+  setTexturePlanObserver,
+  refreshTexturePlan,
+  clearMeshTexture,
+  onActiveMesh,
+  currentMeshName,
+} from "./mesh.js";
 import { MeshViewer } from "./mesh-viewer.js";
 import {
   makePoseGate,
@@ -141,6 +155,9 @@ export async function showDetail(gid, retried = 0) {
     poseReset(); // 预览与在途状态跟着资产走：旧怪的姿势一格都不许留给新怪
     clearEffect();
     clearMaterial();
+    // 详情比视口高时，真正滚动的是窗口而不是 detailPane——换资产后停在上一件
+    // 资产的滚动位置，人第一眼看到的是页面中段（2026-10-24 真窗口撞到）。
+    window.scrollTo?.(0, 0);
   }
   paint(loading(gid)); // 从 empty() 出发，旧内容结构上就留不下来
   try {
@@ -246,6 +263,16 @@ function initAnim() {
     poseCursor(); // 游标动 → 摆这一帧；连动时 gate 只保留最新，不排队积压
   });
   el("animOnlyChanged").addEventListener("change", repaintAnim);
+  // 组成树里的「试画它」：名字是推出来的、清单没登记，但哈希在容器里核过 ⇒ 按哈希直读来画。
+  el("tree").addEventListener("click", (ev) => {
+    const btn = ev.target && ev.target.closest ? ev.target.closest("[data-trial-mesh]") : null;
+    if (!btn) return;
+    const name = btn.getAttribute("data-trial-mesh");
+    const hash = btn.getAttribute("data-trial-hash");
+    if (!name || !hash) return;
+    showMeshes({ meshes: [{ name, hash, label: name }], visible: true, active: 0 });
+    el("secMesh").scrollIntoView({ block: "center" });
+  });
   el("animPlay").addEventListener("click", () => setPlaying(!playing));
   // 点开才取数：一条动作约 0.6 秒，不该压在每次选资产的路径上
   onTabOpen((name) => {
@@ -778,12 +805,35 @@ let warmStatus = null;
 /// 别处改走（列表重画、别的驱动点了别的行），照 state.selected 重刷会让人
 /// 刚标完就看不见自己那条 🟢。
 let texGid = 0;
+/// 当前画布上那只网格的贴图槽名单（由 mesh_texture_plan 回包带来）。
+/// null = 还没拿到分层计划，槽位按整组列；Set = 只列这只网格材质表里的名字。
+let activeSlotNames = null;
+
+/// 当前显示的是哪份网格，就只留它的候选榜。一只怪常有 2~3 份网格
+/// （衣服/手套/武器），把别的网格的榜摆在这里，人会拿错榜往当前槽位里写确认。
+function activeMeshSorted(insp) {
+  const groups = (insp && insp.textureCandidates) || [];
+  // 画布给的是完整路径（data/source/.../x.mesh），榜里只写文件名；按最后一段比。
+  const base = (s) => String(s || "").replaceAll("\\", "/").split("/").pop().toLowerCase();
+  const active = base(currentMeshName());
+  if (!active) return insp;
+  return { ...insp, textureCandidates: groups.filter((g) => base(g.mesh) === active) };
+}
 
 function paintTex(insp) {
   texSource = insp;
+  if (texGid !== state.selected) activeSlotNames = null; // 换资产：别拿上一只的槽名过滤
   texGid = state.selected;
-  const block = texBlock(insp, warmStatus);
-  texReply = block ? insp : null;
+  const reply = activeMeshSorted(insp);
+  const allSlots = reply.texSlots || [];
+  let slots = allSlots;
+  if (activeSlotNames) {
+    const hit = allSlots.filter((s) => activeSlotNames.has(String(s.name).toLowerCase()));
+    if (hit.length) slots = hit;
+  }
+  const view = slots === allSlots ? reply : { ...reply, texSlots: slots };
+  const block = texBlock(view, warmStatus);
+  texReply = block ? view : null;
   el("secTex").hidden = !block;
   if (!block) return;
   el("texSlots").innerHTML = block.slotsHtml;
@@ -792,6 +842,11 @@ function paintTex(insp) {
   loadCandidatePngs();
   loadUvMaps();
 }
+
+// 换网格（画布上方的筹码）时重排候选栏，不重开容器：已解出的 png 都在回包里。
+onActiveMesh(() => {
+  if (texSource && !el("secTex").hidden) paintTex(texSource);
+});
 
 /// 问一次后台批量试贴的状态。数不出来（没有桌面端 / 后端没这条命令）就保持
 /// null：那一栏的话术会退回「离线试贴还没跑」，而不是编一句「都跑完了」。
@@ -810,10 +865,25 @@ refreshWarm();
 /// 立体预览的自动试贴：这只网格没有 🟢 确认记录时，把这份榜的第一名套上去看效果，
 /// 标题里写明「未确认，不是客户端认定的那张」。要不要套、套不了为什么，
 /// 全交给纯函数 `trialPick` 判（没榜 / 岛外无对比 / 综合分低于 1.3 都不套，并把原因说出来）。
+setTexturePlanProvider((name, hash) => api.meshTexturePlan(state.selected, name, hash));
+
+// 分层计划带回「这只网格自己的材质表里有哪些贴图」：槽位清单只列这些名字。
+// 大组里同组有十几个模型，整组槽位混在一起会让人把别的模型的图标到这只身上。
+setTexturePlanObserver((plan) => {
+  activeSlotNames = plan && Array.isArray(plan.slotNames) && plan.slotNames.length
+    ? new Set(plan.slotNames.map((n) => String(n).toLowerCase()))
+    : null;
+  if (texSource && !el("secTex").hidden) paintTex(texSource);
+});
+
 setTrialProvider(async (name) => {
   const groups = (texReply && texReply.textureCandidates) || [];
-  const want = String(name || "").toLowerCase();
-  const g = groups.find((x) => String(x.mesh || "").toLowerCase() === want) || groups[0];
+  // 画布给的是完整路径，榜里只有文件名：按最后一段比。
+  const base = (s) => String(s || "").replaceAll("\\", "/").split("/").pop().toLowerCase();
+  const want = base(name);
+  const g = groups.find((x) => base(x.mesh) === want);
+  // 没这只网格的榜就不套，**绝不退回第一份**——那会把脸的贴图套到头发上。
+  if (!g) return { skip: "这只网格没有候选榜" };
   const pick = trialPick(g);
   if (pick.skip) return { skip: pick.skip };
   const c = pick.candidate;
@@ -932,6 +1002,27 @@ async function loadCandidatePngs() {
   }
 }
 
+/// 网格 meta 的前两段（顶点 / 三角面）与贴图状态无关，重写后段时要留着；
+/// 多件模式的「整组 N 件 · 当前 x」也要留着，否则确认一条就丢掉当前件上下文。
+function meshMetaHead() {
+  const seg = el("meshMeta").textContent.split(" · ");
+  const keep = seg.filter((s, i) => i < 2 || /^(整组 |当前 )/.test(s));
+  return keep.join(" · ");
+}
+
+/// 分层计划 → 一句人话。特效层与不透明材质层分开数，不把第二材质说成特效；
+/// 末尾带上**可核的那对数**：颜色贴图张数与子网格段数对不对得上。
+function layeredMetaLine(plan) {
+  const fx = Math.max(0, Number(plan && plan.effectLayers) || 0);
+  const op = Math.max(0, Number(plan && plan.opaqueLayers) || 0);
+  const extra = [fx ? `${fx} 层特效` : "", op ? `${op} 层材质` : ""].filter(Boolean);
+  const evShort = evidenceShort(plan && plan.evidence);
+  const evTxt = evShort ? ` · ${evShort}` : "";
+  return `${meshMetaHead()} · ${
+    extra.length ? `按子网格分层：基础 + ${extra.join(" + ")}（层次按材质表排）` : "按子网格分层：基础层"
+  }${evTxt}`;
+}
+
 el("secTex").addEventListener("click", async (e) => {
   const b = e.target.closest("button");
   if (!b) return;
@@ -953,6 +1044,60 @@ el("secTex").addEventListener("click", async (e) => {
   const groups = texReply.textureCandidates || [];
   const group = groups[Number(b.dataset.gi)];
   const slots = texReply.texSlots || [];
+  // 客户端自动对上的真文件：不是候选榜的猜测，单独一条路。
+  if (b.dataset.act === "try-auto") {
+    try {
+      const png = await api.candidatePng(b.dataset.hash);
+      if (!png) {
+        el("texNote").textContent = "客户端自动对上的这张没解出来（容器里没有它）。";
+      } else if (tryLayerTexture(b.dataset.slot, png)) {
+        el("texNote").textContent = "已只套到这条槽位对应的子网格层，其它层保持原样。";
+      } else if (!applyTexture(png)) {
+        el("texNote").textContent = "先在上方立体预览里把网格调出来，才能套贴图。";
+      } else {
+        el("texNote").textContent = "已套上客户端自动对上的那张（convert/dxt 路径，不是候选榜猜的）。";
+      }
+    } catch (e) {
+      el("texNote").textContent = `客户端自动对上的这张没解出来：${String((e && e.message) || e)}`;
+    }
+    return;
+  }
+  if (b.dataset.act === "confirm-auto") {
+    const slotName = b.dataset.slot;
+    const cfg = b.dataset.cfg || null;
+    const hash = b.dataset.hash;
+    try {
+      await api.textureOverrideSet(
+        slotName,
+        cfg,
+        hash,
+        "客户端自动对上（convert/dxt）",
+        group && group.mesh,
+      );
+      const hit = slots.find((s) => s.name === slotName && String(s.cfgPath || "") === String(cfg || ""));
+      if (hit) hit.overrideHash = hash;
+      // 重画整栏（不是只重画槽位）：自动卡上的「人工标注是另一张」警告必须当场消失。
+      if (texSource) paintTex(texSource);
+      // 确认一条槽位后要重取**分层计划**，不能拿单张图把全部子网格盖回去。
+      const plan = await refreshTexturePlan();
+      if (plan) {
+        el("meshMeta").textContent = layeredMetaLine(plan);
+      } else {
+        try {
+          const png = await api.candidatePng(hash);
+          if (png && applyTexture(png)) {
+            el("meshMeta").textContent = `${meshMetaHead()} · 已套用人工确认的贴图`;
+          }
+        } catch {
+          // 图没解出来：表已经写进去了，下面那句说明状态。
+        }
+      }
+      el("texNote").textContent = `已记进覆盖表：${slotName} ← 客户端自动对上的那张（convert/dxt）`;
+    } catch (e) {
+      el("texNote").textContent = `没写进覆盖表：${String((e && e.message) || e)}`;
+    }
+    return;
+  }
   if (b.dataset.act === "try") {
     const c = group && group.candidates[Number(b.dataset.idx)];
     if (c && !applyTexture(c.png)) el("texNote").textContent = "先在上方立体预览里把网格调出来，才能套贴图。";
@@ -969,7 +1114,15 @@ el("secTex").addEventListener("click", async (e) => {
     const idx = Number(b.dataset.idx);
     const c = group && group.candidates[idx];
     if (!c) return;
-    await api.textureOverrideSet(slot.name, slot.cfgPath, c.hash, "uvfit v1 人工确认");
+    // 把画布上那只网格一起写进表：槽名和网格名不同名时（头发/衣服），
+    // 只靠「网格同名槽」找不到这条确认，模型下次打开就不会自动套上。
+    await api.textureOverrideSet(
+      slot.name,
+      slot.cfgPath,
+      c.hash,
+      "uvfit v1 人工确认",
+      group.mesh,
+    );
     // 只重画槽位清单，不整页重刷：实测一次 showDetail 要 2.8 秒（20 张缩略图 + 2 张
     // 分布图全得重解一遍），而人在做的事是「连着标十几条」——每标一条闪回灰框、
     // 滚动位置丢一次，就没人标得下去了。撤销那条路保持整页重刷：它要把槽位还回下拉，
@@ -990,14 +1143,15 @@ el("secTex").addEventListener("click", async (e) => {
       `已记进覆盖表：${slot.name} ← 第 ${idx + 1} 张（榜和图都不重画，接着标下一条）`;
     // 确认的成果得当场看得见。上一版只把槽位清单画成 🟢，模型身上仍是那张未确认的试贴，
     // 人点完会以为"没生效"——实测要重开一次模型才换上（10-11 真窗口撞到的）。
-    // 所以这里按这份榜自己的网格名问一次确认层：有就直接套上，并把「未确认」那句换掉。
-    if (api.meshTextureOverride) {
+    // 2026-10-26 起先重取分层计划：确认的可能只是某个特效槽，不能把整只网格换成单张图。
+    const plan = await refreshTexturePlan();
+    if (plan) {
+      el("meshMeta").textContent = layeredMetaLine(plan);
+    } else if (api.meshTextureOverride) {
       try {
         const r = await api.meshTextureOverride(group.mesh);
         if (r && r.png && applyTexture(r.png)) {
-          const base = el("meshMeta").textContent
-            .split(" · 已套试贴")[0].split(" · 没套试贴")[0].split(" · 已套用人工确认")[0];
-          el("meshMeta").textContent = `${base} · 已套用人工确认的贴图（${r.slot}）`;
+          el("meshMeta").textContent = `${meshMetaHead()} · 已套用人工确认的贴图（${r.slot}）`;
         }
       } catch {
         // 确认的贴图解不出来就别装作套上了：留着原来那句，让说明行说清发生了什么。

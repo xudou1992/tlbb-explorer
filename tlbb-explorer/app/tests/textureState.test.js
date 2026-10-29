@@ -41,6 +41,91 @@ test("没跑过试贴的槽位不是候选：标 ⬜ 并说清是名字清单，
   assert.ok(html.includes(SLOT_A.cfgPath));
 });
 
+test("已对上实体的贴图槽也要列：可能只是图标，不能说成包里没有", () => {
+  const html = texSlotsHtml([{ ...SLOT_A, resolved: true }], false);
+  assert.ok(html.includes("已对上实体"), html);
+  assert.ok(html.includes("可能是 UI 小图标"), html);
+  assert.ok(!html.includes("包里没有该文件"), html);
+  assert.ok(texSlotsHtml([{ ...SLOT_A, resolved: true }], true).includes("可能是 UI 小图标"), "候选态也要提醒图标");
+  const b = texBlock(
+    { texSlots: [{ ...SLOT_A, resolved: true }], textureCandidates: [] },
+    { pending: 500 },
+  );
+  assert.ok(b.note.includes("其中 1 个已对上实体"), b.note);
+  assert.ok(!b.note.includes("都没对上文件"), b.note);
+});
+
+test("客户端自动对上：槽位标 🔵 带尺寸/路径；人工标注不同要当场警告", () => {
+  const auto = {
+    ...SLOT_A,
+    autoHash: "9871e8ac8c525aa7",
+    autoWidth: 512,
+    autoHeight: 512,
+    autoCodec: "BC3",
+    autoPath: "convert/dxt/data/source/player/w1351_nan/texture/toufa/w1351_nan_s_toufa_xianfeng_001.tga",
+  };
+  const html = texSlotsHtml([auto], true);
+  assert.ok(html.includes("🔵"), html);
+  assert.ok(html.includes("客户端自动对上"), html);
+  assert.ok(html.includes("512×512"), html);
+  assert.ok(html.includes("convert/dxt/"), html);
+  const clash = texSlotsHtml([{ ...auto, overrideHash: "ab5d2b3da9535d43" }], true);
+  assert.ok(clash.includes("不是同一张"), clash);
+  assert.ok(clash.includes("🟢"), clash);
+});
+
+test("自动对上但没有候选榜：说明里不能再写「包里都没对上文件」", () => {
+  const auto = {
+    ...SLOT_A,
+    autoHash: "9871e8ac8c525aa7",
+    autoWidth: 512,
+    autoHeight: 512,
+    autoCodec: "BC3",
+    autoPath: "convert/dxt/data/source/player/w1351_nan/texture/toufa/x.tga",
+  };
+  const b = texBlock({ texSlots: [auto], textureCandidates: [] });
+  assert.ok(b);
+  assert.ok(b.note.includes("自动对上"), b.note);
+  assert.ok(!b.note.includes("包里都没对上文件"), b.note);
+  assert.ok(b.note.includes("可直接套用"), b.note);
+  assert.equal(b.candHtml, "");
+});
+
+test("自动对上的图要摆成单独一排，带「套上看看 / 确认这张」按钮", () => {
+  const autoSlot = {
+    ...SLOT_A,
+    autoHash: "9871e8ac8c525aa7",
+    autoWidth: 512,
+    autoHeight: 512,
+    autoCodec: "BC3",
+    autoPath: "convert/dxt/data/source/player/w1351_nan/texture/toufa/x.tga",
+  };
+  const html = texCandidatesHtml(GROUP, [autoSlot]);
+  assert.ok(html.includes("客户端自动对上"), html);
+  assert.ok(html.includes('data-act="try-auto"'), html);
+  assert.ok(html.includes('data-act="confirm-auto"'), html);
+  assert.ok(html.includes("9871e8ac8c525aa7"), html);
+  assert.match(html, /data-act="try-auto"[^>]*data-slot="a_yifu_001\.tga"/,
+    "自动试看要带上槽名：分层模式只换这一层，不能整只盖");
+});
+
+test("自动图已经确认过：不再重复给「确认这张」，只留「套上看看」", () => {
+  const autoSlot = {
+    ...SLOT_A,
+    autoHash: "9871e8ac8c525aa7",
+    autoWidth: 512,
+    autoHeight: 512,
+    autoCodec: "BC3",
+    autoPath: "convert/dxt/data/source/player/w1351_nan/texture/toufa/x.tga",
+    overrideHash: "9871e8ac8c525aa7",
+  };
+  const html = texCandidatesHtml(GROUP, [autoSlot]);
+  assert.ok(html.includes("已确认这张"), html);
+  assert.ok(!html.includes('data-act="confirm-auto"'), html);
+  assert.ok(html.includes('data-act="try-auto"'), html);
+  assert.ok(!html.includes("人工标注是另一张"), html);
+});
+
 test("确认下拉只列未确认的槽位；全确认了就提示可撤销重选", () => {
   const open = texCandidatesHtml(GROUP, [SLOT_A, SLOT_B]);
   assert.ok(open.includes('id="texSlotPick"'));
@@ -141,6 +226,26 @@ test("全库都进过榜、这只仍没候选：说的是榜里没有可用候�
   const b = texBlock(NO_GROUP, { pending: 0, running: false });
   assert.ok(b.slotsHtml.includes("都已进批量试贴榜"), b.slotsHtml);
   assert.ok(!b.slotsHtml.includes('data-act="warm"'), "没得跑就别摆按钮");
+});
+
+test("批量试贴明确读到「无 UV」：说读不出 UV，绝不再说「还没跑」或「没有可用候选」", () => {
+  const b = texBlock({ texSlots: [SLOT_A], textureCandidates: [], textureNoUv: ["a_yifu_001.mesh"] },
+    { pending: 0, running: false });
+  assert.ok(b.note.includes("读不出贴图坐标"), b.note);
+  assert.ok(b.note.includes("a_yifu_001.mesh"), b.note);
+  assert.ok(!b.note.includes("还没跑"), b.note);
+  assert.ok(!b.slotsHtml.includes("离线试贴还没跑"), b.slotsHtml);
+  assert.ok(b.slotsHtml.includes("试贴排不出候选"), b.slotsHtml);
+  assert.ok(!b.slotsHtml.includes("都已进批量试贴榜"), "无 UV 不是「榜里没有可用候选」");
+  assert.equal(b.candHtml, "", "没有候选就别摆「退回灰模 / 自动试贴」那两句");
+});
+
+test("只有无 UV 网格、没有贴图槽也照样出区块：这是真实状态，不该整块消失", () => {
+  const b = texBlock({ texSlots: [], textureCandidates: [], textureNoUv: ["a.mesh", "b.mesh"] });
+  assert.ok(b);
+  assert.ok(b.note.includes("2 只网格读不出贴图坐标"), b.note);
+  assert.equal(b.total, 0);
+  assert.equal(b.candHtml, "");
 });
 
 test("有候选榜时不提批量试贴这件事（榜都出来了，那句话是噪音）", () => {

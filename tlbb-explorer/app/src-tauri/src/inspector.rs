@@ -82,6 +82,12 @@ pub struct MdlSlot {
     pub resolved: bool,
     pub hash: Option<String>,
     pub path: Option<String>,
+    /// 身份来自只读 sidecar（`.scratch/cfg_named_sidecar.json`），不是 `resources.db`。
+    /// 变体组的 `_b2.mesh` 一类靠它才能定位；界面要标明「未换库」。
+    pub sidecar: bool,
+    /// 清单里没身份、但**名字能按客户端转换路径解出字节**时的那个路径。
+    /// 与 `resolved` 分开：界面不能只写「缺」——预览页其实能把这张贴图画出来。
+    pub auto_path: Option<String>,
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -89,6 +95,11 @@ pub struct MdlSlot {
 pub struct MdlBodyRow {
     pub label: String,
     pub mesh: MdlSlot,
+    /// 网格名在清单里没身份时：同目录下**按同茎兄弟**推出的候选文件名（已用路径哈希核过容器里有这条）。
+    /// 只作提示——名字是推出来的，不冒充清单登记。
+    pub sibling_mesh: Option<String>,
+    /// 上面那个候选的 16 位哈希：`mesh_data` 就是按哈希定位记录的，界面上「试画它」要用。
+    pub sibling_mesh_hash: Option<String>,
     pub material: MdlSlot,
     /// 材质现场解出的贴图槽（贴图/父材质/着色器）。材质没定位到时为空——
     /// 没有字节就没有槽位，这是事实不是失败。
@@ -131,6 +142,13 @@ pub struct Previews {
 
 #[derive(Serialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
+pub struct AutoMesh {
+    pub name: String,
+    pub hash: String,
+}
+
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct AssetInspectReply {
     pub found: bool,
     /// 一句话：kind_zh + 中文名 + stem + (kind)。
@@ -141,6 +159,9 @@ pub struct AssetInspectReply {
     pub parts: i64,
     pub counts: Counts,
     pub members: Vec<MemberRow>,
+    /// 组里没有能定位的网格、但「同茎兄弟」核得上时，给一份**可直接画**的候选。
+    /// 名字是推出来的（清单没登记），界面必须标明，不能冒充登记项。
+    pub auto_mesh: Option<AutoMesh>,
     pub mdl: Option<MdlView>,
     /// 缺什么，人话；库里有 path 给 path，对不上就「客户端未含」/「名字对不上实体」。
     pub missing: Vec<String>,
@@ -157,6 +178,10 @@ pub struct AssetInspectReply {
     /// 本组悬空贴图槽：cfg 出处 + 覆盖表人工确认状态（🟢）。
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub tex_slots: Vec<crate::texture_override::TexSlotInfo>,
+    /// 批量试贴明确判定「没有 UV」的网格名（有缓存且 hasUv=false）。
+    /// 空 = 没有这种网格，或还没跑过批量——两种都不许写成「读不出」。
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub texture_no_uv: Vec<String>,
     /// 本次处理耗时（毫秒）。
     pub elapsed_ms: u64,
     /// 超过 2s 时给的说明，否则空串。
@@ -266,14 +291,38 @@ fn open_one_pak(root: &Path, pak_name: &str) -> Option<(Pak, Vec<Record>)> {
     Some((pak, recs))
 }
 
-fn slot_of(con: &Connection, s: &SlotSummary) -> MdlSlot {
-    let path = s.resolved.and_then(|h| asset_path(con, h));
+fn slot_of(con: &Connection, root: &Path, s: &SlotSummary) -> MdlSlot {
+    // 先查清单；查不到再查只读 sidecar。变体网格/材质在包里但没进清单，正是这一支。
+    let catalog = resolve_name(con, &s.name);
+    let side = if catalog.is_none() {
+        crate::sidecar::lookup(root, &s.name)
+    } else {
+        None
+    };
+    let (hash, path, sidecar) = match (catalog, side) {
+        (Some((h, p)), _) => (Some(h), p, false),
+        (None, Some(hit)) => (Some(hit.hash), Some(hit.path), true),
+        (None, None) => (
+            s.resolved,
+            s.resolved.and_then(|h| asset_path(con, h)),
+            false,
+        ),
+    };
+    let auto_path = if hash.is_none() && crate::mdl_view::is_image_name(&s.name) {
+        pathmap_of(&root)
+            .and_then(|pm| crate::texture_override::auto_texture_hash(pm, con, &s.name))
+            .map(|(_, p)| p)
+    } else {
+        None
+    };
     MdlSlot {
         role: s.role.clone(),
         name: s.name.clone(),
-        resolved: s.resolved.is_some(),
-        hash: s.resolved.map(|h| format!("{h:016x}")),
+        resolved: hash.is_some(),
+        hash: hash.map(|h| format!("{h:016x}")),
         path,
+        sidecar,
+        auto_path,
     }
 }
 
@@ -320,13 +369,50 @@ fn miss_msg(role: &str, name: &str, kind: &str) -> String {
 /// None，文案退回「只有名称」的旧口径——这层失败绝不允许挡住详情页。
 static PATHMAP: OnceLock<Option<PathMap>> = OnceLock::new();
 
-fn pathmap_of(root: &Path) -> Option<&'static PathMap> {
+pub(crate) fn pathmap_of(root: &Path) -> Option<&'static PathMap> {
     PATHMAP.get_or_init(|| PathMap::load(root)).as_ref()
 }
 
 /// refs 里悬空贴图的人话说明——2026-09-26 口径：cfg 给得出出处就说出处
 /// （不编造文件本体已找到，文件在包里确实没有），给不出才说「只保存名称」。
-fn miss_msg_ref(role: &str, name: &str, kind: &str, pm: Option<&PathMap>) -> String {
+
+/// 列表角标用：每组「悬空贴图名里，有多少张其实能按客户端转换路径解出」。
+/// 只对**当前页的行**算（一行几次哈希+一次查询），量级和缩略图一样按需。
+pub fn texture_auto_counts_run(gids: &[i64]) -> Vec<usize> {
+    let (root, db) = roots();
+    let mut out = vec![0usize; gids.len()];
+    let Ok(con) = open_ro(&db) else { return out };
+    let Some(pm) = pathmap_of(&root) else { return out };
+    for (i, gid) in gids.iter().enumerate() {
+        let Ok(mut st) = con.prepare(
+            "SELECT r.name FROM refs r JOIN amembers a ON a.hash = r.from_hash              AND a.gid = ?1 WHERE r.to_hash IS NULL",
+        ) else {
+            continue;
+        };
+        let Ok(it) = st.query_map([gid], |row| row.get::<_, String>(0)) else {
+            continue;
+        };
+        let mut seen: std::collections::HashSet<String> = Default::default();
+        let mut n = 0usize;
+        for name in it.flatten() {
+            if !seen.insert(name.clone()) || !crate::mdl_view::is_image_name(&name) {
+                continue;
+            }
+            if crate::texture_override::auto_texture_hash(pm, &con, &name).is_some() {
+                n += 1;
+            }
+        }
+        out[i] = n;
+    }
+    out
+}
+
+fn miss_msg_ref(role: &str, name: &str, kind: &str, pm: Option<&PathMap>, auto: Option<&str>) -> String {
+    // 清单里没身份、但名字能按客户端转换路径解出字节：这不是「缺文件」，
+    // 只是「清单没登记」。写成「缺」会让人以为这张图打不开。
+    if let Some(path) = auto {
+        return format!("{role} {name}：清单里没登记，但可按客户端转换路径解出（{path}）");
+    }
     if is_texture_kind(kind) || role.contains("贴图") {
         match pm.and_then(|p| p.lookup(name)) {
             Some(path) => format!(
@@ -460,14 +546,28 @@ pub fn inspect(gid: i64) -> Result<AssetInspectReply, String> {
     };
 
     // 组成树：找本组那个 .mdl，只开它所在的单个 pak。
+    // 大组里会混进十几个别的模型（3,405 成员的巨无霸组、坐骑/变体组），
+    // 直接拿「成员里的第一个 .mdl」会把衣服组画成同组的鸟。优先取与组茎同名的
+    // 那一个；没有同名才退回第一个（1,685 个多 mdl 组里 96 个靠这一步纠正）。
+    let want_mdl = group.stem.to_ascii_lowercase();
+    let stem_of_mdl = |m: &tlbb_core::catalog::Member| -> String {
+        let p = m.path.as_deref().unwrap_or("");
+        let tail = p.rsplit('/').next().unwrap_or(p);
+        let stem = tail
+            .strip_suffix(".mdl")
+            .or_else(|| tail.strip_suffix(".MDL"))
+            .unwrap_or(tail);
+        stem.to_ascii_lowercase()
+    };
     let mdl_member = members
         .iter()
-        .find(|m| {
+        .filter(|m| {
             m.path
                 .as_deref()
                 .map(|p| p.to_ascii_lowercase().ends_with(".mdl"))
                 .unwrap_or(false)
-        });
+        })
+        .min_by_key(|m| if stem_of_mdl(m) == want_mdl { 0 } else { 1 });
     let mdl = if let Some(m) = mdl_member {
         compose_mdl(&con, &root, m)
     } else {
@@ -559,12 +659,15 @@ pub fn inspect(gid: i64) -> Result<AssetInspectReply, String> {
     }
     for r in &refs {
         if r.to.is_none() {
-            missing.push(miss_msg_ref(
-                kind_word(&r.kind),
-                &r.name,
-                &r.kind,
-                pathmap_of(&root),
-            ));
+            let role = kind_word(&r.kind);
+            let auto = if role.contains("贴图") && crate::mdl_view::is_image_name(&r.name) {
+                pathmap_of(&root)
+                    .and_then(|pm| crate::texture_override::auto_texture_hash(pm, &con, &r.name))
+                    .map(|(_, p)| p)
+            } else {
+                None
+            };
+            missing.push(miss_msg_ref(role, &r.name, &r.kind, pathmap_of(&root), auto.as_deref()));
         }
     }
     // 无名成员：只报"哪一类、几个"，不报编号——编号在树行的悬停提示和
@@ -645,6 +748,13 @@ pub fn inspect(gid: i64) -> Result<AssetInspectReply, String> {
         String::new()
     };
 
+    // 组里没有网格成员时（玩家服装/部分 NPC），按同茎兄弟 + 路径哈希找一份能画的候选。
+    let auto_mesh = if group.n_mesh == 0 {
+        sibling_mesh_for_group(&con, &member_rows, &group.stem)
+            .map(|(name, hash, _)| AutoMesh { name, hash })
+    } else {
+        None
+    };
     Ok(AssetInspectReply {
         found: true,
         what,
@@ -669,15 +779,25 @@ pub fn inspect(gid: i64) -> Result<AssetInspectReply, String> {
                 .collect::<Vec<_>>(),
         ),
         tex_slots: crate::texture_override::build_tex_slots(
+            // 不再只收悬空引用：玩家衣服的基础色名字在库里对上了 UI 小图标，
+            // 它仍是模型贴图槽，必须列出来给人改标（界面会注明「可能是图标」）。
             &refs
                 .iter()
-                .filter(|r| r.to.is_none())
-                .map(|r| (r.kind.clone(), r.name.clone()))
+                .map(|r| (r.kind.clone(), r.name.clone(), r.to.is_some()))
                 .collect::<Vec<_>>(),
             pathmap_of(&root),
+            &con,
             &root,
         ),
+        texture_no_uv: crate::texture_override::load_no_uv_meshes(
+            &root,
+            &member_rows
+                .iter()
+                .map(|m| (m.role.clone(), m.name.clone(), m.resolved))
+                .collect::<Vec<_>>(),
+        ),
         members: member_rows,
+        auto_mesh,
         mdl,
         missing,
         can_do,
@@ -689,6 +809,90 @@ pub fn inspect(gid: i64) -> Result<AssetInspectReply, String> {
 }
 
 /// 把本组那个 .mdl 解成组成树；只开它所在的单个 .pak。
+
+/// 网格名在清单里没身份时，按「同茎兄弟」找一个**容器里真有**的候选：
+/// 用同组材质名（`xxx_qingfeng.mtl`）或 .mdl 自己的名字换 `.mesh` 扩展名，
+/// 再用 `path_hash` 去清单里核对该路径的哈希有没有对应记录——**核不上就不认**（不猜名）。
+
+/// 组里一个网格成员都没有时，试着找出「容器里有、清单没登记名字」的那份网格。
+/// 目录与茎都从**已解析成员**的路径取（`.mdl` 常在上层、网格跟 `.mtl` 同目录，两处都试），
+/// 拼出候选路径后用 `path_hash` 去清单核对——核不上不算。返回 `(文件名, 16 位哈希)`。
+pub(crate) fn sibling_mesh_for_group(
+    con: &rusqlite::Connection,
+    members: &[MemberRow],
+    group_stem: &str,
+) -> Option<(String, String, String)> {
+    let mut dirs: Vec<String> = Vec::new();
+    let mut stems: Vec<String> = vec![group_stem.to_string()];
+    for m in members {
+        if let Some((d, _)) = m.path.as_deref().and_then(|p| p.rsplit_once('/')) {
+            if !dirs.iter().any(|x| x == d) {
+                dirs.push(d.to_string());
+            }
+        }
+        let base = m.name.rsplit('/').next().unwrap_or(&m.name);
+        if let Some((stem, _)) = base.rsplit_once('.') {
+            if !stem.is_empty() && !stems.iter().any(|x| x == stem) {
+                stems.push(stem.to_string());
+            }
+        }
+    }
+    for dir in &dirs {
+        for stem in &stems {
+            let cand = format!("{dir}/{stem}.mesh");
+            let h = format!("{:016x}", tlbb_core::jpak::crypto::path_hash(&cand));
+            let hit: Option<i64> = con
+                .query_row("SELECT 1 FROM resources WHERE hash = ?1 LIMIT 1", [&h], |r| r.get(0))
+                .ok();
+            if hit.is_some() {
+                return Some((format!("{stem}.mesh"), h, cand));
+            }
+        }
+    }
+    None
+}
+
+fn sibling_mesh_name(
+    con: &rusqlite::Connection,
+    mdl: &tlbb_core::catalog::Member,
+    material_name: &str,
+    material_path: Option<&str>,
+    mesh_name: &str,
+) -> Option<(String, String, String)> {
+    // 目录可能不止一个：.mdl 常在上层，网格跟 .mtl 同目录 ⇒ 两个都试。
+    let mut dirs: Vec<String> = Vec::new();
+    for p in [mdl.path.as_deref(), material_path] {
+        if let Some((d, _)) = p.and_then(|x| x.rsplit_once('/')) {
+            if !dirs.iter().any(|x| x == d) {
+                dirs.push(d.to_string());
+            }
+        }
+    }
+    let mut stems: Vec<String> = Vec::new();
+    for n in [material_name, mdl.path.as_deref().unwrap_or("")] {
+        let base = n.rsplit('/').next().unwrap_or(n);
+        if let Some((stem, ext)) = base.rsplit_once('.') {
+            if !ext.is_empty() && !stems.iter().any(|x| x == stem) {
+                stems.push(stem.to_string());
+            }
+        }
+    }
+    stems.retain(|s| *s != mesh_name.trim_end_matches(".mesh"));
+    for dir in &dirs {
+        for stem in &stems {
+            let cand = format!("{dir}/{stem}.mesh");
+            let h = format!("{:016x}", tlbb_core::jpak::crypto::path_hash(&cand));
+            let exists: Option<i64> = con
+                .query_row("SELECT 1 FROM resources WHERE hash = ?1 LIMIT 1", [&h], |r| r.get(0))
+                .ok();
+            if exists.is_some() {
+                return Some((format!("{stem}.mesh"), h, cand));
+            }
+        }
+    }
+    None
+}
+
 fn compose_mdl(con: &Connection, root: &Path, m: &tlbb_core::catalog::Member) -> Option<MdlView> {
     let pak_name = m.pak.trim();
     let (pak, recs) = open_one_pak(root, pak_name)?;
@@ -697,21 +901,38 @@ fn compose_mdl(con: &Connection, root: &Path, m: &tlbb_core::catalog::Member) ->
         .find(|r| r.hash == m.hash && r.offset as i64 == m.offset)
         .or_else(|| recs.iter().find(|r| r.hash == m.hash))?;
     let dec = payload::decode(&pak, rec).ok()?;
-    let resolve = |n: &str| resolve_name(con, n).map(|(h, _)| h);
+    let resolve = |n: &str| {
+        resolve_name(con, n)
+            .map(|(h, _)| h)
+            .or_else(|| crate::sidecar::lookup(root, n).map(|x| x.hash))
+    };
     if let ViewBody::Model(mdl) = mdl_summary(&dec.bytes, resolve) {
         Some(MdlView {
             name: mdl.name,
             base_dir: mdl.base_dir,
-            skeletons: mdl.skeletons.iter().map(|s| slot_of(con, s)).collect(),
+            skeletons: mdl
+                .skeletons
+                .iter()
+                .map(|s| slot_of(con, root, s))
+                .collect(),
             bodies: mdl
                 .bodies
                 .iter()
                 .map(|b| {
-                    let material = slot_of(con, &b.material);
-                    let texture_slots = texture_slots_of(con, &pak, &recs, &material, &resolve);
+                    let material = slot_of(con, root, &b.material);
+                    let texture_slots =
+                        texture_slots_of(con, root, &pak, &recs, &material, &resolve);
+                    let mesh = slot_of(con, root, &b.mesh);
+                    let sibling = if mesh.resolved {
+                        None
+                    } else {
+                        sibling_mesh_name(con, m, &material.name, material.path.as_deref(), &b.mesh.name)
+                    };
                     MdlBodyRow {
                         label: b.label.clone(),
-                        mesh: slot_of(con, &b.mesh),
+                        mesh,
+                        sibling_mesh: sibling.as_ref().map(|(n, _, _)| n.clone()),
+                        sibling_mesh_hash: sibling.as_ref().map(|(_, h, _)| h.clone()),
                         material,
                         texture_slots,
                     }
@@ -728,6 +949,7 @@ fn compose_mdl(con: &Connection, root: &Path, m: &tlbb_core::catalog::Member) ->
 /// 所以只查已经开着的那一个 pak，不为槽位再开一批。
 fn texture_slots_of(
     con: &Connection,
+    root: &Path,
     pak: &Pak,
     recs: &[Record],
     mat: &MdlSlot,
@@ -746,7 +968,10 @@ fn texture_slots_of(
         return Vec::new();
     };
     match material_slots(&dec.bytes, resolve) {
-        ViewBody::Material(slots) => slots.iter().map(|s| slot_of(con, s)).collect(),
+        ViewBody::Material(slots) => slots
+            .iter()
+            .map(|s| slot_of(con, root, s))
+            .collect(),
         _ => Vec::new(),
     }
 }
@@ -916,6 +1141,16 @@ fn collect_previews(
                             .unwrap_or(false);
                         let tag = if icon { "材质槽，对上的是衣柜图标" } else { "材质槽" };
                         cands.push((format!("{}（{}）", s.name, tag), h));
+                    }
+                } else if let Some(pm) = pathmap_of(root) {
+                    if let Some((hex, _path)) = crate::texture_override::auto_texture_hash(pm, con, &s.name) {
+                        // 名字在清单里对不上，但客户端自己的转换路径能对上（全库 9,491 张匿名贴图）。
+                        // 预览图这栏以前只有这一条路漏了它：玩家服装 9 张贴图却只摆出 1 张衣柜图标。
+                        if let Ok(h) = u64::from_str_radix(&hex, 16) {
+                            if seen_cand.insert(h) {
+                                cands.push((format!("{}（客户端转换路径对上）", s.name), h));
+                            }
+                        }
                     }
                 }
             }
@@ -1114,7 +1349,9 @@ mod tests {
             }
         }
 
-        // 反例：服装组，mtl 槽全悬空 → 诚实为空。
+        // 反例（2026-10-27 起不再是「诚实为空」）：服装组 mtl 槽在清单里仍悬空，
+        // 但**客户端转换路径那条桥现在也接进这一栏**了（全库 9,491 张匿名贴图）：
+        // 实测 gid 1670 一栏从 1 张衣柜图标变成 10 张（基础色 + pbr + 4 组遮罩/特效）。
         let gid_cloth: i64 = con
             .query_row(
                 "SELECT id FROM agroups WHERE stem='w1351_nan_s_yifu_new_dingchunqiu'",
@@ -1124,10 +1361,15 @@ mod tests {
             .expect("服装组应存在");
         let r = inspect(gid_cloth).expect("inspect 失败");
         match &r.previews {
-            None => {} // 诚实为空，前端显示"没有能对上实体的贴图"
+            None => {} // 这条路也没对上时仍诚实为空
             Some(pv) => {
                 let ok_n = pv.items.iter().filter(|p| p.ok).count();
                 println!("服装组: total={} shown={} ok={} fail={}", pv.total, pv.shown, ok_n, pv.items.len() - ok_n);
+                assert!(
+                    pv.items.iter().any(|p| p.label.contains("客户端转换路径对上")),
+                    "服装组的槽在清单里悬空，但自动对图那条路应至少接回一张：{:?}",
+                    pv.items.iter().map(|p| p.label.clone()).collect::<Vec<_>>()
+                );
             }
         }
     }

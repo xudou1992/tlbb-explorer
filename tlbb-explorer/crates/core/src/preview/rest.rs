@@ -528,6 +528,7 @@ mod tests {
                 unit: [0.00992; 3],
                 rotation: qrests[i],
                 offset: offsets[i],
+                pos: None,
             })
             .collect()
     }
@@ -696,4 +697,344 @@ mod tests {
         assert_eq!(rb_ok.stats.mirror_matched, 1);
         assert_eq!(rb_ok.positions[2], Some([-0.3, 1.0, 0.0]));
     }
+}
+
+/// 【临时测量·不接进解析】拿 `.mesh` 的存储绑定矩阵当裁判，扫两种对齐口径：
+/// δ = 第 i 条轨道/静态记录 归到骨架第几根骨（0 = 同名同序、1 = 整体后挪一根，即改前的读法），
+/// sub = 静态记录里绑定四元数的子偏移。报 (δ, sub, 干净骨数, 旋转命中, 平移命中)。
+pub fn align_probe(ani_raw: &[u8], h: &SkeletonHierarchy) -> Vec<(usize, usize, usize, usize, usize)> {
+    let a = match super::anim::parse_ani(ani_raw) {
+        Some(a) => a,
+        None => return Vec::new(),
+    };
+    let bones = a.bones;
+    let n = h.bones.len();
+    // MIN2：静态记录 60B、绑定旋转 +12；MIN3：44B、+28（全库 130,114/130,114 条单位长）。
+    let min3 = ani_raw.get(0x8c..0x90) == Some(&b"MIN3"[..]);
+    let stride = if min3 { 44 } else { 60 };
+    let subs: &[usize] = if min3 { &[20, 28, 36] } else { &[12, 28, 32] };
+    let base = 0xd2usize + bones * 30 + if min3 { 0 } else { 16 };
+    let mut worlds: Vec<Option<[f32; 16]>> = vec![None; n];
+    for (i, b) in h.bones.iter().enumerate() {
+        if let Some(s) = b.bind {
+            worlds[i] = mat_inverse_affine(&s);
+        }
+    }
+    let read_quat = |o: usize| -> Option<[f32; 4]> {
+        let s = ani_raw.get(o..o + 16)?;
+        Some([
+            f32::from_le_bytes(s[0..4].try_into().ok()?),
+            f32::from_le_bytes(s[4..8].try_into().ok()?),
+            f32::from_le_bytes(s[8..12].try_into().ok()?),
+            f32::from_le_bytes(s[12..16].try_into().ok()?),
+        ])
+    };
+    let med_of = |t: &super::anim::Track| -> Option<[f32; 3]> {
+        Some([
+            median(t.positions.iter().map(|p| p[0]).collect())?,
+            median(t.positions.iter().map(|p| p[1]).collect())?,
+            median(t.positions.iter().map(|p| p[2]).collect())?,
+        ])
+    };
+    let mut out = Vec::new();
+    for delta in [0usize, 1] {
+        for &sub in subs {
+            let (mut clean, mut rot, mut tr) = (0usize, 0usize, 0usize);
+            for i in 0..bones {
+                let j = match i.checked_add(delta) {
+                    Some(j) if j < n => j,
+                    _ => continue,
+                };
+                let Some(parent) = h.bones[j].parent else { continue };
+                if h.bones[j].bind.is_none() || h.bones[parent].bind.is_none() {
+                    continue;
+                }
+                let (Some(wj), Some(wp)) = (worlds[j], worlds[parent]) else { continue };
+                let Some(local) = mat_inverse_affine(&wp).map(|wi| mat_mul(&wj, &wi)) else {
+                    continue;
+                };
+                clean += 1;
+                if let Some(q) = read_quat(base + i * stride + sub) {
+                    if rotation_angle_deg(&local, &quat_to_mat_passive(&q)) <= ROTATION_TOLERANCE_DEG {
+                        rot += 1;
+                    }
+                }
+                if let Some(med) = a.tracks.get(i).and_then(med_of) {
+                    if dist([local[12], local[13], local[14]], med) <= TRANSLATION_TOLERANCE {
+                        tr += 1;
+                    }
+                }
+            }
+            out.push((delta, sub, clean, rot, tr));
+        }
+    }
+    out
+}
+
+/// 【临时测量·不接进解析】MIN3 只给「真的在动」的骨存位移，没块的骨现在填零
+/// ⇒ 那根骨会被拉到父骨原点。这里扫 44B 静态记录的每个 3 浮点候选，
+/// 看哪个子偏移等于 `.mesh` 存的绑定局部平移（δ=1：第 i 条记录归第 i+1 根骨）。
+/// 返回 `(子偏移, 可对账的干净骨数, 命中数)`。
+pub fn min3_bind_offset_probe(ani_raw: &[u8], h: &SkeletonHierarchy) -> Vec<(usize, usize, usize)> {
+    let a = match super::anim::parse_ani(ani_raw) {
+        Some(a) => a,
+        None => return Vec::new(),
+    };
+    if ani_raw.get(0x8c..0x90) != Some(&b"MIN3"[..]) {
+        return Vec::new();
+    }
+    let bones = a.bones;
+    let n = h.bones.len();
+    let base = 0xd2usize + bones * 30;
+    let mut worlds: Vec<Option<[f32; 16]>> = vec![None; n];
+    for (i, b) in h.bones.iter().enumerate() {
+        if let Some(s) = b.bind {
+            worlds[i] = mat_inverse_affine(&s);
+        }
+    }
+    let mut out = Vec::new();
+    for sub in (0..=24usize).step_by(4) {
+        let (mut clean, mut hit) = (0usize, 0usize);
+        for i in 0..bones {
+            let j = match i.checked_add(1) {
+                Some(j) if j < n => j,
+                _ => continue,
+            };
+            let Some(parent) = h.bones[j].parent else { continue };
+            if h.bones[j].bind.is_none() || h.bones[parent].bind.is_none() {
+                continue;
+            }
+            let (Some(wj), Some(wp)) = (worlds[j], worlds[parent]) else { continue };
+            let Some(local) = mat_inverse_affine(&wp).map(|wi| mat_mul(&wj, &wi)) else {
+                continue;
+            };
+            clean += 1;
+            let Some(v) = (|| {
+                let s = ani_raw.get(base + i * 44 + sub..base + i * 44 + sub + 12)?;
+                Some([
+                    f32::from_le_bytes(s[0..4].try_into().ok()?),
+                    f32::from_le_bytes(s[4..8].try_into().ok()?),
+                    f32::from_le_bytes(s[8..12].try_into().ok()?),
+                ])
+            })() else {
+                continue;
+            };
+            if dist([local[12], local[13], local[14]], v) <= TRANSLATION_TOLERANCE {
+                hit += 1;
+            }
+        }
+        out.push((sub, clean, hit));
+    }
+    out
+}
+
+/// 【临时测量·不接进解析】把 [`align_probe`] 的口径（δ=1、MIN2 静态四元数 +12）
+/// 落到**逐骨**：每根骨给「位移中位数 与 绑定局部平移 的差」和「静态区绑定旋转 与
+/// 存储局部旋转 的角差」。存储世界一律先 `bind⁻¹` 再沿父链比，
+/// 不是拿 IBM 的第 4 行当平移（那样量是错的，见 `.scratch/dyn/ani_layout_gap_20261027.md` 第十七轮）。
+pub fn align_outliers(ani_raw: &[u8], h: &SkeletonHierarchy) -> Vec<(String, f32, f32, f32, f32)> {
+    let a = match super::anim::parse_ani(ani_raw) {
+        Some(a) => a,
+        None => return Vec::new(),
+    };
+    let rests = match super::anim::rest_poses(ani_raw) {
+        Some(r) => r,
+        None => return Vec::new(),
+    };
+    let bones = a.bones;
+    let n = h.bones.len();
+    let mut worlds: Vec<Option<[f32; 16]>> = vec![None; n];
+    for (i, b) in h.bones.iter().enumerate() {
+        if let Some(s) = b.bind {
+            worlds[i] = mat_inverse_affine(&s);
+        }
+    }
+    let med = |v: Vec<f32>| -> Option<f32> { median(v) };
+    let mut out = Vec::new();
+    for i in 0..bones {
+        let j = match i.checked_add(1) {
+            Some(j) if j < n => j,
+            _ => continue,
+        };
+        let Some(parent) = h.bones[j].parent else { continue };
+        let (Some(wj), Some(wp)) = (worlds[j], worlds[parent]) else { continue };
+        let Some(local) = mat_inverse_affine(&wp).map(|wi| mat_mul(&wj, &wi)) else {
+            continue;
+        };
+        let t = &a.tracks[i];
+        let (mx, my, mz) = match (
+            med(t.positions.iter().map(|p| p[0]).collect()),
+            med(t.positions.iter().map(|p| p[1]).collect()),
+            med(t.positions.iter().map(|p| p[2]).collect()),
+        ) {
+            (Some(x), Some(y), Some(z)) => (x, y, z),
+            _ => continue,
+        };
+        let d = [(mx - local[12]), (my - local[13]), (mz - local[14])];
+        let dist = (d[0] * d[0] + d[1] * d[1] + d[2] * d[2]).sqrt();
+        let drot = match rests.get(i) {
+            Some(r) => rotation_angle_deg(&local, &quat_to_mat_passive(&r.rotation)),
+            None => f32::NAN,
+        };
+        // 同一个 .ani 值再比一次「世界」口径：若某类骨对上的是世界而不是局部，
+        // 说明它存的时候父链没复合（或根骨被当成恒等）。
+        let dw = {
+            let d = [(mx - wj[12]), (my - wj[13]), (mz - wj[14])];
+            (d[0] * d[0] + d[1] * d[1] + d[2] * d[2]).sqrt()
+        };
+        let rw = rotation_angle_deg(&wj, &quat_to_mat_passive(&rests[i].rotation)) as f32;
+        out.push((h.bones[j].name.clone(), dist, drot as f32, dw, rw));
+    }
+    out
+}
+
+/// 【临时测量·不接进解析】每根骨不假定「轨道 i 归骨 i+1」，而是在 `i ∈ 骨下标−k..+k`
+/// 里找**最对得上**的那条轨道（旋转角差 + 位移差都算），报每根骨的最优偏移。
+/// 若 pelvis 偏好的偏移与末梢不同 ⇒ 「晚一格」在链条顶部并不成立，是**非均匀偏移**。
+pub fn align_best_delta(ani_raw: &[u8], h: &SkeletonHierarchy, k: isize) -> Vec<(String, isize, f32, f32)> {
+    let a = match super::anim::parse_ani(ani_raw) {
+        Some(a) => a,
+        None => return Vec::new(),
+    };
+    let rests = match super::anim::rest_poses(ani_raw) {
+        Some(r) => r,
+        None => return Vec::new(),
+    };
+    let n = h.bones.len();
+    let mut worlds: Vec<Option<[f32; 16]>> = vec![None; n];
+    for (i, b) in h.bones.iter().enumerate() {
+        if let Some(s) = b.bind {
+            worlds[i] = mat_inverse_affine(&s);
+        }
+    }
+    let mut out = Vec::new();
+    for j in 0..n {
+        let Some(parent) = h.bones[j].parent else { continue };
+        let (Some(wj), Some(wp)) = (worlds[j], worlds[parent]) else { continue };
+        if h.bones[j].bind.is_none() || h.bones[parent].bind.is_none() {
+            continue;
+        }
+        let Some(local) = mat_inverse_affine(&wp).map(|wi| mat_mul(&wj, &wi)) else {
+            continue;
+        };
+        let mut best: Option<(isize, f32, f32)> = None;
+        for di in -k..=k {
+            let i = j as isize + di;
+            if i < 0 || i as usize >= a.tracks.len() {
+                continue;
+            }
+            let i = i as usize;
+            let t = &a.tracks[i];
+            let (Some(x), Some(y), Some(z)) = (
+                median(t.positions.iter().map(|p| p[0]).collect()),
+                median(t.positions.iter().map(|p| p[1]).collect()),
+                median(t.positions.iter().map(|p| p[2]).collect()),
+            ) else {
+                continue;
+            };
+            let d = [(x - local[12]), (y - local[13]), (z - local[14])];
+            let dist = (d[0] * d[0] + d[1] * d[1] + d[2] * d[2]).sqrt();
+            let rot = match rests.get(i) {
+                Some(r) => rotation_angle_deg(&local, &quat_to_mat_passive(&r.rotation)) as f32,
+                None => f32::NAN,
+            };
+            let better = match &best {
+                None => true,
+                Some((_, br, bd)) => (rot.min(*br)).min(1.0) <= br.min(*bd).max(1e-6) && rot <= *br,
+            };
+            if better || best.is_none() {
+                if rot.is_finite() {
+                    best = Some((di, rot, dist));
+                }
+            }
+        }
+        if let Some((di, rot, dist)) = best {
+            out.push((h.bones[j].name.clone(), di, rot, dist));
+        }
+    }
+    out
+}
+
+/// 【临时测量·不接进解析】残差旋转用**纯四元数**算（上一版拿矩阵求逆，全量返回空、已删）：
+/// `q_残 = conj(.ani 静态区绑定旋转) ⊗ q(网格存储局部)`，报 `(骨名, 角度°, 主轴 x/y/z, 该轴分量符号)`。
+/// 判读：若 pelvis / clavicle 在全库稳定落在「同一角度档 + 同一根轴」，那就是我们漏读的**按骨修正量**。
+pub fn align_residual_quat(ani_raw: &[u8], h: &SkeletonHierarchy) -> Vec<(String, f32, char, i8)> {
+    let rests = match super::anim::rest_poses(ani_raw) {
+        Some(r) => r,
+        None => return Vec::new(),
+    };
+    let n = h.bones.len();
+    let mut worlds: Vec<Option<[f32; 16]>> = vec![None; n];
+    for (i, b) in h.bones.iter().enumerate() {
+        if let Some(s) = b.bind {
+            worlds[i] = mat_inverse_affine(&s);
+        }
+    }
+    let mut out = Vec::new();
+    for i in 0..rests.len() {
+        let j = match i.checked_add(1) {
+            Some(j) if j < n => j,
+            _ => continue,
+        };
+        let Some(parent) = h.bones[j].parent else { continue };
+        let (Some(wj), Some(wp)) = (worlds[j], worlds[parent]) else { continue };
+        if h.bones[j].bind.is_none() || h.bones[parent].bind.is_none() {
+            continue;
+        }
+        let Some(local) = mat_inverse_affine(&wp).map(|wi| mat_mul(&wj, &wi)) else {
+            continue;
+        };
+        let Some(qm) = mat_to_quat(&local) else { continue };
+        let qa = rests[i].rotation;
+        // q_残 = conj(qa) ⊗ qm
+        let c = [-qa[0], -qa[1], -qa[2], qa[3]];
+        let r = qmul(&c, &qm);
+        let w = r[3].clamp(-1.0, 1.0);
+        let ang = 2.0 * w.abs().acos().to_degrees();
+        let (v, sgn) = if r[0].abs() >= r[1].abs() && r[0].abs() >= r[2].abs() {
+            ('x', r[0])
+        } else if r[1].abs() >= r[2].abs() {
+            ('y', r[1])
+        } else {
+            ('z', r[2])
+        };
+        out.push((h.bones[j].name.clone(), ang as f32, v, if sgn >= 0.0 { 1 } else { -1 }));
+    }
+    out
+}
+
+/// 行主序仿射矩阵的左上 3×3（行 = 基向量）→ 单位四元数（Shepperd 四分支，取数值最稳的那支）。
+fn mat_to_quat(m: &[f32; 16]) -> Option<[f32; 4]> {
+    let (m00, m01, m02) = (m[0], m[1], m[2]);
+    let (m10, m11, m12) = (m[4], m[5], m[6]);
+    let (m20, m21, m22) = (m[8], m[9], m[10]);
+    let tr = m00 + m11 + m22;
+    let q = if tr > 0.0 {
+        let s = (tr + 1.0).sqrt() * 2.0;
+        [ (m21 - m12) / s, (m02 - m20) / s, (m10 - m01) / s, 0.25 * s ]
+    } else if m00 > m11 && m00 > m22 {
+        let s = (1.0 + m00 - m11 - m22).sqrt() * 2.0;
+        [ 0.25 * s, (m01 + m10) / s, (m02 + m20) / s, (m21 - m12) / s ]
+    } else if m11 > m22 {
+        let s = (1.0 + m11 - m00 - m22).sqrt() * 2.0;
+        [ (m01 + m10) / s, 0.25 * s, (m12 + m21) / s, (m02 - m20) / s ]
+    } else {
+        let s = (1.0 + m22 - m00 - m11).sqrt() * 2.0;
+        [ (m02 + m20) / s, (m12 + m21) / s, 0.25 * s, (m10 - m01) / s ]
+    };
+    let n = (q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3]).sqrt();
+    if !n.is_finite() || n < 1e-6 {
+        return None;
+    }
+    Some([q[0] / n, q[1] / n, q[2] / n, q[3] / n])
+}
+
+/// 四元数乘（Hamilton，标量在末位）。
+fn qmul(a: &[f32; 4], b: &[f32; 4]) -> [f32; 4] {
+    [
+        a[3] * b[0] + a[0] * b[3] + a[1] * b[2] - a[2] * b[1],
+        a[3] * b[1] - a[0] * b[2] + a[1] * b[3] + a[2] * b[0],
+        a[3] * b[2] + a[0] * b[1] - a[1] * b[0] + a[2] * b[3],
+        a[3] * b[3] - a[0] * b[0] - a[1] * b[1] - a[2] * b[2],
+    ]
 }

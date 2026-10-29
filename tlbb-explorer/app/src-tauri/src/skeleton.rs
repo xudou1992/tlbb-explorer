@@ -219,19 +219,52 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
         })
         .unwrap_or_default();
     let paths = mesh_paths(&con, gid, &hub, &insp.dir);
+    let mut mesh_src: Option<(u64, String)> = None;
+    let mut sibling_path: Option<String> = None;
     if paths.is_empty() {
-        return Err("这一组里没有网格文件，骨架跟着网格走，没有网格就没有骨架。".to_string());
+        let stem: String = con
+            .query_row("SELECT coalesce(stem,'') FROM agroups WHERE id = ?1", [gid], |r| r.get(0))
+            .unwrap_or_default();
+        match crate::inspector::sibling_mesh_for_group(&con, &insp.members, &stem) {
+            // 网格在容器里、只是清单没登记名字：按哈希直接读，路径只当称呼（骨架页不靠它找文件）。
+            Some((name, hex, cand)) => {
+                let h = u64::from_str_radix(&hex, 16)
+                    .map_err(|_| format!("{name} 的哈希读不出来：{hex}"))?;
+                let pak: String = con
+                    .query_row("SELECT coalesce(pak,'') FROM resources WHERE hash = ?1", [&hex], |r| {
+                        r.get(0)
+                    })
+                    .unwrap_or_default();
+                if pak.is_empty() {
+                    return Err(format!("{name} 在清单里没有容器记录，读不出来"));
+                }
+                mesh_src = Some((h, pak));
+                sibling_path = Some(cand);
+            }
+            None => {
+                return Err(
+                    "这一组里没有网格文件，骨架跟着网格走，没有网格就没有骨架。".to_string()
+                )
+            }
+        }
     }
     // 换一份网格：只在这组登记的那几份里换；名字对不上回到第一份（组名同名那份）
-    let mesh_path = paths
-        .iter()
-        .find(|p| p.rsplit('/').next().unwrap_or("") == want)
-        .cloned()
-        .unwrap_or_else(|| paths[0].clone());
-    let meshes = paths
-        .iter()
-        .filter_map(|p| p.rsplit('/').next().map(|s| s.to_string()))
-        .collect::<Vec<_>>();
+    let mesh_path = match &sibling_path {
+        Some(p) => p.clone(),
+        None => paths
+            .iter()
+            .find(|p| p.rsplit('/').next().unwrap_or("") == want)
+            .cloned()
+            .unwrap_or_else(|| paths[0].clone()),
+    };
+    let meshes = if let Some(p) = &sibling_path {
+        vec![p.rsplit('/').next().unwrap_or(p).to_string()]
+    } else {
+        paths
+            .iter()
+            .filter_map(|p| p.rsplit('/').next().map(|s| s.to_string()))
+            .collect::<Vec<_>>()
+    };
 
     let mut paks: std::collections::HashMap<String, Pak> = Default::default();
     let mut nodes = Vec::new();
@@ -244,7 +277,11 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
     // 挂接的 (骨名, 父骨名) 按文件序留着：HashMap 迭代序不定，补行的顺序要稳定。
     let mut chain_rows: Vec<(String, Option<String>)> = Vec::new();
     let mut chain = false;
-    if let Some((h, pak)) = locate(&con, &mesh_path) {
+    if let Some((h, pak)) = mesh_src
+        .as_ref()
+        .map(|(h, p)| (*h, p.clone()))
+        .or_else(|| locate(&con, &mesh_path))
+    {
         if let Some(raw) = decode(&mut paks, &root, &card_of(&pak), h) {
             declared = bone_count(&raw).unwrap_or(0);
             // 骨架页走**允许森林**口径（2026-10-10）：父链判据一条不少，只放开「恰好一个根」。
@@ -588,8 +625,24 @@ pub fn anim_view_run(gid: i64, want: &str) -> Result<AnimReply, String> {
         .members
         .iter()
         .find(|m| m.role == "mesh")
-        .and_then(|m| m.path.clone())
-        .ok_or_else(|| "这一组里没有网格文件，动作是套在骨架上的，先有骨架才谈得上动作。".to_string())?;
+        .and_then(|m| m.path.clone());
+    let mesh_path = match mesh_path {
+        Some(p) => p,
+        None => {
+            let stem: String = con
+                .query_row("SELECT coalesce(stem,'') FROM agroups WHERE id = ?1", [gid], |r| r.get(0))
+                .unwrap_or_default();
+            // 网格在容器里、只是清单没登记名字：用候选路径继续（动作目录也跟着它推导）。
+            match crate::inspector::sibling_mesh_for_group(&con, &insp.members, &stem) {
+                Some((_, _, cand)) => cand,
+                None => {
+                    return Err(
+                        "这一组里没有网格文件，动作是套在骨架上的，先有骨架才谈得上动作。".to_string(),
+                    )
+                }
+            }
+        }
+    };
     let files = anim_paths(&con, &mesh_path)
         .iter()
         .filter_map(|p| p.rsplit('/').next().map(|s| s.to_string()))
@@ -615,7 +668,7 @@ pub fn anim_view_run(gid: i64, want: &str) -> Result<AnimReply, String> {
         .is_some();
     let raw = decode(&mut paks, &root, &card_of(&pak), h)
         .ok_or_else(|| format!("{pick} 的字节解不出来（容器读得出记录，解码失败）"))?;
-    let a = parse_ani(&raw).ok_or_else(|| format!("{pick} 不按已知的 .ani 布局排布"))?;
+    let a = parse_ani(&raw).ok_or_else(|| crate::anim_pose::ani_layout_why(&pick, &raw))?;
     let moving = a
         .tracks
         .iter()
@@ -635,7 +688,8 @@ pub fn anim_view_run(gid: i64, want: &str) -> Result<AnimReply, String> {
     ];
     if unnamed > 0 {
         missing.push(format!(
-            "骨名表比轨道少 {unnamed} 条：那 {unnamed} 根骨客户端没给名字，这里留空，不编"
+            "轨道比骨名表多 {unnamed} 条：骨名表第 0 格是根骨（实测叫 000 或 bip01），它自己没有轨道，\
+             所以每条轨道归的都是名表里往后一格那根骨、最后 {unnamed} 条落到名表之外。这里留空、不编名字。"
         ));
     }
     Ok(AnimReply {

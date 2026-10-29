@@ -14,6 +14,7 @@ mod model;
 mod mesh_view;
 mod mesh_bones;
 mod present;
+mod sidecar;
 mod texture_override;
 mod gap;
 mod skeleton;
@@ -55,6 +56,16 @@ async fn list_groups(app: State<'_, Arc<AppData>>, filter: Option<Filter>) -> Re
     let app = Arc::clone(&app);
     let filter = filter.unwrap_or_default();
     tauri::async_runtime::spawn_blocking(move || app.page(&filter))
+        .await
+        .map_err(|e| e.to_string())
+}
+
+
+/// 列表角标用：「悬空贴图名里有多少张其实能按客户端转换路径解出」。
+/// 前端按可见行懒取，别把 13,080 组一次性算完。
+#[tauri::command]
+async fn texture_auto_counts(gids: Vec<i64>) -> Result<Vec<usize>, String> {
+    tauri::async_runtime::spawn_blocking(move || inspector::texture_auto_counts_run(&gids))
         .await
         .map_err(|e| e.to_string())
 }
@@ -198,6 +209,7 @@ pub fn run() {
             texture_override::texture_override_set,
             texture_override::texture_override_clear,
             texture_override::mesh_override_png,
+            texture_override::mesh_texture_plan,
             texture_override::candidate_png,
             texture_override::uv_map_png,
             gap::catalog_gap,
@@ -213,6 +225,7 @@ pub fn run() {
             browse::browse_preview,
             browse::browse_export,
             browse::browse_export_group,
+            texture_auto_counts,
         ])
         .run(tauri::generate_context!())
         .expect("工作台窗口未能启动");

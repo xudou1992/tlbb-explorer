@@ -20,8 +20,8 @@ use tauri::State;
 use tlbb_core::jpak::Pak;
 use tlbb_core::preview::pose::{bind_worlds, posed_vertices, reanchored_palette};
 use tlbb_core::preview::{
-    parse_ani, parse_geometry, parse_hierarchy, parse_nodes, Anim, MeshGeometry, Node,
-    SkeletonHierarchy,
+    attach_bone_skin, parse_ani, parse_geometry, parse_hierarchy, parse_nodes, Anim, MeshGeometry,
+    Node, SkeletonHierarchy,
 };
 
 use crate::data::AppData;
@@ -98,9 +98,51 @@ fn pick_anim(
         locate(con, &picked).ok_or_else(|| format!("{anim_name} 在容器里没有对应记录。"))?;
     let ani_raw = decode(paks, root, &card_of(&pak), ah)
         .ok_or_else(|| format!("{anim_name} 的字节解不出来（容器读得出记录，解码失败）。"))?;
-    let a = parse_ani(&ani_raw)
-        .ok_or_else(|| format!("{anim_name} 不按已知的 .ani 布局排布，读不出关键帧。"))?;
+    let a = parse_ani(&ani_raw).ok_or_else(|| ani_layout_why(&anim_name, &ani_raw))?;
     Ok((anim_name, a))
+}
+
+/// `.ani` 解不出时给用户看的原因。头部能读就报骨数/帧数/差多少字节——
+/// 「不按已知布局」这五个字等于什么都没说，而头部那几个数在这一族里是可信的
+/// （57 骨 × 50 帧 × 32B = 91,200 字节 > 整份 27,584 ⇒ 关键帧块必然是另一种布局）。
+pub(crate) fn ani_layout_why(name: &str, raw: &[u8]) -> String {
+    // 0x8C 的容器标签：MIN3 = 每根骨只存真的在动的通道那一族（全库 22.4% 的动作）。
+    // 说清是那一族、影响多大，比单写「不是已知布局」有用得多。
+    let tag = raw
+        .get(0x8c..0x90)
+        .map(|s| String::from_utf8_lossy(s).into_owned())
+        .unwrap_or_default();
+    match tlbb_core::preview::parse_ani_header(raw) {
+        Some(h) => {
+            let head = format!(
+                "{name}：头部 {} 骨 · {} 帧 · 帧率 {:.0}",
+                h.bones, h.frames, h.tick
+            );
+            if tag == "MIN3" {
+                // 结构摘要能算出来就把「这条动作有哪些通道」摆清楚（数都是逐骨复算过、收在文件尾的），
+                // 算不出来（长度对不上）就退回原来的说法，不硬报。
+                let detail = match tlbb_core::preview::ani_min3_summary(raw) {
+                    Some(s) => format!(
+                        "：{} 根骨里 {} 根带压缩旋转、{} 根带位移、{} 根带缩放",
+                        s.bones, s.compressed_rotations, s.with_positions, s.with_scales
+                    ),
+                    None => String::new(),
+                };
+                format!(
+                    "{head}。这条是 MIN3 容器：每根骨只存真在动的通道（整份 {} 字节，通吃式 32B/帧要 {} 字节）{detail}——这一族的布局与 6 字节压缩旋转都已解出（全库 2522/2522 份逐骨复算正好收在文件尾），这份却仍走不通 ⇒ 它不是同一套通道存法，读不出逐帧数据。同模型里 MIN2 的动作不受影响。",
+                    h.bytes,
+                    h.block_need()
+                )
+            } else {
+                format!(
+                    "{head}，但关键帧块不是已知的 32B/帧 布局（整份 {} 字节，按 32B/帧需要 {} 字节）⇒ 这一版解不出逐帧数据。",
+                    h.bytes,
+                    h.block_need()
+                )
+            }
+        }
+        None => format!("{name} 连头部都不是已知的 .ani 版式（信封/骨骼数/帧数对不上），读不出关键帧。"),
+    }
 }
 
 /// 同名骨 bind 世界位姿的容差：整组各件各自带一份骨架文件，同一副骨架的两份
@@ -196,9 +238,25 @@ pub fn anim_pose_run(
             r.get(0)
         })
         .unwrap_or_default();
-    let paths = mesh_paths(&con, gid, &hub, &insp.dir);
+    let mut paths = mesh_paths(&con, gid, &hub, &insp.dir);
+    // 组里没有网格成员时：网格可能在容器里、只是清单没登记名字（如部分 NPC/怪物组）。
+    // 同茎兄弟 + 路径哈希核得上就用它——路径给「动作目录」推导用，读取仍按哈希。
+    let mut sib_hash: Option<String> = None;
     if paths.is_empty() {
-        return Err("这一组里没有网格文件，动作没有可蒙皮的载体，摆不了姿势。".to_string());
+        let stem: String = con
+            .query_row("SELECT coalesce(stem,'') FROM agroups WHERE id = ?1", [gid], |r| r.get(0))
+            .unwrap_or_default();
+        match crate::inspector::sibling_mesh_for_group(&con, &insp.members, &stem) {
+            Some((_name, hash, cand)) => {
+                sib_hash = Some(hash);
+                paths = vec![cand];
+            }
+            None => {
+                return Err(
+                    "这一组里没有网格文件，动作没有可蒙皮的载体，摆不了姿势。".to_string()
+                )
+            }
+        }
     }
     // 部件名单 → 组内路径。同一件点名两次只算一次；没点中的名字悄悄跳过
     // （清单里没有的东西不能编），全没点中才回落单件。
@@ -228,7 +286,7 @@ pub fn anim_pose_run(
                 .cloned()
                 .unwrap_or_else(|| paths[0].clone()),
         };
-        let (mesh_actual, raw) = mesh_bytes(app, &mesh_path, None)?;
+        let (mesh_actual, raw) = mesh_bytes(app, &mesh_path, sib_hash.as_deref())?;
 
         // 管线（契约顺序）：骨架 → 网格几何 → 动作 → 调色板 → 蒙皮。
         // 每一步对不上都用人话说清楚，不吞错、不硬摆。
@@ -245,7 +303,7 @@ pub fn anim_pose_run(
 
         let palette = reanchored_palette(&hier, &a, frame)
             .ok_or_else(|| "骨架与动作对不上（骨数不一致），调不出蒙皮调色板。".to_string())?;
-        let nodes = parse_nodes(&raw);
+        let nodes = attach_bone_skin(&hier, &parse_nodes(&raw), &raw);
         let posed = posed_vertices(&hier, &palette, &nodes, &geom.positions).ok_or_else(|| {
             "蒙皮没摆成：影响顶点表和骨架对不上（骨名对不上或顶点号越界），不硬摆。".to_string()
         })?;
@@ -279,7 +337,7 @@ pub fn anim_pose_run(
             })?;
             let geom =
                 parse_geometry(&raw).map_err(|e| format!("{tail} 的网格几何解析失败：{e}"))?;
-            let nodes = parse_nodes(&raw);
+            let nodes = attach_bone_skin(&hier, &parse_nodes(&raw), &raw);
             preps.push(PartPrep { actual, tail, hier, geom, nodes });
         }
         let refs: Vec<(&str, &SkeletonHierarchy)> =
@@ -365,6 +423,44 @@ pub async fn anim_pose(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// MIN3 那一族的失败话术：要说清「是 MIN3、每骨只存动了的通道、影响不到 MIN2」，
+    /// 不能只写「不是已知布局」——用户与下一班都靠这句话判断要不要再查。
+    #[test]
+    fn 解不出的话术要认出_min3_并说清影响面() {
+        let mut raw = vec![0u8; 4096];
+        raw[0..10].copy_from_slice(b"Copyright\x00");
+        raw[0x40..0x44].copy_from_slice(b"ani\x00");
+        raw[0xba..0xbc].copy_from_slice(&57u16.to_le_bytes());
+        raw[0xbe..0xc0].copy_from_slice(&57u16.to_le_bytes());
+        raw[0xc2..0xc4].copy_from_slice(&50u16.to_le_bytes());
+        raw[0xc6..0xca].copy_from_slice(&40.0f32.to_le_bytes());
+        raw[0x8c..0x90].copy_from_slice(b"MIN3");
+        let why = ani_layout_why("x.ani", &raw);
+        assert!(why.contains("MIN3"), "要点名容器：{why}");
+        assert!(why.contains("每根骨只存真在动的通道"), "要说清这一族的形状：{why}");
+        assert!(why.contains("MIN2 的动作不受影响"), "要给影响面：{why}");
+        assert!(why.contains("57 骨") && why.contains("50 帧"), "头部数字要在：{why}");
+        // 6 字节压缩旋转 2026-10-27 已从客户端读出来解掉，话术不能再说明码没解
+        assert!(
+            !why.contains("编码未解") && !why.contains("还没解"),
+            "压缩旋转已解出，不许再报『没解』：{why}"
+        );
+
+        // 非 MIN3 的份仍走原来那句（别把 MIN3 的说法套到别的版本上）
+        raw[0x8c..0x90].copy_from_slice(b"MIN2");
+        let why2 = ani_layout_why("y.ani", &raw);
+        assert!(!why2.contains("MIN3"), "{why2}");
+        assert!(why2.contains("32B/帧"), "{why2}");
+
+        // 两处计数不等的份（客户端允许，实测 longgui_b0_idle01 = 67/65）也要报得出头部数字，
+        // 不能因为我们的 MIN2 闸门而退化成「连头部都不是已知版式」。
+        raw[0x8c..0x90].copy_from_slice(b"MIN3");
+        raw[0xbe..0xc0].copy_from_slice(&65u16.to_le_bytes());
+        let why3 = ani_layout_why("z.ani", &raw);
+        assert!(why3.contains("57 骨"), "{why3}");
+        assert!(why3.contains("MIN3"), "{why3}");
+    }
 
     /// 真数据集成：idle01 的 frame=0 回包必须与 `mesh_geometry`（前端灰模的
     /// 数据源）同空间同序——差 < 1e-4；中间帧全有限；越界帧夹到最后一帧。

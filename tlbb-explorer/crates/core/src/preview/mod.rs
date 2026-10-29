@@ -18,14 +18,17 @@ pub mod summary;
 pub mod uvfit;
 pub mod uvfit_batch;
 
-pub use anim::{parse_ani, rest_poses, Anim, Rest, Track};
+pub use anim::{
+    ani_min3_landing, ani_min3_summary, parse_ani, parse_ani_header, rest_poses, Anim, AnimHeader,
+    Min3Summary, Rest, Track,
+};
 pub use effect::{parse_pu, pu_attr_count, pu_field_name, pu_param_width, Effect, EffectNames, PuRecord};
 
 pub use geometry::{
     bone_count, hierarchy_forest, hierarchy_with_virtual_root, hierarchy_stuck, hierarchy_try, node_names, parse_forest,
     parse_nodes_variant, root_count, tail_entries, tail_inf_audit, tail_stuck_detail,
     tail_stuck_why, tail_walk_steps, tail_first_entry_head, tail_is_u92, tail_client_binds, parse_geometry, parse_hierarchy, parse_mesh,
-    parse_nodes, BoneNode, MeshGeometry, MeshLayout, Node, SkeletonHierarchy, SocketEntry,
+    parse_nodes, attach_bone_skin, BoneNode, MeshGeometry, MeshLayout, Node, SkeletonHierarchy, SocketEntry,
     SkinInfluence, StuckPoint,
 };
 pub use image::{png_bytes, scale_rgba, write_png};

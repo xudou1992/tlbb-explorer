@@ -6,7 +6,7 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
-import { pctText, texPair, listCount, railCount, citedVerdict, rowMissChip, mapNoObjects, progressLine, titleHtml, emptyMessage } from "../web/lib/wording.js";
+import { pctText, texPair, listCount, railCount, citedVerdict, rowMissChip, missChipTitle, mapNoObjects, progressLine, titleHtml, emptyMessage } from "../web/lib/wording.js";
 
 test("25/30,585 显示成「不足 1%」而不是 0%", () => {
   assert.equal(pctText(0, 25), "不足 1%");
@@ -164,4 +164,34 @@ test("空列表文案点名还开着的筛选条件", () => {
 
   const d = emptyMessage({ query: "x", state: 默认, ready: false });
   assert.ok(d.strong.includes("后台还在准备"), `没读完不该说没命中：${d.strong}`);
+});
+
+test("角标带上「可解 N」：说明这些贴图打得开，不是真缺", () => {
+  assert.equal(rowMissChip(6), "贴图缺 6");
+  assert.equal(rowMissChip(6, 6), "贴图 6 张按转换路径解出");
+  assert.equal(rowMissChip(6, 3), "贴图缺 6·可解 3");
+  assert.equal(rowMissChip(6, 0), "贴图缺 6");
+  assert.equal(rowMissChip(0, 6), "");
+  const t = missChipTitle({ locatedTotal: 0, refTotal: 6 }, 6);
+  assert.ok(t.includes("其中 6 张已确认可按客户端转换路径解出"), t);
+  const t0 = missChipTitle({ locatedTotal: 0, refTotal: 6 }, 0);
+  assert.ok(t0.includes("这个数会偏大"), t0);
+});
+
+
+test("拼音名的中文注：确认过的直写、推断的带 ≈、没词条不注", async () => {
+  const { glossText, glossOf } = await import("../web/lib/gloss.js");
+  assert.equal(glossText("w1351_npc_attack_gaoshanbaiyuan02"), "高山白猿");
+  assert.equal(glossText("w1351_monster_dahuangfeng"), "≈大黄蜂");
+  assert.equal(glossText("w1351_monster_shirenyanshi_idle01"), "≈食人岩石");
+  assert.equal(glossText("w1351_nothing_here"), "");
+  assert.equal(glossOf(""), null);
+});
+
+test("中文名搜索：词表内的中文翻成拼音，翻不出就原样", async () => {
+  const { pinyinForChinese } = await import("../web/lib/gloss.js");
+  assert.equal(pinyinForChinese("高山白猿"), "gaoshanbaiyuan");
+  assert.equal(pinyinForChinese("长臂猿"), "changbiyuan");
+  assert.equal(pinyinForChinese("随便什么"), "");
+  assert.equal(pinyinForChinese(""), "");
 });

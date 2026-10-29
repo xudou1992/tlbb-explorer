@@ -163,13 +163,25 @@
                   <p id="meshMeta" class="dim"></p>
                   <div class="chips" id="meshPick"></div>
                 </div>
+                <!-- 分层筹码：点一层只看那层，用来核「哪段几何配哪张图」有没有配错。 -->
+                <div class="chips" id="meshLayers" hidden></div>
                 <div class="mesh-stage">
                   <canvas id="meshCanvas" aria-label="立体模型预览"></canvas>
                   <p id="meshState" class="mesh-state" hidden></p>
                   <p class="mesh-hint">按住拖动旋转 · 滚轮远近 · 双击回到正面</p>
                 </div>
-                <div id="meshTech" class="mesh-tech"></div>
               </section>
+              <!-- 贴图试贴候选跟模型摆在同一页：点开模型就能看到候选图，点一张直接套上。
+                   放在「资源详情」里时要先切标签页，人根本不知道这里能换贴图。 -->
+              <section class="d-sec" id="secTex" hidden>
+                <h3>贴图</h3>
+                <!-- 候选图排第一：点开模型最想看的是「能换成哪张」，说明与槽位清单是账，放后面。 -->
+                <div id="texCand"></div>
+                <p class="dim" id="texNote"></p>
+                <div id="texSlots"></div>
+              </section>
+              <!-- 技术信息是给排查用的，排在候选之后：先看模型和能换的图，再看字节账。 -->
+              <div id="meshTech" class="mesh-tech"></div>
               <section class="d-sec" id="secPv" hidden>
                 <h3>预览图 <em id="pvCount"></em></h3>
                 <div class="pvgrid" id="pvGrid"></div>
@@ -188,11 +200,6 @@
               <section class="d-sec" id="secAbs" hidden>
                 <h3>有什么 · 缺什么</h3>
                 <ul class="abs" id="abs"></ul>
-              </section>
-              <section class="d-sec" id="secTex" hidden>
-                <h3>贴图试贴候选 <span class="dim" id="texNote"></span></h3>
-                <div id="texSlots"></div>
-                <div id="texCand"></div>
               </section>
               <details class="d-raw">
                 <summary>技术信息（给排查的人看）</summary>

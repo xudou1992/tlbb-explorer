@@ -9,10 +9,23 @@
 //! （`data/effect/pu_other` 实测 3,326 份），按目录挑就是张冠李戴。
 
 use serde::Serialize;
-use tlbb_core::preview::{Effect, parse_pu};
+use tlbb_core::preview::{Effect, parse_pu, pu_field_name};
 
 use crate::inspector::{inspect, roots};
 use crate::skeleton::{anim_paths, card_of, decode, locate, open_db};
+
+/// 参数块的一条记录。`name` 来自客户端 611 条属性表（按 `fld` 查），表外不编名字；
+/// `words` 是原始 32 位词，值的语义（寿命/速度/颜色/向量顺序）还没定，不猜。
+#[derive(Serialize)]
+pub struct ParamRow {
+    pub cls: u16,
+    pub fld: u16,
+    pub name: Option<String>,
+    pub words: Vec<u32>,
+    /// 按 cls 的编码把 words 读成 f32（1=单值、6=二维、7=三维、8/9/10=四元/颜色、
+    /// 14=时间+颜色、17=三浮点）；无载荷的记录这里为空。单位与语义仍不猜。
+    pub floats: Vec<f32>,
+}
 
 #[derive(Serialize)]
 pub struct EffectReply {
@@ -39,6 +52,8 @@ pub struct EffectReply {
     pub param_floats: usize,
     pub param_bytes: usize,
     pub param_records: usize,
+    /// 参数记录：字段名（表外为 NULL）+ 原始 32 位词。前端按条摆表，术语留在折叠区。
+    pub params: Vec<ParamRow>,
     /// 记录流是否恰好走到参数区末尾。
     pub param_walk_complete: bool,
     /// 这个特效组旁边有没有动作文件（`.pu` 自己不带关键帧）。
@@ -112,11 +127,11 @@ pub fn effect_view_run(gid: i64, want: &str) -> Result<EffectReply, String> {
     };
     let mut missing = vec![
         format!(
-            "参数块已经按记录读出来了（{} 条，{}）。每条叫什么名字还没定，说清哪个数是寿命、哪个是速度还没做到",
+            "参数块已经按记录读出来了（{} 条，{}）。字段名已从客户端 611 条属性表解出（表外的留空）；每个数的语义（寿命/速度/颜色/向量顺序）还没定，下表按原始 32 位词列出，不猜",
             e.param_records.len(),
             walked
         ),
-        "播放未做：材质链与发射器形状读得出来，但记录名字没定，摆不出随时间变化的效果".to_string(),
+        "播放未做：字段名有了，值的语义没定，摆不出随时间变化的效果".to_string(),
     ];
     if !hub.is_empty() && !paths.iter().any(|p| p == &hub) {
         missing.push(format!(
@@ -148,6 +163,17 @@ pub fn effect_view_run(gid: i64, want: &str) -> Result<EffectReply, String> {
         param_floats: e.param_floats,
         param_bytes: e.param_bytes,
         param_records: e.param_records.len(),
+        params: e
+            .param_records
+            .iter()
+            .map(|r| ParamRow {
+                cls: r.cls,
+                fld: r.fld,
+                name: pu_field_name(r.fld).map(|s| s.to_string()),
+                words: r.words.clone(),
+                floats: r.floats(),
+            })
+            .collect(),
         param_walk_complete: e.param_walk_complete,
         anims,
         missing,
@@ -204,6 +230,13 @@ mod tests {
         assert!(!rep.name.is_empty(), "特效自己的名字该在字符串表第 0 条");
         assert!(rep.missing.iter().any(|m| m.contains("参数块")));
         assert!(rep.missing.iter().any(|m| m.contains("播放")));
+        assert_eq!(rep.params.len(), rep.param_records, "读出的记录一条都不能少");
+        if rep.param_records > 0 {
+            assert!(
+                rep.params.iter().any(|p| p.name.is_some()),
+                "611 条属性表里应能查到名字；全表外说明接线错了"
+            );
+        }
         let _ = root;
         eprintln!(
             "特效页：{} · 字符串 {} 条 · 材质 {} · 贴图 {} · 网格 {} · 渲染器 {:?} · 发射器 {:?} · 参数块 {}B/{} 浮点",

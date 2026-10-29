@@ -8,7 +8,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { empty, loading, failed, notReady, loaded, absencesOf, isNotReadyMsg } from "../web/lib/detailState.js";
+import { empty, loading, failed, notReady, loaded, absencesOf, isNotReadyMsg, slotRow } from "../web/lib/detailState.js";
 
 // 两个真实形状的回包（从 --probe 落盘的 inspect_245 / detail_245 缩编而来）。
 const CARD_A = {
@@ -259,6 +259,27 @@ test("一张图都没解出来时，贴图行必须指回「缺什么」并说�
   assert.ok(by["贴图"].why.includes("缺什么"), by["贴图"].why);
 });
 
+test("解出图里含「客户端转换路径」的那几张：同一行不能一边说解出、一边说没对上文件", () => {
+  const insp = {
+    ...INSPECT_A,
+    previews: {
+      items: [
+        { label: "a.tga（材质槽，对上的是衣柜图标）", ok: true, dataUrl: "data:image/png;base64,AAA" },
+        { label: "b.tga（客户端转换路径对上）", ok: true, dataUrl: "data:image/png;base64,AAA" },
+        { label: "c.tga（客户端转换路径对上）", ok: true, dataUrl: "data:image/png;base64,AAA" },
+      ],
+      total: 3,
+      shown: 3,
+    },
+  };
+  const by = Object.fromEntries(absencesOf(insp, CARD_A).map((r) => [r.label, r]));
+  const why = by["贴图"].why;
+  assert.ok(why.includes("解出了 3 张"), why);
+  assert.ok(/清单里没登记/.test(why), "悬空的名字要说清是「清单里没登记」而不是「没图」：" + why);
+  assert.ok(why.includes("客户端转换路径"), "要说清这些图是怎么解出来的：" + why);
+  assert.ok(!why.includes("没对上文件"), "同一行不能再出现「没对上文件」：" + why);
+});
+
 test("cfg 出了出处的贴图：汇总句按「登记过位置 / 连位置都没记」分流，不再全说成没路径", () => {
   const insp = {
     ...INSPECT_A,
@@ -292,6 +313,21 @@ test("有网格文件但没有模型定义串起来：说成暂时画不出，�
   const by = Object.fromEntries(absencesOf(insp, CARD_A).map((r) => [r.label, r]));
   assert.equal(by["立体模型"].state, "unknown");
   assert.ok(/2 个网格文件/.test(by["立体模型"].why), by["立体模型"].why);
+});
+
+test("模型定义在、但网格名没对上实体：说成变体件对不上，不说成没有模型定义", () => {
+  const insp = {
+    ...INSPECT_A,
+    previews: null,
+    mdl: {
+      ...INSPECT_A.mdl,
+      bodies: [{ ...INSPECT_A.mdl.bodies[0], mesh: { ...INSPECT_A.mdl.bodies[0].mesh, hash: null } }],
+    },
+  };
+  const by = Object.fromEntries(absencesOf(insp, CARD_A).map((r) => [r.label, r]));
+  assert.equal(by["立体模型"].state, "unknown");
+  assert.ok(/没在清单里对上实体/.test(by["立体模型"].why), by["立体模型"].why);
+  assert.ok(/变体件/.test(by["立体模型"].why), by["立体模型"].why);
 });
 
 test("网格文件记了但客户端没带：说成缺，不推给工具", () => {
@@ -381,4 +417,54 @@ test("detail.js：「还没读到」要自动重试且设上限，判定走同�
   assert.match(detailJs, /retried < 3/, "重试要设上限：无限轮询是后台一直在小声敲门");
   assert.match(detailJs, /2500/, "重试间隔 2.5 秒");
   assert.match(detailJs, /paint\(notReady\(gid\)\)/, "措辞必须是 notReady，不是 failed");
+});
+
+test("详情标题的贴图口径：清单 1/10 之外要补一句「另有 K 张走客户端转换路径」", () => {
+  const card = { ...CARD_A, locatedTotal: 1, refTotal: 10 };
+  const insp = {
+    ...INSPECT_A,
+    previews: {
+      items: [
+        { label: "icon.tga（材质槽，对上的是衣柜图标）", ok: true, dataUrl: "data:image/png;base64,AAA" },
+        { label: "a.tga（客户端转换路径对上）", ok: true, dataUrl: "data:image/png;base64,AAA" },
+        { label: "b.tga（客户端转换路径对上）", ok: true, dataUrl: "data:image/png;base64,AAA" },
+        { label: "c.tga（客户端转换路径对上）", ok: false, reason: "容器里没有它" },
+      ],
+      total: 3, shown: 3,
+    },
+  };
+  const s = loaded(7, { card }, insp);
+  assert.ok(s.sum.includes("贴图引用 1/10 对上了文件"), s.sum);
+  assert.ok(s.sum.includes("另有 2 张走客户端转换路径"), "要补一句，别让 1/10 被读成「只有 1 张能用」：" + s.sum);
+  assert.ok(!s.sum.includes("另有 3"), "只数真解出来的（ok:true）：" + s.sum);
+
+  // 没有自动对上的份，不加这句（别平白多话）
+  const s2 = loaded(7, { card }, { ...insp, previews: { items: [{ label: "icon.tga", ok: true }], total: 1, shown: 1 } });
+  assert.ok(!s2.sum.includes("另有"), s2.sum);
+});
+
+test("能按客户端转换路径解出的贴图，不许只写「缺」", () => {
+  // 清单里没有身份（resolved=false、无 path），但名字能按转换路径解出字节
+  const auto = slotRow("w1351_nv_s_yifu_yszm_qingfeng.tga", "贴图", null, false, "convert/dxt/data/source/player/x.tga");
+  assert.match(auto, /可按客户端转换路径解出/);
+  assert.doesNotMatch(auto, />\s*缺\s*</);
+  assert.match(auto, /class="hit auto"/);
+
+  // 真没有的，仍然写「缺」
+  const miss = slotRow("nope.tga", "贴图", null, false, null);
+  assert.match(miss, /class="miss"/);
+  assert.match(miss, /缺/);
+
+  // 清单里登记的，照旧给路径
+  const hit = slotRow("a.tga", "贴图", "data/a.tga", true, null);
+  assert.match(hit, /class="hit"/);
+  assert.match(hit, /data\/a\.tga/);
+});
+
+test("网格缺、但同目录有同茎兄弟时：仍写「缺」，并给出候选文件名", () => {
+  const row = slotRow("a_moreng.mesh", "网格", null, false, null, "同目录另有 a_qingfeng.mesh，清单里没登记这个名字");
+  assert.match(row, /class="miss"/);
+  assert.match(row, /缺/);
+  assert.match(row, /a_qingfeng\.mesh/);
+  assert.match(row, /清单里没登记这个名字/);
 });

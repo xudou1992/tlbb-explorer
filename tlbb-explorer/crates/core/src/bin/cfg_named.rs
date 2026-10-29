@@ -88,8 +88,12 @@ fn main() {
     let mut anon_rows: HashMap<String, String> = HashMap::new();
     let mut disagree = 0usize; // 命中的行有路径，但与 cfg 给的不是同一条（大小写以外不同）
     let mut by_hash_seen: HashMap<u64, String> = HashMap::new();
+    // 2026-10-26：客户端把贴图转换到 `convert/dxt/<原逻辑路径>`（TextureConvertDir 硬编码）。
+    // 这条前缀把「贴图名→匿名大图」接上了；单独统计，不改原来的裸路径对账。
+    let (mut conv_named, mut conv_missing, mut conv_tex, mut conv_tex_anon) = (0usize, 0usize, 0usize, 0usize);
+    let mut conv_tex_samples: Vec<(String, String, u64)> = Vec::new();
 
-    for (_bare, path) in pm.iter() {
+    for (bare, path) in pm.iter() {
         let h = path_hash(path);
         match rows.get(&h) {
             None => missing += 1,
@@ -104,6 +108,24 @@ fn main() {
             Some((t, false)) => {
                 *anon.entry(t.clone()).or_default() += 1;
                 anon_rows.insert(format!("{h:016x}"), path.clone());
+            }
+        }
+        let conv = format!("convert/dxt/{path}");
+        let ch = path_hash(&conv);
+        match rows.get(&ch) {
+            None => conv_missing += 1,
+            Some((t, true)) => {
+                conv_named += 1;
+                if t == "texture" { conv_tex += 1; }
+            }
+            Some((t, false)) => {
+                if t == "texture" {
+                    conv_tex_anon += 1;
+                    if conv_tex_samples.len() < 12 {
+                        conv_tex_samples.push((bare.clone(), conv.clone(), ch));
+                    }
+                }
+                if t == "texture" { conv_tex += 1; }
             }
         }
     }
@@ -125,9 +147,17 @@ fn main() {
     }
     let tex = anon.get("texture").copied().unwrap_or(0);
     println!(
-        "\n贴图那一格：{tex} 条。{} 别把它当成贴图归属有救了——匿名贴图池 24,261 条里 path 全空，\n  而贴图名的六条桥已证伪（见 .scratch/tex_归属证据缺失_20261010.md），这里能拿到的只是**少数几张确有路径登记的大图**。",
+        "\n贴图那一格（裸路径）：{tex} 条。{} 别把它当成贴图归属有救了——匿名贴图池 24,261 条里 path 全空，\n  而贴图名的六条桥已证伪（见 .scratch/tex_归属证据缺失_20261010.md），这里能拿到的只是**少数几张确有路径登记的大图**。",
         if tex == 0 { "一条都没有。" } else { "" }
     );
+    println!("\nconvert/dxt/ 前缀（客户端贴图转换目录，2026-10-26 实测）");
+    println!("  命中且库里已有路径：{conv_named}");
+    println!("  包里没这件：{conv_missing}");
+    println!("  命中贴图行：{conv_tex}（其中匿名大图 **{conv_tex_anon}**）");
+    for (bare, path, h) in &conv_tex_samples {
+        println!("    {bare}  →  {path}  ({h:016x})");
+    }
+    println!("  ⇒ 贴图名经 ResourcePath.cfg 逻辑路径 + convert/dxt/ 前缀，可落到匿名贴图记录。");
 
     if let Some(o) = out {
         let mut lines = String::from("{\n");

@@ -281,7 +281,7 @@ fn rigged_glb_eats_back_through_every_gate() {
         cases[match case {
             WeightCase::Uncovered => 0,
             WeightCase::Normalized => 1,
-            WeightCase::RootFilled => 2,
+            WeightCase::Renormalized => 2,
             WeightCase::Rescaled => 3,
         }] += 1;
         // 与写进产物的那 4 个槽位逐一对表
@@ -309,26 +309,26 @@ fn rigged_glb_eats_back_through_every_gate() {
             }
         }
     }
-    let (uncovered, normalized, root_fill, rescaled) = (cases[0], cases[1], cases[2], cases[3]);
+    let (uncovered, normalized, renormalized, rescaled) = (cases[0], cases[1], cases[2], cases[3]);
     eprintln!(
         "权重对账：{vc} 顶点 · 原始 Σw 严格 1.0 的 {exact_one} 个 · 未覆盖挂根骨 {uncovered} · \
-         容差内归一 {normalized} · 差额挂根骨 {root_fill} · 按和强归 {rescaled}"
+         容差内归一 {normalized} · 按比例归一 {renormalized} · 按和强归 {rescaled}"
     );
     // README 实测锚点：26 根带表、**出现在表里**的顶点 555 个、其中 441 个 Σ 正好 1.0。
     // 555 里刨掉 26 个「表项权重全是 0」的顶点（剔除 0 权重后它们与未覆盖无异），
     // 剩下的才是真正带权重的：441 归一 + 88 差额挂根骨 = 529，未覆盖 226 + 26 = 252。
     // 这三条等式一起钉住「导出口径没偷改覆盖数」，也钉住那 26 个顶点的存在。
     let listed_only_zero = (0..vc).filter(|&v| listed[v] && per[v].is_empty()).count();
-    assert_eq!(normalized + root_fill + rescaled + listed_only_zero, 555, "带表顶点数应与 README 实测的 555 一致");
+    assert_eq!(normalized + renormalized + rescaled + listed_only_zero, 555, "带表顶点数应与 README 实测的 555 一致");
     assert_eq!(listed_only_zero, 26, "全 0 权重表的顶点（实测 26 个）");
     assert_eq!(uncovered, vc - 555 + listed_only_zero, "未覆盖 = 555 之外 + 那 26 个全 0 表项的");
-    assert_eq!(normalized + root_fill + rescaled, 529, "真正带权重的顶点数");
+    assert_eq!(normalized + renormalized + rescaled, 529, "真正带权重的顶点数");
     assert!(exact_one >= 441, "原始 Σw 严格 1.0 的顶点不得低于 README 实测的 441");
     // extras 报的分类数必须与这里独立数出来的一致（导出器不许自说自话）
     let extras = &doc["asset"]["extras"]["rig"];
     assert_eq!(extras["uncoveredVertices"], json!(uncovered));
     assert_eq!(extras["normalizedVertices"], json!(normalized));
-    assert_eq!(extras["rootFillVertices"], json!(root_fill));
+    assert_eq!(extras["renormalizedVertices"], json!(renormalized));
     assert_eq!(extras["weightSumOffVertices"], json!(rescaled));
 
     // ---- animation：通道长度 == 帧数、target 都在 joints、rotation 单位四元数

@@ -158,7 +158,9 @@ fn the_bind_anchor_tears_worse_than_the_frame0_anchor() {
         bind[0].1
     );
     assert!(
-        sum(&bind) > sum(&f0) * 1.3,
+        // 2026-10-29：权重和<1 改按比例归一后，两种锚的总量都降、差距从 1.3 倍缩到 1.21 倍（10,127 vs 8,396）。
+        // 60 条动作普查（examples/anchor_norm_census.rs）：第 0 帧锚 6.22M vs bind 锚 7.89M、32/60 更低 ⇒ 方向仍成立。
+        sum(&bind) > sum(&f0) * 1.15,
         "bind 锚全程撕边总数应显著高于 frame0 锚（实测 {} vs {}）——这个方向反了说明锚口径被动过",
         sum(&bind),
         sum(&f0)
@@ -169,8 +171,10 @@ fn the_bind_anchor_tears_worse_than_the_frame0_anchor() {
         maxr(&bind),
         maxr(&f0)
     );
+    // 同一改动下这条 walk 上「bind 不比 frame0 差」的帧从 1 处增到 8/31；总量与最大倍数仍指向 bind 更差。
     assert!(
-        worse <= 2,
-        "bind 锚不比 frame0 锚撕的帧有 {worse} 处（已实测到 1 处：第 7 帧）——多了说明口径变了"
+        worse * 3 <= f0.len(),
+        "bind 锚不比 frame0 锚撕的帧有 {worse} 处 / {}——超过三分之一说明口径变了",
+        f0.len()
     );
 }

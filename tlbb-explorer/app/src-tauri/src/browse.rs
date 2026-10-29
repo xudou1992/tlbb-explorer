@@ -632,6 +632,24 @@ fn export_group_run(gid: i64, dest: &str) -> Result<ExportReport, String> {
     let dn = dn.to_string_lossy().to_string();
     let mut by_pak: std::collections::BTreeMap<String, Vec<String>> = Default::default();
     let mut no_body: Vec<String> = Vec::new();
+    // 组里没有网格成员、但界面能按「同茎兄弟 + 路径哈希」画出来时，导出也把它带上：
+    // 导出的东西要和屏幕上看到的一致，别出现「能看不能导」。
+    if let Some(am) = rep.auto_mesh.as_ref() {
+        let pak: Option<String> = con
+            .query_row(
+                "SELECT coalesce(pak,'') FROM resources WHERE hash = ?1 AND stored > 0 LIMIT 1",
+                [&am.hash],
+                |r| r.get(0),
+            )
+            .ok();
+        if let Some(pak) = pak.filter(|p| !p.is_empty()) {
+            let card = if pak.ends_with(".pak") { pak } else { format!("{pak}.pak") };
+            let v = by_pak.entry(card).or_default();
+            if !v.contains(&am.hash) {
+                v.push(am.hash.clone());
+            }
+        }
+    }
     for m in rep.members.iter().filter(|m| m.resolved) {
         let Some(p) = m.path.as_deref() else { continue };
         let hit: Option<(String, String)> = con
@@ -670,6 +688,17 @@ fn export_group_run(gid: i64, dest: &str) -> Result<ExportReport, String> {
     }
     // 名字对上了但容器里没有实体：这是「缺」，不是失败，单独说清楚别混进 failed
     out.failed.extend(no_body.into_iter().take(4).map(|n| format!("清单里没有实体：{n}")));
+    // 无名网格导出后会落在 `_未命名/<哈希>.bin`；这条我们其实知道候选名，
+    // 就改回 `<茎>.mesh`——别让人拿到一个叫哈希的 .bin。
+    if let Some(am) = rep.auto_mesh.as_ref() {
+        let from = PathBuf::from(&dn).join("_未命名").join(format!("{}.bin", am.hash));
+        let to = PathBuf::from(&dn).join(&am.name);
+        if from.is_file() && !to.exists() && std::fs::rename(&from, &to).is_ok() {
+            if let Some(d) = from.parent() {
+                let _ = std::fs::remove_dir(d); // 空了才收得掉，非空会失败，忽略
+            }
+        }
+    }
     Ok(out)
 }
 
@@ -1567,4 +1596,40 @@ mod tests {
         let again = pak_index(&name, &pak);
         assert!(Arc::ptr_eq(&idx, &again), "第二次取应命中缓存返回同一份");
     }
+    /// 无名网格的两段兜底要同时管到「能画」和「能导」：
+    /// ① `inspect` 的 `auto_mesh` 给出候选名 + 哈希；② 组导出把那份网格也带上，
+    /// 并落成 `<茎>.mesh`，而不是 `_未命名/<哈希>.bin`。
+    #[test]
+    fn 无名网格_能认出也能导出() {
+        let (root, db) = roots();
+        if !db.exists() || !root.join("data1.pak").exists() || !root.join("data_1.pak").exists() {
+            eprintln!("跳过：本机没有清单或容器");
+            return;
+        }
+        let Ok(rep) = crate::inspector::inspect(2039) else {
+            eprintln!("跳过：清单里没有 gid 2039");
+            return;
+        };
+        let Some(am) = rep.auto_mesh.as_ref() else {
+            eprintln!("跳过：这一版清单对不上样例组");
+            return;
+        };
+        assert!(am.name.ends_with(".mesh"), "候选应是网格文件：{}", am.name);
+        assert_eq!(am.hash.len(), 16, "哈希应是 16 位：{}", am.hash);
+
+        let dest = std::env::temp_dir().join("tlbb_export_auto_mesh_test");
+        let _ = std::fs::remove_dir_all(&dest);
+        let out = export_group_run(2039, &dest.to_string_lossy()).expect("组导出应能跑");
+        assert!(out.failed.is_empty(), "不应有失败：{:?}", out.failed);
+        let mesh = dest.join(&am.name);
+        let seen = std::fs::read_dir(&dest)
+            .map(|it| it.flatten().map(|e| e.file_name().to_string_lossy().into_owned()).collect::<Vec<_>>())
+            .unwrap_or_default();
+        assert!(mesh.is_file(), "导出目录里应有 {}，实际 {:?}", am.name, seen);
+        let len = std::fs::metadata(&mesh).map(|m| m.len()).unwrap_or(0);
+        assert!(len > 100_000, "网格应有实打实的字节，实际 {len}");
+        assert!(!dest.join("_未命名").exists(), "不该留下 _未命名 目录");
+        let _ = std::fs::remove_dir_all(&dest);
+    }
+
 }

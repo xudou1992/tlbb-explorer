@@ -14,7 +14,7 @@
 //! （`buffer` 为空串）。列表 300 张图若逐个拉全量回包，光 base64 就把首屏拖死；
 //! 计数若另写一份，列表上的数和点进去的数迟早对不上。
 
-use std::collections::HashMap;
+use std::collections::HashMap;
 use std::sync::OnceLock;
 use std::sync::Arc;
 
@@ -121,6 +121,92 @@ pub struct MapScene {
     pub missing_truncated: bool,
     /// 不是网格的名字按扩展名聚合（`.pu` 10 条这种），因为它们各有各的说法。
     pub other_ext: Vec<ExtCount>,
+    /// 场景光照/天空色（`<id>.sfl`，JBCF）。只取「天空顶色 / 雾色 / 环境光 / 主光强度」，
+    /// 用途是把画布背景调成这张图自己的天色——不是天空盒，也不代表地形。
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub env: Option<MapEnv>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MapEnv {
+    /// 客户端 `.sfl` 的 `Sky top color` 第一个关键帧（0.00000）。
+    pub sky: Option<[f32; 3]>,
+    pub fog: Option<[f32; 3]>,
+    pub ambient: Option<f32>,
+    pub light: Option<f32>,
+    /// 来源原话（文件名 + 取不到的字段），界面照它说，别自己编。
+    pub note: String,
+}
+
+/// 从 `<id>.sfl`（JBCF 场景配置）里取天色/雾色/环境光。取不到的字段回 None，不猜。
+fn env_of(app: &AppData, id: &str) -> Option<MapEnv> {
+    let path = format!("mobile_maps/{id}/{id}.sfl");
+    let (_root, db) = crate::inspector::roots();
+    let con = crate::skeleton::open_db(&db).ok()?;
+    let (hash, _pak) = crate::skeleton::locate(&con, &path)?;
+    let raw = app.read(hash)?;
+    let sky = first_stop3(&raw, "Sky top color");
+    let fog = first_stop3(&raw, "Fog color");
+    let ambient = first_stop1(&raw, "Scene amb intensity");
+    let light = first_stop1(&raw, "Main light power");
+    if sky.is_none() && fog.is_none() && ambient.is_none() && light.is_none() {
+        return None;
+    }
+    let mut missing = Vec::new();
+    if sky.is_none() {
+        missing.push("天空色");
+    }
+    if fog.is_none() {
+        missing.push("雾色");
+    }
+    let tail = if missing.is_empty() {
+        String::new()
+    } else {
+        format!("；这份没写{}", missing.join("、"))
+    };
+    Some(MapEnv {
+        sky,
+        fog,
+        ambient,
+        light,
+        note: format!("背景色取自客户端 {id}.sfl 的第一个关键帧（不是天空盒）{tail}"),
+    })
+}
+
+fn find_sub(hay: &[u8], needle: &[u8]) -> Option<usize> {
+    if needle.is_empty() || hay.len() < needle.len() {
+        return None;
+    }
+    hay.windows(needle.len()).position(|w| w == needle)
+}
+
+/// `Key0.00000:(r:g:b):4,...` 里 0 号关键帧的三元组。
+fn first_stop3(raw: &[u8], key: &str) -> Option<[f32; 3]> {
+    let i = find_sub(raw, key.as_bytes())?;
+    let win = &raw[i..raw.len().min(i + 600)];
+    let t = find_sub(win, b"0.00000:(")?;
+    let s = &win[t + "0.00000:(".len()..];
+    let end = s.iter().position(|&b| b == b')')?;
+    let body = std::str::from_utf8(&s[..end]).ok()?;
+    let mut it = body.split(':');
+    let r: f32 = it.next()?.trim().parse().ok()?;
+    let g: f32 = it.next()?.trim().parse().ok()?;
+    let b: f32 = it.next()?.trim().parse().ok()?;
+    Some([r, g, b])
+}
+
+/// `Key0.00000:1.5:4,...` 里 0 号关键帧的单值。
+fn first_stop1(raw: &[u8], key: &str) -> Option<f32> {
+    let i = find_sub(raw, key.as_bytes())?;
+    let win = &raw[i..raw.len().min(i + 200)];
+    let t = find_sub(win, b"0.00000:")?;
+    let mut s = &win[t + "0.00000:".len()..];
+    if s.first() == Some(&b'(') {
+        s = &s[1..];
+    }
+    let end = s.iter().position(|&b| b == b':' || b == b',' || b == b')')?;
+    std::str::from_utf8(&s[..end]).ok()?.trim().parse().ok()
 }
 
 /// 名字属于哪一类：只看扩展名，不看它"应该"是什么。
@@ -271,6 +357,7 @@ fn assemble(app: &AppData, raw_id: &str, with_geometry: bool) -> Result<MapScene
     }
 
     let alias = alias_of(&id).cloned();
+    let env = env_of(app, &id);
     let mut out = MapScene {
         id,
         alias,
@@ -293,6 +380,7 @@ fn assemble(app: &AppData, raw_id: &str, with_geometry: bool) -> Result<MapScene
         missing_sample: Vec::new(),
         missing_truncated: false,
         other_ext: Vec::new(),
+        env,
     };
     // 网格哈希 → 池下标；同一个网格被 500 个格子引用，也只解码一次。
     let mut pool: HashMap<u64, usize> = HashMap::new();
@@ -428,4 +516,22 @@ fn assemble(app: &AppData, raw_id: &str, with_geometry: bool) -> Result<MapScene
     v.sort_by(|a, b| b.grids.cmp(&a.grids).then(a.reason.cmp(&b.reason)));
     out.grid_reasons = v;
     Ok(out)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// `.sfl` 是 JBCF 文本化的关键帧串：取值只认 0 号关键帧，三元组/单值两种形状。
+    #[test]
+    fn sfl_first_stop_reads_color_and_scalar() {
+        let raw = b"Sky top color0.00000:(0.1:0.2:0.3):4,0.50000:(1:1:1):4\
+Fog color0.00000:(0.4:0.5:0.6):4Main light power0.00000:(1.500000):4\
+Scene amb intensity0.00000:0.552000:4";
+        assert_eq!(first_stop3(raw, "Sky top color"), Some([0.1, 0.2, 0.3]));
+        assert_eq!(first_stop3(raw, "Fog color"), Some([0.4, 0.5, 0.6]));
+        assert_eq!(first_stop1(raw, "Main light power"), Some(1.5));
+        assert_eq!(first_stop1(raw, "Scene amb intensity"), Some(0.552));
+        assert_eq!(first_stop3(raw, "不存在键"), None, "没有这条就说没有，别猜");
+    }
 }

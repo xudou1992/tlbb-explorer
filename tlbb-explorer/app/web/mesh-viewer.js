@@ -956,6 +956,12 @@ export class MeshViewer {
     this.draw();
   }
 
+  /// 地图页：清屏透明，露出画布背后的天色渐变（颜色取自客户端 `.sfl`）。
+  setBackdrop(on) {
+    this.backdrop = !!on;
+    this.draw();
+  }
+
   /// 相机还在动就继续下一帧，停稳就自己收工——静态展示没必要一直占着 GPU。
   start() {
     if (this.raf) return;
@@ -975,7 +981,7 @@ export class MeshViewer {
   draw() {
     const gl = this.gl;
     this.syncViewport();
-    gl.clearColor(0.055, 0.067, 0.078, 1);
+    gl.clearColor(0.055, 0.067, 0.078, this.backdrop ? 0 : 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     if (!this.mesh && !this.inst && !this.parts) return false;
     gl.enable(gl.DEPTH_TEST);

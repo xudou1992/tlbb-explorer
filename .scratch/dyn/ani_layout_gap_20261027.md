@@ -2439,3 +2439,13 @@ idle01 每帧最大骨转角 39.4°、walk 85.9°，而 behit01 119.9°、hit01 
 - 第二张图 `w1351_ll_dl_003`（大理城，119 格 / 6,145 实例 / **218 个模型**）加载约 25s 后正常出图，
   道具/屋顶/树都上了色，0 条异常；截图 `.scratch/map2_textured.png`。
 - 俯视量测切换回归正常（`.scratch/map_top_after.png`），新加的图只落在灰模 3D 路径，不碰俯视。
+
+## 第一百二十三轮：地图背景用客户端自己的天色（2026-10-29 15:40）
+
+- 查地图目录时发现 `<id>.sfl` 是 JBCF 场景配置，里面是**文本化关键帧**：天空顶色、雾色、环境光、主光强度、日月贴图名等。
+  实测 7 张图里 5 张有 `Sky top color`、6 张有 `Fog color`，取 0 号关键帧即可。
+- 后端 `MapScene` 新增 `env`（`map_view::env_of`）：按 `mobile_maps/<id>/<id>.sfl` 定位、只认 0 号关键帧，取不到就回 None 不编。
+- 前端地图 3D 画布背景改成「天空顶色 → 雾色」的 CSS 渐变，WebGL 清屏透明透出来；横幅注明「背景色取自 .sfl（不是天空盒）」。
+- 实测 `w1351_fb_sxzc_001` 背景为深蓝夜色（`.scratch/map_sky.png`），`w1351_ll_dl_003` 取到 ambient 0.8 / light 1.0。
+- 单测 `sfl_first_stop_reads_color_and_scalar` 锁解析（三元组/单值/缺键回 None）。
+- 仍未解：地形高度与地表贴图（`.map` 里能看到疑似运行时指针，暂不碰）。

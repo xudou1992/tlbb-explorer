@@ -64,6 +64,7 @@ function paintBanner() {
     banner(
       `<b>物件预览</b> 把物件摆在该在的位置上，有材质表的<b>已按材质表贴图</b>。` +
         `<span class="warn">地形没解出</span><span class="dim">没有材质表的物件仍是灰模</span><span class="warn">朝向待比对</span>` +
+        (scene && scene.env ? `<span class="dim">背景色取自 .sfl（不是天空盒）</span>` : "") +
         `<span class="dim">${scene && scene.alias ? esc(scene.alias) + " · " : ""}地图原名 ${esc(sceneId)}</span>`,
     );
   }
@@ -135,6 +136,22 @@ function ensureViewer() {
     status("显卡上下文被系统收回了，重新点一下这张图就能再看。");
   };
   return viewer;
+}
+
+/// 地图背景：用客户端 `.sfl` 的天空顶色 → 雾色铺一层渐变，画布清成透明透过去。
+/// 这是颜色，不是天空盒；没有 `.sfl` 或取不到色的图保持原来的深色底。
+function applyMapSky(v, scene) {
+  const c = el("mapCanvas");
+  const env = scene && scene.env;
+  const rgb = (x) =>
+    `rgb(${Math.round(x[0] * 255)},${Math.round(x[1] * 255)},${Math.round(x[2] * 255)})`;
+  if (env && env.sky) {
+    c.style.background = `linear-gradient(${rgb(env.sky)}, ${rgb(env.fog || env.sky)})`;
+    v.setBackdrop(true);
+  } else {
+    c.style.background = "";
+    v.setBackdrop(false);
+  }
 }
 
 /// 地图道具的贴图：这些网格不在任何资产组里，按路径取同茎 `.mtl` 的计划（后端反查）。
@@ -232,6 +249,7 @@ function applyMode() {
         // 中间不许再转置（转一次全图叠到原点且不报错）。
         v.loadInstances({ meshes: scene.meshes, instances: scene.instances });
         grayLoaded = scene.id;
+        applyMapSky(v, scene);
         void applyMapPropTextures(v, scene);
       } catch (e) {
         el("mapCanvas").hidden = true;

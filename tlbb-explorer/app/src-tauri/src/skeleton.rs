@@ -133,9 +133,37 @@ pub(crate) fn anim_paths(con: &Connection, mesh_path: &str) -> Vec<String> {
         Ok(s) => s,
         Err(_) => return Vec::new(),
     };
-    stmt.query_map([format!("%{dir}/ani/%")], |r| r.get::<_, String>(0))
+    let mut v: Vec<String> = stmt
+        .query_map([format!("%{dir}/ani/%")], |r| r.get::<_, String>(0))
         .map(|rows| rows.flatten().collect())
-        .unwrap_or_default()
+        .unwrap_or_default();
+    // 2026-10-29：以前按路径字母序，默认选中的永远是 `behit01`/`dead` 这类最极端的姿势
+    //（同一只怪：idle01 最大摆幅 39°、walk 86°，而 behit01 120°、hit01 178.9°），一打开就像炸了。
+    // 这里按「中性动作优先」稳定排序：idle01 → t_pose → idle02/03 → walk → run → 其它 idle → 其余；
+    // 受击/死亡/眩晕排最后。挑选与筹码顺序都以这个顺序为准，用户仍可手动切任意动作。
+    // 先剥掉 `<目录名>_` 前缀再比动作名：直接 `ends_with("_idle01")` 会把
+    // `..._fight_idle01` 也认成 idle01（2026-10-29 实测默认就停在那儿）。
+    let dir_name = dir.rsplit('/').next().unwrap_or("").to_ascii_lowercase();
+    let rank = |p: &str| -> u8 {
+        let n = p.rsplit('/').next().unwrap_or("").to_ascii_lowercase();
+        let action = n
+            .strip_prefix(&format!("{dir_name}_"))
+            .unwrap_or(&n)
+            .trim_end_matches(".ani");
+        match action {
+            "idle01" => 0,
+            "t_pose" => 1,
+            "idle02" => 2,
+            "idle03" => 3,
+            "walk" => 4,
+            "run" => 5,
+            _ if action.contains("idle") => 6,
+            _ if action.contains("hit") || action.contains("dead") || action.contains("vertigo") => 9,
+            _ => 7,
+        }
+    };
+    v.sort_by_key(|p| (rank(p), p.clone()));
+    v
 }
 
 pub(crate) fn decode(paks: &mut std::collections::HashMap<String, Pak>, root: &std::path::Path, card: &str, hash: u64) -> Option<Vec<u8>> {

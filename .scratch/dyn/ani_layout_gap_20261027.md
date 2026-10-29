@@ -2411,3 +2411,12 @@ idle01 每帧最大骨转角 39.4°、walk 85.9°，而 behit01 119.9°、hit01 
 - 地图页未复测（本轮没改它）；已知口径不变：实例摆得出、地形是灰的（格式未解）。
 
 另：`gerong` 四件模型播放中/切动作/勾掉部件后贴图均保留（`.scratch/tex_gerong_f0.png`、`tex_walk_f.png`、`tex_toggle.png`）。
+
+## 下一步（离线可做，尚未开工）
+
+- **地图页的道具贴图**：`map_scene` 的网格在 `mobile_maps_source/*.mesh`，**不属于任何 agroup**（amembers 查不到 gid），
+  所以 `mesh_texture_plan(gid,...)` 这条走不通。可行路线：按网格路径取**同茎 `.mtl`**（实测三份样本都有同茎 mtl），
+  复用 `material_slots` + `texture_refs`/`layer_specs` 造一份「按路径的分层计划」新命令；
+  渲染侧 `drawInstanced` 现在固定 `useTex=0`、不绑 UV，要加「每个池子网格一张图」的分支（仅单层覆盖全网格时套，多层先不碰）。
+  门槛：地形本身仍是灰的（格式未解），这一项只影响树/石/木架这类道具。
+- **动作族散开**：仍需运行时对账（`pose_dump` + `mem_mat_global.py` 按骨名）或游戏内肉眼；本轮查过进程，游戏未在运行。

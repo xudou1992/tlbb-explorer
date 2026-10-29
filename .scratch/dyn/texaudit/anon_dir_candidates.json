@@ -1,0 +1,203 @@
+{
+ "strict_dir_of_anon_texture": {
+  "01625146b9096c1c": [
+   "ui/texture/monsterhead"
+  ],
+  "13e47bc07a05992b": [
+   "ui/texture/font/chonglou"
+  ],
+  "1a84559a1aeb57e0": [
+   "ui/texture/font/maintask"
+  ],
+  "1cede7d24bc283fb": [
+   "ui/texture/font/welfarehall"
+  ],
+  "20c087340c298eea": [
+   "ui/texture/monsterhead"
+  ],
+  "2455f53138a9e3c2": [
+   "ui/icon/wardrobe"
+  ],
+  "274b79b9661fe686": [
+   "ui/texture/monsterhead"
+  ],
+  "2a56dfd144bfc3b2": [
+   "ui/icon/skill"
+  ],
+  "330800a0a9526445": [
+   "ui/icon/wardrobe"
+  ],
+  "3611aa2a6379d559": [
+   "ui/texture/font/maintask"
+  ],
+  "3b141b85701b4bc5": [
+   "ui/texture/monsterhead"
+  ],
+  "3b83cd5ee2cfde1a": [
+   "ui/icon/skill"
+  ],
+  "3d5e77b3cb658293": [
+   "ui/texture/font/fieldcopy"
+  ],
+  "46a9c373b94b4461": [
+   "ui/texture/font/maintask"
+  ],
+  "4b714ed84b4be07a": [
+   "ui/texture/font/mastertask"
+  ],
+  "4dd12185985b490e": [
+   "ui/texture/font/dynamic"
+  ],
+  "4dea57248e43853a": [
+   "ui/texture/font/main_icon/icon"
+  ],
+  "4efe6d9430ea6178": [
+   "ui/icon/wardrobe"
+  ],
+  "51eb0962eb608f22": [
+   "ui/texture/font/juqingwanjiegu"
+  ],
+  "522c8d9b03b146d9": [
+   "ui/texture/font/main_old/skillbar"
+  ],
+  "542ab8874743f949": [
+   "ui/icon/wardrobe"
+  ],
+  "54fb6a31752da733": [
+   "ui/texture/monsterhead"
+  ],
+  "56bc6c79ac4d14e7": [
+   "ui/texture/font/main_icon/icon"
+  ],
+  "57af68419c7d615c": [
+   "ui/texture/font/maintask",
+   "ui/texture/monsterhead"
+  ],
+  "5980aefc69d5aaaa": [
+   "ui/texture/font/main_old/skillbar"
+  ],
+  "5ad44b8bf2c70762": [
+   "ui/texture/font/maintask"
+  ],
+  "5ca3e77a18a3c372": [
+   "ui/texture/monsterhead"
+  ],
+  "6c3bde82a6f6c421": [
+   "ui/texture/font/maintask"
+  ],
+  "6c7bee6ceafc6b70": [
+   "ui/texture/font/juqingwanjiegu"
+  ],
+  "700785c214a29658": [
+   "ui/texture/font/chat"
+  ],
+  "753f875c29c5c643": [
+   "ui/icon/skill"
+  ],
+  "8000b5aaf1c9b1c2": [
+   "ui/texture/monsterhead"
+  ],
+  "836757db5097a8b0": [
+   "ui/icon/item"
+  ],
+  "83cf8095cd0dad55": [
+   "ui/icon/item"
+  ],
+  "87761db161397f57": [
+   "ui/texture/monsterhead"
+  ],
+  "89364d2e7520ca0a": [
+   "ui/texture/font/maintask"
+  ],
+  "8a14f23653ece472": [
+   "ui/texture/font/maintask"
+  ],
+  "8e63600462b5ef5e": [
+   "ui/texture/base"
+  ],
+  "960395c6c69d8595": [
+   "ui/texture/base"
+  ],
+  "98e7c9327868dc7e": [
+   "ui/texture/monsterhead"
+  ],
+  "9db9d9741a3c7f6a": [
+   "ui/icon/wardrobe"
+  ],
+  "a2ee634025a64927": [
+   "ui/texture/font/maintask"
+  ],
+  "a4c6a5d44bb153b2": [
+   "ui/texture/font/welfarehall"
+  ],
+  "aad8336f415d9e1c": [
+   "ui/texture/font/skillbar"
+  ],
+  "ad1a0c9c46fabf09": [
+   "ui/texture/font/maintask"
+  ],
+  "b07cda00b2ded719": [
+   "ui/texture/font/help"
+  ],
+  "b7921f80ab6d74e8": [
+   "ui/texture/monsterhead"
+  ],
+  "b7f2520a8a920fcc": [
+   "ui/texture/font/maintask"
+  ],
+  "b901f1097bfefeb9": [
+   "ui/texture/base"
+  ],
+  "b98ec3e4af6358c1": [
+   "ui/texture/font/maintask"
+  ],
+  "be6b1f2ab71a29c9": [
+   "ui/texture/font/maintask"
+  ],
+  "c03fa43ba198b834": [
+   "ui/texture/font/maintask"
+  ],
+  "c3c0c7a6df02ca05": [
+   "ui/icon/wardrobe"
+  ],
+  "cd7c1decec4137ad": [
+   "ui/texture/font/maintask"
+  ],
+  "cec56da59f40a577": [
+   "ui/icon/skill"
+  ],
+  "cf31383a3ec67273": [
+   "ui/texture/monsterhead"
+  ],
+  "d3ea095176d80df2": [
+   "ui/icon/wardrobe"
+  ],
+  "d697f6991af2af43": [
+   "ui/texture/font/dynamic"
+  ],
+  "d6d72b96302987e1": [
+   "ui/icon/wardrobe"
+  ],
+  "d7592eec4d956f1c": [
+   "ui/texture/font/maintask"
+  ],
+  "d849838989a61d93": [
+   "ui/login/texture"
+  ],
+  "e3f8083daabf588a": [
+   "ui/texture/font/maintask"
+  ],
+  "e5dfaeeb71f2e46a": [
+   "ui/texture/base"
+  ],
+  "e8b304d55491e73b": [
+   "ui/texture/font/welfarehall"
+  ],
+  "f7853abb9685e6a6": [
+   "ui/texture/font/mastertask"
+  ],
+  "fbbfd901ef368ac3": [
+   "ui/texture/font/juqingwanjiegu"
+  ]
+ }
+}

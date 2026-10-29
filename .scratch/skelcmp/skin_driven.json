@@ -1,0 +1,30 @@
+{
+  "compared": 22,
+  "ok": 6,
+  "short": 16,
+  "no_mesh": 15,
+  "lines": [
+    "w1351_pets_bawanglong_b0 网格自报 44 · 变体轨道 60 · **没被驱动的蒙皮骨 4** ['origin', 'top', 'tx_b_foot', 'tx_f_foot']",
+    "w1351_pets_chaimao_b0 网格自报 31 · 变体轨道 34 · **没被驱动的蒙皮骨 4** ['origin', 'top', 'tx_b_foot', 'tx_f_foot']",
+    "w1351_pets_chufeng_b0 网格自报 31 · 变体轨道 45 · **没被驱动的蒙皮骨 2** ['origin', 'top']",
+    "w1351_pets_daidainiu_b0 网格自报 24 · 变体轨道 33 · **没被驱动的蒙皮骨 2** ['origin', 'top']",
+    "w1351_pets_daishu_b0 网格自报 36 · 变体轨道 46 · **没被驱动的蒙皮骨 4** ['origin', 'top', 'tx_b_foot', 'tx_f_foot']",
+    "w1351_pets_e_b0 网格自报 28 · 变体轨道 31 · **没被驱动的蒙皮骨 4** ['origin', 'top', 'tx_b_foot', 'tx_f_foot']",
+    "w1351_pets_haidaoshu_b0 网格自报 26 · 变体轨道 34 · **没被驱动的蒙皮骨 2** ['origin', 'top']",
+    "w1351_pets_huyaojianjun_b0 网格自报 35 · 变体轨道 57 · **没被驱动的蒙皮骨 2** ['origin', 'top']",
+    "w1351_pets_jianchihu_b0 网格自报 33 · 变体轨道 53 · **没被驱动的蒙皮骨 2** ['origin', 'top']",
+    "w1351_pets_leilin_b0 网格自报 32 · 变体轨道 45 · **没被驱动的蒙皮骨 4** ['origin', 'top', 'tx_b_foot', 'tx_f_foot']",
+    "w1351_pets_lingtushou_b0 网格自报 44 · 变体轨道 58 · 全被驱动",
+    "w1351_pets_lingtushuangjie_b0 网格自报 55 · 变体轨道 90 · 全被驱动",
+    "w1351_pets_mojingmao_b0 网格自报 25 · 变体轨道 32 · **没被驱动的蒙皮骨 2** ['origin', 'top']",
+    "w1351_pets_niulangzhinv_b0 网格自报 57 · 变体轨道 86 · 全被驱动",
+    "w1351_pets_qilin_b0 网格自报 30 · 变体轨道 36 · **没被驱动的蒙皮骨 2** ['origin', 'top']",
+    "w1351_pets_tuxiaoyao_b0 网格自报 46 · 变体轨道 87 · **没被驱动的蒙皮骨 16** ['bip001_l_foretwist', 'bip001_luparmtwist', 'bip001_r_foretwist', 'bip001_rthightwist', 'bip001_ruparmtwist']",
+    "w1351_pets_wugui_b0 网格自报 17 · 变体轨道 20 · **没被驱动的蒙皮骨 2** ['origin', 'top']",
+    "w1351_pets_xiongmao_b0 网格自报 25 · 变体轨道 43 · **没被驱动的蒙皮骨 2** ['origin', 'top']",
+    "w1351_pets_yazuishou_b0 网格自报 23 · 变体轨道 32 · 全被驱动",
+    "w1351_pets_youchilong_b0 网格自报 30 · 变体轨道 39 · 全被驱动",
+    "w1351_pets_youminglangyao_b0 网格自报 37 · 变体轨道 49 · **没被驱动的蒙皮骨 2** ['origin', 'top']",
+    "w1351_pets_zhurong_b0 网格自报 15 · 变体轨道 27 · 全被驱动"
+  ]
+}

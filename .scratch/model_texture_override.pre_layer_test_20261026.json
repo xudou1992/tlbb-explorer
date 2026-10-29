@@ -1,0 +1,10 @@
+{
+  "overrides": {
+    "cfg:data/source/player/w1351_nan/texture/toufa/w1351_nan_s_toufa_xianfeng_001.tga": {
+      "hash": "9871e8ac8c525aa7",
+      "mesh": "w1351_model_xx_nan_jt_x02.mesh",
+      "note": "客户端自动对上（convert/dxt）",
+      "ts": 1792983352
+    }
+  }
+}

@@ -1,0 +1,114 @@
+[
+  {
+    "name": "w1351_boss_machao",
+    "clip": "machao_behit01",
+    "grow": 1,
+    "drift": 0,
+    "span": 5.8079
+  },
+  {
+    "name": "w1351_boss_machao",
+    "clip": "machao_dead",
+    "grow": 1,
+    "drift": 0,
+    "span": 5.8079
+  },
+  {
+    "name": "w1351_boss_machao",
+    "clip": "machao_deadbegin",
+    "grow": 1,
+    "drift": 0,
+    "span": 5.8079
+  },
+  {
+    "name": "w1351_boss_machao",
+    "clip": "machao_fight_idle01",
+    "grow": 1,
+    "drift": 0,
+    "span": 5.8079
+  },
+  {
+    "name": "w1351_monster_heimoguai03",
+    "clip": "heimoguai03_behit01",
+    "grow": 1,
+    "drift": 0,
+    "span": 1.7369
+  },
+  {
+    "name": "w1351_monster_heimoguai03",
+    "clip": "heimoguai03_dead",
+    "grow": 1,
+    "drift": 0,
+    "span": 1.7369
+  },
+  {
+    "name": "w1351_monster_heimoguai03",
+    "clip": "heimoguai03_deadbegin",
+    "grow": 1,
+    "drift": 0,
+    "span": 1.7369
+  },
+  {
+    "name": "w1351_monster_heimoguai03",
+    "clip": "heimoguai03_fight_idle01",
+    "grow": 1,
+    "drift": 0,
+    "span": 1.7369
+  },
+  {
+    "name": "w1351_pets_daishu_b1_2_3",
+    "clip": "3_behit",
+    "grow": 1.6919,
+    "drift": 0.2597,
+    "span": 2.8644
+  },
+  {
+    "name": "w1351_pets_daishu_b1_2_3",
+    "clip": "3_dead",
+    "grow": 1.009,
+    "drift": 0.0151,
+    "span": 2.8644
+  },
+  {
+    "name": "w1351_pets_daishu_b1_2_3",
+    "clip": "3_deadbegin",
+    "grow": 1.6012,
+    "drift": 0.2974,
+    "span": 2.8644
+  },
+  {
+    "name": "w1351_pets_daishu_b1_2_3",
+    "clip": "3_fight_idle01",
+    "grow": 1.0028,
+    "drift": 0.0369,
+    "span": 2.8644
+  },
+  {
+    "name": "w1351_pets_yazuishou_b1_toufa_001",
+    "clip": "behit",
+    "grow": 1,
+    "drift": 0,
+    "span": 1.1157
+  },
+  {
+    "name": "w1351_pets_yazuishou_b1_toufa_001",
+    "clip": "dead",
+    "grow": 1,
+    "drift": 0,
+    "span": 1.1157
+  },
+  {
+    "name": "w1351_pets_yazuishou_b1_toufa_001",
+    "clip": "deadbegin",
+    "grow": 1,
+    "drift": 0,
+    "span": 1.1157
+  },
+  {
+    "name": "w1351_pets_yazuishou_b1_toufa_001",
+    "clip": "fight_idle01",
+    "grow": 1,
+    "drift": 0,
+    "span": 1.1157
+  }
+]

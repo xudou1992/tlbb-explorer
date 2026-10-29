@@ -1,0 +1,223 @@
+{
+  "animations": [],
+  "declaredBones": null,
+  "mesh": null,
+  "missing": {
+    "meshNodesPartial": "mesh 只认出部分骨的节点记录（声明 46 根骨，认出 30 多条）：有些骨的名字后面不跟矩阵。真实骨位（存储矩阵求逆后的平移）只在这些记录里有",
+    "skinPerPart": "影响顶点表按份算：同一只怪的衣服那份有 26 根、手套那份一根都没有，所以 nodes 为空或 influences 缺失不代表模型不跟骨走，要换一份网格再看",
+    "tickMeaning": "帧率刻度（样本恒 40.0）到底是每秒 tick 还是别的，未证"
+  },
+  "nodes": [],
+  "parentChain": [
+    {
+      "name": "000",
+      "parent": null
+    },
+    {
+      "name": "bip01",
+      "parent": "000"
+    },
+    {
+      "name": "bip01_footsteps",
+      "parent": "bip01"
+    },
+    {
+      "name": "bip01_pelvis",
+      "parent": "bip01"
+    },
+    {
+      "name": "bip01_spine",
+      "parent": "bip01_pelvis"
+    },
+    {
+      "name": "bip01_spine1",
+      "parent": "bip01_spine"
+    },
+    {
+      "name": "bip01_neck",
+      "parent": "bip01_spine1"
+    },
+    {
+      "name": "bip01_head",
+      "parent": "bip01_neck"
+    },
+    {
+      "name": "bone08",
+      "parent": "bip01_head"
+    },
+    {
+      "name": "bone09",
+      "parent": "bone08"
+    },
+    {
+      "name": "bone10",
+      "parent": "bone09"
+    },
+    {
+      "name": "bone05",
+      "parent": "bip01_head"
+    },
+    {
+      "name": "bone06",
+      "parent": "bone05"
+    },
+    {
+      "name": "bone07",
+      "parent": "bone06"
+    },
+    {
+      "name": "bone12",
+      "parent": "bip01_head"
+    },
+    {
+      "name": "bone11",
+      "parent": "bip01_head"
+    },
+    {
+      "name": "bone14",
+      "parent": "bip01_head"
+    },
+    {
+      "name": "bone17",
+      "parent": "bip01_head"
+    },
+    {
+      "name": "bone18",
+      "parent": "bone17"
+    },
+    {
+      "name": "bone19",
+      "parent": "bone18"
+    },
+    {
+      "name": "bip01_l_clavicle",
+      "parent": "bip01_neck"
+    },
+    {
+      "name": "bip01_l_upperarm",
+      "parent": "bip01_l_clavicle"
+    },
+    {
+      "name": "bip01_l_forearm",
+      "parent": "bip01_l_upperarm"
+    },
+    {
+      "name": "bip01_l_hand",
+      "parent": "bip01_l_forearm"
+    },
+    {
+      "name": "bip01_l_finger0",
+      "parent": "bip01_l_hand"
+    },
+    {
+      "name": "bip01_l_finger01",
+      "parent": "bip01_l_finger0"
+    },
+    {
+      "name": "bip01_l_finger1",
+      "parent": "bip01_l_hand"
+    },
+    {
+      "name": "bip01_l_finger11",
+      "parent": "bip01_l_finger1"
+    },
+    {
+      "name": "bone16",
+      "parent": "bip01_l_hand"
+    },
+    {
+      "name": "bip01_r_clavicle",
+      "parent": "bip01_neck"
+    },
+    {
+      "name": "bip01_r_upperarm",
+      "parent": "bip01_r_clavicle"
+    },
+    {
+      "name": "bip01_r_forearm",
+      "parent": "bip01_r_upperarm"
+    },
+    {
+      "name": "bip01_r_hand",
+      "parent": "bip01_r_forearm"
+    },
+    {
+      "name": "bip01_r_finger0",
+      "parent": "bip01_r_hand"
+    },
+    {
+      "name": "bip01_r_finger01",
+      "parent": "bip01_r_finger0"
+    },
+    {
+      "name": "bip01_r_finger1",
+      "parent": "bip01_r_hand"
+    },
+    {
+      "name": "bip01_r_finger11",
+      "parent": "bip01_r_finger1"
+    },
+    {
+      "name": "bone15",
+      "parent": "bip01_r_hand"
+    },
+    {
+      "name": "bip01_l_thigh",
+      "parent": "bip01_spine"
+    },
+    {
+      "name": "bip01_l_calf",
+      "parent": "bip01_l_thigh"
+    },
+    {
+      "name": "bip01_l_foot",
+      "parent": "bip01_l_calf"
+    },
+    {
+      "name": "bip01_l_toe0",
+      "parent": "bip01_l_foot"
+    },
+    {
+      "name": "bip01_r_thigh",
+      "parent": "bip01_spine"
+    },
+    {
+      "name": "bip01_r_calf",
+      "parent": "bip01_r_thigh"
+    },
+    {
+      "name": "bip01_r_foot",
+      "parent": "bip01_r_calf"
+    },
+    {
+      "name": "bip01_r_toe0",
+      "parent": "bip01_r_foot"
+    },
+    {
+      "name": "bone04",
+      "parent": "bip01_spine"
+    },
+    {
+      "name": "bone03",
+      "parent": "bip01_spine"
+    },
+    {
+      "name": "bone01",
+      "parent": "bip01_spine"
+    },
+    {
+      "name": "bone02",
+      "parent": "bip01_spine"
+    }
+  ],
+  "provenance": {
+    "animationsMatched": "动作按「同目录的 ani/ 子目录」整批配给网格：一只怪的部件网格共用一组动作是对的，但一个目录里放多只互不相关的模型时，每份网格都会拿到该目录的全部动作——批量导出时若 nodes 为 0（静态网格没有骨架节点），这批动作多半不属于它",
+    "boneCountField": ".mesh 头部 0x110 处的 u32 = 骨骼根数，与该模型 .ani 的轨道数一致",
+    "generator": "skel_dump (tlbb-core preview::{parse_nodes, parse_ani, bone_count, parse_hierarchy})",
+    "influences": "蒙皮权重在 .mesh：每条 96B 骨记录之后跟 [u32 顶点数 N][N 个顶点号（严格递增）][N 个权重 f32]，是按骨组织的稀疏表，不是每顶点 4 影响的定长表（2026-09-30 实测，闸门 preview::geometry::node_tests::skin_influences_sum_to_one_per_vertex）",
+    "nodeRecord": "96B = char[32] 名字 + f32[16] 矩阵（D3DX 行向量）。存储矩阵是世界绑定矩阵的逆（B = S⁻¹，2026-10-06 翻案，见 preview::pose::bind_worlds）：bindPosition 是求逆后第 4 行的平移（真实骨位）；存储矩阵的末行 (tx,ty,tz,1) 是逆矩阵的平移，不是骨位，别直接拿去摆骨架",
+    "parentChain": "父链来自尾部各条目孩子名单的并：解出时 parentChain 是骨名到父骨名的列表（根的父为 null，名字用客户端原文），没读出挂接时为 null",
+    "restRecord": ".ani 骨架区 60B/骨 = +12 绑定旋转（每条单位长）；+48 那三个浮点用途未证，没往这份导出里放",
+    "trackRecord": "每骨每帧 = f32×4 旋转 + f32×3 位移 + f32 缩放"
+  }
+}

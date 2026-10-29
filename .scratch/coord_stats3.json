@@ -1,0 +1,267 @@
+{
+ "up_dev_pct": {
+  "p50": 0.0,
+  "p90": 0.0,
+  "p99": 30.21071760812209,
+  "p999": 89.99999316981165,
+  "max": 90.0,
+  "over_1deg": 26109,
+  "over_5deg": 21027,
+  "over_45deg": 1599,
+  "over_89deg": 460
+ },
+ "abs_translation_pct": {
+  "x": {
+   "0.5": 119.54900360107422,
+   "0.99": 296.2330017089844,
+   "0.999": 314.9110107421875
+  },
+  "y": {
+   "0.5": 9.959980010986328,
+   "0.99": 41.73030090332031,
+   "0.999": 53.11579895019531
+  },
+  "z": {
+   "0.5": 121.94100189208984,
+   "0.99": 297.802001953125,
+   "0.999": 317.47198486328125
+  },
+  "y_max": 324881.0,
+  "x_max": 54921.8984375,
+  "z_max": 84616.5
+ },
+ "yaw_exact_counts": {
+  "0": 89077,
+  "180": 13248,
+  "+90": 856,
+  "-180": 361,
+  "-90": 408
+ },
+ "zero_rotation_block_instances": 2,
+ "m5_negative_instances": 616,
+ "understated_files": 0,
+ "nonuniform_top10": [
+  [
+   "w1351_ly_dzlongwen78_001aa.mesh",
+   1903
+  ],
+  [
+   "w1351_ly_dzlongwen78_001a.mesh",
+   1900
+  ],
+  [
+   "w1351_ly_qiangmian_002.mesh",
+   1866
+  ],
+  [
+   "w1351_ly_dizhuanchang1_002.mesh",
+   1397
+  ],
+  [
+   "w1351_tls_huatan_001.mesh",
+   935
+  ],
+  [
+   "w1351_mj_dzqianzhuan_002.mesh",
+   864
+  ],
+  [
+   "w1351_ly_dizhuanchang1_001.mesh",
+   842
+  ],
+  [
+   "w1351_dl_zhalan_001.mesh",
+   790
+  ],
+  [
+   "w1351_qhdg_dzqiangmianjin_001.mesh",
+   653
+  ],
+  [
+   "w1351_sz_dzchangfangxingkuan_001.mesh",
+   634
+  ]
+ ],
+ "nonuniform_distinct_names": 1214,
+ "candidate_samples": {
+  "749": {
+   "no_tail_min": {
+    "rel": "w1351_fb_langhuanyudong_001/1_4_-1.scene",
+    "bytes": 1518,
+    "tag": 749,
+    "instances": 2,
+    "declared": 2,
+    "has_tail": false,
+    "understated": false,
+    "pure_yaw_ratio": 1.0
+   },
+   "with_tail_min": {
+    "rel": "w1351_fb_tjqs_001/1_9_-3.scene",
+    "bytes": 1961,
+    "tag": 749,
+    "instances": 2,
+    "declared": 3,
+    "has_tail": true,
+    "understated": false,
+    "pure_yaw_ratio": 1.0
+   }
+  },
+  "753": {
+   "no_tail_min": {
+    "rel": "w1351_fb_xinsanhuan_001/1_4_-4.scene",
+    "bytes": 1097,
+    "tag": 753,
+    "instances": 2,
+    "declared": 2,
+    "has_tail": false,
+    "understated": false,
+    "pure_yaw_ratio": 0.5
+   },
+   "with_tail_min": {
+    "rel": "w1351_gj_huoyangu_001/1_0_-4.scene",
+    "bytes": 1634,
+    "tag": 753,
+    "instances": 2,
+    "declared": 3,
+    "has_tail": true,
+    "understated": false,
+    "pure_yaw_ratio": 1.0
+   }
+  },
+  "605": {
+   "no_tail_min": {
+    "rel": "w1351_fb_jhqx_001/1_2_-3.scene",
+    "bytes": 1230,
+    "tag": 605,
+    "instances": 2,
+    "declared": 2,
+    "has_tail": false,
+    "understated": false,
+    "pure_yaw_ratio": 1.0
+   },
+   "with_tail_min": {
+    "rel": "w1351_fb_murongshanzhuang_001/1_5_1.scene",
+    "bytes": 1817,
+    "tag": 605,
+    "instances": 2,
+    "declared": 3,
+    "has_tail": true,
+    "understated": false,
+    "pure_yaw_ratio": 1.0
+   }
+  },
+  "592": {
+   "no_tail_min": {
+    "rel": "w1351_fb_murongshanzhuang_001/1_-1_-5.scene",
+    "bytes": 1204,
+    "tag": 592,
+    "instances": 2,
+    "declared": 2,
+    "has_tail": false,
+    "understated": false,
+    "pure_yaw_ratio": 1.0
+   },
+   "with_tail_min": {
+    "rel": "w1351_gj_ywgm9_001/1_2_-1.scene",
+    "bytes": 2512,
+    "tag": 592,
+    "instances": 4,
+    "declared": 5,
+    "has_tail": true,
+    "understated": false,
+    "pure_yaw_ratio": 1.0
+   }
+  },
+  "324": {
+   "no_tail_min": null,
+   "with_tail_min": null
+  },
+  "596": {
+   "no_tail_min": {
+    "rel": "mqts_empty_001/1_0_0.scene",
+    "bytes": 1212,
+    "tag": 596,
+    "instances": 2,
+    "declared": 2,
+    "has_tail": false,
+    "understated": false,
+    "pure_yaw_ratio": 1.0
+   },
+   "with_tail_min": null
+  },
+  "601": {
+   "no_tail_min": null,
+   "with_tail_min": null
+  }
+ },
+ "sample_files_detail": {
+  "w1351_fb_songliao_001/1_-1_-6.scene": {
+   "bytes": 765,
+   "tag": 753,
+   "instances": 1,
+   "declared": 1,
+   "has_tail": false,
+   "tail_bytes": 0,
+   "understated": false,
+   "pure_yaw": 1,
+   "det_neg": 0,
+   "grid_match": 0,
+   "grid_total": 1,
+   "up_dev_max": 0.0,
+   "zero_rot": 0,
+   "nonuniform": 0,
+   "grid_segs": "1_-1_-6"
+  },
+  "w1351_ll_dl_002/1_1_-5.scene": {
+   "bytes": 57079,
+   "tag": 753,
+   "instances": 75,
+   "declared": 75,
+   "has_tail": false,
+   "tail_bytes": 0,
+   "understated": false,
+   "pure_yaw": 75,
+   "det_neg": 3,
+   "grid_match": 75,
+   "grid_total": 75,
+   "up_dev_max": 0.0,
+   "zero_rot": 0,
+   "nonuniform": 22,
+   "grid_segs": "1_1_-5"
+  },
+  "w1351_ll_dl_002/1_5_-1.scene": {
+   "bytes": 16950,
+   "tag": 753,
+   "instances": 21,
+   "declared": 22,
+   "has_tail": true,
+   "tail_bytes": 957,
+   "understated": false,
+   "pure_yaw": 19,
+   "det_neg": 0,
+   "grid_match": 21,
+   "grid_total": 21,
+   "up_dev_max": 46.49999975623462,
+   "zero_rot": 0,
+   "nonuniform": 0,
+   "grid_segs": "1_5_-1"
+  },
+  "w1351_ll_xh_001/1_5_-9.scene": {
+   "bytes": 77069,
+   "tag": 753,
+   "instances": 100,
+   "declared": 101,
+   "has_tail": true,
+   "tail_bytes": 957,
+   "understated": false,
+   "pure_yaw": 89,
+   "det_neg": 0,
+   "grid_match": 100,
+   "grid_total": 100,
+   "up_dev_max": 90.0,
+   "zero_rot": 1,
+   "nonuniform": 16,
+   "grid_segs": "1_5_-9"
+  }
+ }
+}

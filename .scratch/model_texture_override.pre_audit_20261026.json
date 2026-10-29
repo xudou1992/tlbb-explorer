@@ -1,0 +1,9 @@
+{
+  "overrides": {
+    "cfg:data/source/player/w1351_nan/texture/toufa/w1351_nan_s_toufa_xianfeng_001.tga": {
+      "hash": "ab5d2b3da9535d43",
+      "note": "uvfit v1 人工确认",
+      "ts": 1792908518
+    }
+  }
+}

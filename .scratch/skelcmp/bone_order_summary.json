@@ -1,0 +1,56 @@
+{
+  "stat": {
+    "仍有本体没有的骨名": 280,
+    "没数据": 28
+  },
+  "empties": {
+    "轨道": 308
+  },
+  "examples": [
+    [
+      "w1351_pets_daishu_b1_2_3_dead.ani",
+      [
+        "bip01_footsteps",
+        "bip01_head",
+        "bip01_l_clavicle",
+        "bip01_l_thigh"
+      ]
+    ],
+    [
+      "w1351_pets_jiuxiaozhanlong_b8_fight_idle01.ani",
+      [
+        "bip01_footsteps",
+        "bip01_head",
+        "bip01_l_clavicle",
+        "bip01_l_finger0"
+      ]
+    ],
+    [
+      "w1351_pets_yazuishou_b1_vertigo.ani",
+      [
+        "bip01_footsteps",
+        "bip01_head",
+        "bip01_l_clavicle",
+        "bip01_l_thigh"
+      ]
+    ],
+    [
+      "w1351_pets_bawanglong_b2_run.ani",
+      [
+        "bip01_footsteps",
+        "bip01_head",
+        "bip01_l_clavicle",
+        "bip01_l_foot"
+      ]
+    ],
+    [
+      "w1351_pets_lingtushuangjie_b5_hit02.ani",
+      [
+        "bip01_footsteps",
+        "bip01_head",
+        "bip01_l_clavicle",
+        "bip01_l_finger0"
+      ]
+    ]
+  ]
+}

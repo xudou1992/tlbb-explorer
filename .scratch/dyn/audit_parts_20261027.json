@@ -1,0 +1,702 @@
+{
+ "totals": {
+  "groups": 24,
+  "meshes": 91,
+  "err": 0,
+  "nocolor": 0,
+  "unaligned": 8,
+  "ok": 83
+ },
+ "badGroups": [],
+ "rows": [
+  {
+   "gid": 3,
+   "name": "w1351_monster_yanshijiangong",
+   "meshes": [
+    {
+     "mesh": "w1351_monster_meiyingyanshi_lian_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 196 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_meiyingyanshi_xiezi_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 68 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_meiyingyanshi_yifu_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 566 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_shirenyanshi_lian_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 196 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_shirenyanshi_xiezi_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 68 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_shirenyanshi_yifu_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 566 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_yanshihufa_lian_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 196 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_yanshihufa_xiezi_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 68 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_yanshihufa_yifu_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 566 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_yanshijiangong_lian_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 196 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_yanshijiangong_xiezi_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 68 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_yanshijiangong_yifu_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 566 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_yanshishouwei_lian_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 196 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_yanshishouwei_xiezi_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 68 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_yanshishouwei_yifu_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 566 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    }
+   ]
+  },
+  {
+   "gid": 4,
+   "name": "w1351_npc_changbiyuan",
+   "meshes": [
+    {
+     "mesh": "w1351_monster_eyubanghunhun_shoutao_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 226 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_eyubanghunhun_yifu_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 516 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_npc_attack_gaoshanbaiyuan04.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 886 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    }
+   ]
+  },
+  {
+   "gid": 8,
+   "name": "w1351_monster_baiqizi",
+   "meshes": [
+    {
+     "mesh": "w1351_monster_baiqizi.mesh",
+     "layers": 2,
+     "aligned": false,
+     "note": "按材质表分层：基础层 476 面 + 特效层 1 段（其中 1 段叠在基础子网格上）；颜色贴图 2 张 > 子网格 1 "
+    },
+    {
+     "mesh": "w1351_monster_heiqizi.mesh",
+     "layers": 2,
+     "aligned": false,
+     "note": "按材质表分层：基础层 476 面 + 特效层 1 段（其中 1 段叠在基础子网格上）；颜色贴图 2 张 > 子网格 1 "
+    }
+   ]
+  },
+  {
+   "gid": 13,
+   "name": "w1351_monster_yunmushiren",
+   "meshes": [
+    {
+     "mesh": "w1351_monster_huagangshiren.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 902 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_longxueshiren.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 902 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_nvwashiren.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 902 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_shanshen.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 902 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_yeyanshiren.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 902 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_yunmushiren.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 902 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    }
+   ]
+  },
+  {
+   "gid": 10,
+   "name": "w1351_boss_gerong",
+   "meshes": [
+    {
+     "mesh": "w1351_boss_gerong_lian_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 328 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_boss_gerong_shoutao_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 288 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_boss_gerong_toufa_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 808 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_boss_gerong_yifu_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 1054 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    }
+   ]
+  },
+  {
+   "gid": 11,
+   "name": "w1351_boss_yudu",
+   "meshes": [
+    {
+     "mesh": "w1351_boss_yudu_lian_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 230 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_boss_yudu_shoutao_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 106 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_boss_yudu_toufa_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 80 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_boss_yudu_xiezi_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 56 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_boss_yudu_yifu_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 616 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    }
+   ]
+  },
+  {
+   "gid": 14,
+   "name": "w1351_boss_hongjiyaowang",
+   "meshes": [
+    {
+     "mesh": "w1351_boss_hongjiyaowang_toufa_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 80 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_boss_hongjiyaowang_yifu_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 1882 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    }
+   ]
+  },
+  {
+   "gid": 15,
+   "name": "w1351_boss_wangyan",
+   "meshes": [
+    {
+     "mesh": "w1351_boss_wangyan_lian_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 206 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_boss_wangyan_shoutao_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 162 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_boss_wangyan_toufa_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 492 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_boss_wangyan_xiezi_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 790 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_boss_wangyan_yifu_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 1552 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    }
+   ]
+  },
+  {
+   "gid": 2,
+   "name": "w1351_nan_s_yifu_mjrmdz",
+   "meshes": [
+    {
+     "mesh": "w1351_cj_diao.mesh",
+     "layers": 2,
+     "aligned": true,
+     "note": "按材质表分层：基础层 10864 面 + 不透明材质 1 段；颜色贴图 2 张 = 子网格 2 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_nan_s_yifu_mjrmdz.mesh",
+     "layers": 1,
+     "aligned": false,
+     "note": "按材质表分层：基础层 4359 面；颜色贴图 1 张 < 子网格 2 段：材质表只给了 1 张，其余 1 段按基础层铺（"
+    },
+    {
+     "mesh": "w1351_npc_xiaonvhai05.mesh",
+     "layers": 2,
+     "aligned": true,
+     "note": "按材质表分层：基础层 9301 面 + 不透明材质 1 段；颜色贴图 2 张 = 子网格 2 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_npc_xiaonvhai05_yanjing.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 1224 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_scsq_jianxia_001.mesh",
+     "layers": 2,
+     "aligned": true,
+     "note": "按材质表分层：基础层 1896 面 + 不透明材质 1 段；颜色贴图 2 张 = 子网格 2 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_ui_shenmuwangding_01.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 5890 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_zuoqi_guchengfeisha.mesh",
+     "layers": 5,
+     "aligned": true,
+     "note": "按材质表分层：基础层 2778 面 + 特效层 3 段 + 不透明材质 1 段；颜色贴图 5 张 = 子网格 5 段（一"
+    }
+   ]
+  },
+  {
+   "gid": 4,
+   "name": "w1351_npc_changbiyuan",
+   "meshes": [
+    {
+     "mesh": "w1351_monster_eyubanghunhun_shoutao_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 226 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_monster_eyubanghunhun_yifu_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 516 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_npc_attack_gaoshanbaiyuan04.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 886 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    }
+   ]
+  },
+  {
+   "gid": 5,
+   "name": "w1351_npc_attack_dahuangfeng02",
+   "meshes": [
+    {
+     "mesh": "w1351_npc_attack_dahuangfeng01_a.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 272 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_npc_attack_dahuangfeng01_b.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 30 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_npc_attack_dahuangfeng02_a.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 272 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_npc_attack_dahuangfeng02_b.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 30 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_npc_attack_dahuangfeng03_a.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 272 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_npc_attack_dahuangfeng03_b.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 30 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_npc_attack_dahuangfeng04_a.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 272 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_npc_attack_dahuangfeng04_b.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 30 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_npc_attack_dahuangfeng_a.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 272 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_npc_attack_dahuangfeng_b.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 30 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    }
+   ]
+  },
+  {
+   "gid": 9,
+   "name": "w1351_npc_daidaiqiu",
+   "meshes": [
+    {
+     "mesh": "w1351_npc_daidaiqiu_toufa_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 31 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_npc_daidaiqiu_yifu_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 502 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_pets_dandanji_b3_lian_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 24 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_pets_dandanji_b3_toufa_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 35 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_pets_dandanji_b3_yifu_001.mesh",
+     "layers": 2,
+     "aligned": true,
+     "note": "按材质表分层：基础层 502 面 + 不透明材质 1 段；颜色贴图 2 张 = 子网格 2 段（一张对一段）"
+    }
+   ]
+  },
+  {
+   "gid": 9,
+   "name": "w1351_npc_daidaiqiu",
+   "meshes": [
+    {
+     "mesh": "w1351_npc_daidaiqiu_toufa_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 31 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_npc_daidaiqiu_yifu_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 502 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_pets_dandanji_b3_lian_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 24 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_pets_dandanji_b3_toufa_001.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 35 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_pets_dandanji_b3_yifu_001.mesh",
+     "layers": 2,
+     "aligned": true,
+     "note": "按材质表分层：基础层 502 面 + 不透明材质 1 段；颜色贴图 2 张 = 子网格 2 段（一张对一段）"
+    }
+   ]
+  },
+  {
+   "gid": 6,
+   "name": "w1351_pets_shenqie_b0",
+   "meshes": [
+    {
+     "mesh": "w1351_pets_shenqie_b0_lian_01.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 158 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_pets_shenqie_b0_yifu_01.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 1148 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    }
+   ]
+  },
+  {
+   "gid": 16,
+   "name": "w1351_pets_longgui_b2",
+   "meshes": [
+    {
+     "mesh": "w1351_pets_longgui_b0.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 836 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    }
+   ]
+  },
+  {
+   "gid": 19,
+   "name": "w1351_pets_qiongqi_b2",
+   "meshes": [
+    {
+     "mesh": "w1351_pets_qiongqi_b0.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 1082 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    }
+   ]
+  },
+  {
+   "gid": 2,
+   "name": "w1351_nan_s_yifu_mjrmdz",
+   "meshes": [
+    {
+     "mesh": "w1351_cj_diao.mesh",
+     "layers": 2,
+     "aligned": true,
+     "note": "按材质表分层：基础层 10864 面 + 不透明材质 1 段；颜色贴图 2 张 = 子网格 2 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_nan_s_yifu_mjrmdz.mesh",
+     "layers": 1,
+     "aligned": false,
+     "note": "按材质表分层：基础层 4359 面；颜色贴图 1 张 < 子网格 2 段：材质表只给了 1 张，其余 1 段按基础层铺（"
+    },
+    {
+     "mesh": "w1351_npc_xiaonvhai05.mesh",
+     "layers": 2,
+     "aligned": true,
+     "note": "按材质表分层：基础层 9301 面 + 不透明材质 1 段；颜色贴图 2 张 = 子网格 2 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_npc_xiaonvhai05_yanjing.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 1224 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_scsq_jianxia_001.mesh",
+     "layers": 2,
+     "aligned": true,
+     "note": "按材质表分层：基础层 1896 面 + 不透明材质 1 段；颜色贴图 2 张 = 子网格 2 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_ui_shenmuwangding_01.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 5890 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_zuoqi_guchengfeisha.mesh",
+     "layers": 5,
+     "aligned": true,
+     "note": "按材质表分层：基础层 2778 面 + 特效层 3 段 + 不透明材质 1 段；颜色贴图 5 张 = 子网格 5 段（一"
+    }
+   ]
+  },
+  {
+   "gid": 7,
+   "name": "w1351_zuoqi_yuexiaxun_lan",
+   "meshes": [
+    {
+     "mesh": "w1351_zuoqi_yuexiaxun.mesh",
+     "layers": 4,
+     "aligned": false,
+     "note": "按材质表分层：基础层 3211 面 + 特效层 2 段 + 不透明材质 1 段；颜色贴图 4 张 < 子网格 5 段：材"
+    }
+   ]
+  },
+  {
+   "gid": 18,
+   "name": "w1351_zuoqi_hudie_hei",
+   "meshes": [
+    {
+     "mesh": "w1351_monster_heimoguai01.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 958 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_zuoqi_hudie_hei.mesh",
+     "layers": 8,
+     "aligned": false,
+     "note": "按材质表分层：基础层 4506 面 + 特效层 5 段 + 不透明材质 2 段（其中 2 段叠在基础子网格上）；颜色贴图"
+    }
+   ]
+  },
+  {
+   "gid": 343,
+   "name": "w1351_zuoqi_nianshou01",
+   "meshes": [
+    {
+     "mesh": "w1351_zuoqi_nianshou01_xiezi.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 116 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    },
+    {
+     "mesh": "w1351_zuoqi_nianshou01_yifu.mesh",
+     "layers": 1,
+     "aligned": true,
+     "note": "按材质表分层：基础层 1346 面；颜色贴图 1 张 = 子网格 1 段（一张对一段）"
+    }
+   ]
+  },
+  {
+   "gid": 1670,
+   "name": "w1351_nan_s_yifu_xianfeng_001",
+   "meshes": [
+    {
+     "mesh": "w1351_nan_s_yifu_xianfeng_001.mesh",
+     "layers": 5,
+     "aligned": true,
+     "note": "按材质表分层：基础层 4876 面 + 特效层 4 段；颜色贴图 5 张 = 子网格 5 段（一张对一段）"
+    }
+   ]
+  },
+  {
+   "gid": 1739,
+   "name": "w1351_nan_s_yifu_ysym_moren",
+   "meshes": [
+    {
+     "mesh": "w1351_nan_s_yifu_ysym_moren.mesh",
+     "layers": 3,
+     "aligned": false,
+     "note": "按材质表分层：基础层 5046 面 + 特效层 2 段；颜色贴图 3 张 < 子网格 6 段：材质表只给了 3 张，其余"
+    }
+   ]
+  },
+  {
+   "gid": 1647,
+   "name": "w1351_nan_s_yifu_zhongshilifu",
+   "meshes": [
+    {
+     "mesh": "w1351_nan_s_yifu_zhongshilifu.mesh",
+     "layers": 4,
+     "aligned": false,
+     "note": "按材质表分层：基础层 2839 面 + 特效层 2 段 + 不透明材质 1 段；颜色贴图 4 张 < 子网格 5 段：材"
+    }
+   ]
+  },
+  {
+   "gid": 2281,
+   "name": "w1351_nan_s_yifu_qingfengyijiang",
+   "meshes": []
+  }
+ ]
+}

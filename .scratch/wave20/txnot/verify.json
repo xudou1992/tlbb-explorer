@@ -1,0 +1,108 @@
+{
+  "declared": 2696,
+  "v2_ok": 2208,
+  "G_ok": 2335,
+  "regress": 0,
+  "txnot_first": 128,
+  "txnot_first_G": 114,
+  "txnot_first_still": [
+    "w1351_model_ymg02_jn_long_h001.mesh",
+    "w1351_model_ymg02_jn_long_h005.mesh",
+    "w1351_model_ymg02_jn_long_lg_h001.mesh",
+    "w1351_model_ymg02_jn_long_lg_h005.mesh",
+    "w1351_model_ymg02_jn_long_lg_h005_1.mesh",
+    "w1351_model_ymg02_nan_slbw_h002.mesh",
+    "w1351_model_ymg02_nan_slbw_h003.mesh",
+    "w1351_model_ymg02_nan_slbw_lg_h002.mesh",
+    "w1351_model_ymg02_nan_slbw_lg_h003.mesh",
+    "w1351_model_ymg02_nv_flzt_h001.mesh",
+    "w1351_model_ymg02_nv_flzt_lg_h001.mesh",
+    "w1351_monster_heiyuan.mesh",
+    "w1351_npc_duanzhengming_yifu_001.mesh",
+    "w1351_pets_xiaomuling_b7.mesh"
+  ],
+  "txnot_any": 141,
+  "txnot_any_G": 127,
+  "txnot_any_still": [
+    "w1351_model_ymg02_jn_long_h001.mesh",
+    "w1351_model_ymg02_jn_long_h005.mesh",
+    "w1351_model_ymg02_jn_long_lg_h001.mesh",
+    "w1351_model_ymg02_jn_long_lg_h005.mesh",
+    "w1351_model_ymg02_jn_long_lg_h005_1.mesh",
+    "w1351_model_ymg02_nan_slbw_h002.mesh",
+    "w1351_model_ymg02_nan_slbw_h003.mesh",
+    "w1351_model_ymg02_nan_slbw_lg_h002.mesh",
+    "w1351_model_ymg02_nan_slbw_lg_h003.mesh",
+    "w1351_model_ymg02_nv_flzt_h001.mesh",
+    "w1351_model_ymg02_nv_flzt_lg_h001.mesh",
+    "w1351_monster_heiyuan.mesh",
+    "w1351_npc_duanzhengming_yifu_001.mesh",
+    "w1351_pets_xiaomuling_b7.mesh"
+  ],
+  "gained_counts": [
+    [
+      1,
+      23
+    ],
+    [
+      2,
+      14
+    ],
+    [
+      15,
+      12
+    ],
+    [
+      9,
+      11
+    ],
+    [
+      3,
+      7
+    ],
+    [
+      12,
+      7
+    ],
+    [
+      7,
+      7
+    ],
+    [
+      8,
+      6
+    ],
+    [
+      4,
+      5
+    ],
+    [
+      10,
+      5
+    ],
+    [
+      6,
+      4
+    ],
+    [
+      16,
+      4
+    ],
+    [
+      13,
+      3
+    ],
+    [
+      11,
+      3
+    ],
+    [
+      20,
+      2
+    ],
+    [
+      5,
+      1
+    ]
+  ]
+}

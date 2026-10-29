@@ -1,0 +1,20 @@
+{
+  "result": {
+    "err": "基址自检没过（版权串对不上），RVA 推导不可信，先不 dump：{\"at\":\"0x7ff6c9cd2e90\",\"got\":\"Copyright 2013-2200 htt\",\"match\":false}"
+  },
+  "messages": [
+    {
+      "kind": "armed",
+      "base": "0x7ff6c8de0000",
+      "size": 19521536,
+      "baseCheck": {
+        "at": "0x7ff6c9cd2e90",
+        "got": "Copyright 2013-2200 htt",
+        "match": false
+      },
+      "rva_registry": "0x10b5c38",
+      "rva_factory": "0x10a7dd8"
+    }
+  ],
+  "creates": []
+}

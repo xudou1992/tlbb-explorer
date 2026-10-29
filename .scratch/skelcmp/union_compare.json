@@ -1,0 +1,152 @@
+[
+  {
+    "base": "w1351_pets_bawanglong_b0",
+    "n_mesh": 1,
+    "union": 44,
+    "ani": "w1351_pets_bawanglong_b2_run.ani",
+    "tracks": 60,
+    "miss": 20,
+    "miss_sample": [
+      "bip01_footsteps",
+      "bip01_head",
+      "bip01_l_clavicle",
+      "bip01_l_foot",
+      "bip01_l_horselink"
+    ]
+  },
+  {
+    "base": "w1351_pets_bawanglong_b0",
+    "n_mesh": 1,
+    "union": 44,
+    "ani": "w1351_pets_bawanglong_b2_dead.ani",
+    "tracks": 60,
+    "miss": 20,
+    "miss_sample": [
+      "bip01_footsteps",
+      "bip01_head",
+      "bip01_l_clavicle",
+      "bip01_l_foot",
+      "bip01_l_horselink"
+    ]
+  },
+  {
+    "base": "w1351_pets_chaimao_b0",
+    "n_mesh": 1,
+    "union": 31,
+    "ani": "w1351_pets_chaimao_b2_hit02.ani",
+    "tracks": 34,
+    "miss": 7,
+    "miss_sample": [
+      "bip01_footsteps",
+      "bip01_head",
+      "bip01_l_thigh",
+      "bip01_ponytail1",
+      "bip01_r_clavicle"
+    ]
+  },
+  {
+    "base": "w1351_pets_chaimao_b0",
+    "n_mesh": 1,
+    "union": 31,
+    "ani": "w1351_pets_chaimao_b2_idle03.ani",
+    "tracks": 34,
+    "miss": 7,
+    "miss_sample": [
+      "bip01_footsteps",
+      "bip01_head",
+      "bip01_l_thigh",
+      "bip01_ponytail1",
+      "bip01_r_clavicle"
+    ]
+  },
+  {
+    "base": "w1351_pets_chufeng_b0",
+    "n_mesh": 1,
+    "union": 31,
+    "ani": "w1351_pets_chufeng_b1_deadbegin.ani",
+    "tracks": 45,
+    "miss": 16,
+    "miss_sample": [
+      "bip01_footsteps",
+      "bip01_l_clavicle",
+      "bip01_l_forearm",
+      "bip01_l_hand",
+      "bip01_l_thigh"
+    ]
+  },
+  {
+    "base": "w1351_pets_chufeng_b0",
+    "n_mesh": 1,
+    "union": 31,
+    "ani": "w1351_pets_chufeng_b1_idle02.ani",
+    "tracks": 45,
+    "miss": 16,
+    "miss_sample": [
+      "bip01_footsteps",
+      "bip01_l_clavicle",
+      "bip01_l_forearm",
+      "bip01_l_hand",
+      "bip01_l_thigh"
+    ]
+  },
+  {
+    "base": "w1351_pets_daidainiu_b0",
+    "n_mesh": 1,
+    "union": 24,
+    "ani": "w1351_pets_daidainiu_b3_run.ani",
+    "tracks": 33,
+    "miss": 11,
+    "miss_sample": [
+      "bip01_footsteps",
+      "bip01_head",
+      "bip01_l_clavicle",
+      "bip01_l_thigh",
+      "bip01_r_thigh"
+    ]
+  },
+  {
+    "base": "w1351_pets_daidainiu_b0",
+    "n_mesh": 1,
+    "union": 24,
+    "ani": "w1351_pets_daidainiu_b3_fight_idle01.ani",
+    "tracks": 33,
+    "miss": 11,
+    "miss_sample": [
+      "bip01_footsteps",
+      "bip01_head",
+      "bip01_l_clavicle",
+      "bip01_l_thigh",
+      "bip01_r_thigh"
+    ]
+  },
+  {
+    "base": "w1351_pets_daishu_b0",
+    "n_mesh": 1,
+    "union": 36,
+    "ani": "w1351_pets_daishu_b1_2_3_dead.ani",
+    "tracks": 46,
+    "miss": 14,
+    "miss_sample": [
+      "bip01_footsteps",
+      "bip01_head",
+      "bip01_l_clavicle",
+      "bip01_l_thigh",
+      "bip01_l_toe0"
+    ]
+  },
+  {
+    "base": "w1351_pets_daishu_b0",
+    "n_mesh": 1,
+    "union": 36,
+    "ani": "w1351_pets_daishu_b1_2_3_hit02.ani",
+    "tracks": 46,
+    "miss": 14,
+    "miss_sample": [
+      "bip01_footsteps",
+      "bip01_head",
+      "bip01_l_clavicle",
+      "bip01_l_thigh",
+      "bip01_l_toe0"
+    ]
+  }
+]

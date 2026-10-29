@@ -1,0 +1,82 @@
+[
+  {
+    "name": "w1351_boss_machao",
+    "info": {
+      "asset": "/.scratch/glb_sidecar/m_f8e9433000036a9c.glb",
+      "joints": 83,
+      "clip": "machao_behit01",
+      "keys": 16
+    },
+    "cmp": {
+      "节点数": 84,
+      "有名节点": 84,
+      "蒙皮关节数": 83,
+      "该动作通道数": 60,
+      "通道按路径分布": {
+        "undefined": 60
+      },
+      "通道目标不在节点表里": 0,
+      "通道目标样例": [
+        "000",
+        "bip01",
+        "bip01_footsteps",
+        "bip01_pelvis",
+        "bip01_spine",
+        "bip01_spine1"
+      ],
+      "节点名样例": [
+        "w1351_boss_machao",
+        "000",
+        "bip01",
+        "bip01_footsteps",
+        "bip01_pelvis",
+        "bip01_spine"
+      ],
+      "动画总条数": 15,
+      "网格数": 1,
+      "场景根": [
+        2
+      ]
+    }
+  },
+  {
+    "name": "w1351_pets_daishu_b1_2_3",
+    "info": {
+      "asset": "/.scratch/glb_sidecar/m_71b3e8500000a708.glb",
+      "joints": 47,
+      "clip": "3_behit",
+      "keys": 21
+    },
+    "cmp": {
+      "节点数": 48,
+      "有名节点": 48,
+      "蒙皮关节数": 47,
+      "该动作通道数": 60,
+      "通道按路径分布": {
+        "undefined": 60
+      },
+      "通道目标不在节点表里": 0,
+      "通道目标样例": [
+        "000",
+        "bip01",
+        "bip01_footsteps",
+        "bip01_pelvis",
+        "bip01_spine",
+        "bip01_l_thigh"
+      ],
+      "节点名样例": [
+        "w1351_pets_daishu_b1_2_3",
+        "000",
+        "bip01",
+        "bip01_footsteps",
+        "bip01_pelvis",
+        "bip01_spine"
+      ],
+      "动画总条数": 13,
+      "网格数": 1,
+      "场景根": [
+        2
+      ]
+    }
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "per": 1,
+  "full": 228,
+  "off_by_1_2": 0,
+  "off_by_3plus": 1,
+  "no_ske": 6,
+  "no_ani": 0,
+  "worst": [
+    [
+      36,
+      "w1351_pets_tuxiaoyao_b2",
+      "w1351_pets_tuxiaoyao_b2_behit01.ani",
+      [
+        "bone001",
+        "bone002",
+        "bone003"
+      ]
+    ]
+  ]
+}

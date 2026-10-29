@@ -1,0 +1,15 @@
+{
+  "n_samples": 717,
+  "median_dloc96": 1.6565760323619265e-07,
+  "pooled_p50_dloc96": 5.183625973079329e-07,
+  "pooled_max_dloc96": 89.1319337708785,
+  "n_lt_1e3_dloc96": 13935,
+  "n_bones_dloc96": 25009,
+  "exceptions_all": [],
+  "exceptions_96": [],
+  "exceptions_chain": [],
+  "verdict": "🔴",
+  "pooled_p50_dchain": 1.634367175591279e-07,
+  "pooled_max_dchain": 11.23816179507313,
+  "report": "D:\\TLGL\\.scratch\\wave20\\homology\\报告.md"
+}

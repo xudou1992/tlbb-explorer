@@ -38,6 +38,12 @@ export function initStageZoom() {
 }
 
 function toggleStage(stage) {
+  // 画布还没就绪（地图正在读格子、或这张图本来就没有可画的东西）时不放大：
+  // 铺出来只会是一块空白面板，还把「正在读」的提示挡在遮罩后面。
+  const ready = [...stage.querySelectorAll("canvas")].some(
+    (c) => !c.hidden && c.offsetWidth > 0 && c.offsetHeight > 0,
+  );
+  if (!ready) return;
   const on = stage.classList.toggle("zoomed");
   const btn = stage.querySelector(":scope > .stage-zoom");
   if (btn) {

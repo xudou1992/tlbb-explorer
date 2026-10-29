@@ -12,6 +12,7 @@ import { openMap, closeMap } from "./map.js";
 import { clearDetail, showDetail } from "./detail.js";
 import { initBrowse, showTab } from "./browse.js";
 import { initExportProgress } from "./exportProgress.js";
+import { initStageZoom } from "./lib/stageZoom.js";
 import { initRelations, openRelations, closeRelations } from "./relations.js";
 
 // ---- 图片放大（lightbox），壳与事件全在这一处 ----
@@ -111,6 +112,7 @@ function aimSkipLink() {
 
 initBrowse();
 initExportProgress();
+initStageZoom();
 // 瞄准要挂在 browse.js 的标签处理器之后：它先把 state.view 改掉，这里再读。
 el("tabBrowse").addEventListener("click", aimSkipLink);
 el("tabAssets").addEventListener("click", aimSkipLink);

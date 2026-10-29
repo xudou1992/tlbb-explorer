@@ -356,6 +356,30 @@ em.na { color: var(--muted); font-style: normal; }
   color: var(--muted); text-align: center; font-size: 12.5px; pointer-events: none;
 }
 .mesh-hint { position: absolute; right: 10px; bottom: 8px; color: var(--faint); font-size: 11px; pointer-events: none; }
+
+/* 预览放大：舞台右上角一枚按钮，点了铺满视口，再点或 Esc 还原。
+   只改舞台的定位，画布仍旧 100% 填满；尺寸变化由 MeshViewer 收到事件后重算。 */
+.stage-zoom {
+  position: absolute; top: 8px; right: 8px; z-index: 5;
+  padding: 3px 10px; font: inherit; font-size: 11.5px; line-height: 1.5;
+  color: var(--muted); background: rgba(255, 255, 255, 0.86);
+  border: 1px solid var(--line); border-radius: 999px; cursor: pointer;
+}
+.stage-zoom:hover { color: var(--ink); border-color: var(--teal); }
+.mesh-stage.zoomed, .map-stage.zoomed, #secMesh .mesh-stage.zoomed {
+  position: fixed; inset: 3vh 3vw; height: auto; width: auto; z-index: 70;
+  border: 1px solid var(--line); border-radius: var(--radius-l);
+  background: radial-gradient(circle at 50% 35%, #e9efed, var(--stage) 62%);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+}
+.d-sec.folded .mesh-stage.zoomed {
+  height: auto; border: 1px solid var(--line); border-radius: var(--radius-l);
+}
+.map-stage.zoomed { background: var(--stage); }
+body.stage-zoom-open { overflow: hidden; }
+body.stage-zoom-open::before {
+  content: ""; position: fixed; inset: 0; z-index: 65; background: rgba(18, 26, 24, 0.55);
+}
 .mesh-tech { margin-top: 9px; }
 .mesh-tech summary { color: var(--faint); font-size: 12px; cursor: pointer; }
 /* 动作页画布下的播放行：只是把按钮和「参考速度」排成一排，不出新样式 */

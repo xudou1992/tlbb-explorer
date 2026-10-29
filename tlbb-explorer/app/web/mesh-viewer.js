@@ -309,6 +309,10 @@ export class MeshViewer {
     this.canvas = canvas;
     this.gl = canvas.getContext("webgl", { antialias: true });
     if (!this.gl) throw new Error("这台机器开不了 WebGL，看不到 3D 预览");
+    // 预览放大/窗口尺寸变化后要重算视口与投影：draw() 里会 syncViewport，
+    // 这里只负责在被通知时补画一帧。
+    window.addEventListener("tlbb:viewer-resize", () => this.draw());
+    window.addEventListener("resize", () => this.draw());
 
     const gl = this.gl;
     const prog = gl.createProgram();

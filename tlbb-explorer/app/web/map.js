@@ -346,6 +346,10 @@ async function openScene(id) {
   grayLoaded = null;
   topLoaded = null;
   sceneId = id;
+  // 上一张图的天色不许挂到这一张上：读格子这段时间画布还是空的，
+  // 留着旧渐变会让人以为新图已经有天色了。
+  el("mapCanvas").style.background = "";
+  if (viewer) viewer.setBackdrop(false);
   status(`正在读 ${id} 的格子…`);
   paintBanner();
   let s;

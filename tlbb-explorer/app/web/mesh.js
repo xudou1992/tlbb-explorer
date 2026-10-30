@@ -300,6 +300,8 @@ export function hideMeshes() {
 function paintEmpty(why) {
   partsMode = false;
   el("meshCanvas").hidden = true;
+  // 画不出就收成一行理由：空盒子配「放大」按钮，点了也只会被拒绝。
+  el("secMesh").classList.add("folded");
   el("meshPick").innerHTML = "";
   el("meshMeta").textContent = "";
   el("meshTech").innerHTML = "";

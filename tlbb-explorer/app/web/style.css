@@ -388,7 +388,12 @@ body.stage-zoom-open::before {
 
 .d-sec.folded .mesh-head,
 .d-sec.folded .mesh-hint { display: none; }
-.d-sec.folded .mesh-stage { height: auto; border: 0; border-radius: 0; background: none; }
+.d-sec.folded .mesh-stage,
+/* 预览页有 #secMesh .mesh-stage 的 280px 定高，收起时要用更具体的选择器压回去。 */
+#secMesh.folded .mesh-stage { height: auto; border: 0; border-radius: 0; background: none; }
+/* 画布已收掉时放大按钮没有可放大的东西，一并收起。 */
+.d-sec.folded .stage-zoom,
+#secMesh.folded .stage-zoom { display: none; }
 .d-sec.folded .mesh-state { position: static; inset: auto; display: block; padding: 0; text-align: left; }
 
 #browseMeshCanvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; }

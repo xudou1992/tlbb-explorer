@@ -28,6 +28,7 @@ use rusqlite::{Connection, OpenFlags};
 use serde::Serialize;
 use tlbb_core::jpak::Pak;
 use tlbb_core::payload;
+use tlbb_core::preview::summary::{mdl_summary, ViewBody};
 use tlbb_core::preview::{
     bone_count, parse_ani, parse_forest, parse_hierarchy, parse_nodes, rest_poses,
 };
@@ -233,6 +234,33 @@ pub(crate) fn mesh_paths(con: &Connection, gid: i64, hub: &str, dir: &str) -> Ve
     v
 }
 
+/// `.mdl` 的 MainBodyMesh 尾部名。骨架页/动作页默认该摆身体，不是按字母序
+/// 排在前的护手/盾牌；读不到就返回 None，继续保持原顺序。
+fn main_body_tail(
+    con: &Connection,
+    root: &std::path::Path,
+    insp: &crate::inspector::AssetInspectReply,
+) -> Option<String> {
+    let mdl_path = insp
+        .members
+        .iter()
+        .filter_map(|m| m.path.as_deref())
+        .find(|p| p.to_ascii_lowercase().ends_with(".mdl"))?;
+    let (h, pak) = locate(con, mdl_path)?;
+    let p = Pak::open(root.join(card_of(&pak))).ok()?;
+    let rec = p.records().find(|r| r.hash == h && r.stored > 0)?;
+    let raw = payload::decode(&p, &rec).ok()?.bytes;
+    let ViewBody::Model(m) = mdl_summary(&raw, |_| None) else {
+        return None;
+    };
+    let pick = m
+        .bodies
+        .iter()
+        .find(|b| b.label.to_ascii_lowercase().contains("mainbody"))
+        .or_else(|| m.bodies.first())?;
+    Some(pick.mesh.name.rsplit('/').next().unwrap_or(&pick.mesh.name).to_string())
+}
+
 pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> {
     let t0 = std::time::Instant::now();
     let (root, db) = roots();
@@ -246,7 +274,19 @@ pub fn skeleton_view_run(gid: i64, want: &str) -> Result<SkeletonReply, String> 
             r.get(0)
         })
         .unwrap_or_default();
-    let paths = mesh_paths(&con, gid, &hub, &insp.dir);
+    let mut paths = mesh_paths(&con, gid, &hub, &insp.dir);
+    // 默认摆主身网格（`.mdl` 的 MainBodyMesh），而不是字母序第一份（常是护手/盾牌）。
+    if paths.len() > 1 {
+        if let Some(tail) = main_body_tail(&con, &root, &insp) {
+            if let Some(i) = paths
+                .iter()
+                .position(|p| p.rsplit('/').next().map(|s| s.eq_ignore_ascii_case(&tail)).unwrap_or(false))
+            {
+                let p = paths.remove(i);
+                paths.insert(0, p);
+            }
+        }
+    }
     let mut mesh_src: Option<(u64, String)> = None;
     let mut sibling_path: Option<String> = None;
     if paths.is_empty() {

@@ -357,8 +357,12 @@ export class MeshViewer {
     this.lineUn = null;
     this.boneBuf = null;
     this.bonePtsBuf = null;
+    this.hlBuf = null;
+    this.hlPtsBuf = null;
     this.boneCount = 0;
     this.bonePtCount = 0;
+    this.hlCount = 0;
+    this.hlPtCount = 0;
     this.prepareBoneLines(gl);
 
     // 多实例路径的几何池：每个**不同网格**一份缓冲，在 loadInstances 里上传一次。
@@ -434,6 +438,8 @@ export class MeshViewer {
       this.pickBound = null;
       this.boneCount = 0;
       this.bonePtCount = 0;
+      this.hlCount = 0;
+      this.hlPtCount = 0;
       if (this.onlost) this.onlost();
     });
   }
@@ -1122,6 +1128,8 @@ export class MeshViewer {
   setBoneLines(payload) {
     this.boneCount = 0;
     this.bonePtCount = 0;
+    this.hlCount = 0;
+    this.hlPtCount = 0;
     if (!this.lineProg || !this.boneBuf) return;
     const pairs = boneLineVertices(payload);
     if (!pairs.length) return;
@@ -1176,7 +1184,59 @@ export class MeshViewer {
       gl.vertexAttribPointer(this.lineAt, 3, gl.FLOAT, false, 0, 0);
       gl.drawArrays(gl.POINTS, 0, this.bonePtCount);
     }
+    // 选中的骨：黄色叠在青线上面，最后画。
+    if (this.hlCount && this.hlBuf && this.lineUn.color) {
+      gl.uniform4f(this.lineUn.color, 1.0, 0.92, 0.25, 1.0);
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.hlBuf);
+      gl.vertexAttribPointer(this.lineAt, 3, gl.FLOAT, false, 0, 0);
+      gl.drawArrays(gl.LINES, 0, this.hlCount);
+      // 1px 线段在纹理上不够醒目，端点再点两颗大一点的点。
+      if (this.hlPtCount && this.hlPtsBuf && this.lineUn.pt) {
+        gl.uniform1f(this.lineUn.pt, 9 * (window.devicePixelRatio || 1));
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.hlPtsBuf);
+        gl.vertexAttribPointer(this.lineAt, 3, gl.FLOAT, false, 0, 0);
+        gl.drawArrays(gl.POINTS, 0, this.hlPtCount);
+      }
+    }
     gl.enable(gl.DEPTH_TEST);
+  }
+
+  /// 骨架表里选中的那根骨：把与它相连的父子线段单独画黄。
+  setBoneHighlight(pairs) {
+    this.hlCount = 0;
+    this.hlPtCount = 0;
+    if (!this.lineProg || !this.hlBuf) return;
+    const list = Array.isArray(pairs) ? pairs : [];
+    if (list.length) {
+      const data = new Float32Array(list.length * 6);
+      const pts = [];
+      const seen = new Set();
+      let o = 0;
+      for (const [a, b] of list) {
+        data[o++] = a[0];
+        data[o++] = a[1];
+        data[o++] = a[2];
+        data[o++] = b[0];
+        data[o++] = b[1];
+        data[o++] = b[2];
+        for (const p of [a, b]) {
+          const key = `${p[0]},${p[1]},${p[2]}`;
+          if (seen.has(key)) continue;
+          seen.add(key);
+          pts.push(p[0], p[1], p[2]);
+        }
+      }
+      const gl = this.gl;
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.hlBuf);
+      gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+      this.hlCount = list.length * 2;
+      if (this.hlPtsBuf && pts.length) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.hlPtsBuf);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pts), gl.STATIC_DRAW);
+        this.hlPtCount = pts.length / 3;
+      }
+    }
+    this.draw();
   }
 
   prepareBoneLines(gl) {
@@ -1199,6 +1259,8 @@ export class MeshViewer {
       };
       this.boneBuf = gl.createBuffer();
       this.bonePtsBuf = gl.createBuffer();
+      this.hlBuf = gl.createBuffer();
+      this.hlPtsBuf = gl.createBuffer();
     } catch {
       if (prog) gl.deleteProgram(prog);
       this.lineProg = null;
@@ -1206,8 +1268,12 @@ export class MeshViewer {
       this.lineUn = null;
       this.boneBuf = null;
       this.bonePtsBuf = null;
+      this.hlBuf = null;
+      this.hlPtsBuf = null;
       this.boneCount = 0;
       this.bonePtCount = 0;
+      this.hlCount = 0;
+      this.hlPtCount = 0;
     }
   }
 
@@ -1572,6 +1638,8 @@ export class MeshViewer {
     for (const b of Object.values(this.buf)) gl.deleteBuffer(b);
     if (this.boneBuf) gl.deleteBuffer(this.boneBuf);
     if (this.bonePtsBuf) gl.deleteBuffer(this.bonePtsBuf);
+    if (this.hlBuf) gl.deleteBuffer(this.hlBuf);
+    if (this.hlPtsBuf) gl.deleteBuffer(this.hlPtsBuf);
     this.unloadPool();
     this.unloadParts();
     gl.deleteProgram(this.prog);

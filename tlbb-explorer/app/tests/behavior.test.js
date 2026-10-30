@@ -818,7 +818,7 @@ test("骨架页：读出挂接才加「挂在谁」列，补进行与有矩阵�
   );
   assert.ok(panels.el("skelSum").textContent.includes("谁挨着谁"), "导语也要跟着 chain 翻出那句人话");
   // 列对齐：每行按 colspan 展开后的格数都得等于表头列数，哪一行串了列就是这条不过
-  const 行 = [...html.matchAll(/<tr>([\s\S]*?)<\/tr>/g)].map((m) => m[1]);
+  const 行 = [...html.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)].map((m) => m[1]);
   assert.ok(行.length >= 2, "表头加骨行至少两行，正则没吃到说明 HTML 变了");
   const cols = 行[0].match(/<th>/g).length;
   for (const r of 行.slice(1)) {

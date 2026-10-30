@@ -519,6 +519,9 @@ body.stage-zoom-open::before {
 .hl-table th { padding: 7px; border-bottom: 1px solid var(--line-strong); color: var(--muted); font-size: 11.5px; text-align: left; }
 .hl-table td { padding: 8px 7px; border-bottom: 1px solid var(--line); }
 .hl-table tbody tr:hover td { background: var(--panel-2); }
+/* 骨头表：点一行在 3D 里高亮这根骨与父/子的连线。 */
+.bone-row { cursor: pointer; }
+.bone-row.on td { background: #e7f5f0; }
 .hl-table .n { color: var(--text); font: 12px var(--mono); text-align: right; }
 /* 特效表的「类别」列只有两三个字，第三列却很长：不给它 nowrap 会被挤成一字一行 */
 .fx-cat td:first-child, .fx-cat th:first-child { white-space: nowrap; width: 1%; }

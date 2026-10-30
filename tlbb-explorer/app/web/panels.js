@@ -99,11 +99,17 @@ const fx = (v) => (Number.isFinite(v) ? v.toFixed(3) : "—");
 
 let skelViewer = null;
 let skelSeq = 0;
+/// 当前网格的骨线回包（lines + names），供表格点选时挑出这根骨的父子段。
+let skelBoneReply = null;
+let skelBonePick = "";
 
 export function clearSkeleton() {
   skelSeq += 1;
   const st = el("skelStage");
   if (st) st.hidden = true;
+  skelBoneReply = null;
+  skelBonePick = "";
+  if (skelViewer) skelViewer.setBoneHighlight(null);
   el("skelSum").textContent = "";
   el("skelPick").innerHTML = "";
   el("skelTable").innerHTML = "";
@@ -153,7 +159,7 @@ export function paintSkeleton(v, onPick) {
             ? ""
             : `<td>${n.parent ? esc(n.parent) : n.root ? "这是根" : "—"}</td>`;
           return (
-            `<tr><td>${esc(n.name)}</td>${link}` +
+            `<tr class="bone-row" data-bone="${esc(n.name)}"><td>${esc(n.name)}</td>${link}` +
             (n.pos
               ? `<td class="n">${fx(n.pos[0])}</td><td class="n">${fx(n.pos[1])}</td><td class="n">${fx(
                   n.pos[2],
@@ -164,6 +170,7 @@ export function paintSkeleton(v, onPick) {
         })
         .join("")}</tbody></table>`,
   );
+  wireSkelTable();
   if (anims.length) {
     el("secSkelAnims").hidden = false;
     el("skelAnims").innerHTML = fold(
@@ -181,6 +188,40 @@ export function paintSkeleton(v, onPick) {
   }
   el("skelMissing").innerHTML = (v.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
   void paintSkeletonMesh(v);
+}
+
+/// 骨头表点选 → 3D 里高亮这根骨与父/子的连线；再点同一行取消。
+let skelTableWired = false;
+function wireSkelTable() {
+  if (skelTableWired) return;
+  skelTableWired = true;
+  el("skelTable").addEventListener("click", (ev) => {
+    const tr = ev.target && ev.target.closest ? ev.target.closest("tr[data-bone]") : null;
+    if (!tr) return;
+    const name = tr.dataset.bone || "";
+    skelBonePick = skelBonePick === name ? "" : name;
+    for (const row of el("skelTable").querySelectorAll("tr.bone-row")) {
+      row.classList.toggle("on", Boolean(skelBonePick) && row.dataset.bone === skelBonePick);
+    }
+    applyBoneHighlight();
+  });
+}
+
+function applyBoneHighlight() {
+  if (!skelViewer) return;
+  const rep = skelBoneReply;
+  if (!skelBonePick || !rep) {
+    skelViewer.setBoneHighlight(null);
+    return;
+  }
+  const lines = rep.lines || [];
+  const names = rep.names || [];
+  const hit = [];
+  for (let i = 0; i < lines.length; i++) {
+    const n = names[i];
+    if (n && (n[1] === skelBonePick || n[0] === skelBonePick)) hit.push(lines[i]);
+  }
+  skelViewer.setBoneHighlight(hit);
 }
 
 /// 骨架页的 3D：网格 + 绑定姿态的骨线（同一份 `mesh_bone_lines`）。
@@ -204,6 +245,8 @@ async function paintSkeletonMesh(v) {
       const lines = await api.meshBoneLines(mesh, null);
       if (my === skelSeq && lines) {
         skelViewer.setBoneLines(lines);
+        skelBoneReply = lines;
+        applyBoneHighlight(); // 表格里已选中某根骨时，新骨线到位后补上高亮
         skelViewer.draw(); // setBoneLines 只装缓冲，不自己出帧
       }
     } catch {}

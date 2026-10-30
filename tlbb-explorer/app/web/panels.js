@@ -581,69 +581,85 @@ async function paintMaterialTextures(rep) {
       )
       .join("");
   if (rep.kind === "模型定义") {
-    const bodies = rep.bodies || [];
-    const meshes = [...new Set(bodies.map((b) => b.mesh_path).filter(Boolean))].slice(0, 8);
+    const gid = state.selected;
+    const bodies = (rep.bodies || []).slice(0, 8);
     const files = new Set(rep.files || []);
-    // 有的 `.mdl` 点名的网格没在清单里（名字对不上），只能退回它配的那份 `.mtl` 的贴图槽。
-    const mtls = [
-      ...new Set(
-        bodies
-          .map((b) => ((b.material_path || b.material || "").split("/").pop() || ""))
-          .filter((n) => /\.mtl$/i.test(n) && files.has(n)),
-      ),
-    ].slice(0, 8);
-    if (!meshes.length && !mtls.length) {
+    if (!bodies.length) {
       box.innerHTML = "";
       note.hidden = true;
       return;
     }
-    const gid = state.selected;
     note.hidden = false;
     note.textContent = "正在按模型点名的网格与材质表找贴图…";
-    const plans = await Promise.all(meshes.map((p) => api.meshTexturePlanByPath(p).catch(() => null)));
-    const mreps = await Promise.all(mtls.map((n) => api.materialView(gid, n).catch(() => null)));
-    if (my !== mtlTexSeq || state.selected !== gid) return;
-    const seen = new Set();
-    const shots = [];
-    const add = (name, url) => {
-      const key = (name || "").toLowerCase();
-      if (!url || !key || seen.has(key)) return;
-      seen.add(key);
-      shots.push({ name, url });
-    };
-    for (const plan of plans) {
-      for (const layer of (plan && plan.layers) || []) {
-        const tex = layer && layer.color;
-        if (!tex || !tex.png) continue;
-        add(tex.slot || (tex.path ? basename(tex.path) : ""), tex.png);
-      }
-    }
-    const slotNames = [];
-    for (const mr of mreps) {
-      for (const s of (mr && mr.slots) || []) {
-        if (s && s.role === "贴图" && s.name) slotNames.push(s.name);
-      }
-    }
-    const uniq = [...new Set(slotNames.map((n) => n.toLowerCase()))]
-      .map((k) => slotNames.find((n) => n.toLowerCase() === k))
-      .slice(0, 24);
-    const got = await Promise.all(
-      uniq.map(async (name) => {
-        try {
-          return { name, url: await api.texturePngByName(name) };
-        } catch {
-          return { name, url: null };
+    // 一条网格·材质对一组：网格能定位就走分层材质表，定位不到就退回该对配的 .mtl 贴图槽。
+    let failed = 0;
+    const groups = await Promise.all(
+      bodies.map(async (b) => {
+        const title = b.mesh ? (b.material ? `${b.mesh}（材质 ${b.material}）` : b.mesh) : b.material || "这一条";
+        const raw = [];
+        const seen = new Set();
+        const add = (name, url) => {
+          const key = (name || "").toLowerCase();
+          if (!url || !key || seen.has(key)) return;
+          seen.add(key);
+          raw.push({ name, url });
+        };
+        // 先取渲染分层的颜色贴图（能定位到网格时）。
+        if (b.mesh_path) {
+          const plan = await api.meshTexturePlanByPath(b.mesh_path).catch(() => null);
+          if (!plan) failed += 1;
+          for (const layer of (plan && plan.layers) || []) {
+            const tex = layer && layer.color;
+            if (tex && tex.png) add(tex.slot || (tex.path ? basename(tex.path) : ""), tex.png);
+          }
         }
+        // 再补材质表声明的贴图槽：分层没用到的遮罩/参数图也在这份声明里。
+        const mtl = (b.material_path || b.material || "").split("/").pop() || "";
+        if (/\.mtl$/i.test(mtl) && files.has(mtl)) {
+          const mr = await api.materialView(gid, mtl).catch(() => null);
+          if (!mr) failed += 1;
+          const names = [
+            ...new Set(((mr && mr.slots) || []).filter((s) => s && s.role === "贴图" && s.name).map((s) => s.name)),
+          ].slice(0, 24);
+          const got = await Promise.all(
+            names.map(async (name) => {
+              try {
+                return { name, url: await api.texturePngByName(name) };
+              } catch {
+                return { name, url: null };
+              }
+            }),
+          );
+          for (const g of got) if (g.url) add(g.name, g.url);
+        }
+        return { title, shots: raw };
       }),
     );
     if (my !== mtlTexSeq || state.selected !== gid) return;
-    for (const g of got) add(g.name, g.url);
-    const shown = shots.slice(0, 24);
-    box.innerHTML = figures(shown);
+    // 同一张图被多条引用时只摆一次，余下的组跟着变小或消失。
+    const seenAll = new Set();
+    const shown = [];
+    let left = 24;
+    for (const g of groups) {
+      if (left <= 0) break;
+      const shots = g.shots
+        .filter((s) => {
+          const key = s.name.toLowerCase();
+          if (seenAll.has(key)) return false;
+          seenAll.add(key);
+          return true;
+        })
+        .slice(0, left);
+      left -= shots.length;
+      if (shots.length) shown.push({ title: g.title, shots });
+    }
+    const total = shown.reduce((n, g) => n + g.shots.length, 0);
+    box.innerHTML = shown
+      .map((g) => `<p class="pv-title dim">${esc(g.title)} · ${g.shots.length} 张</p>` + figures(g.shots))
+      .join("");
     note.hidden = false;
-    const failed = plans.filter((p) => !p).length + mreps.filter((r) => !r).length;
-    note.textContent = shown.length
-      ? `模型点名的 ${bodies.length} 条网格·材质对里，对上 ${shown.length} 张真图（同一张只摆一次${
+    note.textContent = total
+      ? `模型点名的 ${bodies.length} 条网格·材质对：对上 ${total} 张真图，按来源分组（同一张只摆一次${
           failed ? `；${failed} 份定义没解出来` : ""
         }）`
       : `模型点名的 ${bodies.length} 条网格·材质对里，一张贴图都没对上${failed ? `（${failed} 份定义没解出来）` : ""}。`;

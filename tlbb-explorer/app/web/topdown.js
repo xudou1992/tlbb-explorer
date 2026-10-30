@@ -37,6 +37,8 @@ export class TopDownView {
     this.drag = null;
     this.clusterInfo = null;
     this.skipped = 0;
+    /// 地表编码格垫底图：{img, rect:{x0,z0,x1,z1}}；null = 不画。
+    this.surface = null;
     /// 回调：onhover({wx,wz,gx,gz,gridName}|null)、onpick({wx,wz,meshPath,gridName,recordNo}|null)。
     this.onhover = null;
     this.onpick = null;
@@ -44,6 +46,12 @@ export class TopDownView {
   }
 
   /// payload 就是 map_scene 回包（meshes / instances / gridFiles）。
+  /// 地表编码格垫底图（.map 的单元类型着色，不是地形高度）。
+  setSurface(img, rect) {
+    this.surface = img && rect ? { img, rect } : null;
+    this.draw();
+  }
+
   /// 调用前画布必须已经显示：隐藏的 canvas 量不到尺寸，取景会按 1px 画布算。
   load(payload) {
     const meshes = (payload && payload.meshes) || [];
@@ -284,6 +292,18 @@ export class TopDownView {
       ctx.textAlign = "left";
       ctx.textBaseline = "bottom";
       ctx.fillText("0,0", ox + 4, oy - 4);
+    }
+
+    // 地表编码格垫底：先画地，再画物件；不是地形高度，只是编码格。
+    if (this.surface) {
+      const { img, rect } = this.surface;
+      const sx = px(rect.x0);
+      const sy = py(rect.z0);
+      const sw = px(rect.x1) - sx;
+      const sh = py(rect.z1) - sy;
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(img, sx, sy, sw, sh);
+      ctx.imageSmoothingEnabled = true;
     }
 
     // 摆位矩形：一件一矩形。缩得很远时宽度不足 2px 的画成 2px 点——

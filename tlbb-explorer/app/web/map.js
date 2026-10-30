@@ -58,6 +58,7 @@ function paintBanner() {
     banner(
       `<b>俯视量测</b> 正对地面读坐标，格线间距 32。` +
         `<span class="warn">哪边是北未证</span><span class="warn">地形没解出</span>` +
+        `<span class="dim">绿色底=地表编码格（不是高度）</span>` +
         `<span class="dim">${scene && scene.alias ? esc(scene.alias) + " · " : ""}地图原名 ${esc(sceneId)}</span>`,
     );
   } else {
@@ -136,6 +137,19 @@ function ensureViewer() {
     status("显卡上下文被系统收回了，重新点一下这张图就能再看。");
   };
   return viewer;
+}
+
+/// 俯视图的地表编码格垫底：`.map` 每格按类型着色（不是地形高度）。
+async function ensureSurface(t, scene) {
+  try {
+    const s = await api.mapSurface(scene.id);
+    if (!s || !s.png || topLoaded !== scene.id) return;
+    const img = new Image();
+    img.src = s.png;
+    await img.decode();
+    if (topLoaded !== scene.id) return;
+    t.setSurface(img, { x0: 0, z0: -(s.height * 0.5), x1: s.width * 0.5, z1: 0 });
+  } catch {}
 }
 
 /// 地图背景：用客户端 `.sfl` 的天空顶色 → 雾色铺一层渐变，画布清成透明透过去。
@@ -293,6 +307,7 @@ function applyMode() {
       try {
         t.load(scene);
         topLoaded = scene.id;
+        void ensureSurface(t, scene);
       } catch (e) {
         status(`画不出来：${e instanceof Error ? e.message : String(e)}`);
         return;
@@ -345,6 +360,7 @@ async function openScene(id) {
   scene = null;
   grayLoaded = null;
   topLoaded = null;
+  if (top) top.setSurface(null);
   sceneId = id;
   // 上一张图的天色不许挂到这一张上：读格子这段时间画布还是空的，
   // 留着旧渐变会让人以为新图已经有天色了。

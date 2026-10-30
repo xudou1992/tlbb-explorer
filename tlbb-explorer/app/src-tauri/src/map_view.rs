@@ -315,6 +315,88 @@ pub async fn map_list(
         .map_err(|e| e.to_string())?
 }
 
+/// 地表编码格缩略图（`.map` 每 0.5 单位一个 4 字节单元，按类型上色）。
+/// **不是地形高度**：只回答「哪片是地、哪片是空」，给俯视图垫底。
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MapSurface {
+    pub png: String,
+    /// 像素宽高 = 单元数；世界跨度 = width×0.5 × height×0.5。
+    pub width: u32,
+    pub height: u32,
+}
+
+#[tauri::command]
+pub async fn map_surface_png(
+    app: State<'_, Arc<AppData>>,
+    id: String,
+) -> Result<Option<MapSurface>, String> {
+    let app = Arc::clone(&app);
+    tauri::async_runtime::spawn_blocking(move || surface_png(&app, &id))
+        .await
+        .map_err(|e| e.to_string())?
+}
+
+fn surface_png(app: &AppData, raw_id: &str) -> Result<Option<MapSurface>, String> {
+    let id = raw_id.trim().to_string();
+    if id.is_empty() || id.contains('/') || id.contains('\\') || id.contains("..") {
+        return Ok(None);
+    }
+    let path = format!("mobile_maps/{id}/{id}.map");
+    let (_root, db) = crate::inspector::roots();
+    let Some(con) = crate::skeleton::open_db(&db).ok() else {
+        return Ok(None);
+    };
+    let Some((hash, _pak)) = crate::skeleton::locate(&con, &path) else {
+        return Ok(None);
+    };
+    let Some(raw) = app.read(hash) else {
+        return Ok(None);
+    };
+    if raw.len() < 152 {
+        return Ok(None);
+    }
+    let a = u32::from_le_bytes([raw[4], raw[5], raw[6], raw[7]]) as usize;
+    let b = u32::from_le_bytes([raw[8], raw[9], raw[10], raw[11]]) as usize;
+    if a == 0 || b == 0 || a > 512 || b > 512 {
+        return Ok(None);
+    }
+    if raw.len() < 152 + a * b * 4160 {
+        return Ok(None);
+    }
+    let (w, h) = (a * 32, b * 32);
+    let mut rgba = vec![0u8; w * h * 4];
+    for bi in 0..a * b {
+        let bx = bi % a;
+        let by = bi / a;
+        let off = 152 + bi * 4160;
+        for j in 0..1024 {
+            let cx = j % 32;
+            let cy = j / 32;
+            let b1 = raw[off + j * 4 + 1];
+            let b2 = raw[off + j * 4 + 2];
+            let px = if b1 == 5 && b2 == 8 {
+                [96u8, 128, 96, 110] // 地面
+            } else if b1 == 0 && b2 == 0 {
+                [0, 0, 0, 0] // 空格子
+            } else {
+                [120, 120, 150, 80] // 其它编码
+            };
+            let u = bx * 32 + cx;
+            // 行号把 w 轴翻过来：图像第 0 行对应世界 z 最小的一侧。
+            let row = h - 1 - (by * 32 + cy);
+            let o = (row * w + u) * 4;
+            rgba[o..o + 4].copy_from_slice(&px);
+        }
+    }
+    let png = tlbb_core::preview::png_bytes(w as u16, h as u16, &rgba, true)?;
+    Ok(Some(MapSurface {
+        png: format!("data:image/png;base64,{}", crate::inspector::b64(&png)),
+        width: w as u32,
+        height: h as u32,
+    }))
+}
+
 #[tauri::command]
 pub async fn map_scene(app: State<'_, Arc<AppData>>, id: String) -> Result<MapScene, String> {
     let app = Arc::clone(&app);

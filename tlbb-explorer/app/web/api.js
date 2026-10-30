@@ -41,6 +41,8 @@ export const citedBy = (key, limit) => call("cited_by", { key, limit });
 /// 地图侧两个命令：清单 + 一张图的全部格子（一次回包，不逐个物件问）。
 export const mapList = (limit) => call("map_list", { limit });
 export const mapScene = (id) => call("map_scene", { id });
+/// 地表编码格垫底图（不是地形高度）。
+export const mapSurface = (id) => call("map_surface_png", { id });
 /// 列表缩略图专用：回包与 map_scene 逐字段一致，只是网格不带顶点流。
 export const mapFootprint = (id) => call("map_footprint", { id });
 /// 行缩略图两问：组里第一张真能解出来的图；解不出图再问几何投影。

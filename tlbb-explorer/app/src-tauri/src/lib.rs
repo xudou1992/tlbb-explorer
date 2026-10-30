@@ -205,6 +205,7 @@ pub fn run() {
             mesh_view::group_mesh_outline,
             map_view::map_list,
             map_view::map_scene,
+            map_view::map_surface_png,
             map_view::map_footprint,
             texture_override::texture_override_set,
             texture_override::texture_override_clear,

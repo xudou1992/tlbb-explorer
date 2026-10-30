@@ -134,6 +134,30 @@ function info(s) {
 function ensureViewer() {
   if (viewer) return viewer;
   viewer = new MeshViewer(el("mapCanvas"));
+  // 3D 点选：命中就报「哪个格子的第几条、哪份网格」，按外接盒近似。
+  let down = null;
+  el("mapCanvas").addEventListener("pointerdown", (e) => {
+    down = { x: e.clientX, y: e.clientY };
+  });
+  el("mapCanvas").addEventListener("click", (e) => {
+    if (mode !== "gray" || !viewer || !scene) return;
+    if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) return;
+    const hit = viewer.pickAt(e.clientX, e.clientY);
+    const box = el("topPick");
+    if (!hit) {
+      box.hidden = true;
+      return;
+    }
+    const ins = scene.instances[hit.index];
+    if (!ins) return;
+    const meshPath = (scene.meshes[ins.meshIndex] || {}).path || "";
+    const gridName = scene.gridFiles[ins.gridIndex] || "";
+    box.hidden = false;
+    box.innerHTML =
+      `<b>${esc(gridName || "格子名缺失")}</b> 第 ${num(ins.recordIndex + 1)} 条<br />` +
+      `<span>${esc(meshPath || "（模型名缺失）")}</span>` +
+      `<span class="dim">3D 点选按外接盒近似：点到轮廓空隙也可能算命中</span>`;
+  });
   viewer.onlost = () => {
     seq.next();
     grayLoaded = null;
@@ -404,6 +428,7 @@ async function openScene(id) {
   grayLoaded = null;
   topLoaded = null;
   surfaceLoaded = null;
+  el("topPick").hidden = true;
   if (top) top.setSurface(null);
   sceneId = id;
   // 上一张图的天色不许挂到这一张上：读格子这段时间画布还是空的，

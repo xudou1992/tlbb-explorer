@@ -229,6 +229,21 @@ export function clearAnimation() {
   el("animTable").innerHTML = "";
   el("animMissing").innerHTML = "";
   el("tabAnimCount").textContent = "";
+  setAnimControls(false);
+}
+
+/// 没有动作文件时，帧游标、勾选和姿势表都无处可用——只留上面那句原因。
+function setAnimControls(show) {
+  const frame = el("animFrame");
+  const row = frame && frame.closest ? frame.closest("label") : null;
+  if (row) row.hidden = !show;
+  for (const id of ["animOnlyChanged", "animBones"]) {
+    const box = el(id);
+    const label = box && box.closest ? box.closest("label") : null;
+    if (label) label.hidden = !show;
+  }
+  const table = el("animTable");
+  if (table) table.hidden = !show;
 }
 
 /// 摆一帧。取哪几行、越界怎么夹、未命名的骨叫什么，全在 lib/animView.js（有测试盯着），
@@ -276,6 +291,7 @@ export function paintAnimation(rep, frame, onlyChanged, onPick) {
           (rep.tracks || []).length
         } 根。</p>`,
       );
+  setAnimControls(Boolean((rep.tracks || []).length) || (rep.frames || 0) > 1);
 }
 
 // ---- 特效页：.pu 的材质链与各类类名 ----

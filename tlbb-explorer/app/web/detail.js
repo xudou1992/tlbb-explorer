@@ -285,7 +285,11 @@ function initAnim() {
     }
     if (name === "effect" && !fxReply) loadEffect(state.selected, "");
     // 特效页的画布在面板里，隐藏时量到 0 宽；切回来让它按现在的尺寸重画一帧。
-    if (name === "effect" && typeof window !== "undefined" && typeof Event === "function") {
+    if (
+      (name === "effect" || name === "skeleton") &&
+      typeof window !== "undefined" &&
+      typeof Event === "function"
+    ) {
       window.dispatchEvent(new Event("tlbb:viewer-resize"));
     }
     if (name === "material" && !mtlReply) loadMaterial(state.selected, "");

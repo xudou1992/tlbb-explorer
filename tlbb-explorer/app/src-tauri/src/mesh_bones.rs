@@ -69,7 +69,18 @@ pub(crate) fn mesh_bytes(
                     Ok(None) | Err(_) => {}
                 }
             }
-            found.ok_or_else(|| format!("资源清单里没有找到网格文件：{label}"))?
+            match found {
+                Some(h) => h,
+                // 尾部名兜底，与 `mesh_layout` 同一条规则：骨架页给的部件名单是
+                // 尾部文件名，按整路径查必然落空。只对不含 `/` 的入参兜底。
+                None if !label.contains('/') => app
+                    .try_q(|c| c.hash_by_tail(label))
+                    .map_err(|e| e.to_string())?
+                    .ok_or_else(|| {
+                        format!("资源清单里没有找到网格文件：{label}（同名多处或没有，传完整路径或 hash）")
+                    })?,
+                None => return Err(format!("资源清单里没有找到网格文件：{label}")),
+            }
         }
     };
     let asset = app

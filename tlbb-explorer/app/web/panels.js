@@ -96,7 +96,13 @@ function fold(caption, badge, inner) {
 
 const fx = (v) => (Number.isFinite(v) ? v.toFixed(3) : "—");
 
+let skelViewer = null;
+let skelSeq = 0;
+
 export function clearSkeleton() {
+  skelSeq += 1;
+  const st = el("skelStage");
+  if (st) st.hidden = true;
   el("skelSum").textContent = "";
   el("skelPick").innerHTML = "";
   el("skelTable").innerHTML = "";
@@ -173,6 +179,42 @@ export function paintSkeleton(v, onPick) {
     );
   }
   el("skelMissing").innerHTML = (v.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
+  void paintSkeletonMesh(v);
+}
+
+/// 骨架页的 3D：网格 + 绑定姿态的骨线（同一份 `mesh_bone_lines`）。
+/// 骨线画在网格体积里，画线那一下关深度，转视角能看清谁挂谁。
+async function paintSkeletonMesh(v) {
+  if (!el("skelStage")) return;
+  const stage = el("skelStage");
+  const mesh = v.mesh;
+  if (!mesh) {
+    stage.hidden = true;
+    return;
+  }
+  stage.hidden = false;
+  const my = ++skelSeq;
+  try {
+    const data = await api.meshData(mesh, null);
+    if (my !== skelSeq) return;
+    if (!skelViewer) skelViewer = new MeshViewer(el("skelCanvas"));
+    skelViewer.load(data, null);
+    try {
+      const lines = await api.meshBoneLines(mesh, null);
+      if (my === skelSeq && lines) {
+        skelViewer.setBoneLines(lines);
+        skelViewer.draw(); // setBoneLines 只装缓冲，不自己出帧
+      }
+    } catch {}
+    try {
+      const plan = await api.meshTexturePlanByPath(mesh);
+      if (my === skelSeq && plan && Array.isArray(plan.layers) && plan.layers.length) {
+        skelViewer.setTextureLayers(plan.layers);
+      }
+    } catch {}
+  } catch (e) {
+    if (my === skelSeq) stage.hidden = true;
+  }
 }
 
 // ---- 动作页：整条关键帧一次取回，游标本地切帧（不逐帧打 IPC） ----

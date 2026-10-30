@@ -89,14 +89,18 @@ const BONE_VS = `
 attribute vec3 aPosition;
 uniform mat4 uModelView;
 uniform mat4 uProjection;
+uniform float uPointSize;
 void main() {
   gl_Position = uProjection * uModelView * vec4(aPosition, 1.0);
+  gl_PointSize = uPointSize;
 }`;
 
 const BONE_FS = `
 precision mediump float;
 void main() {
-  gl_FragColor = vec4(0.93, 0.62, 0.22, 1.0);
+  // 青色：骨架页/动作页的网格多是黄橙皮肤与衣料，旧橙色线和它们撞色，
+  // 开不开叠加几乎看不出差别。
+  gl_FragColor = vec4(0.16, 0.88, 0.98, 1.0);
 }`;
 
 // 视场角。抽成常量是因为 draw() 用它投影、pickAt 用它反投影——
@@ -352,7 +356,9 @@ export class MeshViewer {
     this.lineAt = -1;
     this.lineUn = null;
     this.boneBuf = null;
+    this.bonePtsBuf = null;
     this.boneCount = 0;
+    this.bonePtCount = 0;
     this.prepareBoneLines(gl);
 
     // 多实例路径的几何池：每个**不同网格**一份缓冲，在 loadInstances 里上传一次。
@@ -427,6 +433,7 @@ export class MeshViewer {
       this.parts = null;
       this.pickBound = null;
       this.boneCount = 0;
+      this.bonePtCount = 0;
       if (this.onlost) this.onlost();
     });
   }
@@ -878,6 +885,7 @@ export class MeshViewer {
       this.setBoneLines(bones);
     } catch {
       this.boneCount = 0;
+      this.bonePtCount = 0;
     }
     this.syncViewport();
     this.draw(); // 先画定一帧：窗口没聚焦时 rAF 会被挂起，否则首帧要等很久
@@ -1113,6 +1121,7 @@ export class MeshViewer {
   /// 坐标已经是模型空间里的点，套用这一帧灰模用的同一套模型视图和投影。
   setBoneLines(payload) {
     this.boneCount = 0;
+    this.bonePtCount = 0;
     if (!this.lineProg || !this.boneBuf) return;
     const pairs = boneLineVertices(payload);
     if (!pairs.length) return;
@@ -1130,6 +1139,23 @@ export class MeshViewer {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.boneBuf);
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
     this.boneCount = pairs.length * 2;
+    // 关节点：线段端点去重后画成点。1px 宽度的线在小画布里几乎看不见，
+    // 有点才看得出每根骨头落在哪、树怎么分叉。
+    const pts = [];
+    const seen = new Set();
+    for (const [a, b] of pairs) {
+      for (const p of [a, b]) {
+        const key = `${p[0]},${p[1]},${p[2]}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        pts.push(p[0], p[1], p[2]);
+      }
+    }
+    if (this.bonePtsBuf && pts.length) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.bonePtsBuf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pts), gl.STATIC_DRAW);
+      this.bonePtCount = pts.length / 3;
+    }
   }
 
   drawBoneLines(mv, proj) {
@@ -1143,6 +1169,12 @@ export class MeshViewer {
     gl.vertexAttribPointer(this.lineAt, 3, gl.FLOAT, false, 0, 0);
     gl.disable(gl.DEPTH_TEST);
     gl.drawArrays(gl.LINES, 0, this.boneCount);
+    if (this.bonePtCount && this.bonePtsBuf && this.lineUn.pt) {
+      gl.uniform1f(this.lineUn.pt, 5 * (window.devicePixelRatio || 1));
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.bonePtsBuf);
+      gl.vertexAttribPointer(this.lineAt, 3, gl.FLOAT, false, 0, 0);
+      gl.drawArrays(gl.POINTS, 0, this.bonePtCount);
+    }
     gl.enable(gl.DEPTH_TEST);
   }
 
@@ -1161,15 +1193,19 @@ export class MeshViewer {
       this.lineUn = {
         mv: gl.getUniformLocation(prog, "uModelView"),
         pj: gl.getUniformLocation(prog, "uProjection"),
+        pt: gl.getUniformLocation(prog, "uPointSize"),
       };
       this.boneBuf = gl.createBuffer();
+      this.bonePtsBuf = gl.createBuffer();
     } catch {
       if (prog) gl.deleteProgram(prog);
       this.lineProg = null;
       this.lineAt = -1;
       this.lineUn = null;
       this.boneBuf = null;
+      this.bonePtsBuf = null;
       this.boneCount = 0;
+      this.bonePtCount = 0;
     }
   }
 
@@ -1532,6 +1568,7 @@ export class MeshViewer {
     const gl = this.gl;
     for (const b of Object.values(this.buf)) gl.deleteBuffer(b);
     if (this.boneBuf) gl.deleteBuffer(this.boneBuf);
+    if (this.bonePtsBuf) gl.deleteBuffer(this.bonePtsBuf);
     this.unloadPool();
     this.unloadParts();
     gl.deleteProgram(this.prog);

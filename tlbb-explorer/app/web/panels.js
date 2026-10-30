@@ -99,6 +99,9 @@ const fx = (v) => (Number.isFinite(v) ? v.toFixed(3) : "—");
 
 let skelViewer = null;
 let skelSeq = 0;
+/// 当前骨架回包与切网格回调：勾选「只看带权重的骨」时只重画，不重新取数。
+let skelReply = null;
+let skelOnPick = null;
 /// 当前网格的骨线回包（lines + names），供表格点选时挑出这根骨的父子段。
 let skelBoneReply = null;
 let skelBonePick = "";
@@ -112,6 +115,8 @@ export function clearSkeleton() {
   skelBoneReply = null;
   skelBonePick = "";
   skelBonePos = null;
+  skelReply = null;
+  skelOnPick = null;
   if (skelViewer) skelViewer.setBoneHighlight(null);
   el("skelSum").textContent = "";
   el("skelPick").innerHTML = "";
@@ -124,6 +129,8 @@ export function clearSkeleton() {
 
 export function paintSkeleton(v, onPick) {
   clearSkeleton();
+  skelReply = v;
+  skelOnPick = onPick;
   const nodes = v.nodes || [];
   const anims = v.animations || [];
   skelBonePos = new Map(nodes.filter((n) => Array.isArray(n.pos)).map((n) => [n.name, n.pos]));
@@ -151,13 +158,12 @@ export function paintSkeleton(v, onPick) {
       onPick,
     );
   }
-  el("skelTable").innerHTML = fold(
-    "每根骨头搭在哪（点一行在 3D 里高亮）",
-    `${nodes.length} 行`,
-    `<p class="dim">${esc(dense)}</p>` +
-      `<table class="hl-table"><thead><tr><th>骨名</th>${
+  const skinOnly = Boolean(el("skelSkinOnly") && el("skelSkinOnly").checked);
+  const rows = skinOnly ? nodes.filter((n) => Number(n.skin) > 0) : nodes;
+  const tableBody = rows.length
+    ? `<table class="hl-table"><thead><tr><th>骨名</th>${
         showLink ? "<th>挂在谁</th>" : ""
-      }<th>X</th><th>Y</th><th>Z</th><th>缩放</th><th>影响顶点</th></tr></thead><tbody>${nodes
+      }<th>X</th><th>Y</th><th>Z</th><th>缩放</th><th>影响顶点</th></tr></thead><tbody>${rows
         .map((n) => {
           const link = !showLink
             ? ""
@@ -172,9 +178,15 @@ export function paintSkeleton(v, onPick) {
             `<td class="n">${n.skin ? num(n.skin) : "—"}</td></tr>`
           );
         })
-        .join("")}</tbody></table>`,
+        .join("")}</tbody></table>`
+    : `<p class="dim">这份网格没有带顶点权重的骨（影响顶点表为空）。</p>`;
+  el("skelTable").innerHTML = fold(
+    "每根骨头搭在哪（点一行在 3D 里高亮）",
+    `${rows.length} 行${skinOnly ? "（只列带权重的）" : ""}`,
+    `<p class="dim">${esc(dense)}</p>` + tableBody,
   );
   wireSkelTable();
+  wireSkelSkin();
   if (anims.length) {
     el("secSkelAnims").hidden = false;
     el("skelAnims").innerHTML = fold(
@@ -209,6 +221,38 @@ function wireSkelTable() {
     }
     applyBoneHighlight();
   });
+}
+
+/// 「只看带权重的骨」：勾选后表格与 3D 一起过滤；切回来恢复全部。
+let skelSkinWired = false;
+function wireSkelSkin() {
+  if (skelSkinWired) return;
+  const box = el("skelSkinOnly");
+  if (!box) return;
+  skelSkinWired = true;
+  box.addEventListener("change", () => {
+    if (skelReply) paintSkeleton(skelReply, skelOnPick);
+  });
+}
+
+/// 骨线按权重过滤：保留至少一端记着顶点权重的父子段。
+function skelFilteredLines(rep) {
+  const box = el("skelSkinOnly");
+  if (!box || !box.checked || !skelReply) return rep;
+  const weighted = new Set(
+    (skelReply.nodes || []).filter((n) => Number(n.skin) > 0).map((n) => n.name),
+  );
+  const lines = [];
+  const names = [];
+  const src = rep.lines || [];
+  const srcNames = rep.names || [];
+  for (let i = 0; i < src.length; i++) {
+    const n = srcNames[i];
+    if (!n || (!weighted.has(n[0]) && !weighted.has(n[1]))) continue;
+    lines.push(src[i]);
+    names.push(n);
+  }
+  return { ...rep, lines, names };
 }
 
 function applyBoneHighlight() {
@@ -253,8 +297,8 @@ async function paintSkeletonMesh(v) {
     try {
       const lines = await api.meshBoneLines(mesh, null);
       if (my === skelSeq && lines) {
-        skelViewer.setBoneLines(lines);
         skelBoneReply = lines;
+        skelViewer.setBoneLines(skelFilteredLines(lines));
         applyBoneHighlight(); // 表格里已选中某根骨时，新骨线到位后补上高亮
         skelViewer.draw(); // setBoneLines 只装缓冲，不自己出帧
       }

@@ -133,6 +133,8 @@ export function paintSkeleton(v, onPick) {
   skelOnPick = onPick;
   const nodes = v.nodes || [];
   const anims = v.animations || [];
+  const skinRow = el("skelSkinRow");
+  if (skinRow) skinRow.hidden = !nodes.length;
   skelBonePos = new Map(nodes.filter((n) => Array.isArray(n.pos)).map((n) => [n.name, n.pos]));
   el("tabSkelCount").textContent = nodes.length ? String(nodes.length) : "";
   if (!nodes.length) {

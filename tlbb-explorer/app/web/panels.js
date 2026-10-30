@@ -708,16 +708,20 @@ async function paintMaterialTextures(rep) {
     const seenAll = new Set();
     const shown = [];
     let left = 24;
+    let truncated = false;
     for (const g of groups) {
-      if (left <= 0) break;
-      const shots = g.shots
-        .filter((s) => {
-          const key = s.name.toLowerCase();
-          if (seenAll.has(key)) return false;
-          seenAll.add(key);
-          return true;
-        })
-        .slice(0, left);
+      if (left <= 0) {
+        truncated = true;
+        break;
+      }
+      const deduped = g.shots.filter((s) => {
+        const key = s.name.toLowerCase();
+        if (seenAll.has(key)) return false;
+        seenAll.add(key);
+        return true;
+      });
+      if (deduped.length > left) truncated = true;
+      const shots = deduped.slice(0, left);
       left -= shots.length;
       if (shots.length) shown.push({ title: g.title, shots });
     }
@@ -727,16 +731,16 @@ async function paintMaterialTextures(rep) {
       .join("");
     note.hidden = false;
     note.textContent = total
-      ? `模型点名的 ${bodies.length} 条网格·材质对：对上 ${total} 张真图，按来源分组（同一张只摆一次${
-          failed ? `；${failed} 份定义没解出来` : ""
-        }）`
+      ? `模型点名的 ${bodies.length} 条网格·材质对：对上 ${total} 张真图${
+          truncated ? "（最多只摆 24 张）" : ""
+        }，按来源分组（同一张只摆一次${failed ? `；${failed} 份定义没解出来` : ""}）`
       : `模型点名的 ${bodies.length} 条网格·材质对里，一张贴图都没对上${failed ? `（${failed} 份定义没解出来）` : ""}。`;
     return;
   }
-  const names = (rep.slots || [])
+  const allNames = (rep.slots || [])
     .filter((s) => s && s.role === "贴图" && s.name)
-    .map((s) => s.name)
-    .slice(0, 24);
+    .map((s) => s.name);
+  const names = allNames.slice(0, 24);
   if (!names.length) return;
   note.hidden = false;
   note.textContent = "正在按名字对贴图…";
@@ -753,9 +757,10 @@ async function paintMaterialTextures(rep) {
   const ok = got.filter((x) => x.url);
   box.innerHTML = figures(ok);
   note.hidden = false;
+  const cap = allNames.length > names.length ? "（最多只摆 24 张）" : "";
   note.textContent = ok.length
-    ? `槽位里的贴图：${ok.length}/${names.length} 张按客户端转换路径对上真图（其余对不上就不摆）`
-    : `槽位里的贴图 ${names.length} 张，没有一张能按客户端转换路径对上文件。`;
+    ? `槽位里的贴图：${ok.length}/${allNames.length} 张按客户端转换路径对上真图${cap}（其余对不上就不摆）`
+    : `槽位里的贴图 ${allNames.length} 张，没有一张能按客户端转换路径对上文件${cap}。`;
 }
 
 // ---- 右栏：资源概况 + 引用关系 + 关系图谱 ----

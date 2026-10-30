@@ -47,12 +47,23 @@ function closeLightbox() {
   el("lightbox").hidden = true;
   el("lightboxImg").src = "";
 }
-el("pvGrid").addEventListener("click", (e) => {
-  const fig = e.target.closest("figure.pv");
-  if (!fig) return;
-  const img = fig.querySelector("img");
-  if (img) openLightbox(img.src, fig.querySelector("figcaption")?.textContent || "", fig.dataset.hash || null);
-});
+// 所有缩略图网格共用同一个灯箱：贴图候选、材质页槽位、特效页登记贴图。
+for (const id of ["pvGrid", "fxTex", "mtlTex"]) {
+  const grid = el(id);
+  if (!grid) continue;
+  grid.addEventListener("click", (e) => {
+    const fig = e.target.closest("figure.pv");
+    if (!fig) return;
+    const img = fig.querySelector("img");
+    if (img) {
+      openLightbox(
+        img.src,
+        fig.querySelector("figcaption")?.textContent || "",
+        fig.dataset.hash || null,
+      );
+    }
+  });
+}
 el("lightbox").addEventListener("click", closeLightbox);
 
 // 上次的筛选/选中/地图视图先恢复，再谈别的——桌面工具的常识：

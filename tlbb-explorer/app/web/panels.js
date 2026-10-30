@@ -8,6 +8,7 @@ import { animSummary, changedRows, clampFrame, frameRows } from "./lib/animView.
 import { skeletonLead, animationLead, effectLead, materialLead } from "./lib/plain.js";
 import { MeshViewer } from "./mesh-viewer.js";
 import * as api from "./api.js";
+import { state } from "./state.js";
 
 /// 引用类别 → 配色 + 单字图标。颜色只作辅助，文字永远是主载体。
 const ROLE_STYLE = {
@@ -207,7 +208,10 @@ async function paintSkeletonMesh(v) {
       }
     } catch {}
     try {
-      const plan = await api.meshTexturePlanByPath(mesh);
+      // 骨架页拿到的是部件尾部名（不带路径），按组计划取；有路径的才走同茎材质。
+      const plan = mesh.includes("/")
+        ? await api.meshTexturePlanByPath(mesh)
+        : await api.meshTexturePlan(state.selected, mesh, null);
       if (my === skelSeq && plan && Array.isArray(plan.layers) && plan.layers.length) {
         skelViewer.setTextureLayers(plan.layers);
       }

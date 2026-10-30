@@ -212,6 +212,7 @@ pub fn run() {
             texture_override::mesh_texture_plan,
             texture_override::mesh_texture_plan_by_path,
             texture_override::candidate_png,
+            texture_override::texture_png_by_name,
             texture_override::uv_map_png,
             gap::catalog_gap,
             skeleton::skeleton_view,

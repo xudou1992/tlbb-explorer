@@ -1438,6 +1438,38 @@ pub async fn candidate_png(hash: String) -> Result<Option<String>, String> {
     .map_err(|e| e.to_string())?
 }
 
+/// 按客户端贴图名取一张缩略图（特效页用）：与「贴图自动对上」同一条 convert/dxt 规则，
+/// 对不上就回 None，不拿别的图顶替。
+#[tauri::command]
+pub async fn texture_png_by_name(name: String) -> Result<Option<String>, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let (root, db) = crate::inspector::roots();
+        let Some(pm) = PathMap::load(&root) else {
+            return Ok(None);
+        };
+        let con = Connection::open_with_flags(
+            &db,
+            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+        )
+        .map_err(|e| format!("资源清单打不开：{e}"))?;
+        let Some((hash, _path)) = auto_texture_hash(&pm, &con, &name) else {
+            return Ok(None);
+        };
+        let Ok(h) = u64::from_str_radix(&hash, 16) else {
+            return Ok(None);
+        };
+        match decode_candidate_png(&root, &db, h) {
+            Ok((mime, bytes)) => Ok(Some(format!(
+                "data:{mime};base64,{}",
+                crate::inspector::b64(&bytes)
+            ))),
+            Err(_) => Ok(None),
+        }
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

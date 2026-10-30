@@ -237,6 +237,7 @@ export function paintAnimation(rep, frame, onlyChanged, onPick) {
 // 特效引用的网格预览：只画 `.pu` 里点到名字的静态网格，代表不了粒子效果本身。
 let fxViewer = null;
 let fxSeq = 0;
+let fxTexSeq = 0;
 let fxEntries = [];
 let fxIndex = 0;
 
@@ -251,6 +252,11 @@ export function clearEffect() {
   el("fxMeshPick").hidden = true;
   el("fxStage").hidden = true;
   el("fxMeshNote").hidden = true;
+  fxTexSeq += 1;
+  const texBox = el("fxTex");
+  if (texBox) texBox.innerHTML = "";
+  const texNote = el("fxTexNote");
+  if (texNote) texNote.hidden = true;
 }
 
 /// 类别表。名字一律用客户端原文，一类没有就不摆那一行（空行不等于「没有」）。
@@ -332,6 +338,7 @@ export function paintEffect(rep, onPick) {
   el("fxTable").innerHTML = namesFold + paramFold;
   el("fxMissing").innerHTML = (rep.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
   void paintEffectMesh(rep);
+  void paintEffectTextures(rep);
 }
 
 /// 特效引用的网格：有就摆一个画布 + 网格筹码，点哪件看哪件。
@@ -394,6 +401,39 @@ async function loadEffectMesh(i) {
   }
   if (my !== fxSeq) return;
   el("fxMeshNote").textContent = note;
+}
+
+/// 特效登记的贴图：按客户端转换路径逐张对上真图（最多 24 张）。
+/// 一张都对不上就明说，不拿别的图顶替。
+async function paintEffectTextures(rep) {
+  if (!el("fxTex")) return;
+  const my = ++fxTexSeq;
+  const names = (rep.textures || []).slice(0, 24);
+  if (!names.length) return;
+  const shots = await Promise.all(
+    names.map(async (name) => {
+      try {
+        return { name, url: await api.texturePngByName(name) };
+      } catch {
+        return { name, url: null };
+      }
+    }),
+  );
+  if (my !== fxTexSeq) return;
+  const ok = shots.filter((x) => x.url);
+  el("fxTex").innerHTML = ok
+    .map(
+      (x) =>
+        `<figure class="pv"><img src="${esc(x.url)}" alt="${esc(x.name)}" loading="lazy"><figcaption title="${esc(
+          x.name,
+        )}">${esc(x.name)}</figcaption></figure>`,
+    )
+    .join("");
+  const note = el("fxTexNote");
+  note.hidden = false;
+  note.textContent = ok.length
+    ? `特效登记的贴图：${ok.length}/${names.length} 张按客户端转换路径对上真图（其余对不上就不摆）`
+    : `特效登记的贴图 ${names.length} 张，没有一张能按客户端转换路径对上文件。`;
 }
 
 // ---- 材质页：.mtl（JBCF）的槽位表 ----

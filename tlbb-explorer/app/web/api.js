@@ -66,6 +66,8 @@ export const uvMap = (name) => call("uv_map_png", { name });
 /// 按编号、不按「第几名」：榜单出栈前会按综合分重排，名次从此不等于缓存里的
 /// 下标——按名次取图就是拿 A 的纹样去摆 B 的卡，那是编造证据。
 export const candidatePng = (hash) => call("candidate_png", { hash });
+/// 按客户端贴图名取缩略图（特效页）：对不上回 null，不拿别的图顶替。
+export const texturePngByName = (name) => call("texture_png_by_name", { name });
 // ---- 浏览视图（第一屏）：打开一个 data → 文件夹树 → 预览 → 导出 ----
 export const browsePaks = () => call("browse_paks");
 export const browseTree = (pakName) => call("browse_tree", { pakName });

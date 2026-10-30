@@ -564,16 +564,95 @@ export function paintMaterial(rep, onPick) {
 }
 
 /// 材质表里的贴图槽：按名字走客户端转换路径对上真图，最多 24 张。
-/// 对不上就不摆，并在下面写明对上几张。
+/// `.mdl` 没有槽位表，就从它点名的每份网格的分层材质表里取颜色贴图。
 async function paintMaterialTextures(rep) {
   if (!el("mtlTex")) return;
   const my = ++mtlTexSeq;
+  const note = el("mtlTexNote");
+  if (!note) return;
+  const box = el("mtlTex");
+  const figures = (shots) =>
+    shots
+      .map(
+        (x) =>
+          `<figure class="pv"><img src="${esc(x.url)}" alt="${esc(x.name)}" loading="lazy"><figcaption title="${esc(
+            x.name,
+          )}">${esc(x.name)}</figcaption></figure>`,
+      )
+      .join("");
+  if (rep.kind === "模型定义") {
+    const bodies = rep.bodies || [];
+    const meshes = [...new Set(bodies.map((b) => b.mesh_path).filter(Boolean))].slice(0, 8);
+    const files = new Set(rep.files || []);
+    // 有的 `.mdl` 点名的网格没在清单里（名字对不上），只能退回它配的那份 `.mtl` 的贴图槽。
+    const mtls = [
+      ...new Set(
+        bodies
+          .map((b) => ((b.material_path || b.material || "").split("/").pop() || ""))
+          .filter((n) => /\.mtl$/i.test(n) && files.has(n)),
+      ),
+    ].slice(0, 8);
+    if (!meshes.length && !mtls.length) {
+      box.innerHTML = "";
+      note.hidden = true;
+      return;
+    }
+    const gid = state.selected;
+    const plans = await Promise.all(meshes.map((p) => api.meshTexturePlanByPath(p).catch(() => null)));
+    const mreps = await Promise.all(mtls.map((n) => api.materialView(gid, n).catch(() => null)));
+    if (my !== mtlTexSeq || state.selected !== gid) return;
+    const seen = new Set();
+    const shots = [];
+    const add = (name, url) => {
+      const key = (name || "").toLowerCase();
+      if (!url || !key || seen.has(key)) return;
+      seen.add(key);
+      shots.push({ name, url });
+    };
+    for (const plan of plans) {
+      for (const layer of (plan && plan.layers) || []) {
+        const tex = layer && layer.color;
+        if (!tex || !tex.png) continue;
+        add(tex.slot || (tex.path ? basename(tex.path) : ""), tex.png);
+      }
+    }
+    const slotNames = [];
+    for (const mr of mreps) {
+      for (const s of (mr && mr.slots) || []) {
+        if (s && s.role === "贴图" && s.name) slotNames.push(s.name);
+      }
+    }
+    const uniq = [...new Set(slotNames.map((n) => n.toLowerCase()))]
+      .map((k) => slotNames.find((n) => n.toLowerCase() === k))
+      .slice(0, 24);
+    const got = await Promise.all(
+      uniq.map(async (name) => {
+        try {
+          return { name, url: await api.texturePngByName(name) };
+        } catch {
+          return { name, url: null };
+        }
+      }),
+    );
+    if (my !== mtlTexSeq || state.selected !== gid) return;
+    for (const g of got) add(g.name, g.url);
+    const shown = shots.slice(0, 24);
+    box.innerHTML = figures(shown);
+    note.hidden = false;
+    const failed = plans.filter((p) => !p).length + mreps.filter((r) => !r).length;
+    note.textContent = shown.length
+      ? `模型点名的 ${bodies.length} 条网格·材质对里，对上 ${shown.length} 张真图（同一张只摆一次${
+          failed ? `；${failed} 份定义没解出来` : ""
+        }）`
+      : `模型点名的 ${bodies.length} 条网格·材质对里，一张贴图都没对上${failed ? `（${failed} 份定义没解出来）` : ""}。`;
+    return;
+  }
   const names = (rep.slots || [])
     .filter((s) => s && s.role === "贴图" && s.name)
     .map((s) => s.name)
     .slice(0, 24);
   if (!names.length) return;
-  const shots = await Promise.all(
+  const got = await Promise.all(
     names.map(async (name) => {
       try {
         return { name, url: await api.texturePngByName(name) };
@@ -583,16 +662,8 @@ async function paintMaterialTextures(rep) {
     }),
   );
   if (my !== mtlTexSeq) return;
-  const ok = shots.filter((x) => x.url);
-  el("mtlTex").innerHTML = ok
-    .map(
-      (x) =>
-        `<figure class="pv"><img src="${esc(x.url)}" alt="${esc(x.name)}" loading="lazy"><figcaption title="${esc(
-          x.name,
-        )}">${esc(x.name)}</figcaption></figure>`,
-    )
-    .join("");
-  const note = el("mtlTexNote");
+  const ok = got.filter((x) => x.url);
+  box.innerHTML = figures(ok);
   note.hidden = false;
   note.textContent = ok.length
     ? `槽位里的贴图：${ok.length}/${names.length} 张按客户端转换路径对上真图（其余对不上就不摆）`

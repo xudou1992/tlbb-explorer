@@ -14,6 +14,7 @@ import {
   exportTargetOf,
   fmtSize,
   kindZh,
+  fileNameOf,
 } from "./lib/browseState.js";
 import { createBrowseMeshBox, isMeshEntry } from "./browseMeshBox.js";
 
@@ -194,7 +195,9 @@ function fileRow(entry) {
   const row = document.createElement("div");
   row.className = "tree-row";
   row.innerHTML = '<span class="tname"></span><span class="tcount"></span>';
-  row.querySelector(".tname").textContent = entry.name;
+  // 无名件只有 16 位编号：把后端认出的类型缀在后面，才分得清网格还是贴图。
+  const kindTag = !entry.ext && entry.kind ? `（${kindZh(entry.kind)}）` : "";
+  row.querySelector(".tname").textContent = fileNameOf(entry) + kindTag;
   row.querySelector(".tcount").textContent = fmtSize(entry.size);
   row.addEventListener("click", () => {
     pick(row);
@@ -246,7 +249,7 @@ function showDirDetail(node) {
 async function showFileDetail(entry) {
   el("browseGuide").hidden = true;
   el("browseFilePane").hidden = false;
-  el("bfName").textContent = entry.name;
+  el("bfName").textContent = fileNameOf(entry);
   el("bfKind").textContent = entry.kind ? kindZh(entry.kind) : "未命名";
   el("bfMeta").innerHTML = metaRows([
     ["路径", entry.path || "没存路径，编号即身份"],

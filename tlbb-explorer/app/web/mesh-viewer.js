@@ -357,10 +357,12 @@ export class MeshViewer {
     this.lineUn = null;
     this.boneBuf = null;
     this.bonePtsBuf = null;
+    this.allPtsBuf = null;
     this.hlBuf = null;
     this.hlPtsBuf = null;
     this.boneCount = 0;
     this.bonePtCount = 0;
+    this.allPtCount = 0;
     this.hlCount = 0;
     this.hlPtCount = 0;
     this.prepareBoneLines(gl);
@@ -438,6 +440,7 @@ export class MeshViewer {
       this.pickBound = null;
       this.boneCount = 0;
       this.bonePtCount = 0;
+      this.allPtCount = 0;
       this.hlCount = 0;
       this.hlPtCount = 0;
       if (this.onlost) this.onlost();
@@ -1128,6 +1131,7 @@ export class MeshViewer {
   setBoneLines(payload) {
     this.boneCount = 0;
     this.bonePtCount = 0;
+    this.allPtCount = 0;
     this.hlCount = 0;
     this.hlPtCount = 0;
     if (!this.lineProg || !this.boneBuf) return;
@@ -1184,6 +1188,13 @@ export class MeshViewer {
       gl.vertexAttribPointer(this.lineAt, 3, gl.FLOAT, false, 0, 0);
       gl.drawArrays(gl.POINTS, 0, this.bonePtCount);
     }
+    // 有位移但没连成线的骨也要看得见：单独一小颗点。
+    if (this.allPtCount && this.allPtsBuf && this.lineUn.pt) {
+      gl.uniform1f(this.lineUn.pt, 4 * (window.devicePixelRatio || 1));
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.allPtsBuf);
+      gl.vertexAttribPointer(this.lineAt, 3, gl.FLOAT, false, 0, 0);
+      gl.drawArrays(gl.POINTS, 0, this.allPtCount);
+    }
     // 选中的骨：黄色叠在青线上面，最后画。
     if (this.hlCount && this.hlBuf && this.lineUn.color) {
       gl.uniform4f(this.lineUn.color, 1.0, 0.92, 0.25, 1.0);
@@ -1239,6 +1250,27 @@ export class MeshViewer {
     this.draw();
   }
 
+  /// 所有读出位移的骨点（不管有没有连成线）。骨架页用它补孤立骨。
+  setBonePoints(points) {
+    this.allPtCount = 0;
+    if (!this.lineProg || !this.allPtsBuf) return;
+    const list = Array.isArray(points) ? points : [];
+    if (list.length) {
+      const data = new Float32Array(list.length * 3);
+      let o = 0;
+      for (const p of list) {
+        data[o++] = p[0];
+        data[o++] = p[1];
+        data[o++] = p[2];
+      }
+      const gl = this.gl;
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.allPtsBuf);
+      gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+      this.allPtCount = list.length;
+    }
+    this.draw();
+  }
+
   prepareBoneLines(gl) {
     let prog = null;
     try {
@@ -1259,6 +1291,7 @@ export class MeshViewer {
       };
       this.boneBuf = gl.createBuffer();
       this.bonePtsBuf = gl.createBuffer();
+      this.allPtsBuf = gl.createBuffer();
       this.hlBuf = gl.createBuffer();
       this.hlPtsBuf = gl.createBuffer();
     } catch {
@@ -1268,10 +1301,12 @@ export class MeshViewer {
       this.lineUn = null;
       this.boneBuf = null;
       this.bonePtsBuf = null;
+      this.allPtsBuf = null;
       this.hlBuf = null;
       this.hlPtsBuf = null;
       this.boneCount = 0;
       this.bonePtCount = 0;
+      this.allPtCount = 0;
       this.hlCount = 0;
       this.hlPtCount = 0;
     }
@@ -1638,6 +1673,7 @@ export class MeshViewer {
     for (const b of Object.values(this.buf)) gl.deleteBuffer(b);
     if (this.boneBuf) gl.deleteBuffer(this.boneBuf);
     if (this.bonePtsBuf) gl.deleteBuffer(this.bonePtsBuf);
+    if (this.allPtsBuf) gl.deleteBuffer(this.allPtsBuf);
     if (this.hlBuf) gl.deleteBuffer(this.hlBuf);
     if (this.hlPtsBuf) gl.deleteBuffer(this.hlPtsBuf);
     this.unloadPool();

@@ -257,6 +257,15 @@ function skelFilteredLines(rep) {
   return { ...rep, lines, names };
 }
 
+/// 所有读出位移的骨点。勾了「只看带权重」就只发有权重的——和表格/骨线同一口径。
+function skelFilteredPoints() {
+  const box = el("skelSkinOnly");
+  const only = Boolean(box && box.checked);
+  return ((skelReply && skelReply.nodes) || [])
+    .filter((n) => Array.isArray(n.pos) && (!only || Number(n.skin) > 0))
+    .map((n) => n.pos);
+}
+
 function applyBoneHighlight() {
   if (!skelViewer) return;
   const rep = skelBoneReply;
@@ -301,6 +310,7 @@ async function paintSkeletonMesh(v) {
       if (my === skelSeq && lines) {
         skelBoneReply = lines;
         skelViewer.setBoneLines(skelFilteredLines(lines));
+        skelViewer.setBonePoints(skelFilteredPoints());
         applyBoneHighlight(); // 表格里已选中某根骨时，新骨线到位后补上高亮
         skelViewer.draw(); // setBoneLines 只装缓冲，不自己出帧
       }

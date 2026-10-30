@@ -76,7 +76,7 @@ export function createBrowseMeshBox(loadData, loadPlan) {
     stage.className = "mesh-stage";
     canvas = document.createElement("canvas");
     canvas.id = CANVAS_ID;
-    canvas.setAttribute("aria-label", "网格灰模预览");
+    canvas.setAttribute("aria-label", "网格预览");
     statusEl = document.createElement("p");
     statusEl.className = "mesh-state";
     statusEl.hidden = true;

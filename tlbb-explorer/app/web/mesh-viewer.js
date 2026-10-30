@@ -61,6 +61,8 @@ uniform sampler2D uMask;
 uniform float uUseMask;
 // 特效层是发光的叠加片，不参与灰模的漫反射；基础层仍按半兰伯特打光。
 uniform float uUnlit;
+// 场景光照强度：地图页按客户端 .sfl 的环境光填（默认 1 就是原来的亮度）。
+uniform float uLight;
 void main() {
   vec3 n = normalize(vNormal);
   vec3 l = normalize(vec3(0.35, 0.75, 0.6));
@@ -74,7 +76,7 @@ void main() {
     m = max(mk.a, max(mk.r, max(mk.g, mk.b)));
   }
   vec3 base = mix(vec3(0.62, 0.65, 0.69), tex.rgb, uUseTex);
-  vec3 lit = base * (0.32 + 0.68 * d) + rim;
+  vec3 lit = base * (0.32 + 0.68 * d) * uLight + rim;
   vec3 col = mix(lit, tex.rgb, uUnlit);
   float a = uUseTex > 0.5 ? (uUseMask > 0.5 ? tex.a * m : tex.a) : 1.0;
   gl_FragColor = vec4(col, a);
@@ -335,6 +337,7 @@ export class MeshViewer {
       mask: gl.getUniformLocation(prog, "uMask"),
       useMask: gl.getUniformLocation(prog, "uUseMask"),
       unlit: gl.getUniformLocation(prog, "uUnlit"),
+      light: gl.getUniformLocation(prog, "uLight"),
     };
     gl.useProgram(prog);
     gl.uniform1i(this.un.tex, 0);
@@ -960,6 +963,12 @@ export class MeshViewer {
     this.draw();
   }
 
+  /// 场景光照强度（1 = 默认）。地图页按 `.sfl` 的环境光填；其它页面不动。
+  setLight(v) {
+    this.light = Number.isFinite(v) ? Math.min(1.15, Math.max(0.75, v)) : null;
+    this.draw();
+  }
+
   /// 地图页：清屏透明，露出画布背后的天色渐变（颜色取自客户端 `.sfl`）。
   setBackdrop(on) {
     this.backdrop = !!on;
@@ -1026,6 +1035,7 @@ export class MeshViewer {
     gl.useProgram(this.prog);
     gl.uniformMatrix4fv(this.un.pj, false, proj);
     gl.uniformMatrix4fv(this.un.mv, false, mv);
+    if (this.un.light) gl.uniform1f(this.un.light, this.light == null ? 1 : this.light);
 
     if (this.ground) this.drawGround(mv, proj);
     if (this.parts) {

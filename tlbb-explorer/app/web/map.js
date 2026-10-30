@@ -197,6 +197,12 @@ function applyMapSky(v, scene) {
   }
 }
 
+/// 场景光照按 `.sfl` 的环境光强度（夹在 0.75–1.15，预览不是 HDR，别压太黑）。
+function applyMapLight(v, scene) {
+  const amb = scene && scene.env && scene.env.ambient;
+  v.setLight(Number.isFinite(amb) ? amb : null);
+}
+
 /// 地图道具的贴图：这些网格不在任何资产组里，按路径取同茎 `.mtl` 的计划（后端反查）。
 /// 一件取不到就灰着，不挡画布、不改「地形未解」的口径。
 /// 路径 → 分层计划（含 PNG data URL）。同一件道具在多张图里反复出现，缓存后
@@ -305,6 +311,7 @@ function applyMode() {
         v.loadInstances({ meshes: scene.meshes, instances: scene.instances });
         grayLoaded = scene.id;
         applyMapSky(v, scene);
+        applyMapLight(v, scene);
         void applyMapGround(v, scene);
         void applyMapPropTextures(v, scene);
       } catch (e) {

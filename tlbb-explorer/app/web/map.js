@@ -29,6 +29,8 @@ let scene = null; // 最近一次读通的 map_scene 回包，两个视图共用
 let sceneId = null;
 let grayLoaded = null; // viewer 里装着的是哪张图（scene.id）
 let topLoaded = null;
+/// 已经真正加载到地表编码格底图的地图 id（没有 .map 的图不显示那句注记）。
+let surfaceLoaded = null;
 
 function banner(html) {
   el("mapBanner").innerHTML = html;
@@ -58,7 +60,7 @@ function paintBanner() {
     banner(
       `<b>俯视量测</b> 正对地面读坐标，格线间距 32。` +
         `<span class="warn">哪边是北未证</span><span class="warn">地形没解出</span>` +
-        `<span class="dim">绿色底=地表编码格（不是高度）</span>` +
+        (surfaceLoaded === sceneId ? `<span class="dim">绿色底=地表编码格（不是高度）</span>` : "") +
         `<span class="dim">${scene && scene.alias ? esc(scene.alias) + " · " : ""}地图原名 ${esc(sceneId)}</span>`,
     );
   } else {
@@ -66,7 +68,7 @@ function paintBanner() {
       `<b>物件预览</b> 把物件摆在该在的位置上，有材质表的<b>已按材质表贴图</b>。` +
         `<span class="warn">地形没解出</span><span class="dim">没有材质表的物件仍是灰模</span><span class="warn">朝向待比对</span>` +
         (scene && scene.env ? `<span class="dim">背景色取自 .sfl（不是天空盒）</span>` : "") +
-        `<span class="dim">地上暗色块=地表编码格（不是高度）</span>` +
+        (surfaceLoaded === sceneId ? `<span class="dim">地上暗色块=地表编码格（不是高度）</span>` : "") +
         `<span class="dim">${scene && scene.alias ? esc(scene.alias) + " · " : ""}地图原名 ${esc(sceneId)}</span>`,
     );
   }
@@ -165,6 +167,8 @@ async function applyMapGround(v, scene) {
       z1: 0,
       y: (any ? minY : 0) - 0.01,
     });
+    surfaceLoaded = scene.id;
+    paintBanner();
   } catch {}
 }
 
@@ -178,6 +182,8 @@ async function ensureSurface(t, scene) {
     await img.decode();
     if (topLoaded !== scene.id) return;
     t.setSurface(img, { x0: 0, z0: -(s.height * 0.5), x1: s.width * 0.5, z1: 0 });
+    surfaceLoaded = scene.id;
+    paintBanner();
   } catch {}
 }
 
@@ -397,6 +403,7 @@ async function openScene(id) {
   scene = null;
   grayLoaded = null;
   topLoaded = null;
+  surfaceLoaded = null;
   if (top) top.setSurface(null);
   sceneId = id;
   // 上一张图的天色不许挂到这一张上：读格子这段时间画布还是空的，

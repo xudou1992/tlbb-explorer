@@ -598,6 +598,8 @@ async function paintMaterialTextures(rep) {
       return;
     }
     const gid = state.selected;
+    note.hidden = false;
+    note.textContent = "正在按模型点名的网格与材质表找贴图…";
     const plans = await Promise.all(meshes.map((p) => api.meshTexturePlanByPath(p).catch(() => null)));
     const mreps = await Promise.all(mtls.map((n) => api.materialView(gid, n).catch(() => null)));
     if (my !== mtlTexSeq || state.selected !== gid) return;
@@ -652,6 +654,8 @@ async function paintMaterialTextures(rep) {
     .map((s) => s.name)
     .slice(0, 24);
   if (!names.length) return;
+  note.hidden = false;
+  note.textContent = "正在按名字对贴图…";
   const got = await Promise.all(
     names.map(async (name) => {
       try {

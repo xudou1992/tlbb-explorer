@@ -97,10 +97,10 @@ void main() {
 
 const BONE_FS = `
 precision mediump float;
+uniform vec4 uColor;
 void main() {
-  // 青色：骨架页/动作页的网格多是黄橙皮肤与衣料，旧橙色线和它们撞色，
-  // 开不开叠加几乎看不出差别。
-  gl_FragColor = vec4(0.16, 0.88, 0.98, 1.0);
+  // 颜色由调用方给：骨线青色（和暖色衣料区分），地图点选框橙色。
+  gl_FragColor = uColor;
 }`;
 
 // 视场角。抽成常量是因为 draw() 用它投影、pickAt 用它反投影——
@@ -1164,6 +1164,7 @@ export class MeshViewer {
     gl.useProgram(this.lineProg);
     gl.uniformMatrix4fv(this.lineUn.mv, false, mv);
     gl.uniformMatrix4fv(this.lineUn.pj, false, proj);
+    if (this.lineUn.color) gl.uniform4f(this.lineUn.color, 0.16, 0.88, 0.98, 1.0);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.boneBuf);
     gl.enableVertexAttribArray(this.lineAt);
     gl.vertexAttribPointer(this.lineAt, 3, gl.FLOAT, false, 0, 0);
@@ -1194,6 +1195,7 @@ export class MeshViewer {
         mv: gl.getUniformLocation(prog, "uModelView"),
         pj: gl.getUniformLocation(prog, "uProjection"),
         pt: gl.getUniformLocation(prog, "uPointSize"),
+        color: gl.getUniformLocation(prog, "uColor"),
       };
       this.boneBuf = gl.createBuffer();
       this.bonePtsBuf = gl.createBuffer();
@@ -1540,6 +1542,7 @@ export class MeshViewer {
     gl.useProgram(this.lineProg);
     gl.uniformMatrix4fv(this.lineUn.mv, false, mv);
     gl.uniformMatrix4fv(this.lineUn.pj, false, proj);
+    if (this.lineUn.color) gl.uniform4f(this.lineUn.color, 0.98, 0.55, 0.12, 1.0);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.pickBuf);
     gl.enableVertexAttribArray(this.lineAt);
     gl.vertexAttribPointer(this.lineAt, 3, gl.FLOAT, false, 0, 0);

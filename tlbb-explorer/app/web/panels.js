@@ -438,12 +438,19 @@ async function paintEffectTextures(rep) {
 
 // ---- 材质页：.mtl（JBCF）的槽位表 ----
 
+let mtlTexSeq = 0;
+
 export function clearMaterial() {
   el("mtlSum").textContent = "";
   el("mtlPick").innerHTML = "";
   el("mtlTable").innerHTML = "";
   el("mtlMissing").innerHTML = "";
   el("tabMtlCount").textContent = "";
+  mtlTexSeq += 1;
+  const box = el("mtlTex");
+  if (box) box.innerHTML = "";
+  const note = el("mtlTexNote");
+  if (note) note.hidden = true;
 }
 
 /// 槽位一行行摆：类型、客户端原文、对上的实体路径（对不上写「缺」）。
@@ -507,6 +514,43 @@ export function paintMaterial(rep, onPick) {
     ? fold("贴图与渲染清单", `${(rep.slots || []).length} 条`, `<p class="dim">${esc(dense)}</p>` + slotBody)
     : `<p class="dim">这份 .mtl 里没认出任何一类槽位（贴图/材质/模型/骨骼/动作都不在）。</p>`;
   el("mtlMissing").innerHTML = (rep.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
+  void paintMaterialTextures(rep);
+}
+
+/// 材质表里的贴图槽：按名字走客户端转换路径对上真图，最多 24 张。
+/// 对不上就不摆，并在下面写明对上几张。
+async function paintMaterialTextures(rep) {
+  if (!el("mtlTex")) return;
+  const my = ++mtlTexSeq;
+  const names = (rep.slots || [])
+    .filter((s) => s && s.role === "贴图" && s.name)
+    .map((s) => s.name)
+    .slice(0, 24);
+  if (!names.length) return;
+  const shots = await Promise.all(
+    names.map(async (name) => {
+      try {
+        return { name, url: await api.texturePngByName(name) };
+      } catch {
+        return { name, url: null };
+      }
+    }),
+  );
+  if (my !== mtlTexSeq) return;
+  const ok = shots.filter((x) => x.url);
+  el("mtlTex").innerHTML = ok
+    .map(
+      (x) =>
+        `<figure class="pv"><img src="${esc(x.url)}" alt="${esc(x.name)}" loading="lazy"><figcaption title="${esc(
+          x.name,
+        )}">${esc(x.name)}</figcaption></figure>`,
+    )
+    .join("");
+  const note = el("mtlTexNote");
+  note.hidden = false;
+  note.textContent = ok.length
+    ? `槽位里的贴图：${ok.length}/${names.length} 张按客户端转换路径对上真图（其余对不上就不摆）`
+    : `槽位里的贴图 ${names.length} 张，没有一张能按客户端转换路径对上文件。`;
 }
 
 // ---- 右栏：资源概况 + 引用关系 + 关系图谱 ----

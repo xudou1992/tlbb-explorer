@@ -7,18 +7,22 @@
 
 const HOSTS = ".mesh-stage, .map-stage";
 
+/// 给任意画布舞台补一枚「放大」按钮。浏览页的预览盒子是点文件时才建的，
+/// 启动时扫不到，必须由建舞台的一方主动叫一声。
+export function attachStageZoom(stage) {
+  if (!stage || !stage.querySelector("canvas")) return;
+  if (stage.querySelector(":scope > .stage-zoom")) return;
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "stage-zoom";
+  btn.textContent = "放大";
+  btn.title = "把这块预览铺满窗口（Esc 还原）";
+  btn.addEventListener("click", () => toggleStage(stage));
+  stage.appendChild(btn);
+}
+
 export function initStageZoom() {
-  for (const stage of document.querySelectorAll(HOSTS)) {
-    if (!stage.querySelector("canvas")) continue;
-    if (stage.querySelector(":scope > .stage-zoom")) continue;
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "stage-zoom";
-    btn.textContent = "放大";
-    btn.title = "把这块预览铺满窗口（Esc 还原）";
-    btn.addEventListener("click", () => toggleStage(stage));
-    stage.appendChild(btn);
-  }
+  for (const stage of document.querySelectorAll(HOSTS)) attachStageZoom(stage);
   document.addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
     const z = document.querySelector(".mesh-stage.zoomed, .map-stage.zoomed");

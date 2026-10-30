@@ -15,6 +15,7 @@
 
 import { esc, num, errText } from "./ui.js";
 import { MeshViewer } from "./mesh-viewer.js";
+import { attachStageZoom } from "./lib/stageZoom.js";
 import { makeSeq } from "./lib/seq.js";
 
 const CANVAS_ID = "browseMeshCanvas";
@@ -83,6 +84,7 @@ export function createBrowseMeshBox(loadData, loadPlan) {
     hint.className = "mesh-hint";
     hint.textContent = "按住拖动旋转 · 滚轮远近 · 双击回到正面";
     stage.append(canvas, statusEl, hint);
+    attachStageZoom(stage);
     whyEl = document.createElement("details");
     whyEl.hidden = true;
     const summary = document.createElement("summary");

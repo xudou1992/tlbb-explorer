@@ -262,7 +262,7 @@ async function showFileDetail(entry) {
   retireBrowseMesh(); // 换了选择先收掉灰模盒子；选中的还是网格的话下面马上重新亮出来
   if (isMeshEntry(entry)) {
     // 灰模取数有自己的锁（盒子内部那把），这里领的号只为拦住贴图回包。
-    el("bfNote").textContent = "灰模只有形状，没有贴图。";
+    // 「有没有贴图」由盒子按同茎材质的结果写在 meta 里，这里不再先写死一句话。
     showBrowseMesh(entry);
     return;
   }

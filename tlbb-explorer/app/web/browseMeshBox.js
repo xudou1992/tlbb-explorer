@@ -54,7 +54,7 @@ export function meshTechRows(d) {
 }
 
 /// 建一个灰模盒子。loadData 即 api.meshData（browse.js 注入），签名 (name, hash)。
-export function createBrowseMeshBox(loadData) {
+export function createBrowseMeshBox(loadData, loadPlan) {
   const seq = makeSeq();
   let root = null;
   let stage = null;
@@ -158,8 +158,26 @@ export function createBrowseMeshBox(loadData) {
       return;
     }
     if (seq.isStale(my)) return;
+    // 贴图只认同茎材质；没有就保持灰模并在 meta 里写明，不拿别人的材质表顶替。
+    let texNote = "";
+    if (loadPlan && entry.path && /\.mesh$/i.test(entry.path)) {
+      try {
+        const plan = await loadPlan(entry.path);
+        if (seq.isStale(my)) return;
+        if (plan && Array.isArray(plan.layers) && plan.layers.length) {
+          viewer.setTextureLayers(plan.layers);
+        } else {
+          texNote = " · 没有同茎材质，画灰模";
+        }
+      } catch {
+        texNote = " · 没有同茎材质，画灰模";
+      }
+    } else if (!entry.path) {
+      texNote = " · 只有哈希没有路径，画灰模";
+    }
+    if (seq.isStale(my)) return;
     status("");
-    metaEl.textContent = `${num(data.vertexCount)} 个顶点 · ${num(data.faceCount)} 个三角面`;
+    metaEl.textContent = `${num(data.vertexCount)} 个顶点 · ${num(data.faceCount)} 个三角面${texNote}`;
     techEl.innerHTML = meshTechRows(data)
       .map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`)
       .join("");

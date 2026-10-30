@@ -223,7 +223,7 @@ function retireBrowseMesh() {
 }
 
 function showBrowseMesh(entry) {
-  if (!meshBox) meshBox = createBrowseMeshBox(api.meshData);
+  if (!meshBox) meshBox = createBrowseMeshBox(api.meshData, api.meshTexturePlanByPath);
   meshBox.show(el("bfPreview"), entry);
 }
 

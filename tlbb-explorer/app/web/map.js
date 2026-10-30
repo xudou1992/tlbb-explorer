@@ -60,7 +60,7 @@ function paintBanner() {
     banner(
       `<b>俯视量测</b> 正对地面读坐标，格线间距 32。` +
         `<span class="warn">哪边是北未证</span><span class="warn">地形没解出</span>` +
-        (surfaceLoaded === sceneId ? `<span class="dim">绿色底=地表编码格（不是高度）</span>` : "") +
+        (surfaceLoaded === sceneId ? `<span class="dim">绿色底=地面编码格（灰蓝=其它编码、黑=空；不是高度）</span>` : "") +
         `<span class="dim">${scene && scene.alias ? esc(scene.alias) + " · " : ""}地图原名 ${esc(sceneId)}</span>`,
     );
   } else {

@@ -25,7 +25,7 @@ export function factsHeader(s) {
 /// 没解的直说没解，不许把「没读」说成「客户端没有」。
 export function unresolvedHtml() {
   return (
-    `<span class="miss">地形：未解析（.map 是地表编码格，不是高低数据）</span><br />` +
+    `<span class="miss">地形：未解析（.map 是地表编码格，不是高低数据；有 .map 的图已把编码格叠成底图：绿=地面、灰蓝=其它、黑=空）</span><br />` +
     `<span class="part">贴图：部分可恢复（候选机制已就绪，见资产页的试贴候选）</span><br />` +
     `<span class="miss">碰撞：未解析</span><br />` +
     `<span class="miss">寻路：未解析</span><br />` +

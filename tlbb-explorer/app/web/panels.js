@@ -102,6 +102,8 @@ let skelSeq = 0;
 /// 当前网格的骨线回包（lines + names），供表格点选时挑出这根骨的父子段。
 let skelBoneReply = null;
 let skelBonePick = "";
+/// 骨名 → 绑定位移：没连线的骨（父骨或自己没位置）至少点个黄点。
+let skelBonePos = null;
 
 export function clearSkeleton() {
   skelSeq += 1;
@@ -109,6 +111,7 @@ export function clearSkeleton() {
   if (st) st.hidden = true;
   skelBoneReply = null;
   skelBonePick = "";
+  skelBonePos = null;
   if (skelViewer) skelViewer.setBoneHighlight(null);
   el("skelSum").textContent = "";
   el("skelPick").innerHTML = "";
@@ -123,6 +126,7 @@ export function paintSkeleton(v, onPick) {
   clearSkeleton();
   const nodes = v.nodes || [];
   const anims = v.animations || [];
+  skelBonePos = new Map(nodes.filter((n) => Array.isArray(n.pos)).map((n) => [n.name, n.pos]));
   el("tabSkelCount").textContent = nodes.length ? String(nodes.length) : "";
   if (!nodes.length) {
     // 静态网格、解不出字节、组里没网格——后端给的原因原样转述，不换成「暂无数据」
@@ -148,7 +152,7 @@ export function paintSkeleton(v, onPick) {
     );
   }
   el("skelTable").innerHTML = fold(
-    "每根骨头搭在哪",
+    "每根骨头搭在哪（点一行在 3D 里高亮）",
     `${nodes.length} 行`,
     `<p class="dim">${esc(dense)}</p>` +
       `<table class="hl-table"><thead><tr><th>骨名</th>${
@@ -220,6 +224,11 @@ function applyBoneHighlight() {
   for (let i = 0; i < lines.length; i++) {
     const n = names[i];
     if (n && (n[1] === skelBonePick || n[0] === skelBonePick)) hit.push(lines[i]);
+  }
+  // 没有可连的线（父骨或自己没绑定位移）：至少在这根骨的位置点个黄点。
+  if (!hit.length) {
+    const p = skelBonePos && skelBonePos.get(skelBonePick);
+    if (p) hit.push([p, p]);
   }
   skelViewer.setBoneHighlight(hit);
 }

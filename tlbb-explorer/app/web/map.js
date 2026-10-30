@@ -146,12 +146,14 @@ function ensureViewer() {
     const box = el("topPick");
     if (!hit) {
       box.hidden = true;
+      viewer.setPickBox(null);
       return;
     }
     const ins = scene.instances[hit.index];
     if (!ins) return;
     const meshPath = (scene.meshes[ins.meshIndex] || {}).path || "";
     const gridName = scene.gridFiles[ins.gridIndex] || "";
+    viewer.setPickBox(hit.index);
     box.hidden = false;
     box.innerHTML =
       `<b>${esc(gridName || "格子名缺失")}</b> 第 ${num(ins.recordIndex + 1)} 条<br />` +
@@ -314,6 +316,7 @@ function applyMode() {
   el("modeTop").classList.toggle("on", mode === "top");
   el("stageHint").textContent = hintFor(mode);
   el("topPick").hidden = true;
+  if (viewer) viewer.setPickBox(null);
   el("topCoords").hidden = true;
   paintBanner();
   if (!hasObjects) {

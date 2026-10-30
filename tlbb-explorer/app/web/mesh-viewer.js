@@ -1041,7 +1041,10 @@ export class MeshViewer {
     if (this.parts) {
       this.drawParts();
       this.drawBoneLines(mv, proj); // 动作页可叠骨线；没设过时 boneCount 为 0，空操作
-    } else if (this.inst) this.drawInstanced();
+    } else if (this.inst) {
+      this.drawInstanced();
+      this.drawPickBox(mv, proj);
+    }
     else {
       this.drawSingle();
       this.drawBoneLines(mv, proj);
@@ -1468,6 +1471,45 @@ export class MeshViewer {
         gl.drawElements(gl.TRIANGLES, p.ic, gl.UNSIGNED_SHORT, 0);
       }
     }
+  }
+
+  /// 点选高亮：把该实例的点选外接盒画成 12 条线；null 清掉。
+  setPickBox(index) {
+    const gl = this.gl;
+    this.pickedBox = null;
+    if (index == null || !this.pickBound || !this.pickBound[index]) {
+      this.draw();
+      return;
+    }
+    const b = this.pickBound[index].bound;
+    const [x0, y0, z0] = b.min;
+    const [x1, y1, z1] = b.max;
+    const c = [
+      [x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0],
+      [x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1],
+    ];
+    const edges = [0,1,1,2,2,3,3,0,4,5,5,6,6,7,7,4,0,4,1,5,2,6,3,7];
+    const data = new Float32Array(edges.length * 3);
+    edges.forEach((ci, k) => data.set(c[ci], k * 3));
+    if (!this.pickBuf) this.pickBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.pickBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    this.pickedBox = edges.length;
+    this.draw();
+  }
+
+  drawPickBox(mv, proj) {
+    if (!this.pickedBox || !this.lineProg || !this.pickBuf || this.lineAt < 0) return;
+    const gl = this.gl;
+    gl.useProgram(this.lineProg);
+    gl.uniformMatrix4fv(this.lineUn.mv, false, mv);
+    gl.uniformMatrix4fv(this.lineUn.pj, false, proj);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.pickBuf);
+    gl.enableVertexAttribArray(this.lineAt);
+    gl.vertexAttribPointer(this.lineAt, 3, gl.FLOAT, false, 0, 0);
+    gl.disable(gl.DEPTH_TEST);
+    gl.drawArrays(gl.LINES, 0, this.pickedBox);
+    gl.enable(gl.DEPTH_TEST);
   }
 
   /// 点选：返回 { index, approximate: true }，没打中返回 null。index 是 instances 数组下标。

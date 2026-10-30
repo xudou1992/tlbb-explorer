@@ -131,6 +131,13 @@ function renderInto(host, insp) {
     if (p) parts.push(nodeSvg(n, p.x, p.y, NODE_W, NODE_H));
   }
   host.innerHTML = `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="引用关系网">${header}${edges.join("")}${parts.join("")}</svg>`;
+  // 一屏放不下时把当前资产滚到视口中间：否则打开就是一片空白，中心节点在底下。
+  const self = pos.get("self");
+  if (self) {
+    const wantTop = self.y + self.h / 2 - host.clientHeight / 2;
+    host.scrollTop = Math.max(0, wantTop);
+    host.scrollLeft = 0;
+  }
 }
 
 // ---- 浮层开关 ----
@@ -169,7 +176,7 @@ export function renderRelations(insp) {
   lastInsp = insp;
   banner.innerHTML = `<b>关系网</b>${esc(insp.what || "")} · 节点数 ${num(
     (insp.members || []).length + ((insp.mdl && insp.mdl.bodies) || []).length,
-  )} · 缺失 ${num((insp.missing || []).length)} 项`;
+  )} · 缺失 ${num((insp.missing || []).length)} 项 · 空心=能对上文件，实心红=客户端里没有；图高时可滚动查看`;
   renderInto(host, insp);
   info.innerHTML = infoHtml(insp);
 }

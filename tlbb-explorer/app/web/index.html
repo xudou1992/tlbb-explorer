@@ -305,6 +305,13 @@
                 <h3>特效</h3>
                 <p id="fxSum" class="lead"></p>
                 <div class="chips" id="fxPick"></div>
+                <!-- 特效引用的网格：只画 .pu 里点到名字的静态网格，代表不了粒子效果本身。 -->
+                <div class="chips" id="fxMeshPick" hidden></div>
+                <div class="mesh-stage" id="fxStage" hidden>
+                  <canvas id="fxCanvas" aria-label="特效引用网格预览"></canvas>
+                  <p class="mesh-hint">按住拖动旋转 · 滚轮远近 · 双击回到正面</p>
+                </div>
+                <p class="dim" id="fxMeshNote" hidden></p>
                 <div id="fxTable"></div>
               </section>
               <details class="fold">

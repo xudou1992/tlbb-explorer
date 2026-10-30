@@ -284,6 +284,10 @@ function initAnim() {
       setPlaying(false); // 切走 tab 自动暂停：看不见的预览没理由继续占着后端
     }
     if (name === "effect" && !fxReply) loadEffect(state.selected, "");
+    // 特效页的画布在面板里，隐藏时量到 0 宽；切回来让它按现在的尺寸重画一帧。
+    if (name === "effect" && typeof window !== "undefined" && typeof Event === "function") {
+      window.dispatchEvent(new Event("tlbb:viewer-resize"));
+    }
     if (name === "material" && !mtlReply) loadMaterial(state.selected, "");
     if (name === "preview") remesh(); // 详情停在别的标签加载过：画布量的是隐藏时的 1x1，回来要重量
   });

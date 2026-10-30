@@ -6,6 +6,8 @@
 import { el, esc, num, chips } from "./ui.js";
 import { animSummary, changedRows, clampFrame, frameRows } from "./lib/animView.js";
 import { skeletonLead, animationLead, effectLead, materialLead } from "./lib/plain.js";
+import { MeshViewer } from "./mesh-viewer.js";
+import * as api from "./api.js";
 
 /// 引用类别 → 配色 + 单字图标。颜色只作辅助，文字永远是主载体。
 const ROLE_STYLE = {
@@ -232,12 +234,23 @@ export function paintAnimation(rep, frame, onlyChanged, onPick) {
 
 // ---- 特效页：.pu 的材质链与各类类名 ----
 
+// 特效引用的网格预览：只画 `.pu` 里点到名字的静态网格，代表不了粒子效果本身。
+let fxViewer = null;
+let fxSeq = 0;
+let fxEntries = [];
+let fxIndex = 0;
+
 export function clearEffect() {
   el("fxSum").textContent = "";
   el("fxPick").innerHTML = "";
   el("fxTable").innerHTML = "";
   el("fxMissing").innerHTML = "";
   el("tabFxCount").textContent = "";
+  fxSeq += 1; // 作废在途的网格回包
+  el("fxMeshPick").innerHTML = "";
+  el("fxMeshPick").hidden = true;
+  el("fxStage").hidden = true;
+  el("fxMeshNote").hidden = true;
 }
 
 /// 类别表。名字一律用客户端原文，一类没有就不摆那一行（空行不等于「没有」）。
@@ -318,6 +331,69 @@ export function paintEffect(rep, onPick) {
     : `<p class="dim">这份 .pu 的参数记录一条都没走出来（可能这份文件本身没有参数区）。</p>`;
   el("fxTable").innerHTML = namesFold + paramFold;
   el("fxMissing").innerHTML = (rep.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
+  void paintEffectMesh(rep);
+}
+
+/// 特效引用的网格：有就摆一个画布 + 网格筹码，点哪件看哪件。
+/// 取不到、或者这件根本不在包里，照实写一行注记，不假装画出东西。
+async function paintEffectMesh(rep) {
+  if (!el("fxStage")) return; // 测试环境没有这块 DOM
+  const entries = (rep.meshes || []).filter(Boolean);
+  fxEntries = entries;
+  fxIndex = Math.min(fxIndex, Math.max(0, entries.length - 1));
+  if (!entries.length) return;
+  el("fxMeshPick").hidden = entries.length < 2;
+  el("fxStage").hidden = false;
+  el("fxMeshNote").hidden = false;
+  if (entries.length > 1) {
+    chips(
+      el("fxMeshPick"),
+      entries.map((m, i) => ({ value: String(i), label: m.replace(/\.mesh$/i, "") })),
+      String(fxIndex),
+      (v) => void loadEffectMesh(Number(v)),
+    );
+  }
+  if (!fxViewer) {
+    try {
+      fxViewer = new MeshViewer(el("fxCanvas"));
+    } catch (e) {
+      el("fxStage").hidden = true;
+      el("fxMeshNote").textContent = `预览起不来：${e instanceof Error ? e.message : String(e)}`;
+      return;
+    }
+  }
+  await loadEffectMesh(fxIndex);
+}
+
+async function loadEffectMesh(i) {
+  if (!fxViewer || !fxEntries.length) return;
+  fxIndex = i;
+  const my = ++fxSeq;
+  const entry = fxEntries[i];
+  let note = "特效引用的网格（不是粒子效果本身）";
+  try {
+    const data = await api.meshData(entry, null);
+    if (my !== fxSeq) return;
+    fxViewer.load(data, null);
+    // 特效网格只认同茎材质：按组名兜底会拿到别的模型的材质表，贴错图比灰模更糟。
+    if (!entry.includes("/")) note += "；（只登记了裸名，没路径就取不到同茎材质，画灰模）";
+    else {
+      try {
+        const plan = await api.meshTexturePlanByPath(entry);
+        if (my === fxSeq && plan && Array.isArray(plan.layers) && plan.layers.length) {
+          fxViewer.setTextureLayers(plan.layers);
+        } else if (my === fxSeq) {
+          note += "；没有同茎材质，画灰模";
+        }
+      } catch {
+        if (my === fxSeq) note += "；没有同茎材质，画灰模";
+      }
+    }
+  } catch (e) {
+    note = `这一件网格取不到：${e instanceof Error ? e.message : String(e)}`;
+  }
+  if (my !== fxSeq) return;
+  el("fxMeshNote").textContent = note;
 }
 
 // ---- 材质页：.mtl（JBCF）的槽位表 ----

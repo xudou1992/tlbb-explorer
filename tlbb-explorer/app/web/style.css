@@ -349,8 +349,8 @@ em.na { color: var(--muted); font-style: normal; }
   border: 1px solid var(--line); border-radius: var(--radius-l);
   background: radial-gradient(circle at 50% 35%, #e9efed, var(--stage) 62%);
 }
-#meshCanvas, #animCanvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; }
-.mesh-stage.dragging #meshCanvas, .mesh-stage.dragging #animCanvas { cursor: grabbing; }
+#meshCanvas, #animCanvas, #fxCanvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+.mesh-stage.dragging #meshCanvas, .mesh-stage.dragging #animCanvas, .mesh-stage.dragging #fxCanvas { cursor: grabbing; }
 .mesh-state {
   position: absolute; inset: 0; display: grid; place-items: center; padding: 24px;
   color: var(--muted); text-align: center; font-size: 12.5px; pointer-events: none;

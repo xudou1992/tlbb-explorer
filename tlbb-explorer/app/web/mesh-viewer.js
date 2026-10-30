@@ -966,6 +966,14 @@ export class MeshViewer {
     this.draw();
   }
 
+  /// 地表编码格底图：一张带透明度的贴图铺在 XZ 平面上（**不是地形高度**）。
+  setGround(img, rect) {
+    this.ground = img && rect
+      ? { img, rect, token: (this.groundToken = (this.groundToken || 0) + 1) }
+      : null;
+    this.draw();
+  }
+
   /// 相机还在动就继续下一帧，停稳就自己收工——静态展示没必要一直占着 GPU。
   start() {
     if (this.raf) return;
@@ -1019,6 +1027,7 @@ export class MeshViewer {
     gl.uniformMatrix4fv(this.un.pj, false, proj);
     gl.uniformMatrix4fv(this.un.mv, false, mv);
 
+    if (this.ground) this.drawGround(mv, proj);
     if (this.parts) this.drawParts();
     else if (this.inst) this.drawInstanced();
     else {
@@ -1026,6 +1035,63 @@ export class MeshViewer {
       this.drawBoneLines(mv, proj);
     }
     return !settled;
+  }
+
+  /// 地表编码格底图：4 顶点一块平面 + 一张透明贴图。缓冲只在换图时重建。
+  drawGround(mv, proj) {
+    const g = this.ground;
+    if (!g) return;
+    const gl = this.gl;
+    if (!g.buf || g.builtToken !== g.token) {
+      if (g.buf) for (const b of g.buf.all) gl.deleteBuffer(b);
+      if (g.tex) gl.deleteTexture(g.tex);
+      const { x0, z0, x1, z1, y } = g.rect;
+      const pos = new Float32Array([x0, y, z0, x1, y, z0, x1, y, z1, x0, y, z1]);
+      const nrm = new Float32Array([0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0]);
+      const uv = new Float32Array([0, 0, 1, 0, 1, 1, 0, 1]);
+      const idx = new Uint16Array([0, 1, 2, 0, 2, 3]);
+      const mk = (arr) => {
+        const b = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, b);
+        gl.bufferData(gl.ARRAY_BUFFER, arr, gl.STATIC_DRAW);
+        return b;
+      };
+      const bp = mk(pos);
+      const bn = mk(nrm);
+      const bu = mk(uv);
+      const bi = gl.createBuffer();
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bi);
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW);
+      g.buf = { pos: bp, nrm: bn, uv: bu, idx: bi, all: [bp, bn, bu, bi] };
+      g.tex = uploadTexture(gl, g.img);
+      g.builtToken = g.token;
+    }
+    gl.useProgram(this.prog);
+    gl.uniformMatrix4fv(this.un.pj, false, proj);
+    gl.uniformMatrix4fv(this.un.mv, false, mv);
+    gl.uniform1f(this.un.use, 0);
+    gl.uniform1f(this.un.unlit, 0);
+    gl.uniform1f(this.un.useMask, 0);
+    gl.uniform1f(this.un.useTex, 1);
+    gl.bindBuffer(gl.ARRAY_BUFFER, g.buf.pos);
+    gl.enableVertexAttribArray(this.at.pos);
+    gl.vertexAttribPointer(this.at.pos, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, g.buf.nrm);
+    gl.enableVertexAttribArray(this.at.nrm);
+    gl.vertexAttribPointer(this.at.nrm, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, g.buf.uv);
+    gl.enableVertexAttribArray(this.at.uv);
+    gl.vertexAttribPointer(this.at.uv, 2, gl.FLOAT, false, 0, 0);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, g.tex);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.depthMask(false);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, g.buf.idx);
+    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+    gl.depthMask(true);
+    gl.disable(gl.BLEND);
+    gl.uniform1f(this.un.useTex, 0);
   }
 
   /// 绑定姿态的线段。没有可画的点时立刻返回，不改程序、不改深度。

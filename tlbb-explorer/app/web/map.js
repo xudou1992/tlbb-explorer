@@ -66,6 +66,7 @@ function paintBanner() {
       `<b>物件预览</b> 把物件摆在该在的位置上，有材质表的<b>已按材质表贴图</b>。` +
         `<span class="warn">地形没解出</span><span class="dim">没有材质表的物件仍是灰模</span><span class="warn">朝向待比对</span>` +
         (scene && scene.env ? `<span class="dim">背景色取自 .sfl（不是天空盒）</span>` : "") +
+        `<span class="dim">地上暗色块=地表编码格（不是高度）</span>` +
         `<span class="dim">${scene && scene.alias ? esc(scene.alias) + " · " : ""}地图原名 ${esc(sceneId)}</span>`,
     );
   }
@@ -137,6 +138,34 @@ function ensureViewer() {
     status("显卡上下文被系统收回了，重新点一下这张图就能再看。");
   };
   return viewer;
+}
+
+/// 3D 地图的地表编码格底图：铺在物件脚下那块最矮的平面上（不是地形高度）。
+async function applyMapGround(v, scene) {
+  try {
+    const s = await api.mapSurface(scene.id);
+    if (!s || !s.png || grayLoaded !== scene.id) return;
+    const img = new Image();
+    img.src = s.png;
+    await img.decode();
+    if (grayLoaded !== scene.id) return;
+    let minY = 0;
+    let any = false;
+    for (const ins of scene.instances || []) {
+      const y = ins.matrix && ins.matrix[13];
+      if (Number.isFinite(y)) {
+        minY = any ? Math.min(minY, y) : y;
+        any = true;
+      }
+    }
+    v.setGround(img, {
+      x0: 0,
+      z0: -(s.height * 0.5),
+      x1: s.width * 0.5,
+      z1: 0,
+      y: (any ? minY : 0) - 0.01,
+    });
+  } catch {}
 }
 
 /// 俯视图的地表编码格垫底：`.map` 每格按类型着色（不是地形高度）。
@@ -276,6 +305,7 @@ function applyMode() {
         v.loadInstances({ meshes: scene.meshes, instances: scene.instances });
         grayLoaded = scene.id;
         applyMapSky(v, scene);
+        void applyMapGround(v, scene);
         void applyMapPropTextures(v, scene);
       } catch (e) {
         el("mapCanvas").hidden = true;
@@ -365,7 +395,10 @@ async function openScene(id) {
   // 上一张图的天色不许挂到这一张上：读格子这段时间画布还是空的，
   // 留着旧渐变会让人以为新图已经有天色了。
   el("mapCanvas").style.background = "";
-  if (viewer) viewer.setBackdrop(false);
+  if (viewer) {
+    viewer.setBackdrop(false);
+    viewer.setGround(null);
+  }
   status(`正在读 ${id} 的格子…`);
   paintBanner();
   let s;

@@ -18,7 +18,7 @@ use std::sync::Arc;
 use serde::Serialize;
 use tauri::State;
 use tlbb_core::jpak::Pak;
-use tlbb_core::preview::pose::{bind_worlds, posed_vertices, reanchored_palette};
+use tlbb_core::preview::pose::{bind_worlds, pose_frame, posed_vertices, reanchored_palette};
 use tlbb_core::preview::{
     attach_bone_skin, parse_ani, parse_geometry, parse_hierarchy, parse_nodes, Anim, MeshGeometry,
     Node, SkeletonHierarchy,
@@ -38,6 +38,16 @@ pub struct AnimPosePart {
     pub vertex_count: usize,
     /// 摆好后的顶点，与该件 `mesh_data` 的 positions 同空间同序。
     pub positions: Vec<[f32; 3]>,
+}
+
+/// 当前帧的骨头锚点（与 `positions` 同一空间），给画布叠加骨线用。
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AnimPoseBone {
+    pub name: String,
+    /// 父骨在同一个数组里的下标；根骨为空。
+    pub parent: Option<usize>,
+    pub pos: [f32; 3],
 }
 
 /// 回包用 camelCase，与 `mesh_data` / 骨架页同一套约定。
@@ -64,6 +74,54 @@ pub struct AnimPoseReply {
     /// 这个字段——序列化时整个消失，前端按字段在不在分辨两条路。
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parts: Option<Vec<AnimPosePart>>,
+    /// 当前帧逐骨位置（与 positions 同空间），动作页「画布叠加骨架线」用。
+    pub bones: Vec<AnimPoseBone>,
+}
+
+/// 当前帧的骨锚点：**绑定原点 × 该骨的蒙皮调色板**——和顶点走同一个变换，
+/// 这样骨线才和画面里的身体对得上（直接用 `pose_frame` 的世界平移不在同一空间）。
+/// 只发真有轨道的骨；父下标重映射到过滤后的数组。
+fn anim_bones_of(h: &SkeletonHierarchy, a: &Anim, frame: usize) -> Vec<AnimPoseBone> {
+    let Some(palette) = reanchored_palette(h, a, frame) else {
+        return Vec::new();
+    };
+    let bind = bind_worlds(h);
+    if palette.len() != h.bones.len() || bind.len() != h.bones.len() {
+        return Vec::new();
+    }
+    let tracked: std::collections::HashSet<&str> =
+        a.tracks.iter().map(|t| t.bone.as_str()).collect();
+    let mut remap = vec![None; h.bones.len()];
+    let mut kept = 0usize;
+    for (i, b) in h.bones.iter().enumerate() {
+        if tracked.contains(b.name.as_str()) {
+            remap[i] = Some(kept);
+            kept += 1;
+        }
+    }
+    h.bones
+        .iter()
+        .enumerate()
+        .filter_map(|(i, b)| {
+            let _ = remap[i]?;
+            let bm = &bind[i];
+            let m = &palette[i];
+            let (px, py, pz) = (bm[12], bm[13], bm[14]);
+            let pos = [
+                px * m[0] + py * m[4] + pz * m[8] + m[12],
+                px * m[1] + py * m[5] + pz * m[9] + m[13],
+                px * m[2] + py * m[6] + pz * m[10] + m[14],
+            ];
+            if !pos.iter().all(|v| v.is_finite()) {
+                return None;
+            }
+            Some(AnimPoseBone {
+                name: b.name.clone(),
+                parent: b.parent.and_then(|p| remap.get(p).copied().flatten()),
+                pos,
+            })
+        })
+        .collect()
 }
 
 /// 动作定位与解码：同组 `<目录>/ani/*.ani` 里按文件名找；空名字落到第一条
@@ -308,6 +366,7 @@ pub fn anim_pose_run(
             "蒙皮没摆成：影响顶点表和骨架对不上（骨名对不上或顶点号越界），不硬摆。".to_string()
         })?;
 
+        let bones = anim_bones_of(&hier, &a, frame);
         Ok(AnimPoseReply {
             mesh: mesh_actual,
             anim: anim_name,
@@ -315,6 +374,7 @@ pub fn anim_pose_run(
             frames,
             vertex_count: geom.positions.len(),
             positions: posed,
+            bones,
             notes: vec![
                 "预览以这条动作的第 0 帧为基准锚定；静止显示用的是网格里的绑定姿态，两者不同源\
                  （证据档案 .scratch/ani_axis/锚点判定_20261007.md：15/15 条动作全胜绑定锚）"
@@ -388,6 +448,7 @@ pub fn anim_pose_run(
                 positions: posed,
             });
         }
+        let bones = anim_bones_of(&preps[0].hier, &a, frame);
         // 顶层字段 = parts[0]：只认「回包没有 parts 字段」的旧前端照样能摆第一件。
         let first = &out[0];
         Ok(AnimPoseReply {
@@ -397,6 +458,7 @@ pub fn anim_pose_run(
             frames,
             vertex_count: first.vertex_count,
             positions: first.positions.clone(),
+            bones,
             notes,
             parts: Some(out),
         })

@@ -274,6 +274,10 @@ function initAnim() {
     el("secMesh").scrollIntoView({ block: "center" });
   });
   el("animPlay").addEventListener("click", () => setPlaying(!playing));
+const animBonesBox = el("animBones");
+if (animBonesBox) {
+  animBonesBox.addEventListener("change", () => applyPoseBones(poseLastReply));
+}
   // 点开才取数：一条动作约 0.6 秒，不该压在每次选资产的路径上
   onTabOpen((name) => {
     if (!state.selected) return;
@@ -685,7 +689,43 @@ async function poseRequest(frame) {
   }
 }
 
+let poseLastReply = null;
+
+/// 动作回包里的逐骨锚点：勾了「画布叠加骨架线」才画，线段按父下标连。
+function applyPoseBones(rep) {
+  // 测试里的 viewer 桩没有骨线接口：没有就当不支持，别把摆姿势那条路带崩。
+  if (!poseViewer || typeof poseViewer.setBoneLines !== "function" || typeof poseViewer.draw !== "function") {
+    return;
+  }
+  const box = el("animBones");
+  if (!box || !box.checked) {
+    poseViewer.setBoneLines(null);
+    poseViewer.draw();
+    return;
+  }
+  const bones = (rep && rep.bones) || [];
+  const lines = [];
+  for (const b of bones) {
+    if (!b || b.parent == null) continue;
+    const p = bones[b.parent];
+    if (p && b.pos && p.pos) lines.push([b.pos, p.pos]);
+  }
+  // 根骨/落脚点这类骨常落在世界原点，会从身体拖一条长线到脚下；
+  // 按段长中位数把明显离谱的段丢掉（只影响画线，不动数据）。
+  const len = ([a, b]) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+  if (lines.length >= 5) {
+    const lens = lines.map(len).sort((x, y) => x - y);
+    const med = lens[lens.length >> 1];
+    const kept = lines.filter((l) => len(l) <= med * 3);
+    lines.length = 0;
+    lines.push(...kept);
+  }
+  poseViewer.setBoneLines(lines.length ? { lines } : null);
+  poseViewer.draw();
+}
+
 function applyPoseReply(rep) {
+  poseLastReply = rep;
   const err = el("animPoseErr");
   err.hidden = true;
   err.textContent = "";
@@ -704,11 +744,13 @@ function applyPoseReply(rep) {
     el("animPoseNote").textContent = note;
     el("animPoseNote").hidden = !note;
   }
+  applyPoseBones(rep);
 }
 
 /// 整组回包按件对号摆：rep.parts[i].mesh 的尾名对到画布上的件（matchPartPoses
 /// 不按位置硬配），逐件 setPartPose——某件顶点不合格只丢那一件，其余照摆。
 function applyPartsReply(rep) {
+  poseLastReply = rep;
   const err = el("animPoseErr");
   err.hidden = true;
   err.textContent = "";
@@ -741,6 +783,7 @@ function applyPartsReply(rep) {
     el("animPoseNote").textContent = line;
     el("animPoseNote").hidden = !line;
   }
+  applyPoseBones(rep);
 }
 
 function poseFailLine(msg) {

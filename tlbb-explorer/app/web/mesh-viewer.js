@@ -1028,8 +1028,10 @@ export class MeshViewer {
     gl.uniformMatrix4fv(this.un.mv, false, mv);
 
     if (this.ground) this.drawGround(mv, proj);
-    if (this.parts) this.drawParts();
-    else if (this.inst) this.drawInstanced();
+    if (this.parts) {
+      this.drawParts();
+      this.drawBoneLines(mv, proj); // 动作页可叠骨线；没设过时 boneCount 为 0，空操作
+    } else if (this.inst) this.drawInstanced();
     else {
       this.drawSingle();
       this.drawBoneLines(mv, proj);

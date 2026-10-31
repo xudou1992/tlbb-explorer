@@ -223,10 +223,29 @@ function wireSkelTable() {
     }
     applyBoneHighlight();
   });
+  // 悬停只是预览：没有钉住的骨时，鼠标扫到哪根就在 3D 里黄一下。
+  let hoverBone = "";
+  el("skelTable").addEventListener("mouseover", (ev) => {
+    const tr = ev.target && ev.target.closest ? ev.target.closest("tr[data-bone]") : null;
+    if (!tr) return;
+    const name = tr.dataset.bone || "";
+    if (name === hoverBone) return;
+    hoverBone = name;
+    if (!skelBonePick) applyBoneHighlight(name);
+  });
+  el("skelTable").addEventListener("mouseout", (ev) => {
+    const tr = ev.target && ev.target.closest ? ev.target.closest("tr[data-bone]") : null;
+    if (!tr) return;
+    const to = ev.relatedTarget && ev.relatedTarget.closest ? ev.relatedTarget.closest("tr[data-bone]") : null;
+    if (to) return;
+    hoverBone = "";
+    if (!skelBonePick) applyBoneHighlight("");
+  });
 }
 
 /// 「只看带权重的骨」：勾选后表格与 3D 一起过滤；切回来恢复全部。
 let skelSkinWired = false;
+
 function wireSkelSkin() {
   if (skelSkinWired) return;
   const box = el("skelSkinOnly");
@@ -266,10 +285,11 @@ function skelFilteredPoints() {
     .map((n) => n.pos);
 }
 
-function applyBoneHighlight() {
+function applyBoneHighlight(name = skelBonePick) {
   if (!skelViewer) return;
   const rep = skelBoneReply;
-  if (!skelBonePick || !rep) {
+  const pick = name || "";
+  if (!pick || !rep) {
     skelViewer.setBoneHighlight(null);
     return;
   }
@@ -278,11 +298,11 @@ function applyBoneHighlight() {
   const hit = [];
   for (let i = 0; i < lines.length; i++) {
     const n = names[i];
-    if (n && (n[1] === skelBonePick || n[0] === skelBonePick)) hit.push(lines[i]);
+    if (n && (n[1] === pick || n[0] === pick)) hit.push(lines[i]);
   }
   // 没有可连的线（父骨或自己没绑定位移）：至少在这根骨的位置点个黄点。
   if (!hit.length) {
-    const p = skelBonePos && skelBonePos.get(skelBonePick);
+    const p = skelBonePos && skelBonePos.get(pick);
     if (p) hit.push([p, p]);
   }
   skelViewer.setBoneHighlight(hit);

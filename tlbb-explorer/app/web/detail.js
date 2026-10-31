@@ -1243,8 +1243,23 @@ el("secTex").addEventListener("click", async (e) => {
     return;
   }
   if (b.dataset.act === "try") {
-    const c = group && group.candidates[Number(b.dataset.idx)];
-    if (c && !applyTexture(c.png)) el("texNote").textContent = "先在上方立体预览里把网格调出来，才能套贴图。";
+    const idx = Number(b.dataset.idx);
+    const c = group && group.candidates[idx];
+    if (c && !applyTexture(c.png)) {
+      el("texNote").textContent = "先在上方立体预览里把网格调出来，才能套贴图。";
+      return;
+    }
+    if (c) {
+      // 手动套哪张，角标就挪到哪张：否则「已套（未确认）」会指着自动那张说谎。
+      const groups = (texReply && texReply.textureCandidates) || [];
+      trialApplied = {
+        gi: groups.indexOf(group),
+        idx,
+        mesh: String(group.mesh || "").replaceAll("\\", "/").split("/").pop().toLowerCase(),
+      };
+      paintTrialBadge();
+      el("texNote").textContent = `已套上候选 ${idx + 1}（未确认，不是客户端认定的那张）。`;
+    }
     return;
   }
   if (b.dataset.act === "confirm") {
@@ -1272,6 +1287,9 @@ el("secTex").addEventListener("click", async (e) => {
     // 滚动位置丢一次，就没人标得下去了。撤销那条路保持整页重刷：它要把槽位还回下拉，
     // 那是偶尔才做一次的動作，慢一点换来的一定是状态干净。
     slot.overrideHash = c.hash;
+    // 已记进覆盖表就不再是「未确认试贴」，把角标撤掉；槽位清单那行会变 🟢。
+    trialApplied = null;
+    paintTrialBadge();
     el("texSlots").innerHTML = texSlotsHtml(slots, Boolean(texReply));
     for (const g of el("texCand").querySelectorAll(".tex-group")) {
       const sel = g.querySelector(".tex-slot-pick");

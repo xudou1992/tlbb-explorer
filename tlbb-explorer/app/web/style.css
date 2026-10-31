@@ -581,6 +581,9 @@ body.stage-zoom-open::before {
 .tex-why summary { color: var(--faint); font-size: 11px; cursor: pointer; }
 .tex-why .tex-facts { display: block; margin-top: 2px; }
 .tex-cand { min-width: 0; margin: 0; display: grid; gap: 6px; align-content: start; }
+/* 自动试贴当前套上的那张候选卡：描边 + 角标，一页里只有一张会亮。 */
+.tex-cand.trial-on { outline: 2px solid var(--teal); outline-offset: 3px; border-radius: var(--radius-s); }
+.trial-badge { justify-self: start; padding: 2px 7px; border-radius: 999px; background: var(--teal); color: #fff; font-size: 11px; }
 .tex-cand img {
   display: block; width: 100%; height: 118px; object-fit: contain;
   border: 1px solid var(--line); border-radius: var(--radius); background: var(--stage);

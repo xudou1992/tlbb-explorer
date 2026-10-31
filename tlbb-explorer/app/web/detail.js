@@ -912,6 +912,8 @@ async function loadMaterial(gid, file) {
 // texSource 与 texReply 分开是有原因的：texReply 只在「有候选榜」时非空，
 // 而「没有榜」恰恰是要提示「后台还没跑完」的那一路——那时也得能重画这一栏。
 let texSource = null;
+/// 自动试贴当前套的是哪份榜的第几张：只用于在候选卡上标「已套（未确认）」。
+let trialApplied = null;
 let warmStatus = null;
 /// 这一栏当前铺的是哪一只资产的榜。确认/撤销之后要重刷**这一只**，
 /// 不是 `state.selected`——真窗口里撞到过：两次点击之间 state.selected 已经被
@@ -931,6 +933,30 @@ function activeMeshSorted(insp) {
   const active = base(currentMeshName());
   if (!active) return insp;
   return { ...insp, textureCandidates: groups.filter((g) => base(g.mesh) === active) };
+}
+
+/// 在候选卡上标出「自动试贴当前套的是这张」。只做视觉标记，不改试贴逻辑。
+function paintTrialBadge() {
+  const host = el("texCand");
+  if (!host) return;
+  for (const f of host.querySelectorAll("figure.tex-cand.trial-on")) f.classList.remove("trial-on");
+  for (const b of host.querySelectorAll(".trial-badge")) b.remove();
+  if (!trialApplied || !texReply) return;
+  const groups = texReply.textureCandidates || [];
+  const g = groups[trialApplied.gi];
+  if (!g) return;
+  const base = (s) => String(s || "").replaceAll("\\", "/").split("/").pop().toLowerCase();
+  if (base(g.mesh) !== trialApplied.mesh) return;
+  const btn = host.querySelector(
+    `button[data-act="try"][data-gi="${trialApplied.gi}"][data-idx="${trialApplied.idx}"]`,
+  );
+  const fig = btn && btn.closest ? btn.closest("figure.tex-cand") : null;
+  if (!fig) return;
+  fig.classList.add("trial-on");
+  const tag = document.createElement("span");
+  tag.className = "trial-badge";
+  tag.textContent = "已套（未确认）";
+  fig.prepend(tag);
 }
 
 function paintTex(insp) {
@@ -954,6 +980,7 @@ function paintTex(insp) {
   el("texNote").textContent = block.note;
   loadCandidatePngs();
   loadUvMaps();
+  paintTrialBadge();
 }
 
 // 换网格（画布上方的筹码）时重排候选栏，不重开容器：已解出的 png 都在回包里。
@@ -990,6 +1017,8 @@ setTexturePlanObserver((plan) => {
 });
 
 setTrialProvider(async (name) => {
+  trialApplied = null;
+  paintTrialBadge();
   const groups = (texReply && texReply.textureCandidates) || [];
   // 画布给的是完整路径，榜里只有文件名：按最后一段比。
   const base = (s) => String(s || "").replaceAll("\\", "/").split("/").pop().toLowerCase();
@@ -1010,6 +1039,8 @@ setTrialProvider(async (name) => {
   }
   if (!png) return { skip: "榜首那张的缩略图没解出来" };
   c.png = png; // 回填给「套上看看」复用，省一次开容器
+  trialApplied = { gi: groups.indexOf(g), idx: 0, mesh: want };
+  paintTrialBadge();
   const adj = Number.isFinite(Number(c.adjustedScore)) ? ` · 综合分 ${Number(c.adjustedScore).toFixed(2)}` : "";
   return { png, label: `${g.mesh} 候选 1${adj}` };
 });

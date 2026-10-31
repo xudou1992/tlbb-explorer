@@ -65,6 +65,13 @@ for (const id of ["pvGrid", "fxTex", "mtlTex"]) {
   });
 }
 el("lightbox").addEventListener("click", closeLightbox);
+// 浏览页的图片预览也走同一个灯箱（模块间用事件，不互相 import）。
+if (typeof window !== "undefined" && typeof window.addEventListener === "function") {
+  window.addEventListener("tlbb:lightbox", (e) => {
+    const d = (e && e.detail) || {};
+    if (d.src) openLightbox(d.src, d.label || "", d.hash || null);
+  });
+}
 
 // 上次的筛选/选中/地图视图先恢复，再谈别的——桌面工具的常识：
 // 昨天看到一半的东西，今天打开还在。

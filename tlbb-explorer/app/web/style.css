@@ -722,6 +722,7 @@ body.stage-zoom-open::before {
 .bp-img {
   display: block; max-width: 100%; max-height: 440px; margin-top: 10px;
   border: 1px solid var(--line-strong); border-radius: var(--radius); background: var(--stage);
+  cursor: zoom-in;
 }
 .bp-info { margin: 10px 0 0; padding-left: 18px; color: var(--muted); font-size: 12px; }
 

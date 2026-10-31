@@ -288,6 +288,12 @@ async function showFileDetail(entry) {
       img.className = "bp-img";
       img.src = pv.dataUrl;
       img.alt = entry.name;
+      img.title = "点开看大图";
+      img.addEventListener("click", () =>
+        window.dispatchEvent(
+          new CustomEvent("tlbb:lightbox", { detail: { src: pv.dataUrl, label: entry.path || entry.name } }),
+        ),
+      );
       host.append(img);
     } else if (pv.reason) {
       appendMsg(host, pv.reason);

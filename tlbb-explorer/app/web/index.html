@@ -282,6 +282,11 @@
                     <span class="anim-play">
                       <button type="button" id="animPlay" class="mini" aria-label="播放">播放</button>
                       <span class="dim" id="animPlayHint" title="动画帧率刻度的含义还没证实，这是预览用的参考节奏，不是游戏帧率">参考速度</span>
+                      <select id="animSpeed" aria-label="参考速度" title="动画帧率刻度的含义还没证实，这是预览用的参考节奏，不是游戏帧率">
+                        <option value="0.5">0.5×</option>
+                        <option value="1" selected>1×</option>
+                        <option value="2">2×</option>
+                      </select>
                     </span>
                     <p class="dim" id="animPoseErr" hidden></p>
                   </div>

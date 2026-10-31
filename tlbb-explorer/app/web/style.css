@@ -148,6 +148,7 @@ input[type="checkbox"] { accent-color: var(--teal); width: 15px; height: 15px; }
 .chips { display: flex; flex-wrap: wrap; gap: 5px; min-width: 0; }
 #animStep { margin: 6px 0 2px; align-items: center; }
 #animStep .dim { font-size: 12px; }
+#animSpeed { padding: 3px 6px; border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--bg-elev); font-size: 12px; }
 .chip {
   display: inline-flex; align-items: center; justify-content: space-between; gap: 8px;
   padding: 5px 9px; max-width: 100%; overflow: hidden;

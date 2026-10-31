@@ -276,6 +276,17 @@ function initAnim() {
     const b = el(id);
     if (b) b.addEventListener("click", () => stepFrame(d));
   }
+  const speed = el("animSpeed");
+  if (speed) {
+    speed.addEventListener("change", () => {
+      const v = Number(speed.value);
+      playSpeed = Number.isFinite(v) && v > 0 ? v : 1;
+      if (playing) {
+        clearInterval(playTimer);
+        playTimer = setInterval(() => playStep(), playStepMs());
+      }
+    });
+  }
   // 组成树里的「试画它」：名字是推出来的、清单没登记，但哈希在容器里核过 ⇒ 按哈希直读来画。
   el("tree").addEventListener("click", (ev) => {
     const btn = ev.target && ev.target.closest ? ev.target.closest("[data-trial-mesh]") : null;
@@ -349,6 +360,9 @@ let partLoadNote = "";
 /// 不许当成「游戏就是 25fps」写进任何文案。
 let playTimer = 0;
 let playing = false;
+/// 参考速度倍率：只改预览节奏，不改「帧率含义未证」那句口径。
+let playSpeed = 1;
+const playStepMs = () => Math.max(16, Math.round(PLAY_STEP_MS / playSpeed));
 
 function setPlaying(on) {
   if (on === playing) return;
@@ -361,7 +375,7 @@ function setPlaying(on) {
       setPlaying(false); // 没有关键帧可播：按钮如实退回「播放」
       return;
     }
-    playTimer = setInterval(() => playStep(), PLAY_STEP_MS);
+    playTimer = setInterval(() => playStep(), playStepMs());
     playStep(); // 点播放立刻走一步，不等第一个间隔
   } else if (playTimer) {
     clearInterval(playTimer);

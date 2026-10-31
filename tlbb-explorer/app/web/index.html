@@ -292,6 +292,11 @@
                   <span>第几帧</span>
                   <input id="animFrame" type="range" min="0" max="0" step="1" value="0" aria-label="帧游标" />
                 </label>
+                <div class="chips" id="animStep">
+                  <button type="button" id="animPrev" class="mini" aria-label="上一帧">◀ 上一帧</button>
+                  <button type="button" id="animNext" class="mini" aria-label="下一帧">下一帧 ▶</button>
+                  <span class="dim" id="animFrameVal"></span>
+                </div>
                 <label class="check">
                   <input id="animOnlyChanged" type="checkbox" checked />
                   <span>只列这一帧变了的骨</span>

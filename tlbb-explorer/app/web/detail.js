@@ -263,6 +263,19 @@ function initAnim() {
     poseCursor(); // 游标动 → 摆这一帧；连动时 gate 只保留最新，不排队积压
   });
   el("animOnlyChanged").addEventListener("change", repaintAnim);
+  const stepFrame = (d) => {
+    if (!animReply) return;
+    if (playing) setPlaying(false); // 手点逐帧就停下播放，别和定时器抢游标
+    const max = Math.max(0, (animReply.frames || 1) - 1);
+    animFrame = Math.min(max, Math.max(0, animFrame + d));
+    el("animFrame").value = String(animFrame);
+    repaintAnim();
+    poseCursor();
+  };
+  for (const [id, d] of [["animPrev", -1], ["animNext", 1]]) {
+    const b = el(id);
+    if (b) b.addEventListener("click", () => stepFrame(d));
+  }
   // 组成树里的「试画它」：名字是推出来的、清单没登记，但哈希在容器里核过 ⇒ 按哈希直读来画。
   el("tree").addEventListener("click", (ev) => {
     const btn = ev.target && ev.target.closest ? ev.target.closest("[data-trial-mesh]") : null;

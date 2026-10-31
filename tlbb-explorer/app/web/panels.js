@@ -337,6 +337,8 @@ export function clearAnimation() {
   el("animTable").innerHTML = "";
   el("animMissing").innerHTML = "";
   el("tabAnimCount").textContent = "";
+  const fv = el("animFrameVal");
+  if (fv) fv.textContent = "";
   setAnimControls(false);
 }
 
@@ -352,6 +354,8 @@ function setAnimControls(show) {
   }
   const table = el("animTable");
   if (table) table.hidden = !show;
+  const step = el("animStep");
+  if (step) step.hidden = !show;
 }
 
 /// 摆一帧。取哪几行、越界怎么夹、未命名的骨叫什么，全在 lib/animView.js（有测试盯着），
@@ -374,6 +378,11 @@ export function paintAnimation(rep, frame, onlyChanged, onPick) {
   slider.min = "0";
   slider.max = String(Math.max(0, (rep.frames || 1) - 1));
   slider.value = String(clampFrame(frame, rep.frames));
+  const fv = el("animFrameVal");
+  if (fv) {
+    const f = clampFrame(frame, rep.frames);
+    fv.textContent = rep.frames ? `第 ${f} 帧（共 ${rep.frames} 帧，0 起）` : "";
+  }
   const rows = onlyChanged ? changedRows(rep.tracks, frame) : frameRows(rep.tracks, frame);
   const cell = (a) => (a ? a.map((v) => v.toFixed(3)).join(" ") : "—");
   // 第几帧这类活数字随滑杆变——它住折叠区里，跟着每次重画一起刷新。

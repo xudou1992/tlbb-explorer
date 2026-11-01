@@ -25,7 +25,10 @@ test("左栏底部只报一条总数，不在筛选栏里堆口径不同的比�
   // 现在只留总数一行，比值统一去「报告」浮层里说。
   const rc = railCount({ totalGroups: 13080, imageCandidates: 25 });
   assert.equal(rc.total, "13,080");
-  assert.equal(rc.withImage, "25");
+  // 「其中 25 组贴图名能对上文件」这句被加回来过一次，再收掉：它数的是**清单登记了
+  // 贴图成员**的组（全库 13,080 里只有 25 个），而界面还能按客户端 convert/* 转换路径
+  // 给更多组现场解出真图——摆在这儿会被读成「只有 25 组能看图」。
+  assert.equal(rc.withImage, undefined, "筛选栏不再报这个数");
 });
 
 test("没读完时条数要标注是中途值", () => {

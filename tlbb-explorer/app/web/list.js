@@ -84,9 +84,9 @@ export function paintRail() {
   } else {
     syncChips();
   }
-  // 底部的总数一行：截图里左栏最下面那块「共有资源」。
-  const rc = railCount(s);
-  el("railCount").innerHTML = `<b>${rc.total}</b> 条资产 · 其中 <b>${rc.withImage}</b> 组贴图名能对上文件`;
+  // 底部的总数一行：只报总数。「其中 N 组贴图名能对上文件」那句数的是清单登记了贴图成员的
+  // 组（全库只有 25 个），会被读成工具只有 25 组能看图——真实口径在「报告」浮层里。
+  el("railCount").innerHTML = `<b>${railCount(s).total}</b> 条资产`;
 
   const btn = el("unnamed");
   btn.textContent = state.named ? `看未命名资产 ${num(s.unnamed)}` : "回到有名字的资产";

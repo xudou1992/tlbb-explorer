@@ -59,10 +59,14 @@ export function progressLine(view, ready, scanned, total) {
 /// 左栏底部的一行总数。分母写在文案里，不靠用户猜。
 /// 曾经这里列过三行明细（含「贴图引用对上 N/M」）；那三行的分母口径不一，
 /// 摆在一起只会让人以为整页不可信——口径该在证据页说清，不在筛选栏里堆数字。
+///
+/// 「其中 N 组贴图名能对上文件」这句后来又被加回来过一次，现在再收掉：那个 N 数的是
+/// **清单把贴图登记成这条资产成员**的组（全库 13,080 里只有 25 个），而界面另外能按
+/// 客户端 `convert/*` 转换路径现场解出真图。摆在这儿就会被读成「这工具只有 25 组能看图」，
+/// 而真实可用比例在「报告」浮层里已经连口径一起写了。
 export function railCount(s) {
   return {
     total: num(s.totalGroups),
-    withImage: num(s.imageCandidates),
   };
 }
 

@@ -242,6 +242,9 @@ pub struct AppData {
     pub t_collect: AtomicUsize,
     pub t_decode: AtomicUsize,
     blobs: Mutex<HashMap<u64, Option<Arc<Blob>>>>,
+    /// 「对不上的贴图名按 `convert/*` 能对上多少」——按扩展名聚合，算一次缓存一份。
+    /// 要扫全库 lite 的引用名（约 1.4 秒），而 `ref_view` 一次会话里会被调用好几遍。
+    solvable_by_ext: Mutex<Option<std::collections::HashMap<String, usize>>>,
     group_blobs: Mutex<HashMap<i64, Option<Arc<Blob>>>>,
     outlines: Mutex<HashMap<i64, Option<Arc<MeshOutline>>>>,
 }
@@ -311,6 +314,7 @@ impl AppData {
             t_collect: AtomicUsize::new(0),
             t_decode: AtomicUsize::new(0),
             blobs: Mutex::new(HashMap::new()),
+            solvable_by_ext: Mutex::new(None),
             group_blobs: Mutex::new(HashMap::new()),
             outlines: Mutex::new(HashMap::new()),
         });
@@ -879,11 +883,50 @@ impl AppData {
         (fp, asset, names)
     }
 
+    /// 「对不上的贴图名里，有几个能按客户端 `convert/*` 转换路径对上真实文件」，
+    /// 按扩展名（`.tga` 这样，与 `by_ext` 的行同一口径：都数**不同名字**）聚合。
+    /// 名字去重后逐个查路径表 + resources 行，不解像素；结果缓存一份。
+    fn solvable_by_ext(&self) -> std::collections::HashMap<String, usize> {
+        if let Some(hit) = self.solvable_by_ext.lock().ok().and_then(|g| g.clone()) {
+            return hit;
+        }
+        let mut out: std::collections::HashMap<String, usize> = Default::default();
+        let lites: Vec<Arc<Lite>> = match self.lite.lock() {
+            Ok(l) => l.values().cloned().collect(),
+            Err(_) => return out,
+        };
+        let mut seen: std::collections::HashSet<String> = Default::default();
+        let mut pending: Vec<(String, String)> = Default::default();
+        for l in &lites {
+            for r in &l.refs {
+                if r.located || !labels::is_texture_name(&r.name) {
+                    continue;
+                }
+                let key = r.name.to_ascii_lowercase();
+                if !seen.insert(key.clone()) {
+                    continue;
+                }
+                let ext = format!(".{}", key.rsplit('.').next().unwrap_or(""));
+                pending.push((ext, r.name.clone()));
+            }
+        }
+        let hits = self.q(|c| Ok(crate::texture_override::solvable_names(&self.pm, c.conn(), &pending)));
+        for (ext, n) in hits {
+            *out.entry(ext).or_default() += n;
+        }
+        if let Ok(mut g) = self.solvable_by_ext.lock() {
+            *g = Some(out.clone());
+        }
+        out
+    }
+
     /// The citation graph's health, and the names it fails to resolve. Every figure is
     /// read from the catalog; nothing here is derived from a card, so the panel states
     /// the library's condition rather than a sample of it.
     pub fn ref_view(&self, dangling_limit: usize) -> RefView {
         let health = self.q(|c| c.ref_health());
+        let solvable = self.solvable_by_ext();
+        let solvable_total: usize = solvable.values().sum();
         let pct = if health.refs_total == 0 {
             0
         } else {
@@ -894,6 +937,7 @@ impl AppData {
             refs_resolved: health.refs_resolved,
             resolved_pct: pct,
             dangling_names: health.dangling_names,
+            dangling_solvable: solvable_total,
             by_ext: health
                 .by_ext
                 .iter()
@@ -903,6 +947,14 @@ impl AppData {
                     total: e.total,
                     resolved: e.resolved,
                     dangling_names: e.dangling_names,
+                    solvable_names: solvable
+                        .get(&e.ext.to_ascii_lowercase())
+                        .copied()
+                        .unwrap_or(0),
+                    solvable_pct: pct_of(
+                        solvable.get(&e.ext.to_ascii_lowercase()).copied().unwrap_or(0),
+                        e.dangling_names,
+                    ),
                     resolved_pct: pct_of(e.resolved, e.total),
                 })
                 .collect(),
@@ -1812,6 +1864,63 @@ mod page_regression {
             "只数第一条边会严重少报（{} vs {}）",
             stats2.image_candidates,
             stats2.paintable_groups
+        );
+    }
+
+    /// 报告页那张表的最后一列（对不上的名字里可按 `convert/*` 对上文件的）要钉住三件事。
+    /// **只钉关系不钉死数字**——上一班就是写死了「手套 0 根带表」被数据漂移打红的。
+    #[test]
+    fn 报告页的转换路径列只讲关系不编数() {
+        let (root, db) = crate::inspector::roots();
+        if !root.join("data.pak").is_file() || !db.is_file() {
+            eprintln!("跳过：本机没有客户端或资源清单");
+            return;
+        }
+        let app = AppData::open(&root, &db).expect("open");
+        assert!(app.ready(), "本机应有 warm_cache.json(没有就先跑 full_warm_cache_cycle)");
+        let rv = app.ref_view(5);
+        let tga = rv
+            .by_ext
+            .iter()
+            .find(|e| e.ext.eq_ignore_ascii_case(".tga"))
+            .expect("表里该有 .tga 这一行");
+        // 1) 这一列不能超过它自己的分母
+        for e in &rv.by_ext {
+            assert!(
+                e.solvable_names <= e.dangling_names,
+                "{} 可解 {} 不该超过对不上名字 {}",
+                e.ext,
+                e.solvable_names,
+                e.dangling_names
+            );
+        }
+        // 2) 只有贴图类能有这条边：材质/动作/网格/骨骼的名字不走 convert 换算
+        for e in rv.by_ext.iter().filter(|e| {
+            !matches!(e.ext.to_ascii_lowercase().as_str(), ".tga" | ".png" | ".dds" | ".jpg" | ".jpeg" | ".bmp" | ".webp")
+        }) {
+            assert_eq!(e.solvable_names, 0, "{} 不是贴图，不该有转换路径可解：{}", e.ext, e.solvable_names);
+        }
+        // 3) 这条边的存在必须改变结论：清单口径说 .tga 几乎全对不上，
+        //    可解数应当**远大于**清单对上数——否则这一列就是装饰。
+        assert!(
+            tga.solvable_names > tga.resolved * 10,
+            ".tga 清单对上 {} 个、转换路径可解 {} 个，这一列没改变任何结论",
+            tga.resolved,
+            tga.solvable_names
+        );
+        assert!(
+            rv.dangling_solvable >= 5_000,
+            "全库可解总数应当是几千级（实测约 7.9k），实际 {}",
+            rv.dangling_solvable
+        );
+        let sum: usize = rv.by_ext.iter().map(|e| e.solvable_names).sum();
+        assert_eq!(sum, rv.dangling_solvable, "各行之和要等于卡片上那个总数");
+        eprintln!(
+            "报告页：.tga 对上 {} · 可解 {}（{}%）· 全库可解 {}",
+            tga.resolved,
+            tga.solvable_names,
+            tga.solvable_pct,
+            rv.dangling_solvable
         );
     }
 }

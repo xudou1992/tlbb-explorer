@@ -599,6 +599,26 @@ pub(crate) fn auto_texture_hash(pm: &PathMap, con: &Connection, name: &str) -> O
     resolve_texture_auto(pm, con, name).map(|a| (a.hash, a.path))
 }
 
+/// 一批「清单没登记路径的贴图名」里，有几个能按客户端 `convert/*` 换算对上真实文件。
+/// 按传入的扩展名分组计数——报告页的表就是按扩展名分行的，口径要对得上。
+/// 路径表读不出来（`None`）就全算 0：宁缺勿假。
+pub(crate) fn solvable_names(
+    pm: &Option<PathMap>,
+    con: &Connection,
+    pending: &[(String, String)],
+) -> Vec<(String, usize)> {
+    let Some(pm) = pm.as_ref() else {
+        return Vec::new();
+    };
+    let mut acc: std::collections::BTreeMap<String, usize> = Default::default();
+    for (ext, name) in pending {
+        if auto_texture_hash(pm, con, name).is_some() {
+            *acc.entry(ext.clone()).or_default() += 1;
+        }
+    }
+    acc.into_iter().collect()
+}
+
 fn resolve_texture_auto(pm: &PathMap, con: &Connection, name: &str) -> Option<AutoTexture> {
     let path = pm.lookup(name)?;
     for prefix in ["convert/dxt/", "convert/astc/", "convert/etc/", "convert/pvr/"] {

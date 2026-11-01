@@ -26,6 +26,7 @@ function summaryHtml(h) {
         <td class="n">${num(e.resolved)}</td>
         <td class="bar-cell"><span class="mini-bar"><i style="width:${e.resolvedPct}%;background:${barColor(e.resolvedPct)}"></i></span><em>${pctText(e.resolvedPct, e.resolved)}</em></td>
         <td class="n dim">${e.danglingNames ? num(e.danglingNames) : "—"}</td>
+        <td class="n${e.solvableNames ? " ok" : " dim"}">${e.solvableNames ? `${num(e.solvableNames)}（${e.solvablePct}%）` : "—"}</td>
       </tr>`,
     )
     .join("");
@@ -41,23 +42,25 @@ function summaryHtml(h) {
   <p class="plain">客户端文件里写下的「谁用到谁」，有多少真能对上我们手上的文件。对不上的部分不是解析漏了，
   而是发布包当初就没带这些资源——所以照实列出来，不藏。</p>
   <p class="dim">注意口径：这里的「对上」只按<b>资源清单登记的名字/路径</b>算。
-  贴图另有客户端 <code>convert/*</code> 转换路径可解出一批（详情页逐条标出、列表角标写作「可解 N」），
-  这批没有身份记录，<b>不计入</b>上面的百分比——所以真实可用比例比这里高。</p>
+  贴图另有客户端 <code>convert/*</code> 转换路径可解的一批——实测<b>全库 ${num(h.danglingSolvable)} 个</b>对不上的名字
+  能按这条路径对上真实文件（占对不上贴图名的九成上下；抽样 400 张真去解码，400 张都解得出像素）。
+  这批没有身份记录，<b>不计入</b>上面的百分比——所以真实可用比例比这里高，看表里最后一列。</p>
 
   <div class="hl-cards">
     <div class="hl-card"><dt>引用总数</dt><dd>${num(h.refsTotal)}</dd><span>客户端文件里写下的引用条目</span></div>
     <div class="hl-card"><dt>能对上文件的</dt><dd>${num(h.refsResolved)} <em>${pctText(h.resolvedPct, h.refsResolved)}</em></dd>${bar(h.resolvedPct)}<span>剩下 ${num(h.refsTotal - h.refsResolved)} 条只有名字</span></div>
-    <div class="hl-card"><dt>对不上的名字</dt><dd>${num(h.danglingNames)}</dd><span>只读到名字，没有对应资源</span></div>
+    <div class="hl-card"><dt>对不上的名字</dt><dd>${num(h.danglingNames)}</dd><span>只读到名字，没有对应资源；其中 ${num(h.danglingSolvable)} 个可按客户端转换路径对上文件</span></div>
     <div class="hl-card"><dt>有引用可查的文件</dt><dd>${num(h.assetsCitingResolved)} / ${num(h.assetsCiting)}</dd><span>按文件算，不是按资产组（全库里至少有一条引用能对上的文件 · ${pctText(pctOf(h), h.assetsCitingResolved)}）</span></div>
   </div>
 
   <section class="hl-sec">
     <h3>按文件类型看 <em>引用条目 —— 能不能对上</em></h3>
     <table class="hl-table">
-      <thead><tr><th>类型</th><th class="n">引用</th><th class="n">对上</th><th>比例</th><th class="n">对不上的名字</th></tr></thead>
+      <thead><tr><th>类型</th><th class="n">引用</th><th class="n">对上</th><th>比例</th><th class="n">对不上的名字</th><th class="n">可按转换路径对上</th></tr></thead>
       <tbody>${extRows}</tbody>
     </table>
-    <p class="foot">「引用」按条目数，「对不上的名字」按不同名字数，两列不是同一单位，别相加。</p>
+    <p class="foot">「引用」按条目数，「对不上的名字」与最后一列按<b>不同名字</b>数，三列不是同一单位，别相加。
+      最后一列是清单里没登记路径、但按客户端 <code>convert/*</code> 换算能找到真实文件的名字数。</p>
   </section>
 
   <div class="hl-cols">

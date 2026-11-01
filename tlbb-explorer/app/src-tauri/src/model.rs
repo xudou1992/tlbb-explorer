@@ -171,6 +171,13 @@ pub struct RefExtView {
     /// Distinct names carrying this extension that never landed. Counted separately from
     /// `total`, which counts edges — the two are different units on purpose.
     pub dangling_names: usize,
+    /// `dangling_names` 里有多少个**能按客户端 `convert/*` 转换路径对上真实文件**。
+    /// 与 `resolved` 不重叠：那条是清单登记了名字/路径的，这条是清单没路径、按客户端
+    /// 换算找得到文件的。合起来才是「真能用上的」——只看上一条会把 30,585 个贴图名
+    /// 报成「只有 25 个对得上」（实测 90.7% 的贴图名其实对得上文件）。
+    pub solvable_names: usize,
+    /// `solvable_names / dangling_names`，0-100，同样在后端算一次——前端不许再舍入一遍。
+    pub solvable_pct: u32,
     /// `resolved / total`, 0-100, so the frontend never rounds it a second way.
     pub resolved_pct: u32,
 }
@@ -198,6 +205,8 @@ pub struct RefView {
     /// two different ways.
     pub resolved_pct: u32,
     pub dangling_names: usize,
+    /// 全库对不上的名字里，可按 `convert/*` 转换路径对上文件的总数（贴图之外一律 0）。
+    pub dangling_solvable: usize,
     pub by_ext: Vec<RefExtView>,
     pub top_dangling: Vec<DanglingView>,
     /// Distinct assets with any citation at all — the denominator for the ratio below.

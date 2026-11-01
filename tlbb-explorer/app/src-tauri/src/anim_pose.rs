@@ -1376,6 +1376,40 @@ mod tests {
             "抽样 {tried} 张「对得上文件」的贴图：真解得出像素 {decoded_ok} 张 = {:.1}%",
             decoded_ok as f64 * 100.0 / tried.max(1) as f64
         );
+        // 报告页的表是**按不同名字数**的（.tga 那行写「对不上的名字 8,672」），
+        // 上面那两个并集数按组数、口径不一样，不能直接搬过去。这里按同名口径再量一遍。
+        let mut dangling: std::collections::HashMap<String, String> = Default::default();
+        for gid in &gids {
+            let Some(l) = app.lite_of(*gid) else { continue };
+            for r in &l.refs {
+                if !r.located {
+                    dangling.entry(r.name.clone()).or_insert_with(|| r.kind.clone());
+                }
+            }
+        }
+        let mut per_ext: std::collections::BTreeMap<String, (usize, usize)> = Default::default();
+        for (name, kind) in &dangling {
+            let hit = tlbb_core::catalog::labels::is_texture_name(name)
+                && crate::texture_override::auto_texture_hash(&pm, &con, name).is_some();
+            let e = per_ext.entry(kind.clone()).or_default();
+            e.0 += 1;
+            if hit {
+                e.1 += 1;
+            }
+        }
+        let mut solvable_total = 0usize;
+        println!("按不同名字数（与报告页同口径）：类型 对不上名字数 其中可按 convert/* 对上");
+        for (k, (n, s)) in &per_ext {
+            solvable_total += s;
+            if *s > 0 || *n > 200 {
+                println!("  {k}: {n} 个名字 · 可解 {s}");
+            }
+        }
+        println!(
+            "全库对不上的名字 {} 个，其中可按客户端转换路径对上文件 {solvable_total} 个 = {:.1}%",
+            dangling.len(),
+            solvable_total as f64 * 100.0 / dangling.len().max(1) as f64
+        );
         assert!(either >= member_edge, "并集不该小于单条边");
         assert!(gids.len() > 10_000, "名单不该只有几千组：{}", gids.len());
     }

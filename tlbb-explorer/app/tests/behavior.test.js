@@ -201,6 +201,7 @@ test("筛选筹码：不重建那一路也要把高亮挪到生效的那一颗",
     grades: [],
     totalGroups: 2,
     imageCandidates: 0,
+    paintableGroups: 0,
     unnamed: 0,
   };
   list.module.paintRail();

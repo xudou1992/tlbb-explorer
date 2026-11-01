@@ -84,9 +84,15 @@ export function paintRail() {
   } else {
     syncChips();
   }
-  // 底部的总数一行：只报总数。「其中 N 组贴图名能对上文件」那句数的是清单登记了贴图成员的
-  // 组（全库只有 25 个），会被读成工具只有 25 组能看图——真实口径在「报告」浮层里。
-  el("railCount").innerHTML = `<b>${railCount(s).total}</b> 条资产`;
+  // 底部的总数一行：报的是「至少有一张贴图能对上真实文件」的组数（两条边的并集），
+  // 悬停写清两条边各是什么——只数清单登记成员的话全库只有 25 组，会被读成工具不能出图。
+  const rc = railCount(s);
+  const box = el("railCount");
+  box.innerHTML = `<b>${rc.total}</b> 条资产 · 其中 <b>${rc.paintable}</b> 组能对上贴图文件`;
+  box.title =
+    "「能对上贴图文件」= 这一组里至少有一张贴图找得到真实文件，两条边任一成立即算：" +
+    "① 清单把贴图登记成了这组的成员；② 材质里写了贴图名字、清单没登记路径，" +
+    "但能按客户端 convert 转换路径对上文件。对上的文件是否真解得出像素是另一件事（抽样 400 张全解得出）。";
 
   const btn = el("unnamed");
   btn.textContent = state.named ? `看未命名资产 ${num(s.unnamed)}` : "回到有名字的资产";
@@ -333,6 +339,7 @@ function currentFilter() {
     scenario: state.scenario,
     kind: state.kind,
     grade: state.grade,
+    onlyPaintable: state.onlyPaintable || undefined,
     named: state.named,
     limit: PAGE_SIZE,
   };
@@ -427,9 +434,11 @@ export function resetFilters() {
     kind: "全部",
     scenario: "全部",
     grade: "全部",
+    onlyPaintable: false,
     named: true,
   });
   el("q").value = "";
+  el("onlyPaintable").checked = false;
   saveState();
   refresh({ top: true });
 }

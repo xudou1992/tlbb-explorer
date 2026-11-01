@@ -96,10 +96,9 @@
           <div class="chips grades" id="grades"></div>
         </section>
 
-        <!-- 这里原来有一枚「只看有缺失的资源」勾选框：它的字段叫 only_with_image，
-             筛的是「清单登记了贴图成员」那 25 组——和标签正好相反；而真按标签去筛
-             「有缺失」，全库 11,263/13,080（86%）都带「组成单一」这条，筛了等于没筛。
-             两头都不成立，先撤下；要做就做「只看详情里真能出图的」（见 README 待办）。 -->
+        <label class="check" title="勾上只留「至少有一张贴图能对上真实文件」的资产：清单里登记了贴图成员的，或材质写的贴图名能按客户端 convert 转换路径对上文件的。不勾则全列。">
+          <input id="onlyPaintable" type="checkbox" /><span>只看能对上贴图文件的</span>
+        </label>
         <button type="button" id="unnamed" class="ghost wide">看未命名资产</button>
 
         <div class="rail-count" id="railCount"></div>

@@ -19,16 +19,15 @@ test("贴图引用必须带着「贴图」两个字出现", () => {
   assert.match(texPair(25, 22630), /^贴图引用/);
 });
 
-test("左栏底部只报一条总数，不在筛选栏里堆口径不同的比值", () => {
+test("左栏底部只报一条总数 + 能对上贴图文件的组数（两条边的并集）", () => {
   // 曾经这里列三行明细，含「贴图引用对上 25 / 22,630」——分母只数贴图引用，
   // 和旁边两行的分母不是一个东西，摆一起只会让人以为整页不可信。
-  // 现在只留总数一行，比值统一去「报告」浮层里说。
-  const rc = railCount({ totalGroups: 13080, imageCandidates: 25 });
+  // 「25」单独摆出来还会被读成「工具只有 25 组能看图」：它只数清单登记了贴图成员的组，
+  // 材质名按客户端 convert 转换路径对上文件的那 8 千多组没算进去。现在报并集。
+  const rc = railCount({ totalGroups: 13080, imageCandidates: 25, paintableGroups: 8785 });
   assert.equal(rc.total, "13,080");
-  // 「其中 25 组贴图名能对上文件」这句被加回来过一次，再收掉：它数的是**清单登记了
-  // 贴图成员**的组（全库 13,080 里只有 25 个），而界面还能按客户端 convert/* 转换路径
-  // 给更多组现场解出真图——摆在这儿会被读成「只有 25 组能看图」。
-  assert.equal(rc.withImage, undefined, "筛选栏不再报这个数");
+  assert.equal(rc.paintable, "8,785");
+  assert.equal(rc.withImage, undefined, "只数第一条边的旧字段不许回来");
 });
 
 test("没读完时条数要标注是中途值", () => {
@@ -173,11 +172,13 @@ test("空列表文案点名还开着的筛选条件", () => {
 /// 「清单登记了贴图成员」那 25 组（与标签相反），而真按标签筛「有缺失」全库 86%
 /// 都命中（等于没筛）。老用户 localStorage 里可能还留着 onlyImage=true，
 /// 文案不许再把它念出来——否则等于凭空多出一个没人能关掉的筛选条件。
-test("撤掉的勾选框不许从旧本地状态里复活", () => {
+/// 取代它的是 onlyPaintable（只看能对上贴图文件的），那句条件名要能正常出现。
+test("撤掉的勾选框不许从旧本地状态里复活，新的条件名要报得出", () => {
   const 默认 = { kind: "全部", scenario: "全部", grade: "全部", named: true };
   const a = emptyMessage({ query: "x", state: { ...默认, onlyImage: true }, ready: true });
   assert.ok(!a.span.includes("只看有缺失"), `不该再报这个条件：${a.strong} ${a.span}`);
-  assert.ok(!a.span.includes("缺失"), `不该再报这个条件：${a.span}`);
+  const b = emptyMessage({ query: "x", state: { ...默认, onlyPaintable: true }, ready: true });
+  assert.ok(b.span.includes("只看能对上贴图文件的"), `新条件要点名：${b.span}`);
 });
 
 test("角标带上「可解 N」：说明这些贴图打得开，不是真缺", () => {

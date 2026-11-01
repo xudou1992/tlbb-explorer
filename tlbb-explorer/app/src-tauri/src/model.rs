@@ -116,6 +116,11 @@ pub struct Stats {
     /// Groups that name at least one texture we could try to render — not a promise
     /// that pixels came out, which the card itself decides on demand.
     pub image_candidates: usize,
+    /// 至少有一张贴图能对上真实文件的组数——两条边取并：清单登记了贴图成员，
+    /// 或材质里写的名字能按客户端 `convert/*` 转换路径对上文件。
+    /// 页脚报的是这个数；`image_candidates` 只是第一条边（全库 25 组），单独摆出来会被读成
+    /// 「工具只有 25 组能看图」。
+    pub paintable_groups: usize,
     /// How many bodies were actually read back and expanded so far.
     pub decoded: usize,
     pub located_refs: usize,
@@ -134,9 +139,10 @@ pub struct Filter {
     pub scenario: Option<String>,
     pub kind: Option<String>,
     pub grade: Option<String>,
+    /// 只列「至少有一张贴图能对上真实文件」的组（判据见 `Stats::paintable_groups`）。
     /// 这里原来有 `only_with_image`：界面标签写的是「只看有缺失的资源」，筛的却是
     /// 「清单登记了贴图成员」那 25 组——方向相反，且按标签真做会命中全库 86%。
-    /// 勾选框已撤下，判据也一并撤；要重建先看 README 里那条待办。
+    pub only_paintable: Option<bool>,
     /// Some(true) 只列有名字的，Some(false) 只列没名字的，None 不管。
     pub named: Option<bool>,
     pub limit: Option<usize>,

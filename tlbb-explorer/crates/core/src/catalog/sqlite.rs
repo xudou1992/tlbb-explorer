@@ -262,6 +262,12 @@ pub struct Catalog {
 }
 
 impl Catalog {
+    /// 只读连接本身。给「按路径哈希再查一次 resources」这类桥接用
+    /// （`convert/*` 贴图名→文件），它们要的是同一条只读连接，不是第二个打开的库。
+    pub fn conn(&self) -> &Connection {
+        &self.con
+    }
+
     pub fn open_ro(path: impl AsRef<Path>) -> Result<Self> {
         let con = Connection::open_with_flags(
             path,

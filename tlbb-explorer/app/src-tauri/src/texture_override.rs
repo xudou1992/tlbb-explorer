@@ -471,7 +471,7 @@ fn fetch_raw(root: &Path, db: &Path, hash: u64) -> Result<(Vec<u8>, String), Str
 }
 
 /// 把一张贴图/图片资源解成缩略图（长边 256）或原样字节。
-fn decode_candidate_png(root: &Path, db: &Path, hash: u64) -> Result<(&'static str, Vec<u8>), String> {
+pub(crate) fn decode_candidate_png(root: &Path, db: &Path, hash: u64) -> Result<(&'static str, Vec<u8>), String> {
     decode_image(root, db, hash, 256)
 }
 

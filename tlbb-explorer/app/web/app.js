@@ -93,6 +93,15 @@ el("reset").addEventListener("click", () => {
   resetFilters();
   clearDetail();
 });
+// 勾选框和搜索框一样是「存在本地、重启还在」的条件：不回填 DOM，就会出现
+// 「列表被筛窄了、框却看着没勾」的隐形筛选（上一版 onlyImage 正是这样——
+// 它进过 PERSIST_KEYS，但启动时从没往 DOM 回写过）。
+el("onlyPaintable").checked = !!state.onlyPaintable;
+el("onlyPaintable").addEventListener("change", (e) => {
+  state.onlyPaintable = e.target.checked;
+  saveState();
+  refresh({ top: true });
+});
 el("unnamed").addEventListener("click", toggleUnnamed);
 el("openHealth").addEventListener("click", openHealth);
 el("closeHealth").addEventListener("click", closeHealth);

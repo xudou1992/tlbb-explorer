@@ -135,6 +135,8 @@ pub struct Lite {
     pub located: usize,
     pub ref_total: usize,
     pub preview_candidates: Vec<u64>,
+    /// 见 `Row::tex_solvable`：这组有几个贴图名能按 `convert/*` 对上文件。
+    pub tex_solvable: usize,
     pub hub_decoded: bool,
     pub rules: Vec<String>,
     pub members: Vec<Member>,
@@ -176,6 +178,9 @@ struct Row {
     tags: Vec<String>,
     rules: Vec<String>,
     preview_candidates: Vec<u64>,
+    /// 材质里写了、清单没登记路径的贴图名中，有几张能按客户端 `convert/*` 转换路径
+    /// 对上真实的贴图文件。0 且 `preview_candidates` 也空 = 这组一张贴图文件都对不上。
+    tex_solvable: usize,
 }
 
 impl Row {
@@ -191,6 +196,7 @@ impl Row {
             tags: Vec::new(),
             rules: Vec::new(),
             preview_candidates: Vec::new(),
+            tex_solvable: 0,
         }
     }
 }
@@ -218,6 +224,10 @@ pub struct Container {
 pub struct AppData {
     root: PathBuf,
     catalog_file: PathBuf,
+    /// 客户端 `ResourcePath.cfg` 那张「贴图名 → 包内路径」的表，开库时读一次。
+    /// 预热带它给每组算「材质里写的贴图名有几张能按 `convert/*` 对上文件」——
+    /// 只查名字和 resources 行，不解像素，全库一次约 1.4 秒。
+    pm: Option<tlbb_core::pathmap::PathMap>,
     cat: Mutex<Catalog>,
     containers: Vec<Container>,
     by_name: HashMap<String, usize>,
@@ -282,9 +292,12 @@ impl AppData {
             t0.elapsed().as_secs_f64()
         );
 
+        // 路径表读不出来就按「没有这座桥」处理：那条边一律算 0，界面上退回只数清单成员。
+        let pm = tlbb_core::pathmap::PathMap::load(&root);
         let app = Arc::new(Self {
             root,
             catalog_file,
+            pm,
             cat: Mutex::new(cat),
             containers,
             by_name,
@@ -689,6 +702,7 @@ impl AppData {
             located: sig.refs_located,
             ref_total: sig.refs_total,
             preview_candidates: row.preview_candidates,
+            tex_solvable: row.tex_solvable,
             hub_decoded,
             rules: row.rules,
             members: row.members,
@@ -826,6 +840,24 @@ impl AppData {
                 .extend(one(cat.textures_in_dir(&g.dir)).into_iter().map(|(h, _)| h));
         }
 
+        // 「材质里写了名字、清单没登记路径」那批贴图，有几张能按客户端 `convert/*`
+        // 转换路径对上真实文件。只查 名字→路径→resources 行，不解像素；
+        // 同一个名字被多份材质提到只算一次（按名字去重），PathMap 读不出来就整条算 0。
+        let tex_solvable = match &self.pm {
+            Some(pm) => {
+                let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
+                items
+                    .iter()
+                    .filter(|r| !r.located && labels::is_texture_name(&r.name))
+                    .filter(|r| seen.insert(r.name.clone()))
+                    .filter(|r| {
+                        crate::texture_override::auto_texture_hash(pm, cat.conn(), &r.name).is_some()
+                    })
+                    .count()
+            }
+            None => 0,
+        };
+
         Row {
             group: g.clone(),
             base,
@@ -835,6 +867,7 @@ impl AppData {
             tags,
             rules: tags_raw.iter().take(6).map(|(t, c)| format!("{t} ({c})")).collect(),
             preview_candidates,
+            tex_solvable,
         }
     }
 
@@ -973,6 +1006,9 @@ impl AppData {
         if !is_none_or(&f.grade, |s| l.grade.label().starts_with(s)) {
             return false;
         }
+        if f.only_paintable.unwrap_or(false) && l.preview_candidates.is_empty() && l.tex_solvable == 0 {
+            return false;
+        }
         if let Some(want) = f.named {
             if present::is_named(&l.group) != want {
                 return false;
@@ -1060,7 +1096,9 @@ impl AppData {
         let rank = |l: &Lite| {
             (
                 present::is_named(&l.group),
-                !l.preview_candidates.is_empty(),
+                // 「有贴图线索」以前只看清单登记的成员（全库只有 25 组），把 8 千多组
+                // 能按 convert/* 转换路径对上文件的挡在外面了——第一眼该排前者要算上这条边。
+                !l.preview_candidates.is_empty() || l.tex_solvable > 0,
                 l.members.len(),
             )
         };
@@ -1143,13 +1181,15 @@ impl AppData {
             }
         }
         let mut grades: HashMap<String, usize> = HashMap::new();
-        let (mut candidates, mut lr, mut tr, mut decoded) = (0usize, 0usize, 0usize, 0usize);
+        let (mut candidates, mut lr, mut tr, mut decoded, mut paintable) =
+            (0usize, 0usize, 0usize, 0usize, 0usize);
         if let Ok(lite) = self.lite.lock() {
             for l in lite.values() {
                 *grades
                     .entry(l.grade.label().chars().next().unwrap_or('D').to_string())
                     .or_default() += 1;
                 candidates += usize::from(!l.preview_candidates.is_empty());
+                paintable += usize::from(!l.preview_candidates.is_empty() || l.tex_solvable > 0);
                 lr += l.located;
                 tr += l.ref_total;
                 decoded += usize::from(l.hub_decoded);
@@ -1184,6 +1224,7 @@ impl AppData {
                 })
                 .collect(),
             image_candidates: candidates,
+            paintable_groups: paintable,
             decoded,
             located_refs: lr,
             total_refs: tr,
@@ -1212,7 +1253,7 @@ fn is_none_or(opt: &Option<String>, ok: impl Fn(&str) -> bool) -> bool {
 
 /// 缓存结构版本。DTO 或词表（场景/占位/缺口这些 &'static str 的取值集合）变动
 /// 时必须 +1，旧缓存会整体作废重预热——宁可慢一次，不能摆错数据。
-const WARM_CACHE_REV: u32 = 1; // 2: 副标题加了拼音→中文注，旧缓存里的 subtitle 要重建
+const WARM_CACHE_REV: u32 = 2; // 2: 每组多了 `tex_solvable`（贴图名按 convert/* 对上文件的个数），旧缓存里没有这个字段，必须重预热
 const WARM_CACHE_MAGIC: &str = "TLBWARM";
 
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -1242,6 +1283,7 @@ struct LiteDto {
     located: usize,
     ref_total: usize,
     preview_candidates: Vec<u64>,
+    tex_solvable: usize,
     hub_decoded: bool,
     rules: Vec<String>,
     members: Vec<MemberDto>,
@@ -1368,6 +1410,7 @@ fn lite_to_dto(l: &Lite) -> LiteDto {
         located: l.located,
         ref_total: l.ref_total,
         preview_candidates: l.preview_candidates.clone(),
+        tex_solvable: l.tex_solvable,
         hub_decoded: l.hub_decoded,
         rules: l.rules.clone(),
         members: l
@@ -1452,6 +1495,7 @@ fn lite_from_dto(d: LiteDto) -> Result<Lite, String> {
         located: d.located,
         ref_total: d.ref_total,
         preview_candidates: d.preview_candidates,
+        tex_solvable: d.tex_solvable,
         hub_decoded: d.hub_decoded,
         rules: d.rules,
         members,
@@ -1632,6 +1676,7 @@ mod warm_cache_tests {
             located: 0,
             ref_total: 1,
             preview_candidates: vec![0x1234],
+            tex_solvable: 7,
             hub_decoded: true,
             rules: vec!["规则一".into()],
             members: vec![Member {
@@ -1657,6 +1702,7 @@ mod warm_cache_tests {
         assert!(matches!(back.grade, Grade::B));
         assert_eq!(back.members[0].hash, 0xef01);
         assert_eq!(back.preview_candidates, vec![0x1234]);
+        assert_eq!(back.tex_solvable, 7, "转换路径可解个数要能过缓存往返");
         assert!(back.hub_decoded);
         // &'static str 必须真的扎了根（能安全持有到进程结束）。
         let leaked: &'static str = back.scenario;
@@ -1744,5 +1790,28 @@ mod page_regression {
             g.count
         }).sum();
         assert_eq!(grade_sum, app.total, "等级之和 {} 应等于资产组总数 {}", grade_sum, app.total);
+        // 「只看能对上贴图文件的」这条筛选，总数必须等于 stats 报的那个数——
+        // 页脚摆的就是它，两处算不到一起就是界面在骗人。
+        let stats2 = app.stats();
+        let paint = app.page(&Filter {
+            only_paintable: Some(true),
+            ..Default::default()
+        });
+        assert_eq!(
+            paint.total, stats2.paintable_groups,
+            "筛选总数 {} 与 stats.paintable_groups {} 不一致",
+            paint.total, stats2.paintable_groups
+        );
+        assert!(
+            paint.total > 5_000,
+            "两条边并起来不该只剩清单登记了成员的那 25 组：{}",
+            paint.total
+        );
+        assert!(
+            stats2.image_candidates < stats2.paintable_groups,
+            "只数第一条边会严重少报（{} vs {}）",
+            stats2.image_candidates,
+            stats2.paintable_groups
+        );
     }
 }

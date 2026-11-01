@@ -1280,4 +1280,103 @@ mod tests {
             "明确报错的组不该超过 3 个（2026-10-30 基线 3/300）：{errs:?}"
         );
     }
+
+    /// 全库「真能出图」普查（`#[ignore]`，显式跑）。页脚和筛选都缺这个数。
+    ///
+    /// 两条边必须**分开数**，混起来就是上一版页脚那个错（只数了第一条，却写成
+    /// 「贴图名能对上文件」，读起来像全库只有 25 组能看图）：
+    /// ① 清单把贴图登记成这一组的成员（`preview_candidates` 非空）；
+    /// ② 材质里写了贴图名、清单没登记路径，但客户端 `convert/*` 转换路径能解出来
+    ///    （`auto_texture_hash` 只做名字→哈希，不解像素，所以全库跑得动）。
+    #[test]
+    #[ignore = "全库普查，显式跑：cargo test --release -- --ignored --nocapture 全库真能出图"]
+    fn 全库真能出图的组数普查() {
+        use tlbb_core::pathmap::PathMap;
+        let (root, db) = roots();
+        if !root.join("data.pak").is_file() || !db.is_file() {
+            eprintln!("跳过：本机没有客户端或资源清单");
+            return;
+        }
+        let pm = PathMap::load(&root).expect("路径表读不出来");
+        let app = AppData::open(&root, &db).expect("工作台数据");
+        if app.scanned() == 0 {
+            eprintln!("跳过：预热缓存不在（lite 是空的），普查要先有一次完整预热");
+            return;
+        }
+        let con = open_db(&db).expect("清单");
+        let gids: Vec<i64> = {
+            let mut st = con.prepare("SELECT id FROM agroups ORDER BY id").expect("agroups");
+            st.query_map([], |r| r.get::<_, i64>(0))
+                .expect("查组号")
+                .flatten()
+                .collect()
+        };
+        let (mut member_edge, mut bridge_edge, mut either) = (0usize, 0usize, 0usize);
+        let (mut names, mut names_resolved) = (0usize, 0usize);
+        for gid in &gids {
+            let Some(l) = app.lite_of(*gid) else { continue };
+            let has_member = !l.preview_candidates.is_empty();
+            let mut resolved_here = 0usize;
+            for r in &l.refs {
+                if !tlbb_core::catalog::labels::is_texture_name(&r.name) || r.located {
+                    continue;
+                }
+                names += 1;
+                if crate::texture_override::auto_texture_hash(&pm, &con, &r.name).is_some() {
+                    resolved_here += 1;
+                }
+            }
+            names_resolved += resolved_here;
+            if has_member {
+                member_edge += 1;
+            }
+            if resolved_here > 0 {
+                bridge_edge += 1;
+            }
+            if has_member || resolved_here > 0 {
+                either += 1;
+            }
+        }
+        println!(
+            "全库 {} 组：清单登记了贴图成员 {member_edge} 组 · 转换路径可解 {bridge_edge} 组 · 两条至少一条 {either} 组",
+            gids.len()
+        );
+        println!("没有登记路径的贴图名 {names} 个，其中按 convert/* 转换路径可解 {names_resolved} 个");
+        // 「对得上文件」不等于「解得出像素」——抽样把这一层也量掉，别在界面上报过头话。
+        // 固定步长取样（每 40 个取 1），不靠随机数，重跑必得同一个数。
+        let mut tried = 0usize;
+        let mut decoded_ok = 0usize;
+        let mut i = 0usize;
+        'sample: for gid in &gids {
+            let Some(l) = app.lite_of(*gid) else { continue };
+            for r in &l.refs {
+                if !tlbb_core::catalog::labels::is_texture_name(&r.name) || r.located {
+                    continue;
+                }
+                let Some((hash, _)) = crate::texture_override::auto_texture_hash(&pm, &con, &r.name)
+                else {
+                    continue;
+                };
+                if i % 40 != 0 {
+                    i += 1;
+                    continue;
+                }
+                i += 1;
+                let Ok(h) = u64::from_str_radix(&hash, 16) else { continue };
+                tried += 1;
+                if crate::texture_override::decode_candidate_png(&root, &db, h).is_ok() {
+                    decoded_ok += 1;
+                }
+                if tried >= 400 {
+                    break 'sample;
+                }
+            }
+        }
+        println!(
+            "抽样 {tried} 张「对得上文件」的贴图：真解得出像素 {decoded_ok} 张 = {:.1}%",
+            decoded_ok as f64 * 100.0 / tried.max(1) as f64
+        );
+        assert!(either >= member_edge, "并集不该小于单条边");
+        assert!(gids.len() > 10_000, "名单不该只有几千组：{}", gids.len());
+    }
 }

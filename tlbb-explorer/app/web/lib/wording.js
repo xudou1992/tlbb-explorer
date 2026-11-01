@@ -60,13 +60,14 @@ export function progressLine(view, ready, scanned, total) {
 /// 曾经这里列过三行明细（含「贴图引用对上 N/M」）；那三行的分母口径不一，
 /// 摆在一起只会让人以为整页不可信——口径该在证据页说清，不在筛选栏里堆数字。
 ///
-/// 「其中 N 组贴图名能对上文件」这句后来又被加回来过一次，现在再收掉：那个 N 数的是
-/// **清单把贴图登记成这条资产成员**的组（全库 13,080 里只有 25 个），而界面另外能按
-/// 客户端 `convert/*` 转换路径现场解出真图。摆在这儿就会被读成「这工具只有 25 组能看图」，
-/// 而真实可用比例在「报告」浮层里已经连口径一起写了。
+/// 「其中 25 组贴图名能对上文件」这句被加回来过一次，收掉的原因是它数错了边：
+/// 25 只是**清单登记了贴图成员**的组，材质里的贴图名还能按客户端 `convert/*`
+/// 转换路径对上文件——全库实测量到 8,785 组。现在报的是两条边的并集，
+/// 措辞也跟着改成「能对上贴图文件」，悬停写清两条边各是什么。
 export function railCount(s) {
   return {
     total: num(s.totalGroups),
+    paintable: num(s.paintableGroups),
   };
 }
 
@@ -152,6 +153,7 @@ export function emptyMessage({ query, state, ready }) {
   if (state.kind && state.kind !== "全部") 开着.push(`类型：${state.kind}`);
   if (state.scenario && state.scenario !== "全部") 开着.push(`用途：${state.scenario}`);
   if (state.grade && state.grade !== "全部") 开着.push(`完整程度：${state.grade}`);
+  if (state.onlyPaintable) 开着.push("只看能对上贴图文件的");
   if (state.named === false) 开着.push("只看未命名资产");
   if (!ready) {
     return {

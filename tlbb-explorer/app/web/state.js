@@ -6,6 +6,8 @@ export const state = {
   kind: "全部",
   scenario: "全部",
   grade: "全部",
+  // 只列「至少有一张贴图能对上真实文件」的资产（判据两条边取并，见后端 Stats::paintable_groups）
+  onlyPaintable: false,
   // 默认只列有名字的组：既没名字又没路径的那批只能靠 16 位编号区分，
   // 摆进首屏就是一墙编号。看它们要走左栏那个显式入口。
   named: true,
@@ -36,7 +38,7 @@ export const state = {
 // 桌面工具的常识：昨天看到一半的东西，今天打开还在。只存用户摆出来的
 // 筛选/选中，不存运行数据（stats/health 每次都要重算，存了反而旧）。
 const KEY = "tlbb-explorer-ui";
-const PERSIST_KEYS = ["query", "kind", "scenario", "grade", "named", "selected", "mapMode", "view", "browsePak"];
+const PERSIST_KEYS = ["query", "kind", "scenario", "grade", "onlyPaintable", "named", "selected", "mapMode", "view", "browsePak"];
 
 export function loadState() {
   try {

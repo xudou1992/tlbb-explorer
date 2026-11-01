@@ -152,7 +152,7 @@ test("标题转义：名字里带尖括号也不能当标签跑掉", () => {
 /// 筛空列表的锅常常在「还开着的筛选条件」上：这些条件存在本地、重启也还在。
 /// 只说「没有命中关键词」是把锅推给搜索词。
 test("空列表文案点名还开着的筛选条件", () => {
-  const 默认 = { kind: "全部", scenario: "全部", grade: "全部", onlyImage: false, named: true };
+  const 默认 = { kind: "全部", scenario: "全部", grade: "全部", named: true };
   const a = emptyMessage({ query: "xiyuqiezei", state: { ...默认, kind: "场景物件" }, ready: true });
   assert.ok(a.strong.includes("xiyuqiezei"), "搜索词要还在");
   assert.ok(a.span.includes("类型：场景物件"), `要点名开着的条件：${a.span}`);
@@ -167,6 +167,17 @@ test("空列表文案点名还开着的筛选条件", () => {
 
   const d = emptyMessage({ query: "x", state: 默认, ready: false });
   assert.ok(d.strong.includes("后台还在准备"), `没读完不该说没命中：${d.strong}`);
+});
+
+/// 「只看有缺失的资源」那枚勾选框撤掉了：它的字段是 only_with_image，筛出来是
+/// 「清单登记了贴图成员」那 25 组（与标签相反），而真按标签筛「有缺失」全库 86%
+/// 都命中（等于没筛）。老用户 localStorage 里可能还留着 onlyImage=true，
+/// 文案不许再把它念出来——否则等于凭空多出一个没人能关掉的筛选条件。
+test("撤掉的勾选框不许从旧本地状态里复活", () => {
+  const 默认 = { kind: "全部", scenario: "全部", grade: "全部", named: true };
+  const a = emptyMessage({ query: "x", state: { ...默认, onlyImage: true }, ready: true });
+  assert.ok(!a.span.includes("只看有缺失"), `不该再报这个条件：${a.strong} ${a.span}`);
+  assert.ok(!a.span.includes("缺失"), `不该再报这个条件：${a.span}`);
 });
 
 test("角标带上「可解 N」：说明这些贴图打得开，不是真缺", () => {

@@ -134,7 +134,9 @@ pub struct Filter {
     pub scenario: Option<String>,
     pub kind: Option<String>,
     pub grade: Option<String>,
-    pub only_with_image: Option<bool>,
+    /// 这里原来有 `only_with_image`：界面标签写的是「只看有缺失的资源」，筛的却是
+    /// 「清单登记了贴图成员」那 25 组——方向相反，且按标签真做会命中全库 86%。
+    /// 勾选框已撤下，判据也一并撤；要重建先看 README 里那条待办。
     /// Some(true) 只列有名字的，Some(false) 只列没名字的，None 不管。
     pub named: Option<bool>,
     pub limit: Option<usize>,

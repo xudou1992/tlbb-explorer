@@ -89,11 +89,6 @@ el("q").addEventListener("input", (e) => {
     refresh({ top: true });
   }, 260);
 });
-el("onlyImage").addEventListener("change", (e) => {
-  state.onlyImage = e.target.checked;
-  saveState();
-  refresh({ top: true });
-});
 el("reset").addEventListener("click", () => {
   resetFilters();
   clearDetail();

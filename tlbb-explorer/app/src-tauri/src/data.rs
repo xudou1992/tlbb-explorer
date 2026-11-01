@@ -973,9 +973,6 @@ impl AppData {
         if !is_none_or(&f.grade, |s| l.grade.label().starts_with(s)) {
             return false;
         }
-        if f.only_with_image.unwrap_or(false) && l.preview_candidates.is_empty() {
-            return false;
-        }
         if let Some(want) = f.named {
             if present::is_named(&l.group) != want {
                 return false;

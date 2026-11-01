@@ -152,7 +152,6 @@ export function emptyMessage({ query, state, ready }) {
   if (state.kind && state.kind !== "全部") 开着.push(`类型：${state.kind}`);
   if (state.scenario && state.scenario !== "全部") 开着.push(`用途：${state.scenario}`);
   if (state.grade && state.grade !== "全部") 开着.push(`完整程度：${state.grade}`);
-  if (state.onlyImage) 开着.push("只看有缺失的资源");
   if (state.named === false) 开着.push("只看未命名资产");
   if (!ready) {
     return {

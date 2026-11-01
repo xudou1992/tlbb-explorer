@@ -333,7 +333,6 @@ function currentFilter() {
     scenario: state.scenario,
     kind: state.kind,
     grade: state.grade,
-    onlyWithImage: state.onlyImage,
     named: state.named,
     limit: PAGE_SIZE,
   };
@@ -428,11 +427,9 @@ export function resetFilters() {
     kind: "全部",
     scenario: "全部",
     grade: "全部",
-    onlyImage: false,
     named: true,
   });
   el("q").value = "";
-  el("onlyImage").checked = false;
   saveState();
   refresh({ top: true });
 }

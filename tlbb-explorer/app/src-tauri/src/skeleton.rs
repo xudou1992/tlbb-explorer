@@ -943,23 +943,41 @@ mod tests {
             "衣服那份实测 26 根骨带影响顶点表，这里只报 {}",
             yifu.skin_bones
         );
-        // 文案要跟着数据走：一份都不带时不许说「权重已经按骨读出（0 根）」
-        assert!(
-            rep.missing.iter().any(|m| m.contains("没有影响顶点表")),
-            "这份网格不带表，未解项要说这份的情况：{:?}",
-            rep.missing
+        // 文案要跟着数据走。原先这里写死「默认那份网格不带影响表」——默认选择后来改成
+        // 优先主体网格（衣服，实测 26 根骨带表、824 个顶点对），写死的前提就烂了。
+        // 换成按 `skin_bones` 分支的一致性闸门：三份件各判一次，注记与实测有没有表必须对得上，
+        // 数据再漂也只是换分支，不会把这条盯了半年的红线磨没。
+        let shoutao = skeleton_view_run(gid, "w1351_monster_xiyuqiezei_shoutao_001.mesh")
+            .expect("换手套那份");
+        assert_eq!(
+            shoutao.mesh, "w1351_monster_xiyuqiezei_shoutao_001.mesh",
+            "点了一份却列的另一份"
         );
-        assert!(
-            !rep.missing.iter().any(|m| m.contains("(0 根") || m.contains("（0 根")),
-            "0 根还写「已按骨读出」是自相矛盾：{:?}",
-            rep.missing
-        );
-        // 没有影响表 ⇒ 播放/导出只会「骨架动、网格不动」（2026-10-16 实测），提示必须说清。
-        assert!(
-            rep.missing.iter().any(|m| m.contains("网格不动")),
-            "无影响表的件要如实说网格不跟骨走：{:?}",
-            rep.missing
-        );
+        for (who, v) in [("默认", &rep), ("衣服", &yifu), ("手套", &shoutao)] {
+            let no_table = v.missing.iter().any(|m| m.contains("没有影响顶点表"));
+            let read = v.missing.iter().any(|m| m.contains("权重已经按骨读出"));
+            let rigid_note = v.missing.iter().any(|m| m.contains("网格不动"));
+            assert_eq!(no_table, !read, "{who} 那份两条注记互相矛盾：{:?}", v.missing);
+            assert_eq!(
+                v.skin_bones == 0,
+                no_table,
+                "{who} 那份实测 {} 根骨带表，注记却写「没有影响顶点表」={no_table}：{:?}",
+                v.skin_bones,
+                v.missing
+            );
+            assert_eq!(
+                v.skin_bones == 0,
+                rigid_note,
+                "{who} 那份 {} 根带表，「网格不动」这条该不该出现判错了：{:?}",
+                v.skin_bones,
+                v.missing
+            );
+            assert!(
+                !v.missing.iter().any(|m| m.contains("(0 根") || m.contains("（0 根")),
+                "0 根还写「已按骨读出」是自相矛盾：{:?}",
+                v.missing
+            );
+        }
         assert!(
             yifu.missing.iter().any(|m| m.contains("26 根骨")),
             "衣服那份该报得出读出了多少根：{:?}",

@@ -839,13 +839,58 @@ mod tests {
         assert!(mout
             .iter()
             .all(|p| p.positions.iter().all(|v| v.iter().all(|x| x.is_finite()))));
-        // 没权重表的那件要点名（这只怪的手套实测 0 根带表骨）
-        assert!(
-            rep.notes.iter().any(|n| n.contains("不变形")),
-            "没权重表的件要如实标注：{:?}",
-            rep.notes
+        // 注记必须与实测一致：一件标不标「不变形」，取决于它的节点里有没有影响顶点表。
+        // 原先这里写死「手套 0 根带表骨」——10-29 变长权重表按骨名补表之后，这只怪的手套
+        // 实测 bone09 带 1 张表、42 个顶点整件刚性跟随，写死的前提就烂了；改成盯一致性，
+        // 数据再漂也只是换分支。
+        let mut checked = 0usize;
+        for p in out.iter() {
+            let (_, raw) = mesh_bytes(&app, &p.mesh, None).expect("该件字节");
+            let hier = parse_hierarchy(&raw).expect("该件骨架");
+            let nodes = attach_bone_skin(&hier, &parse_nodes(&raw), &raw);
+            let tail = p.mesh.rsplit('/').next().unwrap_or("").to_string();
+            let has_table = nodes.iter().any(|n| n.skin.is_some());
+            let noted = rep
+                .notes
+                .iter()
+                .any(|n| n.contains(&tail) && n.contains("不变形"));
+            assert_eq!(
+                has_table, !noted,
+                "{tail} 实测带表={has_table}，「不变形」注记却是 {noted}：{:?}",
+                rep.notes
+            );
+            checked += 1;
+        }
+        assert!(checked >= 2, "整组注记至少核对两件，实际 {checked}");
+        // 只有一张表且盖住全部顶点 ⇒ 这件整件刚性跟着那根骨走：中间帧也不许把边拉开。
+        // 挂错骨、锚错空间都会在这里露出来（frame0 恒等式盯不住，那一帧本来就是恒等）。
+        let mut rigid_checked = 0usize;
+        for p in mout.iter() {
+            let (_, raw) = mesh_bytes(&app, &p.mesh, None).expect("该件字节");
+            let hier = parse_hierarchy(&raw).expect("该件骨架");
+            let nodes = attach_bone_skin(&hier, &parse_nodes(&raw), &raw);
+            let tables: Vec<&Node> = nodes.iter().filter(|n| n.skin.is_some()).collect();
+            if tables.len() != 1 || tables[0].skin.as_ref().unwrap().vertices.len() < p.vertex_count {
+                continue;
+            }
+            let geom = parse_geometry(&raw).expect("该件几何");
+            let s = tlbb_core::preview::pose::edge_stretch(&geom.positions, &p.positions, &geom.indices);
+            assert!(
+                s.max_ratio <= 1.02 && s.over15 == 0,
+                "{} 整件挂一根骨（{} 个顶点同表），第 {} 帧边长却变了：最大 {:.3} 倍、超 1.5 倍 {} 条",
+                p.mesh,
+                s.edges,
+                m.frame,
+                s.max_ratio,
+                s.over15
+            );
+            rigid_checked += 1;
+        }
+        assert!(rigid_checked >= 1, "这组里该有一件整件刚性跟一根骨的，实际 {rigid_checked}");
+        eprintln!(
+            "整组：{} 件 · 注记核对 {checked} 件 · 刚性件 {rigid_checked} 件",
+            out.len()
         );
-        eprintln!("整组：{} 件 · 注记 {:?}", out.len(), rep.notes);
     }
 
     /// 组里混着**两副骨架**时，动作页要按这条动作的骨名自动挑件，而不是整组报错。

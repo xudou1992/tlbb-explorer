@@ -1168,4 +1168,116 @@ mod tests {
         assert!(msg.contains("没有找到网格文件"), "{msg}");
         assert!(!msg.contains("同名多处"), "全路径失败不该提尾部名兜底：{msg}");
     }
+
+    /// 三百组动作体检（`#[ignore]`，显式跑：`cargo test --release -- --ignored --nocapture`）。
+    ///
+    /// 读 `.scratch/sweep_gids300.txt`（固定种子挑出的 300 个组号），逐组走**界面同款**那条路：
+    /// 组内第一份网格 → 同目录默认动作（idle01 优先）→ `anim_pose_run` 第 0 帧与第 8 帧。
+    /// 报三件事：摆不出来的组（带原话报错）、出现非有限顶点的组、零尺寸包围盒。
+    ///
+    /// 为什么值得单独一条：部件筛选、锚、调色板这些改动，几条单测盯不住——报错话术或分支
+    /// 改坏，界面上就是几十个组同时变灰。上一班基线（2026-10-30）是 297/300 正常、
+    /// 3 组「网格没读出父骨链」明确报错。
+    #[test]
+    #[ignore = "300 组真数据体检，显式跑：cargo test --release -- --ignored --nocapture"]
+    fn 三百组动作体检_默认动作两帧都不许坏() {
+        let (root, db) = roots();
+        let gids_path = root.join(".scratch/sweep_gids300.txt");
+        if !root.join("data.pak").is_file() || !db.is_file() || !gids_path.is_file() {
+            eprintln!("跳过：本机没有客户端、资源清单或 gid 名单");
+            return;
+        }
+        let gids: Vec<i64> = std::fs::read_to_string(&gids_path)
+            .expect("名单读不出来")
+            .split(|c: char| c == ',' || c.is_whitespace())
+            .filter_map(|s| s.parse::<i64>().ok())
+            .collect();
+        assert!(!gids.is_empty(), "名单是空的？");
+        let app = AppData::open(&root, &db).expect("工作台数据");
+        let con = open_db(&db).expect("清单");
+        let mut hub_of: std::collections::HashMap<i64, String> = Default::default();
+        {
+            let mut st = con.prepare("SELECT id, coalesce(hub_path,'') FROM agroups").expect("agroups");
+            for r in st.query_map([], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, String>(1)?))).expect("查 hub")
+            {
+                if let Ok((i, p)) = r {
+                    hub_of.insert(i, p);
+                }
+            }
+        }
+        let (mut ok, mut nan, mut zero) = (0usize, 0usize, 0usize);
+        let mut errs: Vec<(i64, String)> = Vec::new();
+        let mut no_anim: Vec<i64> = Vec::new();
+        for gid in &gids {
+            let insp = match inspect(*gid) {
+                Ok(v) => v,
+                Err(e) => {
+                    errs.push((*gid, format!("组详情：{e}")));
+                    continue;
+                }
+            };
+            let hub = hub_of.get(gid).cloned().unwrap_or_default();
+            let meshes = mesh_paths(&con, *gid, &hub, &insp.dir);
+            let Some(first) = meshes.first() else {
+                errs.push((*gid, "组内没有登记网格".to_string()));
+                continue;
+            };
+            let anim = match anim_paths(&con, first).first().cloned() {
+                Some(p) => p.rsplit('/').next().unwrap_or("").to_string(),
+                None => {
+                    no_anim.push(*gid);
+                    continue;
+                }
+            };
+            let mut bad = false;
+            for frame in [0u32, 8] {
+                match anim_pose_run(&app, *gid, &anim, None, frame, None) {
+                    Ok(rep) => {
+                        if !rep.positions.iter().all(|v| v.iter().all(|x| x.is_finite())) {
+                            nan += 1;
+                            bad = true;
+                        }
+                        let (lo, hi) = rep.positions.iter().fold(
+                            ([f32::MAX; 3], [f32::MIN; 3]),
+                            |(mut lo, mut hi), p| {
+                                for k in 0..3 {
+                                    lo[k] = lo[k].min(p[k]);
+                                    hi[k] = hi[k].max(p[k]);
+                                }
+                                (lo, hi)
+                            },
+                        );
+                        let vol: f32 = (0..3).map(|k| (hi[k] - lo[k]).max(0.0)).product();
+                        if rep.positions.is_empty() || vol <= 1e-9 {
+                            zero += 1;
+                            bad = true;
+                        }
+                    }
+                    Err(e) => {
+                        errs.push((*gid, format!("第 {frame} 帧：{e}")));
+                        bad = true;
+                        break;
+                    }
+                }
+            }
+            if !bad {
+                ok += 1;
+            }
+        }
+        println!(
+            "三百组体检：{} 组正常 / {} 组点名 · 旁边没动作 {} 组 · 非有限数 {nan} 次 · 零尺寸 {zero} 次",
+            ok,
+            errs.len(),
+            no_anim.len()
+        );
+        for (g, e) in errs.iter().take(12) {
+            println!("  gid {g}: {}", e.chars().take(130).collect::<String>());
+        }
+        assert_eq!(nan, 0, "不该出现非有限顶点：{nan} 次");
+        assert_eq!(zero, 0, "不该出现零尺寸包围盒：{zero} 次");
+        assert!(
+            errs.len() <= 3,
+            "明确报错的组不该超过 3 个（2026-10-30 基线 3/300）：{errs:?}"
+        );
+    }
 }

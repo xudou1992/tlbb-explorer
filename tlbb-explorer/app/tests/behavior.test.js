@@ -913,6 +913,7 @@ async function poseSandbox(expose = "", opts = {}) {
       this.partLoads = [];
       this.poses = [];
       this.partPoses = [];
+      this.shown = [];
       this.cleared = 0;
       viewers.push(this);
     }
@@ -930,6 +931,10 @@ async function poseSandbox(expose = "", opts = {}) {
     }
     setPartPose(i, p) {
       this.partPoses.push({ i, p });
+      return true;
+    }
+    setPartsShown(ix) {
+      this.shown.push(Array.from(ix));
       return true;
     }
     clearParts() {
@@ -1000,7 +1005,12 @@ test("动作页 3D 预览（整组）：loadParts 收到 N 份、animPose 带全
     detail.el("animPoseMeta").textContent.includes("整组一起摆：2 件"),
     `meta 行要写「整组一起摆」的人话：${detail.el("animPoseMeta").textContent}`,
   );
-  assert.ok(detail.el("animPoseMeta").textContent.includes("共用一副骨架"), "meta 行要点明共用一副骨架");
+  // meta 不许预先断言「共用一副骨架」：那是后端逐帧按动作骨名筛过才知道的事。
+  // 长臂猿组实测先写这句、再被自检逐帧推翻，画布上还留着摆不动的件 = 看着像炸开。
+  assert.ok(
+    !detail.el("animPoseMeta").textContent.includes("共用一副骨架"),
+    `meta 不许出现未经检查的断言：${detail.el("animPoseMeta").textContent}`,
+  );
   assert.equal(detail.el("animPartPick").children.length, 2, "两件部件各一个勾选框");
   assert.equal(detail.el("animPartPick").children[0].children[0].checked, true, "默认全开");
   assert.equal(detail.el("animPartPick").children[1].children[0].checked, true, "默认全开");
@@ -1202,6 +1212,37 @@ test("动作页 3D 预览（整组）：勾选关一件 → 请求与重画都�
   take(deferred, 2).resolve(partsReply(["a_yifu.mesh"], 2));
   await drain();
   assert.equal(viewer.partPoses.length, 5, "恢复后照摆");
+});
+
+test("动作页 3D 预览（整组）：后端按骨架筛剩一件时，没回的那件从画布上撤下", async () => {
+  const { detail, deferred, viewers, drain } = await poseSandbox();
+  await detail.module.showDetail(245);
+  await drain();
+  detail.get("panels.js").showTabPane("animation");
+  await drain();
+  const viewer = viewers[0];
+  take(deferred, 0).resolve(partsReply(["a_yifu.mesh", "a_shoutao.mesh"], 0));
+  await drain();
+  assert.deepEqual(viewer.shown.at(-1), [0, 1], "两件都摆回来了，两件都该露着");
+  // 换一条只有一件骨架吃得下的动作（后端已按骨名筛过，回包只剩那一件）
+  const slider = detail.el("animFrame");
+  const move = (v) => {
+    slider.value = v;
+    for (const f of slider.events.input || []) f({ target: slider });
+  };
+  move("1");
+  take(deferred, 1).resolve(partsReply(["a_yifu.mesh"], 1));
+  await drain();
+  assert.deepEqual(
+    viewer.shown.at(-1),
+    [0],
+    "没回的那件必须撤下：留在画布上就是叠在身上的静态部件，看着像模型炸了",
+  );
+  // 再换回两件都摆得动的动作：上一轮藏起来的那件要自己回来（不做粘性隐藏）
+  move("2");
+  take(deferred, 2).resolve(partsReply(["a_yifu.mesh", "a_shoutao.mesh"], 2));
+  await drain();
+  assert.deepEqual(viewer.shown.at(-1), [0, 1], "换回同骨架的动作，藏过的件要重新露出来");
 });
 
 test("动作页 3D 预览：切资产清 parts 状态，单件网格组照旧走单件老路", async () => {

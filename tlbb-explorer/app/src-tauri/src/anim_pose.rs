@@ -131,10 +131,21 @@ fn pick_anim(
     con: &rusqlite::Connection,
     paks: &mut std::collections::HashMap<String, Pak>,
     root: &std::path::Path,
-    mesh_path: &str,
+    mesh_paths: &[String],
     want_anim: &str,
 ) -> Result<(String, Anim), String> {
-    let files = anim_paths(con, mesh_path);
+    // 逐份网格各自的目录都找一遍：混了别只怪衣服的组，动作可能挂在任何一份旁边
+    // （长臂猿组的猿身动作在猿身目录下，衣服动作在 eyubanghunhun 目录下）。
+    // 顺序 = 传入顺序，先到先得；同一份路径被点名两次只算一次。
+    let mut files: Vec<String> = Vec::new();
+    let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
+    for m in mesh_paths {
+        for p in anim_paths(con, m) {
+            if seen.insert(p.clone()) {
+                files.push(p);
+            }
+        }
+    }
     let want = want_anim.trim();
     let picked = if want.is_empty() {
         files.first().cloned()
@@ -353,7 +364,7 @@ pub fn anim_pose_run(
         let geom = parse_geometry(&raw).map_err(|e| format!("网格几何解析失败：{e}"))?;
 
         let mut paks: std::collections::HashMap<String, Pak> = Default::default();
-        let (anim_name, a) = pick_anim(&con, &mut paks, &root, &mesh_path, anim)?;
+        let (anim_name, a) = pick_anim(&con, &mut paks, &root, std::slice::from_ref(&mesh_path), anim)?;
 
         // 帧号夹进 0..=frames-1：滑杆越界是前端的事，后端不许 panic。
         let frames = a.frames;
@@ -386,8 +397,7 @@ pub fn anim_pose_run(
         })
     } else {
         // ---- 整组部件路径（复合的账的最后一层）----
-        // 每件独立取字节、解骨架与几何；全部就位后先做跨部件骨架自检，
-        // 过了才谈得上一起摆——骨架对不上的两件摆出来就是撕成两半。
+        // 每件独立取字节、解骨架与几何。
         let mut preps: Vec<PartPrep> = Vec::with_capacity(hit_paths.len());
         for path in &hit_paths {
             let (actual, raw) = mesh_bytes(app, path, None)?;
@@ -400,17 +410,43 @@ pub fn anim_pose_run(
             let nodes = attach_bone_skin(&hier, &parse_nodes(&raw), &raw);
             preps.push(PartPrep { actual, tail, hier, geom, nodes });
         }
+
+        // 动作整组共用一副：同目录 ani/，按第一件定位，解析一次。
+        let mut paks: std::collections::HashMap<String, Pak> = Default::default();
+        let (anim_name, a) = pick_anim(&con, &mut paks, &root, &hit_paths, anim)?;
+        let frames = a.frames;
+        let frame = (frame as usize).min(frames - 1);
+
+        // 同一个目录里混着别只怪的衣服是常事（长臂猿组就同时躺着 32 根的 bip02
+        // 衣/手套和 29 根的 bip01 猿身）。先按「这条动作的骨名」筛一遍：骨数相同、
+        // 且动作里每个有名字的轨道在这件的骨架上都有同名骨，才摆得动。
+        // 筛剩的再互相对账——跨件自检从「整组必须一副」改成「要一起摆的必须一副」。
+        let fits = |p: &&PartPrep| -> bool {
+            p.hier.bones.len() == a.tracks.len()
+                && a.tracks.iter().all(|t| {
+                    t.bone.is_empty() || p.hier.bones.iter().any(|b| b.name == t.bone)
+                })
+        };
+        let kept: Vec<&PartPrep> = preps.iter().filter(fits).collect();
+        let skipped: Vec<&PartPrep> = preps.iter().filter(|p| !fits(p)).collect();
+        if kept.is_empty() {
+            let mine = preps
+                .iter()
+                .map(|p| format!("{} {} 根", p.tail, p.hier.bones.len()))
+                .collect::<Vec<_>>()
+                .join("、");
+            return Err(format!(
+                "这一帧没摆出来：这条动作是 {} 根骨头的骨架，组里的网格没有一副对得上（{}）。换一条同骨架的动作才摆得动。",
+                a.tracks.len(),
+                mine
+            ));
+        }
         let refs: Vec<(&str, &SkeletonHierarchy)> =
-            preps.iter().map(|p| (p.tail.as_str(), &p.hier)).collect();
+            kept.iter().map(|p| (p.tail.as_str(), &p.hier)).collect();
         if let Some(msg) = parts_skeleton_mismatch(&refs) {
             return Err(msg);
         }
 
-        // 动作整组共用一副：同目录 ani/，按第一件定位，解析一次。
-        let mut paks: std::collections::HashMap<String, Pak> = Default::default();
-        let (anim_name, a) = pick_anim(&con, &mut paks, &root, &hit_paths[0], anim)?;
-        let frames = a.frames;
-        let frame = (frame as usize).min(frames - 1);
 
         // 每件各自蒙皮：调色板按这件自己的骨架取（自检已保证骨数与同名骨
         // 位姿一致，逐件算比共用第一件的骨架更不容易被一份坏数据带走）。
@@ -422,7 +458,7 @@ pub fn anim_pose_run(
             "帧率刻度的含义未证，播放速度只是逐帧推进的参考值".to_string(),
             "运动的绝对朝向未证：锚定保证动作连贯，不保证与游戏画面逐帧对齐".to_string(),
         ];
-        for p in &preps {
+        for p in &kept {
             let palette = reanchored_palette(&p.hier, &a, frame).ok_or_else(|| {
                 format!(
                     "{} 调不出蒙皮调色板：有骨的姿态矩阵不可逆（缩放接近 0 或为零），这一份摆不了。",
@@ -448,7 +484,18 @@ pub fn anim_pose_run(
                 positions: posed,
             });
         }
-        let bones = anim_bones_of(&preps[0].hier, &a, frame);
+        if !skipped.is_empty() {
+            let who = skipped
+                .iter()
+                .map(|p| format!("{}（{} 根）", p.tail, p.hier.bones.len()))
+                .collect::<Vec<_>>()
+                .join("、");
+            notes.push(format!(
+                "这一组里混着不止一副骨架：这条动作是 {} 根的，摆不动 {who}——要换自己那副骨架的动作才动",
+                a.tracks.len()
+            ));
+        }
+        let bones = anim_bones_of(&kept[0].hier, &a, frame);
         // 顶层字段 = parts[0]：只认「回包没有 parts 字段」的旧前端照样能摆第一件。
         let first = &out[0];
         Ok(AnimPoseReply {
@@ -799,6 +846,115 @@ mod tests {
             rep.notes
         );
         eprintln!("整组：{} 件 · 注记 {:?}", out.len(), rep.notes);
+    }
+
+    /// 组里混着**两副骨架**时，动作页要按这条动作的骨名自动挑件，而不是整组报错。
+    ///
+    /// 真样品 `w1351_npc_changbiyuan`：同一个目录里躺着 32 根 bip02 的
+    /// `w1351_monster_eyubanghunhun` 衣服 + 手套，和 29 根 bip01 的白猿本体。
+    /// 旧口径先写「整组一起摆：3 件，共用一副骨架」，再被跨件自检逐帧推翻，
+    /// 画布上还留着摆不动的那几件静态部件——看上去就是模型炸了。
+    #[test]
+    fn 混两副骨架的组按动作自动挑件() {
+        let (root, db) = roots();
+        if !root.join("data.pak").is_file() || !db.is_file() {
+            eprintln!("跳过：本机没有客户端或资源清单");
+            return;
+        }
+        let app = AppData::open(&root, &db).expect("工作台数据");
+        let con = open_db(&db).expect("清单");
+        let gid: i64 = con
+            .query_row(
+                "SELECT id FROM agroups WHERE stem = 'w1351_npc_changbiyuan'",
+                [],
+                |r| r.get(0),
+            )
+            .expect("这只怪应在清单里");
+        let hub: String = con
+            .query_row("SELECT coalesce(hub_path,'') FROM agroups WHERE id = ?1", [gid], |r| {
+                r.get(0)
+            })
+            .unwrap_or_default();
+        let insp = inspect(gid).expect("组详情");
+        let meshes = mesh_paths(&con, gid, &hub, &insp.dir);
+        assert!(
+            meshes.len() >= 3,
+            "这组该同时登记了衣服/手套/猿身三份网格，实测 {}",
+            meshes.len()
+        );
+        let tails: Vec<String> = meshes
+            .iter()
+            .map(|p| p.rsplit('/').next().unwrap_or("").to_string())
+            .collect();
+        let anim_named = |needle: &str, from: &str| -> String {
+            anim_paths(&con, from)
+                .into_iter()
+                .map(|p| p.rsplit('/').next().unwrap_or("").to_string())
+                .find(|f| f.contains(needle))
+                .unwrap_or_else(|| panic!("{from} 这条路径下应有名字含 {needle} 的动作"))
+        };
+        let tails_of = |out: &[AnimPosePart]| -> Vec<String> {
+            out.iter()
+                .map(|p| p.mesh.rsplit('/').next().unwrap_or("").to_string())
+                .collect()
+        };
+
+        // 32 根那条（衣服自己的骨架）：摆回衣 + 手套，猿身摆不动但要点名说明
+        // 动作清单是按「那份网格自己所在的目录」取的，所以两件各要各的：
+        // 衣服在 eyubanghunhun 的目录下，猿身在 w1351_npc_attack_gaoshanbaiyuan01 下。
+        let bandit_mesh = meshes
+            .iter()
+            .find(|p| p.contains("eyubanghunhun"))
+            .expect("组里应有那件别人的衣服");
+        let ape_mesh = meshes
+            .iter()
+            .find(|p| p.contains("gaoshanbaiyuan"))
+            .expect("组里应有白猿本体");
+        let bandit = anim_named("eyubanghunhun_idle01", bandit_mesh);
+        let rep = anim_pose_run(&app, gid, &bandit, None, 10, Some(&tails))
+            .expect("32 根的动作应摆得动同骨架的衣服");
+        let out = rep.parts.as_ref().expect("整组路径回包必须带 parts 字段");
+        assert_eq!(out.len(), 2, "只该摆回两件同骨架的：{:?}", tails_of(out));
+        assert!(
+            out.iter().all(|p| p.mesh.contains("eyubanghunhun")),
+            "回来的两件应是衣服/手套：{:?}",
+            tails_of(out)
+        );
+        assert!(
+            rep.notes.iter().any(|n| n.contains("摆不动")),
+            "少摆的那件要说明原因：{:?}",
+            rep.notes
+        );
+
+        // 29 根那条（白猿的骨架）：摆回猿身，衣服摆不动
+        let ape = anim_named("gaoshanbaiyuan01_idle01", ape_mesh);
+        let rep2 = anim_pose_run(&app, gid, &ape, None, 10, Some(&tails))
+            .expect("29 根的动作应摆得动白猿本体");
+        let out2 = rep2.parts.as_ref().expect("整组路径回包必须带 parts 字段");
+        assert_eq!(out2.len(), 1, "只该摆回猿身：{:?}", tails_of(out2));
+        assert!(
+            out2[0].mesh.contains("gaoshanbaiyuan"),
+            "回来的应是白猿本体：{:?}",
+            tails_of(out2)
+        );
+        assert!(
+            rep2.notes.iter().any(|n| n.contains("摆不动")),
+            "衣服摆不动要说明：{:?}",
+            rep2.notes
+        );
+        // 注记不许预先断言「共用一副骨架」——那是筛完才成立的话
+        assert!(
+            !rep.notes.iter().any(|n| n.contains("共用一副骨架")),
+            "注记不许出现未经检查的断言：{:?}",
+            rep.notes
+        );
+        eprintln!(
+            "混骨架自动挑件：{} → {} 件 · {} → {} 件",
+            bandit,
+            out.len(),
+            ape,
+            out2.len()
+        );
     }
 
     /// parts 名单一个都没命中（含空名单）：维持现状单网格路径，回包**不带**

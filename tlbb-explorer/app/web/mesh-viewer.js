@@ -782,6 +782,7 @@ export class MeshViewer {
           layers: [],
           singleReady: false,
           singleTex: null,
+          hidden: false,
           ...viewOf(geo, data),
         });
       }
@@ -840,6 +841,18 @@ export class MeshViewer {
     const gl = this.gl;
     gl.bindBuffer(gl.ARRAY_BUFFER, parts[i].buf.pos);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, flat);
+    this.draw();
+    return true;
+  }
+
+  /// 整组里只画点名的这几件（下标 = loadParts 的装载序）。
+  /// 后端按这条动作的骨架筛过之后，摆不动的件若继续留在画布上，就是一堆静态部件
+  /// 叠在一起——看着像模型炸了，其实那一帧根本没摆。每帧重算，不做粘性隐藏：
+  /// 换一条动作，上一轮藏起来的件要能自己回来。
+  setPartsShown(indices) {
+    if (!this.parts) return false;
+    const on = new Set(Array.isArray(indices) ? indices : []);
+    this.parts.forEach((p, i) => { p.hidden = !on.has(i); });
     this.draw();
     return true;
   }
@@ -1546,6 +1559,7 @@ export class MeshViewer {
     const gl = this.gl;
     gl.uniform1f(this.un.use, 0);
     for (const p of this.parts) {
+      if (p.hidden) continue; // 这条动作摆不动的件不画：留着就是叠在身上的静态部件
       gl.bindBuffer(gl.ARRAY_BUFFER, p.buf.pos);
       gl.enableVertexAttribArray(this.at.pos);
       gl.vertexAttribPointer(this.at.pos, 3, gl.FLOAT, false, 0, 0);

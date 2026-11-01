@@ -465,11 +465,13 @@ function pickPoseMesh(gid) {
 }
 
 /// 整组部件的 meta 行：组级事实（共几件、名单）+ 此刻画布上有几件。
+/// 这里**不写**「共用一副骨架」——那是后端逐帧筛过才知道的事，预先断言过一次
+/// 就被后端自己的报错推翻（长臂猿组：32 根的衣服和 29 根的猿身躺在同一目录）。
 function partsMetaText() {
   const total = partData.length;
   const drawn = partNames.length;
   const head = drawn === total ? `整组一起摆：${total} 件` : `整组一起摆：${drawn}/${total} 件`;
-  return `${head}，共用一副骨架（${partData.map((o) => o.name).join("、")}）`;
+  return `${head}（${partData.map((o) => o.name).join("、")}）`;
 }
 
 /// 部件勾选区：每件一个 checkbox，复用 .check 的现成样式。关掉的不画不请求
@@ -803,6 +805,9 @@ function applyPartsReply(rep) {
   if (rejected > 0) {
     poseFailLine(`这一帧有 ${rejected} 件没摆出来（顶点对不上，那件停在上一帧），其余照摆。`);
   }
+  // 后端按这条动作的骨架筛过，回包里只有摆得动的件：其余从画布上撤下。
+  // 不撤就是静态部件叠在摆好的身上，看着像模型炸了。
+  poseViewer.setPartsShown(matched.map((m) => m.index));
   // 「这件不变形」这类部件实况由后端追加在固定三条后面，整段一起上屏才叫如实。
   const line = poseNotesLine(rep.notes, poseNoteShown);
   if (line != null) {

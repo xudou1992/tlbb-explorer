@@ -395,12 +395,27 @@ export function loaded(gid, d, insp) {
 
   s.tree = { html: treeHtml(insp.mdl, insp.members || []), count: `${num(insp.parts)} 个文件` };
   const gaps = [...new Set([...(insp.missing || []), ...(d.gaps || [])])];
+  // 「可按客户端转换路径解出」的那几条**不是缺**：文件找得到，只是清单没登记路径。
+  // 混进「缺什么 N 处」一起数，用户看到的就是一堵「缺」，其中一部分当场就能贴上图
+  // （2026-11-01 用户实测：「缺什么 2 处」里有一处就写着「可按客户端转换路径解出」）。
+  // 只认**逐条那种形状**（`贴图 <名字>：…但可按…解出`）：类别说明那句也提到这条路径，
+  // 单看关键字会把类别句一起误分成「已解出」，那一处真缺就凭空消失了。
+  const isSolved = (g) => g.startsWith("贴图 ") && g.includes("但可按客户端转换路径解出");
+  const solved = gaps.filter(isSolved);
+  const realGaps = gaps.filter((g) => !isSolved(g));
   s.gaps = {
-    items: gaps,
-    count: gaps.length ? `${gaps.length} 处` : "0 处",
-    html: gaps.length
-      ? gaps.map((g) => `<li class="miss">${esc(g)}</li>`).join("")
-      : `<li class="ok">没有发现明显缺失</li>`,
+    items: realGaps,
+    solved,
+    count: realGaps.length
+      ? `${realGaps.length} 处${solved.length ? ` · 另有 ${solved.length} 处可解出` : ""}`
+      : solved.length
+        ? `0 处 · ${solved.length} 处可按客户端转换路径解出`
+        : "0 处",
+    html:
+      (realGaps.length
+        ? realGaps.map((g) => `<li class="miss">${esc(g)}</li>`).join("")
+        : `<li class="ok">没有发现明显缺失</li>`) +
+      solved.map((g) => `<li class="dim">${esc(g)}</li>`).join(""),
   };
   const absences = absencesOf(insp, card);
   s.absences = {

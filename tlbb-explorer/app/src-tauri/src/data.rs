@@ -162,6 +162,7 @@ impl Lite {
             member_total: self.members.len(),
             ref_total: self.ref_total,
             located_total: self.located,
+            tex_solvable: self.tex_solvable,
             named: present::is_named(&self.group),
             preview_hash: self.preview_candidates.first().copied().map(hex),
         }
@@ -691,6 +692,17 @@ impl AppData {
         let tags = row.tags.clone();
         let scenario = present::scenario_of(&g.kind);
         let placeholder = present::placeholder_for(scenario, &tags);
+        // 「贴图引用只有名称，未指向具体资源」是**清单口径**的话。这组里只要有贴图名
+        // 能按客户端 `convert/*` 换算对上真实文件，这句和下面逐条写的「可按转换路径解出」
+        // 就自相矛盾（用户实测截图：「缺什么 2 处」里有一处其实不缺），换成不矛盾的说法。
+        let mut gaps = evidence::gaps(&sig);
+        if row.tex_solvable > 0 {
+            for g in gaps.iter_mut() {
+                if g.starts_with("贴图引用只有名称") {
+                    *g = "贴图引用只有名称，清单里没登记路径；有贴图名可按客户端转换路径解出（逐条见下面）";
+                }
+            }
+        }
         let lite = Arc::new(Lite {
             group: g.clone(),
             name: name.clone(),
@@ -701,7 +713,7 @@ impl AppData {
             placeholder,
             parts: row.parts,
             grade: evidence::grade(&sig),
-            gaps: evidence::gaps(&sig),
+            gaps,
             refs: row.refs,
             located: sig.refs_located,
             ref_total: sig.refs_total,
@@ -1305,7 +1317,7 @@ fn is_none_or(opt: &Option<String>, ok: impl Fn(&str) -> bool) -> bool {
 
 /// 缓存结构版本。DTO 或词表（场景/占位/缺口这些 &'static str 的取值集合）变动
 /// 时必须 +1，旧缓存会整体作废重预热——宁可慢一次，不能摆错数据。
-const WARM_CACHE_REV: u32 = 2; // 2: 每组多了 `tex_solvable`（贴图名按 convert/* 对上文件的个数），旧缓存里没有这个字段，必须重预热
+const WARM_CACHE_REV: u32 = 3; // 3: 能按 convert/* 解出的组，其「贴图引用只有名称」那句改了措辞——旧缓存里还是自相矛盾的旧话
 const WARM_CACHE_MAGIC: &str = "TLBWARM";
 
 #[derive(serde::Serialize, serde::Deserialize)]

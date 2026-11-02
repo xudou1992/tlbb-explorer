@@ -468,3 +468,49 @@ test("网格缺、但同目录有同茎兄弟时：仍写「缺」，并给出�
   assert.match(row, /a_qingfeng\.mesh/);
   assert.match(row, /清单里没登记这个名字/);
 });
+
+/// 「缺什么 N 处」不许把「其实当场解得出来」的那几条数进去。
+/// 2026-11-01 用户实测：白猿那组写「缺什么 2 处」，可其中一条原文就是
+/// 「清单里没登记，但可按客户端转换路径解出」——那不是缺，是已经找到了文件。
+test("缺什么计数把「可按转换路径解出」的条目分出去，不再混报", () => {
+  const insp = {
+    ...INSPECT_A,
+    missing: [
+      "贴图 w1351_x.tga：清单里没登记，但可按客户端转换路径解出（convert/dxt/data/ource/npc/x.tga）",
+    ],
+  };
+  const detail = { ...DETAIL_A, gaps: ["贴图引用只有名称，清单里没登记路径；有贴图名可按客户端转换路径解出（逐条见下面）"] };
+  const s = loaded(245, detail, insp);
+  assert.equal(s.gaps.items.length, 1, "只剩那条类别说明");
+  assert.equal(s.gaps.solved.length, 1, "解得出的那条要单独列出");
+  assert.ok(!/^2 处$/.test(s.gaps.count), `不许再报「2 处」：${s.gaps.count}`);
+  assert.ok(s.gaps.count.includes("1 处"), `要说清真缺几处：${s.gaps.count}`);
+  assert.ok(s.gaps.count.includes("可解出"), `要顺带说明有一处其实解得出来：${s.gaps.count}`);
+  assert.ok(s.gaps.html.includes("convert/dxt"), "解得出的那条仍要看得见（只是不算缺）");
+  assert.ok(!/class="miss"[^<]*convert\/dxt/.test(s.gaps.html), "解得出的那条不许标成「缺」");
+});
+
+/// 全都能解出时，「缺」必须是 0，而不是把解得出的条目当缺项摆着。
+test("一处都不真缺时明说 0 处，并说明几处可解出", () => {
+  const insp = {
+    ...INSPECT_A,
+    missing: ["贴图 a.tga：清单里没登记，但可按客户端转换路径解出（convert/dxt/…）"],
+  };
+  const s = loaded(245, { ...DETAIL_A, gaps: [] }, insp);
+  assert.equal(s.gaps.count, "0 处 · 1 处可按客户端转换路径解出", s.gaps.count);
+  assert.ok(s.gaps.html.includes("没有发现明显缺失"), "该给「没有明显缺失」这句");
+});
+
+/// 类别说明那句也提到「客户端转换路径」，但它本身**不是**一条已解出的项——
+/// 只看关键字分类会把这句一起分掉，那一处真缺就凭空少了。
+test("类别说明不许被当成「已解出」分掉", () => {
+  const insp = {
+    ...INSPECT_A,
+    missing: ["贴图 a.tga：清单里没登记，但可按客户端转换路径解出（convert/dxt/…）"],
+  };
+  const 类别 = "贴图引用只有名称，清单里没登记路径；有贴图名可按客户端转换路径解出（逐条见下面）";
+  const s = loaded(245, { ...DETAIL_A, gaps: [类别] }, insp);
+  assert.deepEqual(s.gaps.items, [类别], "类别那句仍算一条缺项");
+  assert.equal(s.gaps.solved.length, 1, "已解出的只有逐条那一条");
+  assert.ok(s.gaps.count.startsWith("1 处"), s.gaps.count);
+});

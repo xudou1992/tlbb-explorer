@@ -41,6 +41,10 @@ pub struct Card {
     pub member_total: usize,
     pub ref_total: usize,
     pub located_total: usize,
+    /// 这组「材质写了贴图名、清单没登记路径」里，有几个能按客户端 `convert/*`
+    /// 换算对上真实贴图文件。界面拿它把「缺」和「其实解得出来」分开说——
+    /// 之前两者混在一个计数里，「缺什么 2 处」里有一处就写着「可按转换路径解出」。
+    pub tex_solvable: usize,
     /// 有没有能对人说的名字。false 时界面写「未命名资源」，不把编号摆成标题。
     pub named: bool,
     /// Best candidate for a real image; `None` means nothing was even referenced.

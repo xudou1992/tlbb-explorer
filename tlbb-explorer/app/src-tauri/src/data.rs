@@ -137,6 +137,9 @@ pub struct Lite {
     pub preview_candidates: Vec<u64>,
     /// 见 `Row::tex_solvable`：这组有几个贴图名能按 `convert/*` 对上文件。
     pub tex_solvable: usize,
+    /// 其中第一个对上文件的贴图哈希。列表行的缩略图用它兜底：清单没登记贴图路径
+    /// 不等于这组没有像素——客户端自己就是按换算路径去取文件的。
+    pub tex_preview: Option<u64>,
     pub hub_decoded: bool,
     pub rules: Vec<String>,
     pub members: Vec<Member>,
@@ -182,6 +185,8 @@ struct Row {
     /// 材质里写了、清单没登记路径的贴图名中，有几张能按客户端 `convert/*` 转换路径
     /// 对上真实的贴图文件。0 且 `preview_candidates` 也空 = 这组一张贴图文件都对不上。
     tex_solvable: usize,
+    /// 上面那批里第一个对上文件的哈希，供列表缩略图兜底（与 `tex_solvable` 同一次遍历）。
+    tex_preview: Option<u64>,
 }
 
 impl Row {
@@ -198,8 +203,23 @@ impl Row {
             rules: Vec::new(),
             preview_candidates: Vec::new(),
             tex_solvable: 0,
+            tex_preview: None,
         }
     }
+}
+
+/// 列表行缩略图的取图顺序：清单登记过的贴图先试（最多 5 张，和 `first_image` 的
+/// 尝试上限留一格余量），一张都没解出来再试「按客户端换算路径对上文件」的那张贴图。
+/// 后者是材质里写了名字、清单没登记路径的一批——客户端自己就是按换算路径去取文件的，
+/// 所以「页脚说这组能对上贴图文件」而「行里只有几何剪影」中间缺的就是这一格。
+fn thumb_order(preview: &[u64], bridge: Option<u64>) -> Vec<u64> {
+    let mut out: Vec<u64> = preview.iter().take(5).copied().collect();
+    if let Some(h) = bridge {
+        if !out.contains(&h) {
+            out.push(h);
+        }
+    }
+    out
 }
 
 /// `refs.kind` is the shipped extension. Words the player can read, and never a guess
@@ -431,9 +451,13 @@ impl AppData {
                 return hit.as_ref().map(|b| b.image());
             }
         }
-        let found = self
-            .lite_of(gid)
-            .and_then(|l| self.first_image(&l.preview_candidates));
+        let found = self.lite_of(gid).and_then(|l| {
+            // 清单登记过的贴图先试；一张都没解出来，才退到「材质里写了名字、可按客户端
+            // 换算路径对上文件」那张——页脚说 8,785 组能对上贴图文件，行里却全是剪影，
+            // 缺的就是这条兜底。
+            let order = thumb_order(&l.preview_candidates, l.tex_preview);
+            self.first_image(&order)
+        });
         if let Ok(mut c) = self.group_blobs.lock() {
             capped_insert(&mut c, gid, found.clone(), GROUP_BLOB_CAP);
         }
@@ -719,6 +743,7 @@ impl AppData {
             ref_total: sig.refs_total,
             preview_candidates: row.preview_candidates,
             tex_solvable: row.tex_solvable,
+            tex_preview: row.tex_preview,
             hub_decoded,
             rules: row.rules,
             members: row.members,
@@ -859,19 +884,23 @@ impl AppData {
         // 「材质里写了名字、清单没登记路径」那批贴图，有几张能按客户端 `convert/*`
         // 转换路径对上真实文件。只查 名字→路径→resources 行，不解像素；
         // 同一个名字被多份材质提到只算一次（按名字去重），PathMap 读不出来就整条算 0。
-        let tex_solvable = match &self.pm {
+        let (tex_solvable, tex_preview) = match &self.pm {
             Some(pm) => {
                 let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
-                items
+                let hits: Vec<u64> = items
                     .iter()
                     .filter(|r| !r.located && labels::is_texture_name(&r.name))
                     .filter(|r| seen.insert(r.name.clone()))
-                    .filter(|r| {
-                        crate::texture_override::auto_texture_hash(pm, cat.conn(), &r.name).is_some()
+                    .filter_map(|r| {
+                        // 回的是 16 位十六进制（`{:016x}` 出来的），换回 u64 才能和
+                        // `preview_candidates` 走同一个解图入口。
+                        crate::texture_override::auto_texture_hash(pm, cat.conn(), &r.name)
+                            .and_then(|(h, _)| u64::from_str_radix(&h, 16).ok())
                     })
-                    .count()
+                    .collect();
+                (hits.len(), hits.first().copied())
             }
-            None => 0,
+            None => (0, None),
         };
 
         Row {
@@ -884,6 +913,7 @@ impl AppData {
             rules: tags_raw.iter().take(6).map(|(t, c)| format!("{t} ({c})")).collect(),
             preview_candidates,
             tex_solvable,
+            tex_preview,
         }
     }
 
@@ -1317,7 +1347,8 @@ fn is_none_or(opt: &Option<String>, ok: impl Fn(&str) -> bool) -> bool {
 
 /// 缓存结构版本。DTO 或词表（场景/占位/缺口这些 &'static str 的取值集合）变动
 /// 时必须 +1，旧缓存会整体作废重预热——宁可慢一次，不能摆错数据。
-const WARM_CACHE_REV: u32 = 3; // 3: 能按 convert/* 解出的组，其「贴图引用只有名称」那句改了措辞——旧缓存里还是自相矛盾的旧话
+const WARM_CACHE_REV: u32 = 4; // 4: Lite 多带一个 tex_preview（行缩略图的换算路径兜底），旧缓存没这个字段
+                               // 3: 能按 convert/* 解出的组，其「贴图引用只有名称」那句改了措辞——旧缓存里还是自相矛盾的旧话
 const WARM_CACHE_MAGIC: &str = "TLBWARM";
 
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -1348,6 +1379,7 @@ struct LiteDto {
     ref_total: usize,
     preview_candidates: Vec<u64>,
     tex_solvable: usize,
+    tex_preview: Option<u64>,
     hub_decoded: bool,
     rules: Vec<String>,
     members: Vec<MemberDto>,
@@ -1475,6 +1507,7 @@ fn lite_to_dto(l: &Lite) -> LiteDto {
         ref_total: l.ref_total,
         preview_candidates: l.preview_candidates.clone(),
         tex_solvable: l.tex_solvable,
+        tex_preview: l.tex_preview,
         hub_decoded: l.hub_decoded,
         rules: l.rules.clone(),
         members: l
@@ -1560,6 +1593,7 @@ fn lite_from_dto(d: LiteDto) -> Result<Lite, String> {
         ref_total: d.ref_total,
         preview_candidates: d.preview_candidates,
         tex_solvable: d.tex_solvable,
+        tex_preview: d.tex_preview,
         hub_decoded: d.hub_decoded,
         rules: d.rules,
         members,
@@ -1741,6 +1775,7 @@ mod warm_cache_tests {
             ref_total: 1,
             preview_candidates: vec![0x1234],
             tex_solvable: 7,
+            tex_preview: Some(0x77aa),
             hub_decoded: true,
             rules: vec!["规则一".into()],
             members: vec![Member {
@@ -1767,6 +1802,7 @@ mod warm_cache_tests {
         assert_eq!(back.members[0].hash, 0xef01);
         assert_eq!(back.preview_candidates, vec![0x1234]);
         assert_eq!(back.tex_solvable, 7, "转换路径可解个数要能过缓存往返");
+        assert_eq!(back.tex_preview, Some(0x77aa), "换算路径兜底那张哈希要能过缓存往返");
         assert!(back.hub_decoded);
         // &'static str 必须真的扎了根（能安全持有到进程结束）。
         let leaked: &'static str = back.scenario;
@@ -1933,6 +1969,54 @@ mod page_regression {
             tga.solvable_names,
             tga.solvable_pct,
             rv.dangling_solvable
+        );
+    }
+
+    /// 行缩略图的取图顺序：登记过的先试，换算路径那张排在最后兜底。
+    #[test]
+    fn 行缩略图先试登记的贴图再退到换算路径() {
+        // 有登记的：顺序就是登记的，兜底那张排在后面（登记的解不出来才轮到它）。
+        let a = thumb_order(&[1, 2, 3], Some(9));
+        assert_eq!(a, vec![1, 2, 3, 9]);
+        // 一张登记都没有：只剩兜底那张——这类组就是页脚说的「能对上贴图文件」那 8 千多组。
+        assert_eq!(thumb_order(&[], Some(9)), vec![9]);
+        // 既没登记也没对上：如实空着，行里就该是几何剪影或「没图」，不猜。
+        assert!(thumb_order(&[], None).is_empty());
+        assert!(thumb_order(&[1, 2], None).len() == 2);
+        // 登记的太多要截到 5 张，给 first_image 的尝试上限留一格，兜底那张不能被挤出队列。
+        let big = thumb_order(&[1, 2, 3, 4, 5, 6, 7], Some(9));
+        assert_eq!(big.len(), 6, "登记的最多取 5 张 + 兜底 1 张");
+        assert_eq!(big.last(), Some(&9), "兜底那张不许被登记队列挤掉");
+        // 兜底哈希与登记里的某张相同（同名贴图两条路都指到它）：不重复排。
+        assert_eq!(thumb_order(&[9, 8], Some(9)), vec![9, 8]);
+    }
+
+    /// 实测闸门：清单没登记贴图路径、材质里却写了贴图名的组，行缩略图现在出真图。
+    /// gid 1（`w1351_model_zq_qszd_h001`）实测 `tex_solvable=1208`、`preview_candidates` 空——
+    /// 页脚说这组能对上贴图文件，行里却只有几何剪影，缺的就是换算路径这一格兜底。
+    /// 跑法：`cargo test --release -- --ignored 换算路径可解`
+    #[test]
+    #[ignore]
+    fn 换算路径可解的组行缩略图出真图() {
+        let (root, db) = crate::inspector::roots();
+        let app = AppData::open(&root, &db).expect("open");
+        app.warm();
+        let t0 = std::time::Instant::now();
+        while !app.ready() {
+            assert!(t0.elapsed() < std::time::Duration::from_secs(600), "预热超过 10 分钟，先查 warm 日志");
+            std::thread::sleep(std::time::Duration::from_millis(500));
+        }
+        let l = app.lite_of(1).expect("gid 1 应在预热里");
+        assert!(
+            l.preview_candidates.is_empty(),
+            "前提变了：这组有清单登记的贴图了，兜底路径要另挑样本"
+        );
+        assert!(l.tex_solvable > 0, "前提变了：这组按换算路径也解不出贴图");
+        let img = app.group_image(1).expect("兜底那张该解得出像素");
+        assert!(img.width > 0 && img.height > 0, "解出来的图没有尺寸");
+        eprintln!(
+            "gid 1 行缩略图：{}×{} · 这组可按换算路径对上的贴图 {} 张",
+            img.width, img.height, l.tex_solvable
         );
     }
 }

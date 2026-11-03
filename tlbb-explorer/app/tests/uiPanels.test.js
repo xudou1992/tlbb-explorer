@@ -214,3 +214,14 @@ test("地图信息栏不许替查询下结论：非网格那批只说「按名�
   assert.match(seg, /按名字没查到/, "要说这条查询实际做了什么");
   assert.ok(!/文件在客户端里存在/.test(seg), "按名字没查到的东西不能写成「存在」——实测 mobile_maps* 下 .pu 一条都没有");
 });
+
+test("立体那一行要说「套上了几件」，不许只讲已贴图", () => {
+  const map = readFileSync(join(web, "map.js"), "utf8");
+  assert.match(map, /function grayStatus\(s, tex\)/, "状态行要有带实测数的版本");
+  assert.match(map, /个模型套上了贴图/);
+  assert.match(map, /贴图正在逐件核对/, "数还没数出来，不许先说已贴图");
+  assert.ok(!/有材质表的已贴图，地形未解/.test(map), "旧的含糊话（不给分母）已撤");
+  assert.match(map, /return \{ total: paths\.length, textured \}/, "套贴图的计数要回给状态行");
+  // 数没数完都不能盖掉别的图的状态：回包要先过当前图这道闸。
+  assert.match(map, /sceneId !== scene\.id \|\| mode !== "gray"/, "迟到的贴图数不许顶掉当前画面");
+});

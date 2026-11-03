@@ -243,11 +243,15 @@ const mapPlanCache = new Map();
 
 async function applyMapPropTextures(v, scene) {
   const paths = [...new Set((scene.meshes || []).map((m) => m.path).filter(Boolean))];
-  if (!paths.length) return;
+  if (!paths.length) return { total: 0, textured: 0 };
   const todo = [];
+  let textured = 0;
   for (const p of paths) {
-    if (mapPlanCache.has(p)) v.setInstanceLayersFor(p, mapPlanCache.get(p));
-    else todo.push(p);
+    if (mapPlanCache.has(p)) {
+      const cached = mapPlanCache.get(p);
+      if (cached.length) textured++;
+      v.setInstanceLayersFor(p, cached);
+    } else todo.push(p);
   }
   // 逐件到货逐件上色；同时最多 6 个请求，别把 IPC 和 PNG 解码一次性打满。
   let i = 0;
@@ -258,11 +262,15 @@ async function applyMapPropTextures(v, scene) {
         const plan = await api.meshTexturePlanByPath(p);
         const layers = plan && Array.isArray(plan.layers) ? plan.layers : [];
         mapPlanCache.set(p, layers);
-        if (layers.length) v.setInstanceLayersFor(p, layers);
+        if (layers.length) {
+          textured++;
+          v.setInstanceLayersFor(p, layers);
+        }
       } catch {}
     }
   };
   await Promise.all([worker(), worker(), worker(), worker(), worker(), worker()]);
+  return { total: paths.length, textured };
 }
 
 function ensureTop() {
@@ -296,6 +304,18 @@ function ensureTop() {
 
 /// 俯视图左下角的状态行：把取景口径说清（主簇多少格、有没有孤悬），
 /// 让「为什么一打开看不见那棵孤悬的树」有答案：缩放出去就有。
+/// 立体（物件预览）那一行的口径。`tex` 是贴图核对完的实测数：
+/// 没数完之前不许说「已贴图」——那是句还没证据的话。
+function grayStatus(s, tex) {
+  const cs = clusterStats(s.instances, s.gridFiles);
+  return (
+    `${num(s.instances.length)} 件 · ${num(s.uniqueMeshes)} 个模型 · ` +
+    (tex ? `${num(tex.textured)}/${num(tex.total)} 个模型套上了贴图` : "贴图正在逐件核对") +
+    ` · 地形未解` +
+    (cs && cs.stray > 0 ? ` · 取景对准主簇 ${num(cs.mainCells)} 格（另有 ${num(cs.stray)} 格孤悬在外，这一面够不到）` : "")
+  );
+}
+
 function topStatus() {
   const n = scene.instances.length;
   const ci = top && top.clusterInfo;
@@ -350,7 +370,6 @@ function applyMode() {
         applyMapSky(v, scene);
         applyMapLight(v, scene);
         void applyMapGround(v, scene);
-        void applyMapPropTextures(v, scene);
       } catch (e) {
         el("mapCanvas").hidden = true;
         status(`画不出来：${e instanceof Error ? e.message : String(e)}`);
@@ -360,11 +379,12 @@ function applyMode() {
       // 从俯视切回来时 WebGL 那边已停帧：画一帧把画面找回来，否则可能是块黑布。
       v.start();
     }
-    const cs = clusterStats(scene.instances, scene.gridFiles);
-    status(
-      `${num(scene.instances.length)} 件 · ${num(scene.uniqueMeshes)} 个模型 · 有材质表的已贴图，地形未解` +
-        (cs && cs.stray > 0 ? ` · 取景对准主簇 ${num(cs.mainCells)} 格（另有 ${num(cs.stray)} 格孤悬在外，这一面够不到）` : ""),
-    );
+    status(grayStatus(scene));
+    // 贴图是逐件到货的：数出来了再改这一行，「有材质表的已贴图」就从含糊话变成实测数。
+    void applyMapPropTextures(v, scene).then((tex) => {
+      if (!tex || sceneId !== scene.id || mode !== "gray") return;
+      status(grayStatus(scene, tex));
+    });
   } else {
     if (viewer) viewer.stop();
     el("mapCanvas").hidden = true;

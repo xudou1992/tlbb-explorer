@@ -384,9 +384,9 @@ function applyMode() {
       }
     } else {
       // 同图切回：隐藏期间窗口 resize 可能把位图清成 1×1（灰模侧同样的问题
-      // 靠 start() 找回画面，这边是纯 2D，补一次量尺寸 + 重画）。
-      t.syncViewport();
-      t.draw();
+      // 靠 start() 找回画面，这边是纯 2D，补一次量尺寸 + 重画）。画布盒变了
+      // 还要重算取景，否则地图仍画在旧尺寸的中心点上。
+      t.ensureFit();
     }
     status(topStatus());
   }

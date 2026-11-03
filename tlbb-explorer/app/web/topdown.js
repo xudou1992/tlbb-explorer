@@ -37,6 +37,12 @@ export class TopDownView {
     this.drag = null;
     this.clusterInfo = null;
     this.skipped = 0;
+    /// 取景范围（主簇包围盒或全部矩形）与算取景时用的画布尺寸。
+    /// 画布盒变了要按新尺寸重算，见 applyFit。
+    this.fitOn = null;
+    this.fitSize = null;
+    /// 用户拖过/缩过之后，重算取景不再把他的视野顶掉。
+    this.touched = false;
     /// 地表编码格垫底图：{img, rect:{x0,z0,x1,z1}}；null = 不画。
     this.surface = null;
     /// 回调：onhover({wx,wz,gx,gz,gridName}|null)、onpick({wx,wz,meshPath,gridName,recordNo}|null)。
@@ -85,15 +91,41 @@ export class TopDownView {
     // 取景口径在 topdownMath.mainClusterBounds：地图列表缩略图用同一个，
     // 两边的图必须长得一样（用户拿缩略图认图，点进去形状变了就是 bug）。
     const mainB = tm.mainClusterBounds(cells);
-    const fitOn = mainB ? [mainB] : rects;
-    this.home = tm.fitView(fitOn, this.size.w, this.size.h, PAD);
-    this.view = this.home ? { ...this.home } : null;
+    this.fitOn = mainB ? [mainB] : rects;
+    this.touched = false;
+    this.applyFit();
+    this.draw();
+  }
+
+  /// 按「当前画布尺寸」重算取景。load 时用一次；之后画布盒变了（列表把网格行
+  /// 撑到两万像素、隐藏期间量到 1px、窗口缩放）必须再来一次——取景算在错误的
+  /// 高度上，地图就永远画在可见窗口之外，读者看到的是一块空白。
+  applyFit() {
+    if (!this.fitOn) return false;
+    this.home = tm.fitView(this.fitOn, this.size.w, this.size.h, PAD);
+    this.fitSize = { ...this.size };
     if (this.home) {
       // 缩放上下限：远到能看全图 16 倍的视野，近到一格铺满半个画布。
       this.minScale = this.home.scale / 16;
       this.maxScale = Math.max(this.home.scale * 1024, this.size.w / (2 * tm.CELL));
+      if (!this.touched) this.view = { ...this.home };
+    } else {
+      this.view = null;
     }
-    this.draw();
+    return true;
+  }
+
+  /// 量一遍画布盒，和上次取景差得远就按新尺寸重算取景，然后画一帧。
+  /// 取景算在 24,192px 高的画布上（列表把 grid 行撑破）或 1px 上（画布还藏着），
+  /// 地图就永远落在可见窗口之外——读者看到的是一块没有任何报错的空白。
+  ensureFit() {
+    const before = this.size ? { ...this.size } : null;
+    this.syncViewport();
+    const s = this.size;
+    if (!before || before.h <= 1 || Math.abs(before.h - s.h) > s.h * 0.2 || Math.abs(before.w - s.w) > s.w * 0.2) {
+      this.applyFit();
+    }
+    if (this.view) this.draw();
   }
 
   bindEvents() {
@@ -113,6 +145,7 @@ export class TopDownView {
         const dy = e.clientY - this.drag.y;
         this.view.cx -= dx / this.view.scale;
         this.view.cz -= dy / this.view.scale;
+        this.touched = true;
         this.drag = { x: e.clientX, y: e.clientY, moved: this.drag.moved || Math.hypot(dx, dy) > 3 };
         this.draw();
       }
@@ -144,13 +177,20 @@ export class TopDownView {
     c.addEventListener("dblclick", () => {
       if (!this.home) return;
       this.view = { ...this.home };
+      this.touched = false;
       this.draw();
     });
     window.addEventListener("resize", () => {
       // 隐藏的画布量不到尺寸，此时画会把位图缩成 1×1——切回来就是一块空白，
       // 而且没有任何报错（map.js 在切回时补画一帧，这里从源头别糟蹋位图）。
       if (this.canvas.hidden || !this.canvas.isConnected) return;
-      if (this.view) this.draw();
+      this.ensureFit();
+    });
+    // 「放大」把画布盒改了（.map-stage.zoomed）走的是这个事件，不是 window.resize：
+    // 不接的话铺满窗口后位图还是老尺寸，画面挤在左上角一小块。
+    window.addEventListener("tlbb:viewer-resize", () => {
+      if (this.canvas.hidden || !this.canvas.isConnected) return;
+      this.ensureFit();
     });
   }
 
@@ -182,6 +222,7 @@ export class TopDownView {
     const py = e.clientY - r.top;
     const [wx, wz] = tm.worldOfPixel(px, py, v, this.size.w, this.size.h);
     v.scale = ns;
+    this.touched = true;
     v.cx = wx - (px - this.size.w / 2) / ns;
     v.cz = wz - (py - this.size.h / 2) / ns;
     this.trackHover(e);

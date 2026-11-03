@@ -18,7 +18,7 @@ use std::sync::Arc;
 use serde::Serialize;
 use tauri::State;
 use tlbb_core::jpak::Pak;
-use tlbb_core::preview::pose::{bind_worlds, pose_frame, posed_vertices, reanchored_palette};
+use tlbb_core::preview::pose::{bind_worlds, posed_vertices, reanchored_palette};
 use tlbb_core::preview::{
     attach_bone_skin, parse_ani, parse_geometry, parse_hierarchy, parse_nodes, Anim, MeshGeometry,
     Node, SkeletonHierarchy,

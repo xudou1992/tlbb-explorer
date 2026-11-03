@@ -160,3 +160,34 @@ test("统计函数叫 memberStats：名字本身说明它数的是什么", () =>
   const seg = panels.slice(panels.indexOf("function memberStats"), panels.indexOf("function paintSide"));
   assert.match(seg, /for \(const m of insp\.members \|\| \[\]\)/);
 });
+
+// ---- 地图页画布尺寸：列表一长，画布就被撑到两万像素 ----
+//
+// 实测（2026-11-03，无量山 w1351_ll_wls_001）：.map-wrap 不写 grid-template-rows
+// 时那一行走 auto＝三个栏里最高的内容说了算。地图列表铺满 300 行 ≈ 22,500px，
+// 整行被撑到 24,192px；.map-stage 跟着长，canvas{height:100%} 吃不到确定高度就
+// 退回位图自带高度，syncViewport 再把量到的尺寸写回位图。俯视取景算在 24,192px
+// 高的画布上，地图画在 1.2 万像素以下——读者点「俯视量测」看到的是一块空白，
+// 状态栏却写着「2,240 件」。
+
+test("地图页三栏的行高必须钉死，不许被列表撑起来", () => {
+  const css = readFileSync(join(web, "style.css"), "utf8");
+  const at = css.indexOf(".map-wrap {");
+  assert.ok(at >= 0, "找不到 .map-wrap 规则");
+  const seg = css.slice(at, css.indexOf("}", at));
+  assert.match(seg, /grid-template-rows:\s*minmax\(0/, "行高要钉成 minmax(0,1fr)，否则隐式行走 auto＝最高内容说了算");
+  assert.match(seg, /min-height:\s*0/, "父级不收缩，1fr 也吃不到视口高度");
+});
+
+test("俯视量测：画布盒变了要按新尺寸重算取景", () => {
+  const top = readFileSync(join(web, "topdown.js"), "utf8");
+  const map = readFileSync(join(web, "map.js"), "utf8");
+  assert.match(top, /applyFit\(\) \{[\s\S]{0,400}tm\.fitView\(this\.fitOn, this\.size\.w, this\.size\.h/, "重算取景要吃当前尺寸");
+  assert.match(top, /ensureFit\(\) \{[\s\S]{0,500}this\.applyFit\(\)/, "量出盒子差得远就得重算");
+  // 两条入口：窗口缩放、「放大」铺满画布（走 tlbb:viewer-resize，不是 window.resize）
+  assert.match(top, /addEventListener\("resize"[\s\S]{0,300}this\.ensureFit\(\)/, "窗口缩放要重算取景");
+  assert.match(top, /addEventListener\("tlbb:viewer-resize"[\s\S]{0,300}this\.ensureFit\(\)/, "「放大」改了画布盒也要重算");
+  // 同图切回不许退回裸 syncViewport+draw（那样取景还按旧盒子）
+  assert.match(map, /t\.ensureFit\(\);/, "切回俯视要走 ensureFit");
+  assert.ok(!/t\.syncViewport\(\);\s*\n\s*t\.draw\(\);/.test(map), "裸量尺寸+重画会留着按旧尺寸算出来的取景");
+});

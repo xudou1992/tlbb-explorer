@@ -635,7 +635,11 @@ body.stage-zoom-open::before {
   border: 1px solid #eccfa6; border-radius: 99px; background: var(--amber-soft);
   color: var(--amber);
 }
-.map-wrap { flex: 1; min-height: 0; display: grid; grid-template-columns: 250px minmax(0, 1fr) 316px; gap: 0; margin-top: 12px; }
+/* 行高必须钉死：不写 grid-template-rows，隐式行走 auto＝最高的内容说了算。
+   地图列表 300 行 ≈ 24,192px 会把整行撑起来，画布 canvas{height:100%} 吃不到
+   确定高度就退回位图自带高度，syncViewport 再把量到的尺寸写回位图——地图画到
+   1.2 万像素以下，可见窗口里只剩一块空白。 */
+.map-wrap { flex: 1; min-height: 0; display: grid; grid-template-columns: 250px minmax(0, 1fr) 316px; grid-template-rows: minmax(0, 1fr); gap: 0; margin-top: 12px; }
 .map-list { border-right: 1px solid var(--line); overflow-y: auto; padding: 10px; background: var(--bg-elev); display: flex; flex-direction: column; }
 .map-list .field { margin-bottom: 8px; flex: none; }
 .maprows { display: flex; flex-direction: column; gap: 2px; }

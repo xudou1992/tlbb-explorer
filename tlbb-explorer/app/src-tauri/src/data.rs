@@ -991,6 +991,7 @@ impl AppData {
         RefView {
             refs_total: health.refs_total,
             refs_resolved: health.refs_resolved,
+            refs_dangling: health.refs_total.saturating_sub(health.refs_resolved),
             resolved_pct: pct,
             dangling_names: health.dangling_names,
             dangling_solvable: solvable_total,
@@ -1002,6 +1003,7 @@ impl AppData {
                     ext: e.ext.clone(),
                     total: e.total,
                     resolved: e.resolved,
+                    dangling: e.total.saturating_sub(e.resolved),
                     dangling_names: e.dangling_names,
                     solvable_names: solvable
                         .get(&e.ext.to_ascii_lowercase())
@@ -2005,6 +2007,34 @@ mod page_regression {
     }
 
     /// 行缩略图的取图顺序：登记过的先试，换算路径那张排在最后兜底。
+    /// 报告页每一行要加得回自己的引用总数（同一单位：条）。
+    /// 之前表里只有「对上（条）」和「对不上的名字（个）」两列，读者相加必然对不上
+    /// 总数——实测 .tga 行 25 + 8,672 = 8,697，而引用是 30,585 条，差 21,888 没人解释。
+    #[test]
+    fn 报告页每行加得回引用条数() {
+        let row = |ext: &str, kind: &str, total: usize, resolved: usize, names: usize| RefExtView {
+            ext: ext.to_string(),
+            kind: kind.to_string(),
+            total,
+            resolved,
+            dangling: total.saturating_sub(resolved),
+            dangling_names: names,
+            solvable_names: 0,
+            solvable_pct: 0,
+            resolved_pct: 0,
+        };
+        let a = row(".tga", "贴图", 30_585, 25, 8_672);
+        assert_eq!(a.resolved + a.dangling, a.total, "每行「对上 + 对不上」要等于「引用」");
+        assert_eq!(a.dangling, 30_560, "对不上的条数不是对不上的名字数");
+        assert_ne!(a.dangling, a.dangling_names, "两个单位必须可能不同，别混用");
+        // 卡片上的总数 = 各行相加
+        let rows = vec![row(".tga", "贴图", 10, 4, 3), row(".ani", "动作", 7, 7, 0)];
+        let 合计: usize = rows.iter().map(|r| r.total).sum();
+        let 对上: usize = rows.iter().map(|r| r.resolved).sum();
+        let 对不上: usize = rows.iter().map(|r| r.dangling).sum();
+        assert_eq!(对上 + 对不上, 合计, "卡片那两个数也要加得回引用总数");
+    }
+
     #[test]
     fn 行缩略图先试登记的贴图再退到换算路径() {
         // 有登记的：顺序就是登记的，兜底那张排在后面（登记的解不出来才轮到它）。

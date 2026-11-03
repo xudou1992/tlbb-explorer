@@ -172,6 +172,11 @@ pub struct RefExtView {
     pub kind: String,
     pub total: usize,
     pub resolved: usize,
+    /// `total - resolved`：**条**这一单位里的对不上数。有了它，这一行才加得回来
+    /// （对上 + 对不上 = 引用总数）；下面那个 `dangling_names` 数的是「个名字」，
+    /// 和条不是同一单位，读者拿两列相加必然对不上总数（实测 .tga 行：
+    /// 引用 30,585、对上 25、悬空名字 8,672——两个数相加差 21,888）。
+    pub dangling: usize,
     /// Distinct names carrying this extension that never landed. Counted separately from
     /// `total`, which counts edges — the two are different units on purpose.
     pub dangling_names: usize,
@@ -205,6 +210,8 @@ pub struct DanglingView {
 pub struct RefView {
     pub refs_total: usize,
     pub refs_resolved: usize,
+    /// `refs_total - refs_resolved`：卡片上也要有同单位（条）的那个数，见 `RefExtView::dangling`。
+    pub refs_dangling: usize,
     /// `refs_resolved / refs_total`, as a 0-100 integer so the frontend never rounds
     /// two different ways.
     pub resolved_pct: u32,

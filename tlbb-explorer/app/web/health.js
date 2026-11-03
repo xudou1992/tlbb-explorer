@@ -24,6 +24,7 @@ function summaryHtml(h) {
         <td><span class="kd">${esc(e.kind)}</span> <code>${esc(e.ext)}</code></td>
         <td class="n">${num(e.total)}</td>
         <td class="n">${num(e.resolved)}</td>
+        <td class="n">${num(e.dangling)}</td>
         <td class="bar-cell"><span class="mini-bar"><i style="width:${e.resolvedPct}%;background:${barColor(e.resolvedPct)}"></i></span><em>${pctText(e.resolvedPct, e.resolved)}</em></td>
         <td class="n dim">${e.danglingNames ? num(e.danglingNames) : "—"}</td>
         <td class="n${e.solvableNames ? " ok" : " dim"}">${e.solvableNames ? `${num(e.solvableNames)}（${e.solvablePct}%）` : "—"}</td>
@@ -48,7 +49,7 @@ function summaryHtml(h) {
 
   <div class="hl-cards">
     <div class="hl-card"><dt>引用总数</dt><dd>${num(h.refsTotal)}</dd><span>客户端文件里写下的引用条目</span></div>
-    <div class="hl-card"><dt>能对上文件的</dt><dd>${num(h.refsResolved)} <em>${pctText(h.resolvedPct, h.refsResolved)}</em></dd>${bar(h.resolvedPct)}<span>剩下 ${num(h.refsTotal - h.refsResolved)} 条只有名字</span></div>
+    <div class="hl-card"><dt>能对上文件的</dt><dd>${num(h.refsResolved)} <em>${pctText(h.resolvedPct, h.refsResolved)}</em></dd>${bar(h.resolvedPct)}<span>剩下 ${num(h.refsDangling)} 条只有名字</span></div>
     <div class="hl-card"><dt>对不上的名字</dt><dd>${num(h.danglingNames)}</dd><span>只读到名字，没有对应资源；其中 ${num(h.danglingSolvable)} 个可按客户端转换路径对上文件</span></div>
     <div class="hl-card"><dt>有引用可查的文件</dt><dd>${num(h.assetsCitingResolved)} / ${num(h.assetsCiting)}</dd><span>按文件算，不是按资产组（全库里至少有一条引用能对上的文件 · ${pctText(pctOf(h), h.assetsCitingResolved)}）</span></div>
   </div>
@@ -56,10 +57,12 @@ function summaryHtml(h) {
   <section class="hl-sec">
     <h3>按文件类型看 <em>引用条目 —— 能不能对上</em></h3>
     <table class="hl-table">
-      <thead><tr><th>类型</th><th class="n">引用</th><th class="n">对上</th><th>比例</th><th class="n">对不上的名字</th><th class="n">可按转换路径对上</th></tr></thead>
+      <thead><tr><th>类型</th><th class="n">引用</th><th class="n">对上</th><th class="n">对不上</th><th>比例</th><th class="n">对不上的名字</th><th class="n">可按转换路径对上</th></tr></thead>
       <tbody>${extRows}</tbody>
     </table>
-    <p class="foot">「引用」按条目数，「对不上的名字」与最后一列按<b>不同名字</b>数，三列不是同一单位，别相加。
+    <p class="foot">前三列同一单位（<b>条</b>）：<b>对上 + 对不上 = 引用</b>，每行都加得回来。
+      后两列数的是<b>不同名字</b>（个），和条不是同一单位，别拿去和前三列相加——
+      实测 <code>.tga</code> 行：引用 30,585 条、对上 25 条，可对不上的名字有 8,672 个（同一条名字被多处引用只数一次）。
       最后一列是清单里没登记路径、但按客户端 <code>convert/*</code> 换算能找到真实文件的名字数。</p>
   </section>
 

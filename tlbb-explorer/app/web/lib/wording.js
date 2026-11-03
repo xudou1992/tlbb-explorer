@@ -155,6 +155,10 @@ export function emptyMessage({ query, state, ready }) {
   if (state.grade && state.grade !== "全部") 开着.push(`完整程度：${state.grade}`);
   if (state.onlyPaintable) 开着.push("只看能对上贴图文件的");
   if (state.named === false) 开着.push("只看未命名资产");
+  // 默认那档「只看有名字的」也得列出来：实测点「其他资源」(921)、「玩家角色」(204)、
+  // 「共享材质」(36) 三个筹码都筛成 0 行——那批全是未命名资产，被这档默认筛掉了。
+  // 不写出来，读者只会看见「类型：其他资源」筛空了，然后去点「清空筛选」把别的条件一起丢掉。
+  if (state.named === true) 开着.push("只看有名字的资产（未命名的一律不看）");
   if (!ready) {
     return {
       strong: "后台还在准备资产清单",
@@ -170,7 +174,11 @@ export function emptyMessage({ query, state, ready }) {
   if (开着.length) {
     return {
       strong: "这些筛选条件把列表筛空了",
-      span: `开着 ${开着.join("、")}。点「清空筛选」一次清掉。`,
+      span:
+        `开着 ${开着.join("、")}。点「清空筛选」一次清掉。` +
+        (state.named === true
+          ? "只想看被这档筛掉的那批，点左下「看未命名资产」就行，不用把其他条件一起清掉。"
+          : ""),
     };
   }
   if (query) {

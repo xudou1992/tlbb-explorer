@@ -225,3 +225,13 @@ test("页脚那两个数要写明「全库」，不许被当成眼前这一屏�
   assert.match(src, /不跟着当前筛选变/, "悬停要说明它不跟筛选走");
   assert.match(src, /列表头上那一行才是筛出来的条数/, "要指路到真正跟着筛选变的那个数");
 });
+
+test("筛空时要列出默认那档「只看有名字的」，并指路到左下的开关", () => {
+  // 实测：清掉其他条件后点「其他资源」(921) 得到 0 行——那批全是未命名资产。
+  const t = emptyMessage({ query: "", state: { kind: "其他资源", scenario: "全部", grade: "全部", named: true }, ready: true });
+  assert.ok(t.span.includes("只看有名字的资产"), t.span);
+  assert.ok(t.span.includes("不用把其他条件一起清掉"), t.span);
+  // 已经切到「只看未命名」时不该再劝一遍
+  const u = emptyMessage({ query: "", state: { kind: "其他资源", scenario: "全部", grade: "全部", named: false }, ready: true });
+  assert.ok(!u.span.includes("不用把其他条件一起清掉"), u.span);
+});

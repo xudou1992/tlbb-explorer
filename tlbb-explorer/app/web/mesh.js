@@ -125,7 +125,10 @@ function partShortLabel(m) {
   }
   prefix = prefix.replace(/[_\-.]+$/, "");
   const short = prefix ? base.slice(prefix.length).replace(/^[_\-.]+/, "") : base;
-  return short || base;
+  // 剥到只剩数字（`c01`/`c02`、`yifu_001`/`_002`）等于把名字全剥掉了——
+  // 筹码上写「1」「2」不告诉人任何事，这种情况退回完整短名。
+  if (!short || /^\d+$/.test(short)) return base;
+  return short;
 }
 
 function paintPick() {
@@ -371,8 +374,9 @@ export function showMeshes(meshState) {
   if (noLod.length) meshes = noLod;
   const active = Math.min(Math.max(meshState.active ?? 0, 0), meshes.length - 1);
   // 多件模型一次画整组（身体+翅膀、衣服+脸），筹码只切当前贴图栏；
-  // 没有分层提供者（独立网格面板）仍走单件老路。
-  if (meshes.length > 1 && texturePlanProvider) {
+  // 没有分层提供者（独立网格面板）仍走单件老路；`merge:false` 是「一批各自独立的
+  // 特效件」——叠成一坨会画出个不存在的东西，所以只许筹码逐个切。
+  if (meshes.length > 1 && texturePlanProvider && meshState.merge !== false) {
     loadParts(active);
     return;
   }

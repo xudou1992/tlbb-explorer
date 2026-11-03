@@ -299,6 +299,8 @@ export function absencesOf(insp, card) {
         `模型定义里有 ${namedBodies} 件，但网格名没在清单里对上实体（变体件常见），暂时画不出`,
       ),
     );
+  else if (meshHit && !bodies.length)
+    out.push(abs("立体模型", "ok", `没有模型定义，按组里的 ${meshHit} 个网格文件逐个摆（筹码切换，不叠成一具）`));
   else if (meshHit) out.push(abs("立体模型", "unknown", `有 ${meshHit} 个网格文件，但这组没有模型定义把它们串起来，暂时画不出`));
   else if (ofRole("mesh").length) out.push(abs("立体模型", "missing", `记了 ${ofRole("mesh").length} 个网格，但客户端未含这些文件`));
   else out.push(abs("立体模型", "missing", "这组里没有网格文件，画不出形状"));
@@ -469,6 +471,24 @@ export function loaded(gid, d, insp) {
       trial: true,
     });
   }
+  // 没有模型定义、但组里就是一批 .mesh（特效件常见）：每份网格自己带着顶点/面/UV，
+  // 单独就画得出来——原来只因为「没有 .mdl 把它们串起来」就整块放弃，
+  // 21 组分层普查里有 7 组停在这一句上（实测 12/12 份网格都能解出几何）。
+  // 这些彼此是独立的特效件、不是一具身体的部件，所以 merge:false：筹码逐个切，不叠成一坨。
+  const bodyCount = insp.mdl && insp.mdl.bodies ? insp.mdl.bodies.length : 0;
+  const looseMeshes = !meshes.length && !bodyCount
+    ? (insp.members || []).filter((m) => m.role === "mesh" && (m.resolved || m.path))
+    : [];
+  // 摆在第一位的必须是「和本组同名」那份：成员原序常把兄弟件顶到前面
+  //（组 w1351_model_zjx_fo_w001 的第一名是 yijinjing_fashe_w001）。
+  const groupStem = String(card.name || "").toLowerCase();
+  if (groupStem) {
+    const rank = (m) => (String(m.name || "").toLowerCase().includes(groupStem) ? 0 : 1);
+    looseMeshes.sort((a, b) => rank(a) - rank(b));
+  }
+  for (const m of looseMeshes) {
+    meshes.push({ name: m.path || m.name, hash: null, label: m.name });
+  }
   // 面板常驻：画不出时最忌讳整块隐藏——用户看到的是"工具坏了"。原因不在这儿另编
   // 一套，直接复用 absencesOf 里那条「立体模型」，两边说的必须是同一处判断。
   const meshRow = absences.find((a) => a.label === "立体模型") || null;
@@ -476,6 +496,7 @@ export function loaded(gid, d, insp) {
     visible: true,
     hasView: meshes.length > 0,
     meshes,
+    merge: looseMeshes.length === 0,
     active: meshes.length ? 0 : -1,
     why: meshRow ? meshRow.why : "",
     meta: "",

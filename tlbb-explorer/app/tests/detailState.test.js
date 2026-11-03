@@ -308,11 +308,35 @@ test("有贴图文件但没被任何材质引用：说成不知道用在哪，�
   assert.ok(by["贴图"].why.includes("没有材质引用"), by["贴图"].why);
 });
 
-test("有网格文件但没有模型定义串起来：说成暂时画不出，不说成没有网格", () => {
+test("没有模型定义、但组里有网格文件：按文件逐个摆，不再说「暂时画不出」", () => {
+  // 2026-11-03 改口：21 组分层普查有 7 组停在这句上，实测这 12 份 .mesh
+  // 每份都自带顶点/面/UV（对照组 3/3），"没有 .mdl 串起来"不等于"画不出"。
   const insp = { ...INSPECT_A, mdl: null, previews: null };
   const by = Object.fromEntries(absencesOf(insp, CARD_A).map((r) => [r.label, r]));
-  assert.equal(by["立体模型"].state, "unknown");
+  assert.equal(by["立体模型"].state, "ok");
+  assert.ok(/逐个摆/.test(by["立体模型"].why), by["立体模型"].why);
   assert.ok(/2 个网格文件/.test(by["立体模型"].why), by["立体模型"].why);
+  const s = loaded(245, DETAIL_A, insp);
+  assert.equal(s.mesh.hasView, true, "有网格文件就该给画面");
+  assert.equal(s.mesh.meshes.length, 2);
+  assert.equal(s.mesh.merge, false, "各份是独立的特效件，不许叠成一具");
+  for (const m of s.mesh.meshes) assert.ok(m.name && !m.hash, "按路径直读：成员行没有哈希，也不许编一个");
+});
+
+test("没有模型定义那批：和本组同名那份摆第一，兄弟件排后面", () => {
+  const insp = {
+    ...INSPECT_A,
+    mdl: null,
+    previews: null,
+    members: [
+      { role: "mesh", roleZh: "网格", name: "w1351_model_yijinjing_fashe_w001.mesh", path: "d/yijinjing.mesh", resolved: true },
+      { role: "mesh", roleZh: "网格", name: "w1351_monster_xiyuqiezei.mesh", path: "d/self.mesh", resolved: true },
+    ],
+  };
+  const s = loaded(245, DETAIL_A, insp);
+  assert.equal(s.mesh.meshes.length, 2);
+  assert.equal(s.mesh.meshes[0].label, "w1351_monster_xiyuqiezei.mesh", "第一眼画的必须是本组同名那份");
+  assert.equal(s.mesh.meshes[1].label, "w1351_model_yijinjing_fashe_w001.mesh");
 });
 
 test("模型定义在、但网格名没对上实体：说成变体件对不上，不说成没有模型定义", () => {
@@ -379,7 +403,7 @@ test("非 ready 状态不渲染这个区块（也不留空壳）", () => {
 // 和下面「缺什么」迟早分家，那时用户看到两个互相矛盾的解释。
 test("画不出立体时面板还在，且理由是「缺什么」里那一句", () => {
   const cases = [
-    ["没有模型定义", { ...INSPECT_A, mdl: null }],
+    ["记了网格但客户端没带这些文件", { ...INSPECT_A, mdl: null, members: INSPECT_A.members.map((m) => ({ ...m, resolved: false, path: null })) }],
     ["定义了部件但一个网格都没定位到", { ...INSPECT_A, mdl: { bodies: [{ mesh: { name: "a.mesh", hash: null }, material: { name: "a.mtl" } }] } }],
     ["一组里根本没有网格文件", { ...INSPECT_A, mdl: null, members: [] }],
   ];

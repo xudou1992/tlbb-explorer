@@ -268,3 +268,14 @@ test("预览第一眼要和游戏里一样：骨架线是勾了才叠的附加�
   const parts = mesh.slice(mesh.indexOf("partsMode = true;"));
   assert.match(parts, /showBoneToggle\(false\);/, "整组模式没有逐骨数据，不许留个点不动的勾");
 });
+
+test("没有模型定义那批：筹码逐个切，不许把各自独立的网格叠成一具", () => {
+  const mesh = readFileSync(join(web, "mesh.js"), "utf8");
+  assert.match(mesh, /meshState\.merge !== false/, "整组那条路要听 merge:false");
+  assert.match(html, /id="meshPick"/, "筹码区必须在，否则切不了下一份");
+});
+
+test("筹码剥到只剩数字时退回完整短名，不许写「1」「2」", () => {
+  const mesh = readFileSync(join(web, "mesh.js"), "utf8");
+  assert.match(mesh, /\/\^\\d\+\$\/\.test\(short\)/, "纯数字等于名字被剥光了");
+});

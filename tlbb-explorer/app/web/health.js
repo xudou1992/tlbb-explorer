@@ -97,7 +97,7 @@ async function paintGap() {
       <div class="hl-card"><dt>清单已登记</dt><dd>${num(g.dbResources)}</dd><span>resources.db 里的条数</span></div>
       <div class="hl-card"><dt>清单没登记</dt><dd class="${miss ? "bad" : ""}">${num(miss)}</dd><span>${
         miss
-          ? "这些文件「浏览」里能翻到，资产检索与反查查不到"
+          ? "这些文件在「浏览」的 (未命名) 桶里：只有 16 位编号和后端嗅出的类型，没有路径；资产检索与反查查不到"
           : "容器里的每一条都在清单里"
       }</span></div>
     </div>

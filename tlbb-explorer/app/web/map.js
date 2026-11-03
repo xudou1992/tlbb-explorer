@@ -16,7 +16,7 @@ import { state, saveState } from "./state.js";
 import { MeshViewer } from "./mesh-viewer.js";
 import { TopDownView } from "./topdown.js";
 import { makeSeq } from "./lib/seq.js";
-import { rowLabel, factsHeader, unresolvedHtml } from "./lib/mapView.js";
+import { rowLabel, factsHeader, unresolvedHtml, clusterFrame, clusterStats } from "./lib/mapView.js";
 import { mapNoObjects } from "./lib/wording.js";
 import { drawThumb } from "./lib/mapThumb.js";
 
@@ -343,6 +343,10 @@ function applyMode() {
         // 中间不许再转置（转一次全图叠到原点且不报错）。
         v.loadInstances({ meshes: scene.meshes, instances: scene.instances });
         grayLoaded = scene.id;
+        // 相机按连片主体取景：一格孤悬在千把单位外就能把整张图压成画面角落的
+        // 一块邮票。俯视与列表缩略图早就用同一个 mainClusterBounds，这里补上。
+        const cf = clusterFrame(scene.instances, scene.gridFiles);
+        if (cf) v.applyFrame(cf);
         applyMapSky(v, scene);
         applyMapLight(v, scene);
         void applyMapGround(v, scene);
@@ -356,7 +360,11 @@ function applyMode() {
       // 从俯视切回来时 WebGL 那边已停帧：画一帧把画面找回来，否则可能是块黑布。
       v.start();
     }
-    status(`${num(scene.instances.length)} 件 · ${num(scene.uniqueMeshes)} 个模型 · 有材质表的已贴图，地形未解`);
+    const cs = clusterStats(scene.instances, scene.gridFiles);
+    status(
+      `${num(scene.instances.length)} 件 · ${num(scene.uniqueMeshes)} 个模型 · 有材质表的已贴图，地形未解` +
+        (cs && cs.stray > 0 ? ` · 取景对准主簇 ${num(cs.mainCells)} 格（孤悬 ${num(cs.stray)} 格，缩远才看得到）` : ""),
+    );
   } else {
     if (viewer) viewer.stop();
     el("mapCanvas").hidden = true;

@@ -716,7 +716,7 @@ pub fn anim_view_run(gid: i64, want: &str) -> Result<AnimReply, String> {
         .filter_map(|p| p.rsplit('/').next().map(|s| s.to_string()))
         .collect::<Vec<_>>();
     if files.is_empty() {
-        return Err("这一组旁边没有 ani/ 目录，客户端没给它配动作文件。".to_string());
+        return Err("这一组旁边没有 ani/ 目录，没找到能配给它的动作（别的目录里也许有能套在这副骨架上的，这一版没查）。".to_string());
     }
     // 空 want 或名字对不上时取第一条，别让人面对一个空白页
     let pick = files

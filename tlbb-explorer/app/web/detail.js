@@ -167,7 +167,7 @@ export async function showDetail(gid, retried = 0) {
       paint(notReady(gid));
       state.lastInspect = null;
       paintSide(null);
-      paintFixBar({ missing: [] });
+      paintFixBar(null);
       clearTabPanes();
     } else {
       state.lastInspect = insp; // 关系网浮层要按同一份回包铺图，不再重查
@@ -176,12 +176,12 @@ export async function showDetail(gid, retried = 0) {
       paint(st);
       paintTex(insp);
       paintSide(insp, d);
-      paintTabCounts(insp);
+      paintTabCounts(insp, st);
       paintRing(st);
       paintFiles(insp);
       loadSkeleton(gid, ""); // 骨架要开容器读字节，放在主画面之后异步补，不挡第一眼
       paintRaw({ card: d, inspect: insp });
-      paintFixBar(insp);
+      paintFixBar(st);
       if (paintedGid !== gid) {
         showTabPane("preview"); // 换资产回到第一眼该看的那一页；同一组的重刷不动
         paintedGid = gid;
@@ -208,7 +208,7 @@ export async function showDetail(gid, retried = 0) {
     paint(failed(gid, msg));
     state.lastInspect = null;
     paintSide(null);
-    paintFixBar({ missing: [] });
+    paintFixBar(null);
     clearTabPanes();
   }
 }
@@ -1379,7 +1379,7 @@ export function clearDetail() {
   state.lastInspect = null;
   paint(empty());
   paintSide(null);
-  paintFixBar({ missing: [] });
+  paintFixBar(null);
   clearTabPanes();
 }
 

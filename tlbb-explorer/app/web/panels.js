@@ -969,12 +969,16 @@ function trunc(s, n) {
 // ---- 详情标签上的计数 ----
 
 /// 标签上的数字跟标签名必须同指一件事：这里两个数分别是
-/// 「组成成员条数」和「缺失条数」，不是引用边数——引用边（refs）不在回包里。
-export function paintTabCounts(insp) {
+/// 「组成成员条数」和「缺什么那张表里的条数」，不是引用边数——引用边（refs）不在回包里。
+export function paintTabCounts(insp, st) {
   const total = memberStats(insp).reduce((a, r) => a + r.hit + r.miss, 0);
   el("tabRelCount").textContent = total ? total : "";
-  const gaps = (insp.missing || []).length;
-  el("tabMissCount").textContent = gaps ? gaps : "";
+  // 「缺失资源」这一页里只有「缺什么」那张表，所以页签就得数它的条数。
+  // 原来这里数的是 `insp.missing`——那是另一批东西（这一页并没有那张列表），
+  // 实测 6 组页签与页内全对不上：页签 5 / 页内「1 处 · 另有 5 处可解出」，页签 80 / 页内 81 处。
+  // 「可按客户端转换路径解出」那几条不算缺（文件找得到），所以也不进页签这个数。
+  const real = st && st.gaps ? st.gaps.items.length : 0;
+  el("tabMissCount").textContent = real ? real : "";
 }
 
 // ---- 文件清单 / 原始数据 ----
@@ -1084,18 +1088,23 @@ function missingOf(miss, unknown, pct) {
 // ---- 底部修复建议条 ----
 
 /// 只在真有缺失时出现。点击切到「缺失资源」标签——不去别处编一套修复流程。
-export function paintFixBar(insp) {
+export function paintFixBar(st) {
   const host = el("fixBarHost");
   if (!host) return;
-  const gaps = (insp.missing || []).length;
-  if (!gaps) {
+  // 条上的「缺失项」必须和它指着的那一页数的是同一批东西：那一页只列「缺什么」，
+  // 而「可按客户端转换路径解出」的条目不是缺（文件找得到），不该来催你查 pak 完不完整。
+  const gaps = st && st.gaps ? st.gaps.items : [];
+  if (!gaps.length) {
     host.innerHTML = "";
     return;
   }
-  const first = trunc(insp.missing[0], 40);
+  const first = trunc(gaps[0], 40);
+  // 原来这里直接给原因（「检查 pak 是否完整」）——可这堆条目里既有真取不出文件的，
+  // 也有「文件找得到、只是清单没登记路径」那一类，替后者断言 pak 不完整就是猜。
+  // 逐条原因「缺失资源」那一页已经写全了，条子只负责把人带到那里。
   host.innerHTML = `<div class="fix-bar"><span class="ico">!</span><span>检测到 <b>${num(
-    gaps,
-  )} 个缺失项</b>（${esc(first)}…）— 建议检查 pak 是否完整，或核实这些资源是否本就未随包发布。</span>
+    gaps.length,
+  )} 处缺失</b>（${esc(first)}…）— 逐条原因见「缺失资源」这一页。</span>
     <button type="button" class="ghost sm" data-goto="missing">查看修复建议</button></div>`;
   host.querySelector("[data-goto]").addEventListener("click", () => showTabPane("missing"));
 }

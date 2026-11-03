@@ -82,7 +82,7 @@ test("失败/未就绪也要把右栏清干净，不留上一条的概况", () =
 
 test("修复建议条只在真有缺失时出现，且跳的是「缺失资源」标签", () => {
   const seg = panels.slice(panels.indexOf("export function paintFixBar"));
-  assert.match(seg, /if \(!gaps\) \{/);
+  assert.match(seg, /if \(!gaps\.length\) \{/, "空列表才收起条子");
   assert.match(seg, /showTabPane\("missing"\)/);
   // 条子挂在滚动容器外面，才能稳在详情栏底边而不是随内容浮动。
   assert.match(seg, /el\("fixBarHost"\)/);
@@ -224,4 +224,27 @@ test("立体那一行要说「套上了几件」，不许只讲已贴图", () =>
   assert.match(map, /return \{ total: paths\.length, textured \}/, "套贴图的计数要回给状态行");
   // 数没数完都不能盖掉别的图的状态：回包要先过当前图这道闸。
   assert.match(map, /sceneId !== scene\.id \|\| mode !== "gray"/, "迟到的贴图数不许顶掉当前画面");
+});
+
+test("「缺失资源」页签要数这一页里那张表，不许数另一批东西", () => {
+  const panels = readFileSync(join(web, "panels.js"), "utf8");
+  assert.match(panels, /export function paintTabCounts\(insp, st\)/, "页签要拿到建好的状态（里面才有「缺什么」那张表）");
+  assert.match(panels, /st\.gaps\.items\.length/);
+  // 只看这两个函数的函数体：别处（文件清单那一栏）用 insp.missing 是它自己的事。
+  const body = panels.slice(panels.indexOf("export function paintTabCounts"), panels.indexOf("// ---- 文件清单"));
+  assert.ok(!/insp\.missing/.test(body.replace(/\/\/[^\n]*/g, "")), "页签不许再数 insp.missing——这一页没有那张列表");
+  const bar = panels.slice(panels.indexOf("export function paintFixBar"));
+  assert.match(bar, /st && st\.gaps \? st\.gaps\.items/, "修复建议条也要数同一批");
+  assert.match(bar, /num\(\s*gaps\.length,/s, "数的是条数，不是把数组塞进 num()");
+  const detail = readFileSync(join(web, "detail.js"), "utf8");
+  assert.match(detail, /paintTabCounts\(insp, st\)/, "调用点要一起把状态传进去");
+});
+
+test("修复建议条不替缺失猜原因——逐条原因交给「缺失资源」那一页", () => {
+  const panels = readFileSync(join(web, "panels.js"), "utf8");
+  const seg = panels.slice(panels.indexOf("export function paintFixBar"));
+  assert.match(seg, /逐条原因见「缺失资源」这一页/);
+  // 注释里会引用被撤掉的那句原话，断言只看代码本体。
+  const code = seg.replace(/\/\/[^\n]*/g, "");
+  assert.ok(!/检查 pak 是否完整/.test(code), "条目里混着「文件找得到、只是清单没登记路径」那一类，替它们断言 pak 不完整就是猜");
 });

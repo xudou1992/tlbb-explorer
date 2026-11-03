@@ -208,6 +208,19 @@ impl Row {
     }
 }
 
+/// 行缩略图挑哪张贴图：名字里带着组名主干的那张优先——那就是这组自己的皮肤；
+/// 没有同名主干才退回第一个可对上的。普查（141 组抽样）实测有同名主干的占 **49.6%**，
+/// 全按「第一个」选的话，这一半组的行图摆的是它引用到的别的贴图。
+fn pick_tex_preview(stem: &str, hits: &[(String, u64)]) -> Option<u64> {
+    let low = stem.to_lowercase();
+    if low.len() >= 8 {
+        if let Some((_, h)) = hits.iter().find(|(n, _)| n.to_lowercase().contains(&low)) {
+            return Some(*h);
+        }
+    }
+    hits.first().map(|(_, h)| *h)
+}
+
 /// 列表行缩略图的取图顺序：清单登记过的贴图先试（最多 5 张，和 `first_image` 的
 /// 尝试上限留一格余量），一张都没解出来再试「按客户端换算路径对上文件」的那张贴图。
 /// 后者是材质里写了名字、清单没登记路径的一批——客户端自己就是按换算路径去取文件的，
@@ -887,7 +900,7 @@ impl AppData {
         let (tex_solvable, tex_preview) = match &self.pm {
             Some(pm) => {
                 let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
-                let hits: Vec<u64> = items
+                let hits: Vec<(String, u64)> = items
                     .iter()
                     .filter(|r| !r.located && labels::is_texture_name(&r.name))
                     .filter(|r| seen.insert(r.name.clone()))
@@ -896,9 +909,10 @@ impl AppData {
                         // `preview_candidates` 走同一个解图入口。
                         crate::texture_override::auto_texture_hash(pm, cat.conn(), &r.name)
                             .and_then(|(h, _)| u64::from_str_radix(&h, 16).ok())
+                            .map(|h| (r.name.clone(), h))
                     })
                     .collect();
-                (hits.len(), hits.first().copied())
+                (hits.len(), pick_tex_preview(&g.stem, &hits))
             }
             None => (0, None),
         };
@@ -1347,7 +1361,8 @@ fn is_none_or(opt: &Option<String>, ok: impl Fn(&str) -> bool) -> bool {
 
 /// 缓存结构版本。DTO 或词表（场景/占位/缺口这些 &'static str 的取值集合）变动
 /// 时必须 +1，旧缓存会整体作废重预热——宁可慢一次，不能摆错数据。
-const WARM_CACHE_REV: u32 = 4; // 4: Lite 多带一个 tex_preview（行缩略图的换算路径兜底），旧缓存没这个字段
+const WARM_CACHE_REV: u32 = 5; // 5: tex_preview 改成优先「名字带组名主干」那张（49.6% 的组有），旧缓存里存的是随便第一张
+                               // 4: Lite 多带一个 tex_preview（行缩略图的换算路径兜底），旧缓存没这个字段
                                // 3: 能按 convert/* 解出的组，其「贴图引用只有名称」那句改了措辞——旧缓存里还是自相矛盾的旧话
 const WARM_CACHE_MAGIC: &str = "TLBWARM";
 
@@ -1972,6 +1987,23 @@ mod page_regression {
         );
     }
 
+    #[test]
+    fn 缩略图优先挑名字带组名那张() {
+        let hits = vec![
+            ("w1351_other_skin.tga".to_string(), 11u64),
+            ("w1351_smoke_h014a.tga".to_string(), 22u64),
+            ("w1351_smoke_h014a_body.tga".to_string(), 33u64),
+        ];
+        // 组名主干出现在第 2、3 个名字里：要选第一个命中的（22），不是随便第一张（11）。
+        assert_eq!(pick_tex_preview("w1351_smoke_h014a", &hits), Some(22));
+        // 没有同名主干：退回第一个可对上的。
+        assert_eq!(pick_tex_preview("w1351_zzz_unrelated", &hits), Some(11));
+        // 组名太短不当特征（避免「a」这种把每张都算成主干）。
+        assert_eq!(pick_tex_preview("abc", &hits), Some(11));
+        // 一张都没有：如实 None。
+        assert_eq!(pick_tex_preview("w1351_smoke_h014a", &[]), None);
+    }
+
     /// 行缩略图的取图顺序：登记过的先试，换算路径那张排在最后兜底。
     #[test]
     fn 行缩略图先试登记的贴图再退到换算路径() {
@@ -2018,5 +2050,113 @@ mod page_regression {
             "gid 1 行缩略图：{}×{} · 这组可按换算路径对上的贴图 {} 张",
             img.width, img.height, l.tex_solvable
         );
+    }
+
+    /// 普查（真库，`#[ignore]`）：行缩略图拿的是「第一个可对上的贴图名」，
+    /// 但「可对上」不等于「就是这组自己的那张贴图」。这里量清楚：有多少组里
+    /// 存在名字带着组名主干的可解贴图——存在就该优先选它，不存在就维持现状。
+    /// 跑法：`cargo test --release -- --ignored 行缩略图选图普查 --nocapture`
+    /// 普查（真库，`#[ignore]`）：行缩略图现在优先挑「名字里带着组名主干」的那张贴图。
+    /// 这里量两件事：① 有多少组的可解贴图里存在这样一张；② 界面实际选中的那张是不是它。
+    /// 抽样必须稳定：`HashMap` 的迭代顺序每次不同，第一版没排序，同一份库两次跑出
+    /// 49.6% 和 39.6% —— 那是抽样在漂，不是库在变。所以先按 gid 排序再每 64 组取 1 组。
+    /// 跑法：`cargo test --release -- --ignored 行缩略图选图普查 --nocapture`
+    #[test]
+    #[ignore]
+    fn 行缩略图选图普查() {
+        let (root, db) = crate::inspector::roots();
+        let app = AppData::open(&root, &db).expect("open");
+        app.warm();
+        let t0 = std::time::Instant::now();
+        while !app.ready() {
+            assert!(t0.elapsed() < std::time::Duration::from_secs(600), "预热超过 10 分钟，先查 warm 日志");
+            std::thread::sleep(std::time::Duration::from_millis(500));
+        }
+        if app.pm.is_none() {
+            eprintln!("本机读不到客户端路径表，普查做不了（不是 0 命中，是没查）");
+            return;
+        }
+        const 每组上限: usize = 12;
+        const 总名上限: usize = 1500;
+        let keys: Vec<i64> = {
+            // 先把键抄出来再放掉锁：`for` 里那个临时 MutexGuard 会活到整个循环结束，
+            // 循环体再调 `lite_of` 就是拿同一把锁拿第二次——直接死锁（第一版就是这么卡住的）。
+            let g = app.lite.lock().unwrap();
+            let mut v: Vec<i64> = g.keys().copied().collect();
+            v.sort_unstable();
+            v
+        };
+        let mut 抽样组 = 0usize;
+        let mut 有主干 = 0usize;
+        let mut 选中了主干 = 0usize;
+        let mut 查过名字 = 0usize;
+        let mut 样例: Vec<String> = Vec::new();
+        for (i, gid) in keys.iter().enumerate() {
+            if i % 64 != 0 || 查过名字 >= 总名上限 {
+                continue;
+            }
+            let l = match app.lite_of(*gid) {
+                Some(l) => l,
+                None => continue,
+            };
+            if l.tex_solvable == 0 {
+                continue;
+            }
+            抽样组 += 1;
+            let stem = l.name.to_lowercase();
+            let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
+            let mut 主干名 = String::new();
+            for r in l.refs.iter().filter(|r| !r.located && labels::is_texture_name(&r.name)) {
+                if !seen.insert(r.name.clone()) {
+                    continue;
+                }
+                if seen.len() > 每组上限 || 查过名字 >= 总名上限 {
+                    break;
+                }
+                let pm = app.pm.as_ref().expect("上面查过");
+                let hit = app.q(|c| Ok(crate::texture_override::auto_texture_hash(pm, c.conn(), &r.name)));
+                查过名字 += 1;
+                let (hh, _) = match hit {
+                    Some(x) => x,
+                    None => continue,
+                };
+                // 回的是 16 位十六进制；和 collect() 里同一个换算，才比得上 tex_preview。
+                let h = match u64::from_str_radix(&hh, 16) {
+                    Ok(v) => v,
+                    Err(_) => continue,
+                };
+                let low = r.name.to_lowercase();
+                if stem.len() >= 8 && low.contains(&stem) {
+                    if 主干名.is_empty() {
+                        主干名 = r.name.clone();
+                    }
+                    if Some(h) == l.tex_preview {
+                        选中了主干 += 1;
+                    }
+                }
+            }
+            if !主干名.is_empty() {
+                有主干 += 1;
+                if 样例.len() < 6 {
+                    样例.push(format!("{} → {}", l.name, 主干名));
+                }
+            }
+        }
+        let 选中不是主干 = 抽样组.saturating_sub(选中了主干);
+        let 百分比 = |a: usize, b: usize| if b > 0 { a as f64 * 100.0 / b as f64 } else { 0.0 };
+        let line = format!(
+            "抽样组(有可解贴图) {} · 可解贴图里有带组名主干那张的 {} ({:.1}%) · 界面实际选中主干那张 {} ({:.1}%) · 没选中 {} · 查过贴图名 {} 个\n样例:\n{}\n",
+            抽样组,
+            有主干,
+            百分比(有主干, 抽样组),
+            选中了主干,
+            百分比(选中了主干, 抽样组),
+            选中不是主干,
+            查过名字,
+            样例.join("\n")
+        );
+        let _ = std::fs::write(std::path::PathBuf::from("D:/TLGL/.scratch/thumb_stem_census.txt"), &line);
+        eprint!("{}", line);
+        assert!(抽样组 > 20, "抽样太少（{} 组），这次普查不算数", 抽样组);
     }
 }

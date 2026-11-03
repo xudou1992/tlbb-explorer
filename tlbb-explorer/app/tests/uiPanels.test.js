@@ -191,3 +191,17 @@ test("俯视量测：画布盒变了要按新尺寸重算取景", () => {
   assert.match(map, /t\.ensureFit\(\);/, "切回俯视要走 ensureFit");
   assert.ok(!/t\.syncViewport\(\);\s*\n\s*t\.draw\(\);/.test(map), "裸量尺寸+重画会留着按旧尺寸算出来的取景");
 });
+
+test("孤悬格的两句话要各自对得上做得到的事", () => {
+  const top = readFileSync(join(web, "topdown.js"), "utf8");
+  const map = readFileSync(join(web, "map.js"), "utf8");
+  // 俯视那句「缩远可见」是承诺：下限必须真能罩住全体实例（实测某张图孤悬格在 5.5 万单位外，
+  // 只按主簇 1/16 缩到底只有 6,153 单位视野，承诺兑现不了）。
+  assert.match(top, /fitView\(this\.rects/, "俯视的缩放下限要按全体范围再放宽一次");
+  // 立体面的远裁剪按主簇尺寸定，够不到那一格，就不许再说「缩远」。
+  const at = map.indexOf("取景对准主簇");
+  assert.ok(at >= 0, "立体侧要有取景口径那句");
+  const seg = map.slice(at, at + 200);
+  assert.match(seg, /这一面够不到/, "立体侧要如实说够不到");
+  assert.ok(!/取景对准主簇[^）]*缩远/.test(map), "立体侧不许再承诺缩远");
+});

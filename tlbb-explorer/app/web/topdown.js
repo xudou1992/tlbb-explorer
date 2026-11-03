@@ -107,6 +107,13 @@ export class TopDownView {
     if (this.home) {
       // 缩放上下限：远到能看全图 16 倍的视野，近到一格铺满半个画布。
       this.minScale = this.home.scale / 16;
+      // 「缩远可见」得真做得到：下限还要罩住**全体**实例的范围。实测 w1351_fb_wanjiegu_002
+      // 那一格孤悬在 5.5 万单位外，只按主簇 1/16 缩到底也只有 6,153 单位的视野——
+      // 界面那句承诺就是空的。
+      if (this.rects.length) {
+        const all = tm.fitView(this.rects, this.size.w, this.size.h, PAD);
+        if (all && all.scale < this.minScale) this.minScale = all.scale;
+      }
       this.maxScale = Math.max(this.home.scale * 1024, this.size.w / (2 * tm.CELL));
       if (!this.touched) this.view = { ...this.home };
     } else {

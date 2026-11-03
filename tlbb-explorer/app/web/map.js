@@ -363,7 +363,7 @@ function applyMode() {
     const cs = clusterStats(scene.instances, scene.gridFiles);
     status(
       `${num(scene.instances.length)} 件 · ${num(scene.uniqueMeshes)} 个模型 · 有材质表的已贴图，地形未解` +
-        (cs && cs.stray > 0 ? ` · 取景对准主簇 ${num(cs.mainCells)} 格（孤悬 ${num(cs.stray)} 格，缩远才看得到）` : ""),
+        (cs && cs.stray > 0 ? ` · 取景对准主簇 ${num(cs.mainCells)} 格（另有 ${num(cs.stray)} 格孤悬在外，这一面够不到）` : ""),
     );
   } else {
     if (viewer) viewer.stop();

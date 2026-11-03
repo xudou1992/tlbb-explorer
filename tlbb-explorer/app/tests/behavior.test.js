@@ -583,7 +583,11 @@ test("特效页：点开才取数，材质链要真列成表、参数块未解�
   assert.ok(table.includes("position") && table.includes("3f800000"), `参数字段名与原始词要摆出来：${table.slice(-200)}`);
   assert.ok(table.includes("0 · 1 · 0"), `数值要按 cls 解成浮点：${table.slice(-200)}`);
   assert.ok(detail.el("fxMissing").innerHTML.includes("参数块"), "参数记录的限制必须同屏");
-  assert.equal(detail.el("tabFxCount").textContent, "59");
+  // 页签徽章数的是这一页列出的条目，不是参数块字符串表的条数（string_total=59 是另一件事）。
+  const 列出 = [rep.materials, rep.textures, rep.meshes, rep.blends, rep.renderers, rep.emitters, rep.updaters, rep.dynamics, rep.other]
+    .reduce((a, v) => a + (v || []).length, 0);
+  assert.equal(detail.el("tabFxCount").textContent, String(列出), "页签要等于类别表列出的条数");
+  assert.notEqual(detail.el("tabFxCount").textContent, "59", "不许再挂字符串表条数");
   assert.equal(detail.el("fxPick").children.length, 0, "只登记一份特效时不该摆选择条");
 });
 

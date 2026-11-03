@@ -383,7 +383,9 @@ function setAnimControls(show) {
 export function paintAnimation(rep, frame, onlyChanged, onPick) {
   clearAnimation();
   if (!rep) return;
-  el("tabAnimCount").textContent = rep.frames ? String(rep.frames) : "";
+  // 页签数「这一页列了几条动作文件」，不数帧数：帧数在页里（表有「关键帧」列、
+  // 导语也写），而四个页签的徽章得是同一类东西——数各自列出的条目。
+  el("tabAnimCount").textContent = (rep.files || []).length ? String((rep.files || []).length) : "";
   el("animSum").textContent = animationLead(rep);
   el("animMissing").innerHTML = (rep.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
   if ((rep.files || []).length > 1) {
@@ -473,7 +475,11 @@ export function paintEffect(rep, onPick) {
     ["动态参数名", rep.dynamics],
     ["其他名字", rep.other],
   ].filter(([, v]) => (v || []).length);
-  el("tabFxCount").textContent = String(rep.string_total || "");
+  // 页签上的数要数这一页里列出来的东西。原来挂的是 `string_total`（参数块字符串表条数），
+  // 两者可以完全不同：实测 gid 1 的字符串表是 0，页签因此空着，而类别表里列了 111 行——
+  // 「页签没数、点进去一墙条目」正是「缺失资源」那个坑的同一个形状。
+  const 列出 = groups.reduce((a, [, v]) => a + v.length, 0);
+  el("tabFxCount").textContent = 列出 ? String(列出) : "";
   const more = (rep.files || []).length - 1;
   el("fxSum").textContent = effectLead(rep);
   // 术语版注记（文件名/字符串表/参数块字节数）跟着名字表一起住进折叠区。

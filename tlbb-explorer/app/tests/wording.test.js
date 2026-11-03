@@ -6,7 +6,12 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 import { pctText, texPair, listCount, railCount, citedVerdict, rowMissChip, missChipTitle, mapNoObjects, progressLine, titleHtml, emptyMessage } from "../web/lib/wording.js";
+
+const here = dirname(fileURLToPath(import.meta.url));
 
 test("25/30,585 显示成「不足 1%」而不是 0%", () => {
   assert.equal(pctText(0, 25), "不足 1%");
@@ -212,4 +217,11 @@ test("中文名搜索：词表内的中文翻成拼音，翻不出就原样", as
   assert.equal(pinyinForChinese("长臂猿"), "changbiyuan");
   assert.equal(pinyinForChinese("随便什么"), "");
   assert.equal(pinyinForChinese(""), "");
+});
+
+test("页脚那两个数要写明「全库」，不许被当成眼前这一屏的数", () => {
+  const src = readFileSync(join(here, "..", "web", "list.js"), "utf8");
+  assert.match(src, /全库 <b>\$\{rc\.total\}<\/b> 条资产/, "可见文案要带「全库」");
+  assert.match(src, /不跟着当前筛选变/, "悬停要说明它不跟筛选走");
+  assert.match(src, /列表头上那一行才是筛出来的条数/, "要指路到真正跟着筛选变的那个数");
 });

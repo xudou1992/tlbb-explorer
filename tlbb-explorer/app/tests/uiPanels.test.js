@@ -255,3 +255,16 @@ test("清单没登记那批：只说浏览里的真实样子（未命名桶、�
   assert.match(h, /只有 16 位编号/, "要说清那里长什么样");
   assert.ok(!/「浏览」里能翻到/.test(h), "「能翻到」会被读成能按路径找到——这批根本没有路径");
 });
+
+test("预览第一眼要和游戏里一样：骨架线是勾了才叠的附加层", () => {
+  const mesh = readFileSync(join(web, "mesh.js"), "utf8");
+  assert.match(mesh, /v\.load\(data, null\)/, "不许默认把青色骨线画在贴图模型上");
+  assert.ok(!/v\.load\(data, bones\)/.test(mesh), "改回传 bones 就等于把调试视图当默认画面");
+  assert.match(mesh, /let boneOn = false;/, "开关默认关");
+  assert.match(mesh, /export async function setBoneOverlay/, "勾选要有出口");
+  assert.match(html, /<input id="meshBones" type="checkbox" \/>/, "HTML 里带 checked 就是没改干净");
+  assert.match(html, /id="meshBonesWrap" hidden/, "开关只在真画出单件网格时才出现");
+  assert.match(detail, /setBoneOverlay\(meshBonesBox\.checked\)/, "界面要接上这个开关");
+  const parts = mesh.slice(mesh.indexOf("partsMode = true;"));
+  assert.match(parts, /showBoneToggle\(false\);/, "整组模式没有逐骨数据，不许留个点不动的勾");
+});

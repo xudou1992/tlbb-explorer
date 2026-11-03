@@ -148,7 +148,7 @@ const noop = () => {};
 const meshMock = { showMeshes: noop, hideMeshes: noop, applyTexture: () => true, tryLayerTexture: () => false,
   remesh: noop, setTrialProvider: noop, setTexturePlanProvider: noop, setTexturePlanObserver: noop,
   refreshTexturePlan: async () => null,
-  clearMeshTexture: () => true, onActiveMesh: noop, currentMeshName: () => "" };
+  clearMeshTexture: () => true, onActiveMesh: noop, currentMeshName: () => "", setBoneOverlay: noop };
 
 // 详情用的两份夹具直接从 detailState 的用例里借，免得两处夹具各写各的。
 const fixtureSource = fs.readFileSync(path.join(here, "detailState.test.js"), "utf8");

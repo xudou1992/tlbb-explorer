@@ -24,6 +24,7 @@ import {
   clearMeshTexture,
   onActiveMesh,
   currentMeshName,
+  setBoneOverlay,
 } from "./mesh.js";
 import { MeshViewer } from "./mesh-viewer.js";
 import {
@@ -301,6 +302,11 @@ function initAnim() {
 const animBonesBox = el("animBones");
 if (animBonesBox) {
   animBonesBox.addEventListener("change", () => applyPoseBones(poseLastReply));
+}
+// 预览页的骨架线同样是附加层：勾上才叠，默认画面和游戏里一致。
+const meshBonesBox = el("meshBones");
+if (meshBonesBox) {
+  meshBonesBox.addEventListener("change", () => setBoneOverlay(meshBonesBox.checked));
 }
   // 点开才取数：一条动作约 0.6 秒，不该压在每次选资产的路径上
   onTabOpen((name) => {

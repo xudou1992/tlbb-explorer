@@ -58,6 +58,53 @@ export function remesh() {
 function foldStage() {
   el("secMesh").classList.add("folded");
   el("meshCanvas").hidden = true;
+  showBoneToggle(false);
+}
+
+/// 骨架线开关只在「单件网格已经画出来」时出现：整组模式没有逐骨数据，
+/// 画不出时更没有，留一个点不动的勾等于骗人。
+function showBoneToggle(on) {
+  const box = el("meshBonesWrap");
+  if (box) box.hidden = !on;
+}
+
+/// 骨线是绑定姿态上的附加层，默认关：第一眼要和游戏里一样，青色骨架线是给排查用的。
+/// 勾上才问客户端取一次，同一件网格再勾不重复取；取不到、解不出、空表都静默跳过，
+/// 附加层缺了只少一层线，不许挡在灰模前面。
+let boneOn = false;
+let boneCache = null;
+let boneCacheKey = "";
+
+async function applyBones(my, m, v) {
+  if (!boneOn || partsMode) {
+    v.setBoneLines(null);
+    return;
+  }
+  const key = `${m.name}|${m.hash || ""}`;
+  if (boneCacheKey !== key || !boneCache) {
+    try {
+      boneCache = (await api.meshBoneLines(m.name, m.hash)) || null;
+    } catch {
+      boneCache = null;
+    }
+    boneCacheKey = key;
+  }
+  if (seq.isStale(my)) return; // 等回包时已经换模型了
+  v.setBoneLines(boneCache);
+  v.draw();
+}
+
+/// 勾选「叠加骨架线」由界面接线调这里。
+export async function setBoneOverlay(on) {
+  boneOn = !!on;
+  const v = viewer;
+  if (!v || partsMode || current < 0 || !meshes[current]) return;
+  if (!boneOn) {
+    v.setBoneLines(null);
+    v.draw();
+    return;
+  }
+  await applyBones(seq.current(), meshes[current], v);
 }
 
 /// 部件筹码只显示公共前缀之后的短名（`_a`/`_b`、`yifu_001`），全名在 title 里。
@@ -176,14 +223,6 @@ async function pick(k) {
     return;
   }
   if (seq.isStale(my)) return; // 已经切到别的模型了
-  // 骨头是绑定姿态上的附加线。取不到、解不出、空表都不挡灰模，也不另开错误。
-  let bones = null;
-  try {
-    bones = await api.meshBoneLines(m.name, m.hash);
-  } catch {
-    bones = null;
-  }
-  if (seq.isStale(my)) return;
   let v;
   try {
     v = ensure();
@@ -197,7 +236,7 @@ async function pick(k) {
     status("显卡上下文被系统收回了，重新点一下这个模型就能再看。");
   };
   try {
-    v.load(data, bones);
+    v.load(data, null); // 骨线是附加层，勾了「叠加骨架线」才叠
   } catch (e) {
     // 缓冲长度对不上是数据/契约问题，别把锅甩给显卡。
     foldStage();
@@ -205,6 +244,8 @@ async function pick(k) {
     return;
   }
   if (seq.isStale(my)) return; // 上面这些是同步的，但 load 里可能已经换人了
+  showBoneToggle(!partsMode);
+  await applyBones(my, m, v);
   status("");
   el("meshMeta").textContent = `${num(data.vertexCount)} 个顶点 · ${num(data.faceCount)} 个三角面`;
   el("meshMeta").title = "";
@@ -291,6 +332,7 @@ async function pick(k) {
 export function hideMeshes() {
   seq.next();
   el("secMesh").hidden = true;
+  showBoneToggle(false);
   if (viewer) viewer.stop();
 }
 
@@ -302,6 +344,7 @@ function paintEmpty(why) {
   el("meshCanvas").hidden = true;
   // 画不出就收成一行理由：空盒子配「放大」按钮，点了也只会被拒绝。
   el("secMesh").classList.add("folded");
+  showBoneToggle(false);
   el("meshPick").innerHTML = "";
   el("meshMeta").textContent = "";
   el("meshTech").innerHTML = "";
@@ -392,6 +435,9 @@ async function loadParts(active = 0) {
     return;
   }
   partsMode = true;
+  // 整组一次画多件，逐骨线只属于单件那条路：开关收掉，别留个点了没反应的勾。
+  showBoneToggle(false);
+  v.setBoneLines(null);
   meshes = ok.map((o) => o.mesh);
   current = Math.min(current, meshes.length - 1);
   partPlans = new Array(ok.length).fill(null);

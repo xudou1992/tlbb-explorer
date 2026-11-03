@@ -167,6 +167,11 @@
                 </div>
                 <!-- 分层筹码：点一层只看那层，用来核「哪段几何配哪张图」有没有配错。 -->
                 <div class="chips" id="meshLayers" hidden></div>
+                <!-- 骨架线是排查用的附加层，默认不画：第一眼要和游戏里一样。 -->
+                <label class="check" id="meshBonesWrap" hidden>
+                  <input id="meshBones" type="checkbox" />
+                  <span>叠加骨架线</span>
+                </label>
                 <div class="mesh-stage">
                   <canvas id="meshCanvas" aria-label="立体模型预览"></canvas>
                   <p id="meshState" class="mesh-state" hidden></p>

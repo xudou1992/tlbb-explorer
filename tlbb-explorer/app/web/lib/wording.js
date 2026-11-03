@@ -133,7 +133,7 @@ export function mapNoObjects(s) {
   const miss = s.missingMeshes + s.unreadableMeshes;
   if (miss) parts.push(`${num(miss)} 条记的是网格，可客户端里取不出这个文件`);
   if (s.notMesh)
-    parts.push(`${num(s.notMesh)} 条摆的本来就不是网格${other ? `（${other}，文件是存在的）` : ""}`);
+    parts.push(`${num(s.notMesh)} 条摆的本来就不是网格${other ? `（${other}，这一版只摆网格、不画这些）` : ""}`);
   if (s.oddNames) parts.push(`${num(s.oddNames)} 条名字既不像文件名也不像路径，没猜它是什么`);
   if (s.emptyNamed) parts.push(`${num(s.emptyNamed)} 条名字是空的`);
   const why = parts.length ? `：${parts.join("；")}` : "";

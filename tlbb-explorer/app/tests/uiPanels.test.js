@@ -205,3 +205,12 @@ test("孤悬格的两句话要各自对得上做得到的事", () => {
   assert.match(seg, /这一面够不到/, "立体侧要如实说够不到");
   assert.ok(!/取景对准主簇[^）]*缩远/.test(map), "立体侧不许再承诺缩远");
 });
+
+test("地图信息栏不许替查询下结论：非网格那批只说「按名字没查到」", () => {
+  const map = readFileSync(join(web, "map.js"), "utf8");
+  const at = map.indexOf("本来就不是网格");
+  assert.ok(at >= 0, "找不到那句");
+  const seg = map.slice(at, at + 420);
+  assert.match(seg, /按名字没查到/, "要说这条查询实际做了什么");
+  assert.ok(!/文件在客户端里存在/.test(seg), "按名字没查到的东西不能写成「存在」——实测 mobile_maps* 下 .pu 一条都没有");
+});

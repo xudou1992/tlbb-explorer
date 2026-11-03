@@ -72,15 +72,18 @@ test("读不通与空格子并存时两个数都要出现", () => {
 });
 
 test("记录摆的不是网格时不能说成「没对上模型文件」", () => {
-  // mqts_empty_001：2 条记录都是 .pu 特效，文件在客户端里真实存在
+  // mqts_empty_001：2 条记录都是 .pu 特效。注意口径：这类同样是「按名字在地图目录里
+  // 没查到」才计进来的，实测 mobile_maps* 下 .pu 一条都没有（全库 7,806 份都在别处），
+  // 所以界面不许写「文件是存在的」——那是这条查询证明不了的话。
   const s = {
     grids: 2, records: 2, missingMeshes: 0, unreadableMeshes: 0,
     notMesh: 2, oddNames: 0, emptyNamed: 0, otherExt: [{ ext: "pu", records: 2 }],
   };
   const t = mapNoObjects(s);
-  assert.ok(t.includes("2 条摆的本来就不是网格（.pu 2 条，文件是存在的）"), t);
+  assert.ok(t.includes("2 条摆的本来就不是网格（.pu 2 条，这一版只摆网格、不画这些）"), t);
   assert.ok(!t.includes("没对上"), t);
   assert.ok(!t.includes("缺"), "这类不是缺，这一版只是不画");
+  assert.ok(!t.includes("存在"), "不许替这条查询断言文件存在");
 });
 
 test("真缺、非网格、认不出的名字分开各说各的", () => {

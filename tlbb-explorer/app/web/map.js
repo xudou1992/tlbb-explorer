@@ -98,7 +98,7 @@ function info(s) {
     line(
       "本来就不是网格",
       s.notMesh
-        ? `${num(s.notMesh)} 条引用的是别的类型（${s.otherExt.map((x) => `.${esc(x.ext)} ${num(x.records)} 条`).join("、")}）—— 文件在客户端里存在，这一版只摆网格、不画这些`
+        ? `${num(s.notMesh)} 条引用的是别的类型（${s.otherExt.map((x) => `.${esc(x.ext)} ${num(x.records)} 条`).join("、")}）—— 这一版只摆网格、不画这些；地图目录里按名字没查到它们`
         : "0 条",
     ),
   );

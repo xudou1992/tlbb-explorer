@@ -285,6 +285,13 @@ test("没有模型定义那批：筹码逐个切，不许把各自独立的网�
   assert.match(html, /id="meshPick"/, "筹码区必须在，否则切不了下一份");
 });
 
+test("贴图上传要按 D3D 口径翻 V——不翻就是整张图上下颠倒（脸会眼在下、嘴在上）", () => {
+  const v = readFileSync(join(web, "mesh-viewer.js"), "utf8");
+  assert.match(v, /gl\.pixelStorei\(gl\.UNPACK_FLIP_Y_WEBGL, true\)/, "上传前必须设 FLIP_Y");
+  assert.match(v, /gl\.pixelStorei\(gl\.UNPACK_FLIP_Y_WEBGL, false\)/, "用完还原，别污染别的上传");
+  assert.ok(!/1\.0\s*-\s*aUv\.y/.test(v), "UV 保持文件原样：翻转只在上传那一步，采样端不许再翻（双翻=回到错的）");
+});
+
 test("筹码剥到只剩数字时退回完整短名，不许写「1」「2」", () => {
   const mesh = readFileSync(join(web, "mesh.js"), "utf8");
   assert.match(mesh, /\/\^\\d\+\$\/\.test\(short\)/, "纯数字等于名字被剥光了");

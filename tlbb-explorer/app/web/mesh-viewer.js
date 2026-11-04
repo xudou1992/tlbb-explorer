@@ -119,7 +119,12 @@ function loadImage(src) {
 function uploadTexture(gl, img) {
   const t = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, t);
+  // 客户端的 UV 是 D3D 口径（v=0 在图片**顶部**），WebGL 采样时 t=0 在纹理**底部**。
+  // 不翻的话整张图上下颠倒——2026-11-04 用户一眼看出「脸贴反了」：眼在下、嘴在上。
+  // 翻转放在上传这一步（UNPACK_FLIP_Y_WEBGL），UV 保持文件原样，不动几何。
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);

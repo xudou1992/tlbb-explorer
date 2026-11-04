@@ -867,6 +867,19 @@ fn no_color_note(pbr: usize, masks: usize, tex_total: usize) -> String {
     )
 }
 
+/// 只有 pbr 的材质：pbr 是通道图，但当它是文件里**唯一有像素**的东西时，拿它当**静态底色**
+/// 比灰模多一点信息。必须写明「近似、不是客户端效果」——不能让人以为预览器复现了水波。
+fn pbr_stand_in_note(pbr: usize, masks: usize) -> String {
+    let extra = if masks > 0 {
+        format!("、遮罩 {masks} 张")
+    } else {
+        String::new()
+    };
+    format!(
+        "材质表里没有颜色图，只有 pbr 贴图 {pbr} 张{extra}——这里拿 pbr 当静态底色（近似，不是客户端的水波/特效效果）"
+    )
+}
+
 /// 把证据写成人话。三种形状各说各的，别用一句「对不上」糊过去：
 /// * 相等：一张颜色对一段；
 /// * 颜色**少于**段数：材质表就那么几张颜色（客户端也没别的可绑），其余段按基础层铺；
@@ -1265,14 +1278,50 @@ fn mesh_texture_plan_sync(
     let Some((base_spec, overlays)) = layer_specs(&refs, &stem) else {
         // 材质表里一张颜色图都没有（普查 1,200 份里 87 份，全是 `template_pbr_water` 一类）。
         // 这不是解析失败，是这类特效件本来只给 pbr/遮罩、颜色由客户端着色器算 ⇒ 老实说清。
-        let pbr = items
+        let pbr_names: Vec<String> = items
             .iter()
             .filter(|(r, n)| r == "贴图" && n.to_ascii_lowercase().contains("_pbr"))
-            .count();
+            .map(|(_, n)| n.clone())
+            .collect();
         let masks = refs
             .iter()
             .filter(|r| r.name.to_ascii_lowercase().contains("mask"))
             .count();
+        // 有 pbr 的那类不再死守灰模：pbr 是文件里唯一有像素的东西，拿它当**静态底色**
+        // （近似）比灰模多一层信息；连 pbr 都没有的仍走下面那句灰模说明。
+        if let Some(pbr_name) = pbr_names.first() {
+            let pm = PathMap::load(&root);
+            let ov = load_overrides(&root);
+            let con = Connection::open_with_flags(
+                &db,
+                OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+            )
+            .ok();
+            if let Some(base) =
+                plan_texture(&root, &db, pm.as_ref(), con.as_ref(), &ov, pbr_name, 1024)
+            {
+                let total: usize = counts.iter().map(|&x| x as usize).sum();
+                let n = pbr_names.len();
+                return Ok(MeshTexturePlan {
+                    mesh: mesh_path,
+                    layers: vec![TextureLayer {
+                        face_start: 0,
+                        face_count: total,
+                        blend: "opaque".into(),
+                        color: base,
+                        mask: None,
+                        slot: pbr_name.clone(),
+                    }],
+                    slot_names,
+                    effect_layers: 0,
+                    opaque_layers: 0,
+                    face_counts: counts.clone(),
+                    evidence: layer_evidence(&counts, &refs, &[]),
+                    note: pbr_stand_in_note(n, masks),
+                });
+            }
+        }
+        let pbr = pbr_names.len();
         return Ok(MeshTexturePlan {
             mesh: mesh_path,
             layers: Vec::new(),
@@ -2031,6 +2080,21 @@ mod tests {
         assert!(n.contains("没有任何贴图"), "{n}");
         assert!(!n.contains("pbr"), "没有 pbr 就别提 pbr：{n}");
         assert!(n.contains("灰模"));
+    }
+
+    /// 只有 pbr 的那类（2026-11-03 起不再死守灰模）：说清「拿 pbr 当静态底色」，
+    /// 并且必须标明是**近似、不是客户端效果**——否则看的人会以为我们复现了水波。
+    #[test]
+    fn pbr_only_materials_get_a_labelled_static_stand_in() {
+        let n = pbr_stand_in_note(2, 1);
+        assert!(n.contains("pbr 贴图 2 张"), "{n}");
+        assert!(n.contains("遮罩 1 张"), "{n}");
+        assert!(n.contains("静态底色"), "{n}");
+        assert!(n.contains("近似"), "{n}");
+        assert!(n.contains("不是客户端"), "必须标明不是客户端效果：{n}");
+        assert!(!n.contains("灰模"), "拿 pbr 顶上去了就不能再说灰模：{n}");
+        assert!(!n.contains("失败"), "这不是失败：{n}");
+        assert!(!pbr_stand_in_note(1, 0).contains("遮罩"), "没有遮罩就别提");
     }
 
     /// 颜色层数和子网格数对不上时，证据必须说没验证——这是界面那句人话的来源。

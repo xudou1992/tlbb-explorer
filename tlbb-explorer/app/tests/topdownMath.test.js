@@ -263,7 +263,7 @@ test("朝向约定：世界 x → 屏幕右，世界 z → 屏幕下", () => {
   const [rx] = pixelOf(VIEW.cx + 10, VIEW.cz, VIEW, 800, 600);
   assert.ok(rx > px, "+x 该往右");
   const [, dy] = pixelOf(VIEW.cx, VIEW.cz + 10, VIEW, 800, 600);
-  assert.ok(dy > py, "+z 该往下（哪边是北未证，界面不许说上北下南）");
+  assert.ok(dy > py, "+z 该往下（= 南；上北下南 2026-11-03 与游戏内地图对照校过）");
 });
 
 test("worldOfPixel 的中心 = 取景中心（缩放不改变中心）", () => {

@@ -192,6 +192,16 @@ test("俯视量测：画布盒变了要按新尺寸重算取景", () => {
   assert.ok(!/t\.syncViewport\(\);\s*\n\s*t\.draw\(\);/.test(map), "裸量尺寸+重画会留着按旧尺寸算出来的取景");
 });
 
+test("俯视的南北：2026-11-03 与游戏内地图对照过了，横幅要改成已校过的说法", () => {
+  const map = readFileSync(join(web, "map.js"), "utf8");
+  const math = readFileSync(join(web, "lib/topdownMath.js"), "utf8");
+  // 原来写「哪边是北未证」——那时确实没证据。有了游戏内地图对照（宫院群在游戏里和
+  // 我们摆位里都在右中），这句就该改口；改回去等于把已证的结论重新当未知。
+  assert.ok(!/哪边是北未证/.test(map), "横幅不许再挂「未证」");
+  assert.match(map, /上北下南/, "横幅要写清上北下南");
+  assert.match(math, /2026-11-03 用游戏内无量山地图校过/, "约定旁边要留证据出处");
+});
+
 test("孤悬格的两句话要各自对得上做得到的事", () => {
   const top = readFileSync(join(web, "topdown.js"), "utf8");
   const map = readFileSync(join(web, "map.js"), "utf8");

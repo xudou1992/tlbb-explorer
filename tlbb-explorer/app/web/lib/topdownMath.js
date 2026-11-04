@@ -206,8 +206,10 @@ export function fitView(rects, w, h, padding) {
 }
 
 /// 世界 → 画布像素（CSS 像素；渲染器自己处理 devicePixelRatio）。
-/// 约定：世界 x → 屏幕右，世界 z → 屏幕下。**哪边是北未证**（M1 待比对），
-/// 界面文案不许说"上北下南"。
+/// 约定：世界 x → 屏幕右，世界 z → 屏幕下。
+/// **2026-11-03 用游戏内无量山地图校过**：游戏地图是上北下南，同一片宫院群
+///（剑湖宫门/宫墙/台阶）在游戏里在右中、在我们的摆位里也是右中（x 200~280、
+/// z −100~−220），两套画面对得上 ⇒ 屏幕上方＝北＝z 更负，右方＝东＝x 更大。
 export function pixelOf(wx, wz, view, w, h) {
   return [(wx - view.cx) * view.scale + w / 2, (wz - view.cz) * view.scale + h / 2];
 }

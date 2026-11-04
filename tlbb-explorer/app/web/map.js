@@ -59,7 +59,7 @@ function paintBanner() {
   if (mode === "top") {
     banner(
       `<b>俯视量测</b> 正对地面读坐标，格线间距 32。` +
-        `<span class="warn">哪边是北未证</span><span class="warn">地形没解出</span>` +
+        `<span class="dim">上北下南 · 已与游戏内地图对照校过</span><span class="warn">地形没解出</span>` +
         (surfaceLoaded === sceneId ? `<span class="dim">绿色底=地面编码格（灰蓝=其它编码、黑=空；不是高度）</span>` : "") +
         `<span class="dim">${scene && scene.alias ? esc(scene.alias) + " · " : ""}地图原名 ${esc(sceneId)}</span>`,
     );

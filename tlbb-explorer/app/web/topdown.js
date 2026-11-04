@@ -11,7 +11,7 @@
 //
 // 界面必须诚实交代的三件事：
 //   * 格线间距 32 是实测常数，不是配置（topdownMath 文件头实测事实 1）；
-//   * 哪边是北未证——画布角上只标「+x → +z ↓」，不说上北下南；
+//   * 上北下南（2026-11-03 与游戏内地图对照校过，见 topdownMath.pixelOf 的说明）；
 //   * 点选是矩形近似（pickRect 的说明），报的是「指到哪件」，不是像素级命中。
 
 import * as tm from "./lib/topdownMath.js";
@@ -386,7 +386,7 @@ export class TopDownView {
       ctx.stroke();
     }
 
-    // 角标：只说方向约定，不说南北（哪边是北未证）。
+    // 角标：只说方向约定，南北已在 2026-11-03 与游戏地图对照过。
     ctx.fillStyle = "rgba(130, 145, 138, 0.9)";
     ctx.font = '10px "Cascadia Code", Consolas, monospace';
     ctx.textAlign = "right";

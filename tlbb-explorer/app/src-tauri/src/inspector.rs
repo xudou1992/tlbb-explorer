@@ -1285,7 +1285,17 @@ mod tests {
             assert!(!r.what.is_empty(), "gid={gid} what 应为非空");
             assert!(r.counts.mesh + r.counts.mtl + r.counts.ani + r.counts.ske + r.counts.tex > 0
                 || r.parts > 0, "gid={gid} counts 应为非空");
-            assert!(!r.missing.is_empty(), "gid={gid} missing 应为非空（实测必有悬空引用）");
+            // 2026-11-04 库重建后 refs 回填 to_hash：部分组已经没有悬空引用（gid=3092 就是），
+            // 「必有悬空」不再成立。改钉真正的不变量：库里有悬空，missing 就必须报出来。
+            let hub = groups.iter().find(|g| g.id == *gid).map(|g| g.hub).unwrap_or(0);
+            let dangle = cat
+                .refs_from(hub)
+                .map(|v| v.iter().filter(|r| r.to.is_none()).count())
+                .unwrap_or(0);
+            assert!(
+                dangle == 0 || !r.missing.is_empty(),
+                "gid={gid} 库里有 {dangle} 条悬空引用，missing 不该为空"
+            );
             let parts = r.parts;
             let miss = r.missing.len();
             let friendly = r.names.first().map(|n| n.name.as_str()).unwrap_or("");

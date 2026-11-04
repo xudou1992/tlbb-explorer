@@ -1924,9 +1924,12 @@ mod page_regression {
             "两条边并起来不该只剩清单登记了成员的那 25 组：{}",
             paint.total
         );
+        // 2026-11-04 库重建后（refs 回填 to_hash）两条边给出同一批组：
+        // image_candidates == paintable_groups == 7,806。并集不可能比单边小；
+        // 「第二条边一定多报」只在旧库的悬空态下成立，别把它当永久不变量。
         assert!(
-            stats2.image_candidates < stats2.paintable_groups,
-            "只数第一条边会严重少报（{} vs {}）",
+            stats2.image_candidates <= stats2.paintable_groups,
+            "并集不该比单边小（{} vs {}）",
             stats2.image_candidates,
             stats2.paintable_groups
         );
@@ -1967,16 +1970,20 @@ mod page_regression {
         }
         // 3) 这条边的存在必须改变结论：清单口径说 .tga 几乎全对不上，
         //    可解数应当**远大于**清单对上数——否则这一列就是装饰。
+        // 2026-11-04 库重建后 refs 直接按 cfg 路径哈希对上（.tga 30,000 条全有 to_hash），
+        // 悬空归零 ⇒ 换算这一列自然是 0。改钉关系不钉旧量级：
+        // 「可解」不可能比它要救的悬空名字还多，否则这一列在编数。
         assert!(
-            tga.solvable_names > tga.resolved * 10,
-            ".tga 清单对上 {} 个、转换路径可解 {} 个，这一列没改变任何结论",
-            tga.resolved,
-            tga.solvable_names
+            tga.solvable_names <= tga.dangling_names,
+            ".tga 可解 {} 个 > 悬空名字 {} 个：换算列不可能比待救的还多",
+            tga.solvable_names,
+            tga.dangling_names
         );
         assert!(
-            rv.dangling_solvable >= 5_000,
-            "全库可解总数应当是几千级（实测约 7.9k），实际 {}",
-            rv.dangling_solvable
+            rv.dangling_solvable <= rv.dangling_names,
+            "全库可解 {} 个 > 悬空名字 {} 个",
+            rv.dangling_solvable,
+            rv.dangling_names
         );
         let sum: usize = rv.by_ext.iter().map(|e| e.solvable_names).sum();
         assert_eq!(sum, rv.dangling_solvable, "各行之和要等于卡片上那个总数");

@@ -200,6 +200,7 @@ test("俯视的南北：2026-11-03 与游戏内地图对照过了，横幅要改
   assert.ok(!/哪边是北未证/.test(map), "横幅不许再挂「未证」");
   assert.match(map, /上北下南/, "横幅要写清上北下南");
   assert.match(math, /2026-11-03 用游戏内无量山地图校过/, "约定旁边要留证据出处");
+  assert.ok(!/朝向待比对/.test(map), "立体横幅也不许再挂「待比对」");
 });
 
 test("孤悬格的两句话要各自对得上做得到的事", () => {
@@ -283,6 +284,13 @@ test("没有模型定义那批：筹码逐个切，不许把各自独立的网�
   const mesh = readFileSync(join(web, "mesh.js"), "utf8");
   assert.match(mesh, /meshState\.merge !== false/, "整组那条路要听 merge:false");
   assert.match(html, /id="meshPick"/, "筹码区必须在，否则切不了下一份");
+});
+
+test("3D 地图的地表底图不是 D3D UV：上传翻了，四边形这一层必须把 v 反回来", () => {
+  const v = readFileSync(join(web, "mesh-viewer.js"), "utf8");
+  // 底图是「PNG 第 0 行 = 世界 z 最小的一侧」的行序对齐；跟着模型一起翻就会沿 z 镜像，
+  // 和 2D 俯视（ctx.drawImage 不翻）对不上。
+  assert.match(v, /new Float32Array\(\[0, 1, 1, 1, 1, 0, 0, 0\]\)/, "地面四边形 v 要反过来");
 });
 
 test("贴图上传要按 D3D 口径翻 V——不翻就是整张图上下颠倒（脸会眼在下、嘴在上）", () => {

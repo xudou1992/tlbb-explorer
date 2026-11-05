@@ -1098,7 +1098,10 @@ export class MeshViewer {
       const { x0, z0, x1, z1, y } = g.rect;
       const pos = new Float32Array([x0, y, z0, x1, y, z0, x1, y, z1, x0, y, z1]);
       const nrm = new Float32Array([0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0]);
-      const uv = new Float32Array([0, 0, 1, 0, 1, 1, 0, 1]);
+      // 底面这张图不是按 D3D UV 贴的，是**行序对齐**的：PNG 第 0 行 = 世界 z 最小的一侧。
+      // uploadTexture 现在统一做 UNPACK_FLIP_Y_WEBGL（模型贴图必须翻），所以这里把 v 反回来，
+      // 否则地表编码格会沿 z 镜像——2D 俯视（ctx.drawImage，不翻）和 3D 就对不上了。
+      const uv = new Float32Array([0, 1, 1, 1, 1, 0, 0, 0]);
       const idx = new Uint16Array([0, 1, 2, 0, 2, 3]);
       const mk = (arr) => {
         const b = gl.createBuffer();

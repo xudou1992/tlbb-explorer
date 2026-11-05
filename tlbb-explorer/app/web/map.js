@@ -66,7 +66,7 @@ function paintBanner() {
   } else {
     banner(
       `<b>物件预览</b> 把物件摆在该在的位置上，有材质表的<b>已按材质表贴图</b>。` +
-        `<span class="warn">地形没解出</span><span class="dim">没有材质表的物件仍是灰模</span><span class="warn">朝向待比对</span>` +
+        `<span class="warn">地形没解出</span><span class="dim">没有材质表的物件仍是灰模</span><span class="dim">上北下南（2026-11-04 与游戏内地图对照校过）</span>` +
         (scene && scene.env ? `<span class="dim">背景色取自 .sfl（不是天空盒）</span>` : "") +
         (surfaceLoaded === sceneId ? `<span class="dim">地上暗色块=地表编码格（不是高度）</span>` : "") +
         `<span class="dim">${scene && scene.alias ? esc(scene.alias) + " · " : ""}地图原名 ${esc(sceneId)}</span>`,

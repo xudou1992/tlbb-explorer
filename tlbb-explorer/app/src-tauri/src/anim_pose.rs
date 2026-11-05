@@ -1347,24 +1347,19 @@ mod tests {
         let mut tried = 0usize;
         let mut decoded_ok = 0usize;
         let mut i = 0usize;
+        // 2026-11-05：新库 refs 回填后「换算路径可解」归零——照旧只采那条边，
+        // 这条会抽到 0 张、0/0 通过得毫无意义（实测 tried=0）。改从**已解析的贴图候选**采，
+        // 换算边只作兜底；并且抽不到就报红，别让「没抽到」冒充「全解得出」。
         'sample: for gid in &gids {
             let Some(l) = app.lite_of(*gid) else { continue };
-            for r in &l.refs {
-                if !tlbb_core::catalog::labels::is_texture_name(&r.name) || r.located {
-                    continue;
-                }
-                let Some((hash, _)) = crate::texture_override::auto_texture_hash(&pm, &con, &r.name)
-                else {
-                    continue;
-                };
+            for h in &l.preview_candidates {
                 if i % 40 != 0 {
                     i += 1;
                     continue;
                 }
                 i += 1;
-                let Ok(h) = u64::from_str_radix(&hash, 16) else { continue };
                 tried += 1;
-                if crate::texture_override::decode_candidate_png(&root, &db, h).is_ok() {
+                if crate::texture_override::decode_candidate_png(&root, &db, *h).is_ok() {
                     decoded_ok += 1;
                 }
                 if tried >= 400 {
@@ -1372,9 +1367,37 @@ mod tests {
                 }
             }
         }
+        if tried == 0 {
+            // 兜底：老库口径的换算边（新库上通常是空的）
+            'sample2: for gid in &gids {
+                let Some(l) = app.lite_of(*gid) else { continue };
+                for r in &l.refs {
+                    if !tlbb_core::catalog::labels::is_texture_name(&r.name) || r.located {
+                        continue;
+                    }
+                    let Some((hash, _)) = crate::texture_override::auto_texture_hash(&pm, &con, &r.name)
+                    else {
+                        continue;
+                    };
+                    let Ok(h) = u64::from_str_radix(&hash, 16) else { continue };
+                    tried += 1;
+                    if crate::texture_override::decode_candidate_png(&root, &db, h).is_ok() {
+                        decoded_ok += 1;
+                    }
+                    if tried >= 400 {
+                        break 'sample2;
+                    }
+                }
+            }
+        }
         println!(
             "抽样 {tried} 张「对得上文件」的贴图：真解得出像素 {decoded_ok} 张 = {:.1}%",
             decoded_ok as f64 * 100.0 / tried.max(1) as f64
+        );
+        assert!(tried > 0, "一张都没抽到：这条普查就没有牙齿，不许绿着回去");
+        assert!(
+            decoded_ok * 100 >= tried * 90,
+            "抽样里解得出像素的比例低于 90%（{decoded_ok}/{tried}）"
         );
         // 报告页的表是**按不同名字数**的（.tga 那行写「对不上的名字 8,672」），
         // 上面那两个并集数按组数、口径不一样，不能直接搬过去。这里按同名口径再量一遍。

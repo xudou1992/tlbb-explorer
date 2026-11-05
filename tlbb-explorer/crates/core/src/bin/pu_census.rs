@@ -71,6 +71,10 @@ fn main() {
     let mut records_total = 0usize;
     let mut named_records = 0usize;
     let mut name_hist: BTreeMap<String, usize> = BTreeMap::new();
+    // 播放相关的字段，收集它们的原始读数，给未来的播放器定标（不猜单位，只报范围）。
+    let play_keys = ["emission_rate", "duration", "velocity", "acceleration", "angle",
+                     "rotation_speed", "min_increment", "max_increment"];
+    let mut play_vals: BTreeMap<&str, Vec<f32>> = BTreeMap::new();
     let mut tsv = String::from("path|decoded|parsed|strings|records|emitters|updaters|renderers\n");
 
     for (pak, hex, path, offset) in &rows {
@@ -91,6 +95,14 @@ fn main() {
             if let Some(nm) = pu_field_name(r.fld) {
                 named_records += 1;
                 *name_hist.entry(nm.to_string()).or_insert(0) += 1;
+                if play_keys.contains(&nm) {
+                    let v = play_vals.entry(nm).or_default();
+                    for f in r.floats() {
+                        if v.len() < 200_000 && f.is_finite() {
+                            v.push(f);
+                        }
+                    }
+                }
             }
         }
         let _ = row_cls;
@@ -140,5 +152,16 @@ fn main() {
                 "colour", "color", "emission", "duration", "angle", "mass", "width"];
     let hit: Vec<_> = keys.iter().filter_map(|k| name_hist.get(*k).map(|v| (*k, *v))).collect();
     println!("播放相关字段命中：{:?}", hit);
+    for k in play_keys {
+        if let Some(mut v) = play_vals.get(k).cloned() {
+            v.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+            let n = v.len();
+            if n == 0 { continue; }
+            println!(
+                "  {k}: n={n} min={:.4} p10={:.4} 中位={:.4} p90={:.4} max={:.4}",
+                v[0], v[n / 10], v[n / 2], v[n * 9 / 10], v[n - 1]
+            );
+        }
+    }
     println!("落盘 {}", out.display());
 }

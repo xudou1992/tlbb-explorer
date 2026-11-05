@@ -71,6 +71,14 @@ export function buildRecipe(params, emitter) {
   return { rate, life, accel, speed, colour, grow, shape, colourKeys };
 }
 
+/// 挑一张当粒子贴图的图：优先非 mask/pbr/normal 的那张，都没有就退回第一张。
+/// 特效常把遮罩排在前面，拿遮罩当精灵画出来是黑块——这不是"效果"，是拿错图。
+export function pickSprite(textures) {
+  const list = (textures || []).filter(Boolean);
+  const ok = list.find((t) => !/mask|pbr|normal|_n\.|_nm\./i.test(t));
+  return ok || list[0] || "";
+}
+
 /// 按年龄比例取颜色：有控制点就在相邻两点间线性插值，没有就用单色。
 export function colourAt(recipe, k) {
   const keys = recipe.colourKeys;

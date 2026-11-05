@@ -9,7 +9,7 @@ import { skeletonLead, animationLead, effectLead, materialLead } from "./lib/pla
 import { MeshViewer } from "./mesh-viewer.js";
 import * as api from "./api.js";
 import { state } from "./state.js";
-import { buildRecipe, makeSim, step, draw as fxDraw } from "./lib/fxPlay.js";
+import { buildRecipe, makeSim, step, draw as fxDraw, pickSprite } from "./lib/fxPlay.js";
 
 /// 引用类别 → 配色 + 单字图标。颜色只作辅助，文字永远是主载体。
 const ROLE_STYLE = {
@@ -626,7 +626,7 @@ function fxPlayStart() {
   const sim = makeSim(recipe);
   const st = { raf: 0, sim, ctx, img: null };
   fxPlayState = st;
-  const texName = (fxPlayRep.textures || [])[0];
+  const texName = pickSprite(fxPlayRep.textures);
   if (texName && api.texturePngByName) {
     api.texturePngByName(texName)
       .then((url) => {

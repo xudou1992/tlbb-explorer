@@ -1,7 +1,7 @@
 // 「试播（近似）」的纯函数测试：只验算子和推进，不碰 DOM。
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildRecipe, makeSim, step, spawnPoint, colourAt } from "../web/lib/fxPlay.js";
+import { buildRecipe, makeSim, step, spawnPoint, colourAt, pickSprite } from "../web/lib/fxPlay.js";
 
 const row = (name, floats, cls = 1) => ({ cls, fld: 0, name, words: [], floats });
 
@@ -23,6 +23,12 @@ test("buildRecipe：按字段名取值，缺字段用默认，不让参数飞出
 
   const empty = buildRecipe([]);
   assert.ok(empty.rate > 0 && empty.life > 0, "空参数也要有可跑的默认值");
+});
+
+test("pickSprite：优先非遮罩/法线的图，拿遮罩当精灵就是黑块", () => {
+  assert.equal(pickSprite(["a_mask.tga", "b.tga"]), "b.tga");
+  assert.equal(pickSprite(["x_pbr.tga", "y_normal.tga"]), "x_pbr.tga", "都像遮罩就退回第一张");
+  assert.equal(pickSprite([]), "");
 });
 
 test("colourAt：有时间-颜色控制点就在两点间插值，没有就回单色", () => {

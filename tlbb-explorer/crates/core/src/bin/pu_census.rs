@@ -70,6 +70,7 @@ fn main() {
     let mut no_emitter = 0usize;
     let mut records_total = 0usize;
     let mut named_records = 0usize;
+    let mut name_hist: BTreeMap<String, usize> = BTreeMap::new();
     let mut tsv = String::from("path|decoded|parsed|strings|records|emitters|updaters|renderers\n");
 
     for (pak, hex, path, offset) in &rows {
@@ -87,8 +88,9 @@ fn main() {
             *cls.entry(r.cls).or_insert(0) += 1;
             *row_cls.entry(r.cls).or_insert(0) += 1;
             records_total += 1;
-            if pu_field_name(r.fld).is_some() {
+            if let Some(nm) = pu_field_name(r.fld) {
                 named_records += 1;
+                *name_hist.entry(nm.to_string()).or_insert(0) += 1;
             }
         }
         let _ = row_cls;
@@ -130,5 +132,13 @@ fn main() {
     println!("cls 分布：{:?}", cls);
     println!("发射器（前 8）：{:?}", ev.iter().take(8).collect::<Vec<_>>());
     println!("更新器（前 8）：{:?}", uv.iter().take(8).collect::<Vec<_>>());
+    let mut nh: Vec<_> = name_hist.iter().collect();
+    nh.sort_by(|a, b| b.1.cmp(a.1));
+    println!("字段名（前 30）：{:?}", nh.iter().take(30).collect::<Vec<_>>());
+    // 和播放直接相关的名字，单列一行，方便判断能不能做最小播放器。
+    let keys = ["lifetime", "life", "speed", "rate", "velocity", "size", "scale",
+                "colour", "color", "emission", "duration", "angle", "mass", "width"];
+    let hit: Vec<_> = keys.iter().filter_map(|k| name_hist.get(*k).map(|v| (*k, *v))).collect();
+    println!("播放相关字段命中：{:?}", hit);
     println!("落盘 {}", out.display());
 }

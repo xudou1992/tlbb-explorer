@@ -286,6 +286,18 @@ test("没有模型定义那批：筹码逐个切，不许把各自独立的网�
   assert.match(html, /id="meshPick"/, "筹码区必须在，否则切不了下一份");
 });
 
+test("特效页要有「播放相关参数」摘要，且只摆原始读数、不换算单位", () => {
+  const p = readFileSync(join(web, "panels.js"), "utf8");
+  assert.match(p, /播放相关参数/, "要把播放要用的量挑出来单列");
+  assert.match(p, /单位与曲线含义未定/, "必须标明没换算");
+  for (const k of ["emission_rate", "velocity", "time_colour", "initial_colour", "duration"]) {
+    assert.ok(p.includes(`"${k}"`), `白名单里应有 ${k}`);
+  }
+  // 只许摆原始读数：出现「秒」「米/秒」这种换算说法就是猜
+  const seg = p.slice(p.indexOf("播放相关参数"), p.indexOf("fxTable"));
+  assert.ok(!/米\/秒|换算成秒/.test(seg), "不许把 tick/单位换算成秒");
+});
+
 test("3D 地图的地表底图不是 D3D UV：上传翻了，四边形这一层必须把 v 反回来", () => {
   const v = readFileSync(join(web, "mesh-viewer.js"), "utf8");
   // 底图是「PNG 第 0 行 = 世界 z 最小的一侧」的行序对齐；跟着模型一起翻就会沿 z 镜像，

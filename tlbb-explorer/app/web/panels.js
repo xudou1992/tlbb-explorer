@@ -540,7 +540,47 @@ export function paintEffect(rep, onPick) {
           (params.length > 100 ? `<p class="dim">还有 ${params.length - 100} 条未展开。</p>` : ""),
       )
     : `<p class="dim">这份 .pu 的参数记录一条都没走出来（可能这份文件本身没有参数区）。</p>`;
-  el("fxTable").innerHTML = namesFold + paramFold;
+  // 播放要用到的量：字段名在 611 条属性表里是全的（velocity 5.2 万条、emission_rate 2.6 万…），
+  // 但从 100 行平铺表里翻不出来。这里按名字挑出来单列，**只摆原始读数**——
+  // 单位和曲线含义没定，任何「换算成秒/米」的说法都是猜。
+  const PLAY_KEYS = [
+    ["emission_rate", "发射率"],
+    ["duration", "持续时间"],
+    ["velocity", "速度"],
+    ["acceleration", "加速度"],
+    ["position", "位置"],
+    ["angle", "角度"],
+    ["rotation_speed", "旋转速度"],
+    ["initial_colour", "初始颜色"],
+    ["time_colour", "颜色随时间"],
+    ["colour_change", "颜色变化"],
+    ["min_increment", "尺寸增量（小）"],
+    ["max_increment", "尺寸增量（大）"],
+  ];
+  const byName = new Map();
+  for (const p of params) {
+    if (!p.name) continue;
+    if (!byName.has(p.name)) byName.set(p.name, []);
+    byName.get(p.name).push(p);
+  }
+  const playRows = PLAY_KEYS.filter(([k]) => byName.has(k)).map(([k, zh]) => {
+    const rows = byName.get(k);
+    const shown = rows.slice(0, 3).map((x) => {
+      const f = (x.floats || []).map(fmtNum).join(", ");
+      return f || `cls ${x.cls}（无载荷）`;
+    });
+    return `<tr><td>${esc(zh)}</td><td class="mono">${esc(k)}</td><td class="n">${rows.length}</td><td class="mono">${esc(shown.join(" · "))}</td></tr>`;
+  }).join("");
+  const playFold = playRows
+    ? fold(
+        "播放相关参数（原始读数，单位与曲线含义未定）",
+        `${PLAY_KEYS.filter(([k]) => byName.has(k)).length} 项`,
+        `<p class="dim">按字段名从参数块里挑出来的：发射率、持续时间、速度、颜色、尺寸增量这一类。数值是文件里的原始读数，**不换算单位、不猜曲线**；真要播放，得先拿客户端画面校准。</p>` +
+          `<table class="hl-table fx-play"><thead><tr><th>用途</th><th>字段</th><th>条数</th><th>前几条读数</th></tr></thead><tbody>${playRows}</tbody></table>`,
+      )
+    : "";
+
+  el("fxTable").innerHTML = namesFold + playFold + paramFold;
   el("fxMissing").innerHTML = (rep.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
   void paintEffectMesh(rep);
   void paintEffectTextures(rep);

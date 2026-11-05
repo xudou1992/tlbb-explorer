@@ -2075,17 +2075,25 @@ mod page_regression {
             assert!(t0.elapsed() < std::time::Duration::from_secs(600), "预热超过 10 分钟，先查 warm 日志");
             std::thread::sleep(std::time::Duration::from_millis(500));
         }
-        let l = app.lite_of(1).expect("gid 1 应在预热里");
-        assert!(
-            l.preview_candidates.is_empty(),
-            "前提变了：这组有清单登记的贴图了，兜底路径要另挑样本"
-        );
-        assert!(l.tex_solvable > 0, "前提变了：这组按换算路径也解不出贴图");
-        let img = app.group_image(1).expect("兜底那张该解得出像素");
+        // 2026-11-05：库重建把 refs 按路径哈希回填之后，「换算路径可解」这一档归零
+        // （全库 tex_solvable=0，preview_candidates 才是现在的来源）。这条闸门的
+        // **意图没变**——行缩略图必须真解得出像素——所以改成从「有登记贴图」的组里取样。
+        let gid = {
+            let mut gids: Vec<i64> = app.lite.lock().unwrap().keys().copied().collect();
+            gids.sort_unstable();
+            gids.into_iter()
+                .find(|g| app.lite_of(*g).map(|l| !l.preview_candidates.is_empty()).unwrap_or(false))
+                .expect("全库都找不到一组带登记贴图的？")
+        };
+        let l = app.lite_of(gid).expect("预热里该有这组");
+        let img = app.group_image(gid).expect("登记的那张该解得出像素");
         assert!(img.width > 0 && img.height > 0, "解出来的图没有尺寸");
         eprintln!(
-            "gid 1 行缩略图：{}×{} · 这组可按换算路径对上的贴图 {} 张",
-            img.width, img.height, l.tex_solvable
+            "gid {gid} 行缩略图：{}×{} · 登记贴图 {} 张 · 换算路径可解 {} 张",
+            img.width,
+            img.height,
+            l.preview_candidates.len(),
+            l.tex_solvable
         );
     }
 
@@ -2112,6 +2120,18 @@ mod page_regression {
         if app.pm.is_none() {
             eprintln!("本机读不到客户端路径表，普查做不了（不是 0 命中，是没查）");
             return;
+        }
+        // 2026-11-05：库重建后「换算路径可解」全库归零（refs 已按路径哈希回填），
+        // 这条普查量的正是那条边——抽样源没了。显式跳过并说明，不造假指标。
+        {
+            let any = {
+                let g = app.lite.lock().unwrap();
+                g.values().any(|l| l.tex_solvable > 0)
+            };
+            if !any {
+                eprintln!("跳过：新库「换算路径可解」全库为 0（refs 已回填），这条普查的抽样源不存在了");
+                return;
+            }
         }
         const 每组上限: usize = 12;
         const 总名上限: usize = 1500;

@@ -47,11 +47,45 @@ export function buildRecipe(params, emitter) {
   const inc = nums("min_increment").concat(nums("max_increment"));
   const grow = inc.length ? clamp(med(inc, 0) / 100, -0.5, 2) : 0;
 
+  // 颜色随时间（cls 14 的「时间+RGBA 控制点」）：按时间排序，t 归一化到 0..1。
+  // 若只有 initial_colour，就退化成单色（下面 colourAt 会处理）。
+  const keys = [];
+  for (const r of byName.get("time_colour") || []) {
+    const f = r.floats || [];
+    if (f.length >= 4) keys.push({ t: f[0], c: [f[1], f[2], f[3], f[4] ?? 1] });
+    else if (f.length === 3) keys.push({ t: 0, c: [f[0], f[1], f[2], 1] });
+  }
+  keys.sort((a, b) => a.t - b.t);
+  const ck = Math.max(...keys.flatMap((k) => k.c), 1);
+  const ksc = ck > 1.5 ? 255 : 1;
+  const colourKeys = keys.length
+    ? keys.map((k) => ({ t: Math.max(0, k.t), c: k.c.map((v) => Math.min(1, Math.max(0, v / ksc))) }))
+    : [];
+
   // 发射器形状：只按名字近似。形状的尺寸参数没读到（各字段单位未定），
   // 这里用固定量级——界面上必须标明「形状是近似」。
   const shape = ["Point", "Box", "Circle", "Cylinder", "Jet", "Polar", "ring", "Line"]
     .find((x) => String(emitter || "").toLowerCase() === x.toLowerCase()) || "Point";
-  return { rate, life, accel, speed, colour, grow, shape };
+  return { rate, life, accel, speed, colour, grow, shape, colourKeys };
+}
+
+/// 按年龄比例取颜色：有控制点就在相邻两点间线性插值，没有就用单色。
+export function colourAt(recipe, k) {
+  const keys = recipe.colourKeys;
+  if (!keys || !keys.length) return recipe.colour;
+  const t0 = keys[0].t;
+  const t1 = keys[keys.length - 1].t;
+  const span = Math.max(1e-6, t1 - t0);
+  const t = t0 + Math.min(1, Math.max(0, k)) * span;
+  for (let i = 1; i < keys.length; i++) {
+    if (t <= keys[i].t) {
+      const a = keys[i - 1];
+      const b = keys[i];
+      const u = (t - a.t) / Math.max(1e-6, b.t - a.t);
+      return [0, 1, 2, 3].map((j) => a.c[j] + (b.c[j] - a.c[j]) * u);
+    }
+  }
+  return keys[keys.length - 1].c;
 }
 
 /// 发射器的近似出生点（形状按名字，尺寸固定量级——真尺寸参数没解出来）。
@@ -137,11 +171,12 @@ export function draw(ctx, sim, w, h, texture) {
     const k = p.age / p.life;
     const a = Math.max(0, 1 - k);
     const size = Math.max(3, (26 * (1 + recipe.grow * k)) / z);
-    ctx.globalAlpha = a * 0.9;
+    const c = colourAt(recipe, k);
+    ctx.globalAlpha = a * 0.9 * Math.min(1, c[3] ?? 1);
     if (texture && texture.width > 0) {
       ctx.drawImage(texture, sx - size / 2, sy - size / 2, size, size);
     } else {
-      ctx.fillStyle = `rgba(${Math.round(recipe.colour[0] * 255)},${Math.round(recipe.colour[1] * 255)},${Math.round(recipe.colour[2] * 255)},1)`;
+      ctx.fillStyle = `rgb(${Math.round(c[0] * 255)},${Math.round(c[1] * 255)},${Math.round(c[2] * 255)})`;
       ctx.beginPath();
       ctx.arc(sx, sy, size / 2, 0, Math.PI * 2);
       ctx.fill();

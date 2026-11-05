@@ -1,7 +1,7 @@
 // 「试播（近似）」的纯函数测试：只验算子和推进，不碰 DOM。
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildRecipe, makeSim, step, spawnPoint } from "../web/lib/fxPlay.js";
+import { buildRecipe, makeSim, step, spawnPoint, colourAt } from "../web/lib/fxPlay.js";
 
 const row = (name, floats, cls = 1) => ({ cls, fld: 0, name, words: [], floats });
 
@@ -23,6 +23,23 @@ test("buildRecipe：按字段名取值，缺字段用默认，不让参数飞出
 
   const empty = buildRecipe([]);
   assert.ok(empty.rate > 0 && empty.life > 0, "空参数也要有可跑的默认值");
+});
+
+test("colourAt：有时间-颜色控制点就在两点间插值，没有就回单色", () => {
+  const r = buildRecipe([
+    row("time_colour", [0, 255, 0, 0, 255], 14),
+    row("time_colour", [1, 0, 0, 255, 255], 14),
+  ]);
+  assert.equal(r.colourKeys.length, 2, "两个控制点都要收进来");
+  const a = colourAt(r, 0);
+  const m = colourAt(r, 0.5);
+  const b = colourAt(r, 1);
+  assert.ok(Math.abs(a[0] - 1) < 1e-6 && Math.abs(a[2]) < 1e-6, "起点是红");
+  assert.ok(Math.abs(m[0] - 0.5) < 1e-6 && Math.abs(m[2] - 0.5) < 1e-6, "中点各一半");
+  assert.ok(Math.abs(b[2] - 1) < 1e-6 && Math.abs(b[0]) < 1e-6, "终点是蓝");
+
+  const plain = buildRecipe([row("initial_colour", [1, 0.5, 0.25], 9)]);
+  assert.deepEqual(colourAt(plain, 0.7), plain.colour, "没有控制点就回单色");
 });
 
 test("spawnPoint：形状按名字给出生点，未知名字退回原点", () => {

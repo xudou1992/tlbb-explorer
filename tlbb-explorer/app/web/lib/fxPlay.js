@@ -31,10 +31,12 @@ export function buildRecipe(params, emitter) {
 
   const rate = clamp(med(nums("emission_rate"), 12), 1, 80);
   const life = clamp(med(nums("duration"), 1.2), 0.2, 8);
-  const accel = clamp(med(nums("acceleration"), -2), -40, 40);
+  const accel = clamp(med(nums("acceleration"), -2), -6, 6);
   // velocity 多半是三分量向量，压平后取绝对值众数的上四分位，避免被 0 拖平
   const velRaw = nums("velocity").map(Math.abs).filter((x) => x > 1e-6);
-  const speed = clamp(velRaw.length ? velRaw.sort((a, b) => a - b)[Math.floor(velRaw.length * 0.75)] : 6, 0.5, 60);
+  // 速度按**显示量级**归一：文件里的读数跨度到 60+，照搬会一帧飞出画面。
+  // 这是预览的可视化选择，不是物理——说明里同屏写明「速度按显示量级归一」。
+  const speed = clamp(velRaw.length ? velRaw.sort((a, b) => a - b)[Math.floor(velRaw.length * 0.75)] : 6, 0.6, 8);
 
   // 颜色：优先 initial_colour；三个数就补 alpha=1，四个数直接用
   const col = nums("initial_colour");

@@ -595,7 +595,7 @@ export function paintEffect(rep, onPick) {
       const r = buildRecipe(params, (rep.emitters || [])[0]);
       note.textContent =
         `按读数中位数近似：发射器 ${r.shape}（形状量级固定）· 发射率 ${r.rate.toFixed(0)}/s · 寿命 ${r.life.toFixed(2)} · 速度 ${r.speed.toFixed(2)} · 加速度 ${r.accel.toFixed(2)}。` +
-        `出生点按发射器名字近似（形状尺寸固定），更新器只做颜色/尺寸随年龄；单位与曲线含义未定——不是客户端效果，不能当验收依据。`;
+        `出生点按发射器名字近似（形状尺寸固定），速度按显示量级归一（≤8），更新器只做颜色/尺寸随年龄；单位与曲线含义未定——不是客户端效果，不能当验收依据。`;
     }
     const go = el("fxPlayGo");
     const stop = el("fxPlayStop");

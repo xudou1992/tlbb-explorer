@@ -343,6 +343,18 @@
                 <p class="dim" id="fxMeshNote" hidden></p>
                 <div id="fxTex" class="pvgrid"></div>
                 <p class="dim" id="fxTexNote" hidden></p>
+                <!-- 实验性「试播」：按 .pu 参数的读数中位数做的近似粒子模拟，**不是客户端效果**。 -->
+                <details class="fold" id="fxPlayFold" hidden>
+                  <summary>试播（近似）<em>实验</em></summary>
+                  <div class="fold-body">
+                    <div class="chips">
+                      <button type="button" id="fxPlayGo" class="mini">开始</button>
+                      <button type="button" id="fxPlayStop" class="mini">停止</button>
+                    </div>
+                    <canvas id="fxSim" width="440" height="260" aria-label="特效近似试播"></canvas>
+                    <p class="dim" id="fxPlayNote"></p>
+                  </div>
+                </details>
                 <div id="fxTable"></div>
               </section>
               <details class="fold">

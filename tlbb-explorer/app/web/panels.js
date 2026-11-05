@@ -9,6 +9,7 @@ import { skeletonLead, animationLead, effectLead, materialLead } from "./lib/pla
 import { MeshViewer } from "./mesh-viewer.js";
 import * as api from "./api.js";
 import { state } from "./state.js";
+import { buildRecipe, makeSim, step, draw as fxDraw } from "./lib/fxPlay.js";
 
 /// 引用类别 → 配色 + 单字图标。颜色只作辅助，文字永远是主载体。
 const ROLE_STYLE = {
@@ -581,9 +582,71 @@ export function paintEffect(rep, onPick) {
     : "";
 
   el("fxTable").innerHTML = namesFold + playFold + paramFold;
+
+  // ── 「试播（近似）」：只在参数够用时出现；切换资产/特效先停掉上一轮。
+  fxPlayStop();
+  fxPlayRep = rep;
+  const playFoldEl = el("fxPlayFold");
+  const canPlay = params.length > 0 && PLAY_KEYS.some(([k]) => byName.has(k));
+  if (playFoldEl) {
+    playFoldEl.hidden = !canPlay;
+    const note = el("fxPlayNote");
+    if (note && canPlay) {
+      const r = buildRecipe(params);
+      note.textContent =
+        `按读数中位数近似：发射率 ${r.rate.toFixed(0)}/s · 寿命 ${r.life.toFixed(2)} · 速度 ${r.speed.toFixed(2)} · 加速度 ${r.accel.toFixed(2)}。` +
+        `只做点发射 + 颜色/尺寸随年龄变化；单位与曲线含义未定——不是客户端效果，不能当验收依据。`;
+    }
+    const go = el("fxPlayGo");
+    const stop = el("fxPlayStop");
+    if (go) go.onclick = () => fxPlayStart();
+    if (stop) stop.onclick = () => fxPlayStop();
+  }
   el("fxMissing").innerHTML = (rep.missing || []).map((m) => `<li>${esc(m)}</li>`).join("");
   void paintEffectMesh(rep);
   void paintEffectTextures(rep);
+}
+
+// 试播状态：画布是 2D 的（粒子用叠加混合画），跟网格预览那块 WebGL 画布互不干扰。
+let fxPlayRep = null;
+let fxPlayState = null;
+
+function fxPlayStop() {
+  if (fxPlayState && fxPlayState.raf) cancelAnimationFrame(fxPlayState.raf);
+  fxPlayState = null;
+}
+
+function fxPlayStart() {
+  fxPlayStop();
+  const cv = el("fxSim");
+  if (!cv || !fxPlayRep) return;
+  const ctx = cv.getContext && cv.getContext("2d");
+  if (!ctx) return;
+  const recipe = buildRecipe(fxPlayRep.params || []);
+  const sim = makeSim(recipe);
+  const st = { raf: 0, sim, ctx, img: null };
+  fxPlayState = st;
+  const texName = (fxPlayRep.textures || [])[0];
+  if (texName && api.texturePngByName) {
+    api.texturePngByName(texName)
+      .then((url) => {
+        if (!url || fxPlayState !== st) return;
+        const img = new Image();
+        img.onload = () => { st.img = img; };
+        img.src = url;
+      })
+      .catch(() => {});
+  }
+  let last = (typeof performance !== "undefined" ? performance.now() : Date.now());
+  const tick = (now) => {
+    if (fxPlayState !== st) return;
+    const dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000));
+    last = now;
+    step(sim, dt);
+    fxDraw(ctx, sim, cv.width, cv.height, st.img);
+    st.raf = requestAnimationFrame(tick);
+  };
+  st.raf = requestAnimationFrame(tick);
 }
 
 /// 特效引用的网格：有就摆一个画布 + 网格筹码，点哪件看哪件。

@@ -592,9 +592,9 @@ export function paintEffect(rep, onPick) {
     playFoldEl.hidden = !canPlay;
     const note = el("fxPlayNote");
     if (note && canPlay) {
-      const r = buildRecipe(params);
+      const r = buildRecipe(params, (rep.emitters || [])[0]);
       note.textContent =
-        `按读数中位数近似：发射率 ${r.rate.toFixed(0)}/s · 寿命 ${r.life.toFixed(2)} · 速度 ${r.speed.toFixed(2)} · 加速度 ${r.accel.toFixed(2)}。` +
+        `按读数中位数近似：发射器 ${r.shape}（形状量级固定）· 发射率 ${r.rate.toFixed(0)}/s · 寿命 ${r.life.toFixed(2)} · 速度 ${r.speed.toFixed(2)} · 加速度 ${r.accel.toFixed(2)}。` +
         `只做点发射 + 颜色/尺寸随年龄变化；单位与曲线含义未定——不是客户端效果，不能当验收依据。`;
     }
     const go = el("fxPlayGo");

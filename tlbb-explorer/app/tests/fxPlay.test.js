@@ -1,7 +1,7 @@
 // 「试播（近似）」的纯函数测试：只验算子和推进，不碰 DOM。
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildRecipe, makeSim, step } from "../web/lib/fxPlay.js";
+import { buildRecipe, makeSim, step, spawnPoint } from "../web/lib/fxPlay.js";
 
 const row = (name, floats, cls = 1) => ({ cls, fld: 0, name, words: [], floats });
 
@@ -23,6 +23,16 @@ test("buildRecipe：按字段名取值，缺字段用默认，不让参数飞出
 
   const empty = buildRecipe([]);
   assert.ok(empty.rate > 0 && empty.life > 0, "空参数也要有可跑的默认值");
+});
+
+test("spawnPoint：形状按名字给出生点，未知名字退回原点", () => {
+  const p = spawnPoint("Point");
+  assert.deepEqual(p, [0, 0, 0]);
+  const box = spawnPoint("Box");
+  assert.ok(Math.abs(box[0]) <= 1.2 && Math.abs(box[1]) <= 0.6, "Box 在盒子里");
+  const c = spawnPoint("Circle");
+  assert.ok(Math.hypot(c[0], c[2]) <= 1.4 + 1e-9, "Circle 在圆盘内");
+  assert.deepEqual(spawnPoint("什么都不是"), [0, 0, 0]);
 });
 
 test("step：会按发射率生成粒子，并在寿命到了以后回收", () => {

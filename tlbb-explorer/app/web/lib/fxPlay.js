@@ -8,7 +8,7 @@
 // 另外这层是纯函数 + 一个画布，测试环境（node）不碰 DOM。
 
 /// 从 rep.params 里按字段名取值（同名字段取中位数），拿不到就回默认。
-export function buildRecipe(params) {
+export function buildRecipe(params, emitter) {
   const byName = new Map();
   for (const p of params || []) {
     if (!p.name) continue;
@@ -47,7 +47,43 @@ export function buildRecipe(params) {
   const inc = nums("min_increment").concat(nums("max_increment"));
   const grow = inc.length ? clamp(med(inc, 0) / 100, -0.5, 2) : 0;
 
-  return { rate, life, accel, speed, colour, grow };
+  // 发射器形状：只按名字近似。形状的尺寸参数没读到（各字段单位未定），
+  // 这里用固定量级——界面上必须标明「形状是近似」。
+  const shape = ["Point", "Box", "Circle", "Cylinder", "Jet", "Polar", "ring", "Line"]
+    .find((x) => String(emitter || "").toLowerCase() === x.toLowerCase()) || "Point";
+  return { rate, life, accel, speed, colour, grow, shape };
+}
+
+/// 发射器的近似出生点（形状按名字，尺寸固定量级——真尺寸参数没解出来）。
+export function spawnPoint(shape) {
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  switch (shape) {
+    case "Box":
+      return [rnd(-1.2, 1.2), rnd(-0.6, 0.6), rnd(-1.2, 1.2)];
+    case "Circle": {
+      const t = Math.random() * Math.PI * 2;
+      const r = Math.sqrt(Math.random()) * 1.4;
+      return [Math.cos(t) * r, 0, Math.sin(t) * r];
+    }
+    case "Cylinder": {
+      const t = Math.random() * Math.PI * 2;
+      return [Math.cos(t) * 1.2, rnd(-1, 1), Math.sin(t) * 1.2];
+    }
+    case "Jet":
+      return [rnd(-0.25, 0.25), 0, rnd(-0.25, 0.25)];
+    case "Polar": {
+      const t = Math.random() * Math.PI * 2;
+      return [Math.cos(t) * 1.2, rnd(-0.3, 0.3), Math.sin(t) * 1.2];
+    }
+    case "ring": {
+      const t = Math.random() * Math.PI * 2;
+      return [Math.cos(t) * 1.3, rnd(-0.1, 0.1), Math.sin(t) * 1.3];
+    }
+    case "Line":
+      return [rnd(-1.4, 1.4), 0, 0];
+    default:
+      return [0, 0, 0];
+  }
 }
 
 /// 推进一帧：spawn 直到配额，积分速度/重力，回收过期粒子。
@@ -59,8 +95,9 @@ export function step(sim, dt) {
     const theta = Math.random() * Math.PI * 2;
     const phi = Math.acos(2 * Math.random() - 1);
     const sp = recipe.speed * (0.6 + Math.random() * 0.8);
+    const [ox, oy, oz] = spawnPoint(recipe.shape);
     sim.parts.push({
-      x: 0, y: 0, z: 0,
+      x: ox, y: oy, z: oz,
       vx: Math.sin(phi) * Math.cos(theta) * sp,
       vy: Math.cos(phi) * sp,
       vz: Math.sin(phi) * Math.sin(theta) * sp,

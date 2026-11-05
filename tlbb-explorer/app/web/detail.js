@@ -59,6 +59,7 @@ import {
   paintFiles,
   paintRaw,
   paintFixBar,
+  stopFxPlay,
 } from "./panels.js";
 const seq = makeSeq();
 
@@ -310,6 +311,8 @@ if (meshBonesBox) {
 }
   // 点开才取数：一条动作约 0.6 秒，不该压在每次选资产的路径上
   onTabOpen((name) => {
+    // 切走特效页就把试播停掉：看不见的粒子循环没理由继续烧 CPU。
+    if (name !== "effect") stopFxPlay();
     if (!state.selected) return;
     if (name === "animation") {
       if (!animReply) loadAnimation(state.selected, "");

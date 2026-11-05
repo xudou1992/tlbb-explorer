@@ -611,6 +611,8 @@ export function paintEffect(rep, onPick) {
 let fxPlayRep = null;
 let fxPlayState = null;
 
+export function stopFxPlay() { fxPlayStop(); }
+
 function fxPlayStop() {
   if (fxPlayState && fxPlayState.raf) cancelAnimationFrame(fxPlayState.raf);
   fxPlayState = null;

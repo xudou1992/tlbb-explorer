@@ -293,6 +293,13 @@ test("没有模型定义那批：筹码逐个切，不许把各自独立的网�
   assert.match(html, /id="meshPick"/, "筹码区必须在，否则切不了下一份");
 });
 
+test("切走特效页要停掉试播，别让看不见的粒子循环继续跑", () => {
+  const p = readFileSync(join(web, "panels.js"), "utf8");
+  const d = readFileSync(join(web, "detail.js"), "utf8");
+  assert.match(p, /export function stopFxPlay/, "要留一个停的口子");
+  assert.match(d, /if \(name !== "effect"\) stopFxPlay\(\);/, "切页签时调用");
+});
+
 test("特效页要有「播放相关参数」摘要，且只摆原始读数、不换算单位", () => {
   const p = readFileSync(join(web, "panels.js"), "utf8");
   assert.match(p, /播放相关参数/, "要把播放要用的量挑出来单列");

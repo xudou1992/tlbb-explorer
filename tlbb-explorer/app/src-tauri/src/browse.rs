@@ -448,7 +448,8 @@ pub fn browse_preview(pak_name: String, hash: String) -> Result<BrowsePreview, S
                     }
                     let refs = n.materials.len() + n.textures.len() + n.meshes.len();
                     info.push(format!(
-                        "参数块 {} 字节（{} 个像浮点的数）——字段名未解，只报数量；引用到资源 {} 个",
+                        "参数块 {} 字节（{} 个像浮点的数）——字段名已按属性表解出（表外的留空），\
+                         参数值含义未解、只报数量；引用到资源 {} 个",
                         e.param_bytes, e.param_floats, refs
                     ));
                     Ok(BrowsePreview {
@@ -1376,8 +1377,12 @@ mod tests {
         let joined = pv.info.join(" | ");
         assert!(joined.contains("特效"), "应报特效名：{joined}");
         assert!(joined.contains("驻留字符串"), "应报字符串条数：{joined}");
-        assert!(joined.contains("参数块"), "应报参数块与「字段名未解」：{joined}");
-        assert!(joined.contains("字段名未解"), "参数含义没解就必须这么说：{joined}");
+        assert!(joined.contains("参数块"), "应报参数块：{joined}");
+        // 2026-11-05 改口：字段名早已按 611 条属性表解出（特效页在用 `pu_field_name`），
+        // 没解的是**参数值的含义**——别再写「字段名未解」。
+        assert!(joined.contains("字段名已按属性表解出"), "字段名解了就要说清：{joined}");
+        assert!(joined.contains("参数值含义未解"), "没解的是值含义，必须这么说：{joined}");
+        assert!(!joined.contains("字段名未解"), "旧说法别再出现：{joined}");
     }
 
     /// 骨架节点名交叉核对：同一只怪的 `.mesh` 尾部节点名，必须盖住它 `.ani`

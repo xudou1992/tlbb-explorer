@@ -716,7 +716,7 @@ pub fn anim_view_run(gid: i64, want: &str) -> Result<AnimReply, String> {
         .filter_map(|p| p.rsplit('/').next().map(|s| s.to_string()))
         .collect::<Vec<_>>();
     if files.is_empty() {
-        return Err("这一组旁边没有 ani/ 目录，没找到能配给它的动作（别的目录里也许有能套在这副骨架上的，这一版没查）。".to_string());
+        return Err("这一组旁边没有 ani/ 目录，没找到能配给它的动作（零件组按骨名核过全库：没有同骨架的成套动作可套）。".to_string());
     }
     // 空 want 或名字对不上时取第一条，别让人面对一个空白页
     let pick = files
@@ -1210,5 +1210,101 @@ mod tests {
             }
             Err(e) => assert!(!e.is_empty(), "报错不能是空串"),
         }
+    }
+
+    /// 按骨名重数「零件组配动作」的盘子（2026-11-04 定的口径）。
+    /// 旧数字「83 组带 .ske」作废：衣服组没有 .ske 成员却报得出 133 根骨，骨写在网格层级里。
+    /// 所以按**能不能报出骨名**数，不按成员角色数。跑法：
+    /// `cargo test --lib -- --ignored 按骨名重数零件组盘子`
+    #[test]
+    #[ignore]
+    fn 按骨名重数零件组盘子() {
+        let (root, db) = roots();
+        let con = match open_db(&db) { Ok(c) => c, Err(_) => return };
+        let sql = "select distinct g.id, g.stem, g.kind from agroups g \
+                   join amembers m on m.gid = g.id \
+                   where m.role = 'mesh' and g.id not in ( \
+                     select m2.gid from amembers m2 join resources r on r.hash = m2.hash \
+                     where r.ext = '.ani' and r.path like '%/ani/%') \
+                   order by g.kind, g.id";
+        let Ok(mut stmt) = con.prepare(sql) else { return };
+        let mut rows: Vec<(i64, String, String)> = Vec::new();
+        {
+            let it = stmt.query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?))).unwrap();
+            for row in it.flatten() { rows.push(row); }
+        }
+        let mut out = String::from("gid|stem|kind|骨名行数|有位置|结果|动作");
+        out.push('\n');
+        let mut total = 0usize;
+        let mut with_bones = 0usize;
+        let mut by_kind: std::collections::BTreeMap<String, (usize, usize)> = Default::default();
+        for (gid, stem, kind) in &rows {
+            total += 1;
+            let ent = by_kind.entry(kind.clone()).or_insert((0, 0));
+            ent.0 += 1;
+            // 应用真正查动作靠「网格旁边的 ani/ 目录」，不是成员表——两口径不一样，
+            // 2026-11-04 实测：按成员没 .ani 的 531 组里，有 53 组其实能按目录找到动作。
+            let mut has_ani_dir = false;
+            if let Ok(mut q) = con.prepare(
+                "select r.path from amembers m join resources r on r.hash = m.hash \
+                 where m.gid = ?1 and m.role = 'mesh' and r.path is not null and r.path <> ''",
+            ) {
+                let paths: Vec<String> = q
+                    .query_map([gid], |r| r.get::<_, String>(0))
+                    .map(|it| it.flatten().collect())
+                    .unwrap_or_default();
+                for path in &paths {
+                    if let Some(d) = path.rsplit_once('/').map(|(d, _)| d) {
+                        if con
+                            .query_row(
+                                "select 1 from resources where ext = '.ani' and path like ?1 limit 1",
+                                [format!("{d}/ani/%")],
+                                |r| r.get::<_, i64>(0),
+                            )
+                            .is_ok()
+                        {
+                            has_ani_dir = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            let line = match skeleton_view_run(*gid, "") {
+                Ok(rep) => {
+                    let pos = rep.nodes.iter().filter(|n| n.pos.is_some()).count();
+                    if !rep.nodes.is_empty() {
+                        with_bones += 1;
+                        ent.1 += 1;
+                    }
+                    format!(
+                        "{}|{}|{}|{}|{}|ok|{}",
+                        gid,
+                        stem,
+                        kind,
+                        rep.nodes.len(),
+                        pos,
+                        if has_ani_dir { "有动作" } else { "真没动作" }
+                    )
+                }
+                Err(e) => format!("{}|{}|{}|-|-|ERR|{}", gid, stem, kind, e.replace('\n', " ")),
+            };
+            out.push_str(&line);
+            out.push('\n');
+        }
+        let path = root.join(".scratch").join("no_ani_bone_census.tsv");
+        std::fs::write(&path, &out).ok();
+        let real_targets = out
+            .lines()
+            .skip(1)
+            .filter(|l| l.ends_with("|真没动作") && l.split('|').nth(3).map(|v| v.parse::<usize>().unwrap_or(0) > 0).unwrap_or(false))
+            .count();
+        eprintln!(
+            "盘子：{total} 组；报得出骨名 {with_bones} 组；其中**按目录也真没动作**的 {real_targets} 组；明细写 {}",
+            path.display()
+        );
+        for (k, (n, w)) in &by_kind {
+            eprintln!("  {k}: {n} 组，报得出 {w}");
+        }
+        assert!(total > 400, "这个盘子不该只有 {total} 组");
     }
 }

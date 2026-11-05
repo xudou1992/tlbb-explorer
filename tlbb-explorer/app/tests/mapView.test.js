@@ -28,13 +28,17 @@ test("没证据的地图：名称写明没有证据别名，不编一个", () =>
   assert.ok(map["名称"].includes("没有证据别名"));
 });
 
-test("还没解的：地形/碰撞/寻路直说未解析，贴图说部分可恢复，朝向说未证", () => {
+test("还没解的：地形/碰撞/寻路直说未解析，贴图说部分可恢复，朝向说清不影响画面", () => {
   const h = unresolvedHtml();
   assert.ok(h.includes("地形：未解析"));
   assert.ok(h.includes("碰撞：未解析"));
   assert.ok(h.includes("寻路：未解析"));
   assert.ok(h.includes("贴图：部分可恢复"));
-  assert.ok(h.includes("朝向：R 还是 Rᵀ 未证"));
+  // 2026-11-05 改口：渲染是按文件里的矩阵原序直读（与客户端同序），R/Rᵀ 只是叫法，
+  // 不影响画面；「与游戏逐点比对」才是真未做的那件事。
+  assert.ok(h.includes("矩阵按文件原序直读"));
+  assert.ok(h.includes("不影响画面"));
+  assert.ok(h.includes("与游戏逐点比对未做"));
   assert.ok(!h.includes("贴图 ✘"));
 });
 

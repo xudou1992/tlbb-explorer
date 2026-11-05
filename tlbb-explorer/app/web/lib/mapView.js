@@ -31,7 +31,7 @@ export function unresolvedHtml() {
     `<span class="part">贴图：部分可恢复（候选机制已就绪，见资产页的试贴候选）</span><br />` +
     `<span class="miss">碰撞：未解析</span><br />` +
     `<span class="miss">寻路：未解析</span><br />` +
-    `<span class="miss">朝向：R 还是 Rᵀ 未证，待与客户端比对</span>`
+    `<span class="part">朝向：矩阵按文件原序直读（与客户端同序），R/Rᵀ 的叫法不影响画面；与游戏逐点比对未做</span>`
   );
 }
 

@@ -192,6 +192,13 @@ test("俯视量测：画布盒变了要按新尺寸重算取景", () => {
   assert.ok(!/t\.syncViewport\(\);\s*\n\s*t\.draw\(\);/.test(map), "裸量尺寸+重画会留着按旧尺寸算出来的取景");
 });
 
+test("地图信息栏的「R 还是 Rᵀ」要说清它不影响画面，不是一句吓人的未证", () => {
+  const v = readFileSync(join(web, "lib/mapView.js"), "utf8");
+  assert.match(v, /矩阵按文件原序直读/, "要说清渲染怎么用矩阵");
+  assert.match(v, /不影响画面/, "要说清这个未证不挡画面");
+  assert.ok(!/R 还是 Rᵀ 未证，待与客户端比对/.test(v), "旧说法撤掉");
+});
+
 test("俯视的南北：2026-11-03 与游戏内地图对照过了，横幅要改成已校过的说法", () => {
   const map = readFileSync(join(web, "map.js"), "utf8");
   const math = readFileSync(join(web, "lib/topdownMath.js"), "utf8");

@@ -288,6 +288,7 @@
   更新器前八：Colour 7,677 / Scale 6,874 / TextureRotator 5,704 / Affector_1..3 / TextureAnimator 1,939 / Vortex 1,500；
   参数 cls 分布里 cls0 157.6 万（无载荷）、cls1 46.5 万、cls5 16.5 万、cls6 12.6 万、cls14（时间+颜色）12.1 万。
   报告在 `.scratch/pu_census_20261105/SUMMARY.md`（每份的发射器/更新器明细在 `pu_census.tsv`）。
+  对账：抽 ，工具报的 22 条字符串 / 发射器 Point / 更新器 Scale、TextureRotator、Vortex、Colour / 渲染器 Billboard、MeshSurface、Entity，与界面和浏览页逐项一致。
   ⇒ 播放要实现的就这八种发射器 + 前几类更新器；「值语义」目前只到「按 cls 读成数」，
   **单位/曲线含义仍未定**，播放器若做必须先标「近似」。
 - ❌ **「按围栏/墙链的自洽对齐能定 R 还是 Rᵀ」** —— 2026-11-04 试过，**不足以定论**：
